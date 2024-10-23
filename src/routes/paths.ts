@@ -1,24 +1,18 @@
 export const paths = {
-  home: "/",
-  login: {
-    index: "/login",
-    otp: "otp",
+  dashboard: "dashboard",
+  auth: {
+    index: "auth",
+    login: "login",
+    register: "register",
   },
-  profile: {
-    index: "/profile",
-    personnel: {
-      index: "personnel",
-      view: ":id",
+  invite: "invite",
+  workspaces: {
+    index: "workspaces",
+    create: "create",
+    view: ":slug",
+    rooms: {
+      index: "rooms",
+      view: ":room_id",
     },
-    wallet: {
-      index: "wallet",
-      increase: "increase",
-    },
-    credits: {
-      index: "credits",
-      add: "add",
-      view: ":id",
-    },
-    creditsHistory: "credits-history",
   },
 };

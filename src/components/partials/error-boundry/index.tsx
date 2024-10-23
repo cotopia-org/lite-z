@@ -1,10 +1,11 @@
+import { routeResolver } from "@/lib/utils";
 import { paths } from "@/routes/paths";
 import { Button } from "@radix-ui/themes";
 import { useNavigate } from "react-router-dom";
 export default function ErrorElement() {
   const navigate = useNavigate();
 
-  const backToHome = () => navigate(paths.home);
+  const backToHome = () => navigate(routeResolver(paths.dashboard));
 
   const reloadThePage = () => window.location.reload();
 

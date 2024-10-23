@@ -18,7 +18,7 @@ export default function PrivateRoutes() {
   const { accessToken } = useAuth();
   useEffect(() => {
     if (!accessToken) {
-      return navigate(paths.login.index);
+      return navigate(paths.auth.login);
     }
     setInitState(true);
   }, [accessToken, navigate]);

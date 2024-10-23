@@ -1,22 +1,22 @@
-import useAuth from "@/hooks/auth"
-import { useEffect, useState } from "react"
-import { Outlet, useNavigate } from "react-router-dom"
-import { paths } from "./paths"
+import useAuth from "@/hooks/auth";
+import { useEffect, useState } from "react";
+import { Outlet, useNavigate } from "react-router-dom";
+import { paths } from "./paths";
 
 export default function PublicRoutes() {
-  const [initState, setInitState] = useState(false)
+  const [initState, setInitState] = useState(false);
 
-  const navigate = useNavigate()
+  const navigate = useNavigate();
 
-  const { accessToken } = useAuth()
+  const { accessToken } = useAuth();
   useEffect(() => {
     if (accessToken) {
-      return navigate(paths.home)
+      return navigate(paths.dashboard);
     }
-    setInitState(true)
-  }, [accessToken])
+    setInitState(true);
+  }, [accessToken]);
 
-  if (initState === false) return null
+  if (initState === false) return null;
 
-  return <Outlet />
+  return <Outlet />;
 }
