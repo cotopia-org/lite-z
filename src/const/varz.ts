@@ -1,4 +1,19 @@
 export const VARZ = {
   apiBaseUrl: process.env.REACT_APP_API_URL,
-  xKey: process.env["REACT_APP_X_KEY"] ?? "",
-}
+  domain: process.env.REACT_APP_PUBLIC_HOME_URL,
+  serverUrl: process.env.REACT_APP_PUBLIC_LK_SERVER_URL,
+  socketUrl: process.env.REACT_APP_PUBLIC_SOOCKET_URL ?? "",
+  dashboardPage: "/dashboard",
+  loginPage: `/auth/login`,
+  registerPage: `/auth/register`,
+  forgetPasswordPage: `/auth/forget-password`,
+  signOutApiPage: `/api/auth/sign-out`,
+  voiceAreaRadius: 200,
+  defaultPositionOfUserX: 400,
+  jailNodeType: "jailNode",
+  backgroundNodeType: "backgroundNode",
+  defaultPerPage: 20,
+  pagesLimitDiff: 6,
+  defaultPositionOfUserY: 400,
+  teleportMargin: 40,
+};

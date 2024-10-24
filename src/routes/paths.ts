@@ -4,6 +4,7 @@ export const paths = {
     index: "auth",
     login: "login",
     register: "register",
+    ["forget-password"]: "forget-password",
   },
   invite: "invite",
   workspaces: {

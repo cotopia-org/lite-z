@@ -1,5 +1,3 @@
-import { FetchPaginatedDataType } from "@/services/axios";
-import { DateType } from "@/types/date";
 import moment from "moment-jalaali";
 
 export const thunkResHandler = (
@@ -16,14 +14,3 @@ export const thunkResHandler = (
     }
   });
 };
-
-export const getItemsFromPagination = <T>(data?: FetchPaginatedDataType<T>) => {
-  if (data === undefined) return [] as T[];
-
-  return data?.items ?? [];
-};
-
-export const getJalaliDate = (
-  date: DateType,
-  format: string = "jYYYY/jMM/jDD"
-) => moment(date.jalali, "jYYYY-jMM-jDD").format(format);

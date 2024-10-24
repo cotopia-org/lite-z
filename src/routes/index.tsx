@@ -1,11 +1,11 @@
-import { Navigate, Outlet, createBrowserRouter } from "react-router-dom";
+import { Navigate, createBrowserRouter } from "react-router-dom";
 import PublicRoutes from "./public-wrapper";
-import { Suspense, lazy } from "react";
-import PrivateRoutes from "./private-wrarpper";
+import { lazy } from "react";
 import { paths } from "./paths";
-import RootBoundary from "@/components/partials/error-boundry";
-import ProfileWrapper from "@/components/containers/profile/profile-wrapper";
 import { routeResolver } from "@/lib/utils";
+import ErrorElement from "@/components/shared/error-boundry";
+//@ts-ignore
+import PrivateRoutes from "./private-wrarpper";
 
 //Home page
 const HomePage = lazy(() => import("@/pages/home/page"));
@@ -20,7 +20,7 @@ const NotFoundPage = lazy(() => import("@/pages/not-found"));
 const router = createBrowserRouter([
   {
     element: <PrivateRoutes />,
-    errorElement: <RootBoundary />,
+    errorElement: <ErrorElement />,
     children: [
       {
         path: paths.dashboard,
@@ -31,7 +31,7 @@ const router = createBrowserRouter([
   {
     path: routeResolver(paths.auth.index),
     element: <PublicRoutes />,
-    errorElement: <RootBoundary />,
+    errorElement: <ErrorElement />,
     children: [
       {
         index: true,

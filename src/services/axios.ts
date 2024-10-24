@@ -1,33 +1,19 @@
 import { VARZ } from "@/const/varz";
-import store from "@/store";
-import { logout } from "@/store/slices/auth/slice";
 import axios, { AxiosInstance, AxiosResponse } from "axios";
 import { toast } from "sonner";
 
-export type FetchDataType<T> = T;
-
-export type FetchPaginatedDataType<T> = {
-  items: T[];
-  _meta: {
-    currentPage: number;
-    pageCount: number;
-    perPage: number;
-    totalCount: number;
+export type FetchDataType<T> = {
+  meta: {
+    code: number;
+    message: string;
   };
-  _links: {
-    first: { href: string };
-    last: { href: string };
-    self: { href: string };
-  };
+  status: string;
+  data: T;
 };
 
 // Create a new Axios instance
 const axiosInstance: AxiosInstance = axios.create({
   baseURL: VARZ.apiBaseUrl,
-  headers: {
-    "x-key": VARZ.xKey,
-    "accept-language": "fa",
-  },
 });
 
 // Add a request interceptor to add authorization headers
@@ -35,11 +21,9 @@ axiosInstance.interceptors.request.use(
   (config: any) => {
     if (typeof window === "undefined") return config;
 
-    const state = store.getState();
-    const token = state.auth.accessToken;
-
-    if (token) {
-      config.headers.Authorization = `Bearer ${token}`;
+    const accessToken = localStorage.getItem("accessToken");
+    if (accessToken && config?.headers) {
+      config.headers["Authorization"] = `Bearer ${accessToken}`;
     }
 
     return config;
@@ -63,25 +47,36 @@ axiosInstance.interceptors.response.use(
       !originalRequest._retry &&
       typeof window !== "undefined"
     ) {
-      store.dispatch(logout());
+      // originalRequest._retry = true;
+      // // Perform token refresh logic here
+      // try {
+      //   const newAccessToken = await refreshAccessToken(); // Implement your refresh token logic
+      //   if (newAccessToken) {
+      //     // Retry the original request with the new access token
+      //     originalRequest.headers["Authorization"] = `Bearer ${newAccessToken}`;
+      //     return axiosInstance(originalRequest);
+      //   }
+      // } catch (refreshError) {
+      //   //Signing out the user here
+      //   //TODO - Add logic here
+      // }
+
+      //Means we are in client mode
+      if (typeof window !== "undefined") {
+        // toast.loading("You are going to logout!");
+        // window.location.href = __VARS.signOutApiPage;
+      }
     }
 
     const errorData = error.response.data;
 
-    if (typeof window === "undefined") return Promise.reject(error);
-
-    if (Array.isArray(errorData) && errorData?.length > 0) {
-      for (let errorItem of errorData) {
-        if (errorItem?.message) toast.error(errorItem?.message);
-      }
-    } else {
-      if (
-        errorData?.["meta"] &&
-        typeof errorData["meta"]?.["message"] === "string"
-      ) {
-        //Means we have error string as detail
-        toast.error(errorData?.meta?.message);
-      }
+    if (
+      typeof window !== "undefined" &&
+      errorData?.["meta"] &&
+      typeof errorData["meta"]?.["message"] === "string"
+    ) {
+      //Means we have error string as detail
+      toast.error(errorData?.meta?.message);
     }
 
     return Promise.reject(error);
