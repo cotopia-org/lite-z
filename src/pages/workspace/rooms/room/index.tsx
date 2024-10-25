@@ -4,7 +4,7 @@ import { useParams } from "react-router-dom";
 
 export default function WorkspaceRoomPage() {
   const { query } = useQueryParams();
-  const { id: workspace_id, room_id } = useParams();
+  const { workspace_id, room_id } = useParams();
 
   if (!workspace_id || !room_id) return null;
 

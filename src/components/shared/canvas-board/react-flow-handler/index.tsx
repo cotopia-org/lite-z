@@ -109,6 +109,8 @@ function ReactFlowHandler({ tracks }: Props) {
     []
   );
 
+  console.log("tracks", tracks);
+
   const addParticipants = (particpants: UserMinimalType[]) => {
     return uniqueById(
       particpants.map((participant) => {

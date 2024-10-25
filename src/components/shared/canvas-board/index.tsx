@@ -51,7 +51,7 @@ const Canvas: React.FC = () => {
   // if (init === false) return <FullLoading />;
 
   return (
-    <div id='canvas-board' className='w-screen h-[1080px]'>
+    <div id='canvas-board' className='w-full h-[1080px] relative'>
       <TrackRefContext.Provider value={track}>
         <UserSessions>
           <ReactFlowHandler tracks={tracks} />

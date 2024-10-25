@@ -23,13 +23,13 @@ export default function Toolbar({
 }: Props) {
   const { sidebar } = useRoomContext();
 
-  let clss = "relative h-screen";
+  let clss = "relative h-screen w-full";
 
-  if (sidebar) {
-    clss += ` w-[calc(100%-380px)]`;
-  } else {
-    clss += ` w-full`;
-  }
+  // if (sidebar) {
+  //   clss += ` w-[calc(100%-380px)]`;
+  // } else {
+  //   clss += ` w-full`;
+  // }
 
   return (
     <div className={clss}>

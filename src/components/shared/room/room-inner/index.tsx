@@ -33,7 +33,7 @@ export default function RoomInner() {
     <>
       <InitRoom />
       <div id='main-room-holder' className={mainRoomHolderClss}>
-        <div className='w-full h-full relative'>
+        <div className='w-full   h-full relative'>
           <CanvasBoard />
         </div>
         {!!sidebar && (
