@@ -2,101 +2,29 @@
 module.exports = {
   content: ["./src/**/*.{js,jsx,ts,tsx}"],
   theme: {
+    container: {
+      center: true,
+      padding: "2rem",
+      screens: {
+        "2xl": "1400px",
+      },
+    },
     extend: {
       colors: {
-        label: "var(--label)",
         border: "var(--border)",
         input: "var(--input)",
         ring: "var(--ring)",
         background: "var(--background)",
-        onBackground: "var(--foreground)",
         foreground: "var(--foreground)",
-        onForeground: "var(--background)",
-        backgroundText: "var(--neutral-1000)",
-        secondaryButton: "var(--primary-800)",
-        secondaryButtonText: "var(--primary-900)",
-        tertiary: "var(--neutral-200)",
-        tertiaryButton: "var(--neutral-800)",
-        onTertiary: "var(--neutral-1000)",
-        inputFieldStroke: "var(--primary-800)",
-        star: "var(--star)",
+        primaryBackground: "var(--primary-background)",
         primary: {
           DEFAULT: "var(--primary)",
-          200: "var(--primary-200)"
+          foreground: "var(--primary-foreground)",
         },
-        error: {
-          DEFAULT: "var(--error-500)",
-          0: "var(--error-0)",
-          50: "var(--error-50)",
-          100: "var(--error-100)",
-          150: "var(--error-150)",
-          200: "var(--error-200)",
-          300: "var(--error-300)",
-          400: "var(--error-400)",
-          500: "var(--error-500)",
-          600: "var(--error-600)",
-          700: "var(--error-700)",
-          800: "var(--error-800)",
-          850: "var(--error-850)",
-          900: "var(--error-900)",
-          950: "var(--error-950)",
-          1000: "var(--error-1000)",
+        secondary: {
+          DEFAULT: "var(--secondary)",
+          foreground: "var(--secondary-foreground)",
         },
-        success: {
-          DEFAULT: "var(--success-500)",
-          0: "var(--success-0)",
-          50: "var(--success-50)",
-          100: "var(--success-100)",
-          150: "var(--success-150)",
-          200: "var(--success-200)",
-          300: "var(--success-300)",
-          400: "var(--success-400)",
-          500: "var(--success-500)",
-          600: "var(--success-600)",
-          700: "var(--success-700)",
-          800: "var(--success-800)",
-          850: "var(--success-850)",
-          900: "var(--success-900)",
-          950: "var(--success-950)",
-          1000: "var(--success-1000)",
-        },
-        info: {
-          DEFAULT: "var(--info-500)",
-          0: "var(--info-0)",
-          50: "var(--info-50)",
-          100: "var(--info-100)",
-          150: "var(--info-150)",
-          200: "var(--info-200)",
-          300: "var(--info-300)",
-          400: "var(--info-400)",
-          500: "var(--info-500)",
-          600: "var(--info-600)",
-          700: "var(--info-700)",
-          800: "var(--info-800)",
-          850: "var(--info-850)",
-          900: "var(--info-900)",
-          950: "var(--info-950)",
-          1000: "var(--info-1000)",
-        },
-        neutral: {
-          DEFAULT: "var(--neutral-500)",
-          0: "var(--neutral-0)",
-          50: "var(--neutral-50)",
-          100: "var(--neutral-100)",
-          150: "var(--neutral-150)",
-          200: "var(--neutral-200)",
-          300: "var(--neutral-300)",
-          400: "var(--neutral-400)",
-          500: "var(--neutral-500)",
-          600: "var(--neutral-600)",
-          700: "var(--neutral-700)",
-          800: "var(--neutral-800)",
-          850: "var(--neutral-850)",
-          900: "var(--neutral-900)",
-          950: "var(--neutral-950)",
-          1000: "var(--neutral-1000)",
-        },
-        // Other variables
         destructive: {
           DEFAULT: "var(--destructive)",
           foreground: "var(--destructive-foreground)",
@@ -118,6 +46,11 @@ module.exports = {
           foreground: "var(--card-foreground)",
         },
       },
+      borderRadius: {
+        lg: "var(--radius)",
+        md: "calc(var(--radius) - 2px)",
+        sm: "calc(var(--radius) - 4px)",
+      },
       keyframes: {
         "accordion-down": {
           from: { height: "0" },
@@ -127,50 +60,42 @@ module.exports = {
           from: { height: "var(--radix-accordion-content-height)" },
           to: { height: "0" },
         },
-
-        expand: {
-          "0%": { width: "4rem" }, // Sidebar collapsed width
-          "100%": { width: "16rem" }, // Sidebar expanded width
-        },
-        collapse: {
-          "0%": { width: "16rem" },
-          "100%": { width: "4rem" },
-        },
-        "spin-around": {
+        "scale-up": {
           "0%": {
-            transform: "translateZ(0) rotate(0)",
+            transform: "scale(1)",
+            animationTimingFunction: "cubic-bezier(0.8,0,1,1)",
           },
-          "15%, 35%": {
-            transform: "translateZ(0) rotate(90deg)",
-          },
-          "65%, 85%": {
-            transform: "translateZ(0) rotate(270deg)",
+          "50%": {
+            transform: "scale(1.2)",
+            animationTimingFunction: "cubic-bezier(0,0,0.2,1)",
           },
           "100%": {
-            transform: "translateZ(0) rotate(360deg)",
+            transform: "scale(1)",
+            animationTimingFunction: "cubic-bezier(0,0,0.2,1)",
           },
         },
-        slide: {
-          to: {
-            transform: "translate(calc(100cqw - 100%), 0)",
-          },
+        "slide-up": {
+          from: { transform: "translateY(100%)", opacity: "0" },
+          to: { transform: "translateY(0)", opacity: "1" },
         },
       },
       animation: {
+        "scale-custom": "scale-up 0.3s ease-in-out",
         "accordion-down": "accordion-down 0.2s ease-out",
         "accordion-up": "accordion-up 0.2s ease-out",
-        "spin-around": "spin-around calc(var(--speed) * 2) infinite linear",
-        expand: "expand 0.15s ease-in-out forwards", // Smooth expanding animation
-        collapse: "collapse 0.15s ease-in-out forwards", // Smooth collapsing animation
-        slide: "slide var(--speed) ease-in-out infinite alternate",
+        "slide-up": "slide-up 0.2s ease-in-out",
       },
-      boxShadow: {
-        "app-bar":
-          "0px 0px 4px 0px rgba(0, 0, 0, 0.14), 0px 3px 4px 0px rgba(0, 0, 0, 0.12), 0px 1px 5px 0px rgba(0, 0, 0, 0.2)",
+      screens: {
+        xs: "495px",
+        "2xs": "200px",
       },
-      backgroundColor: {
-        input: "var(--background-input)",
-        foreground: "var(--foreground)",
+      width: {
+        "nearly-full": "90%",
+        "10.5": "10.25rem",
+        wide: "666px",
+      },
+      height: {
+        "3.25": "3.125rem",
       },
     },
   },

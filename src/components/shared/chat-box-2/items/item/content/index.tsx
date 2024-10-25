@@ -1,20 +1,20 @@
-import { useProfile } from "@/app/(pages)/(protected)/protected-wrapper";
 import { Chat2ItemType } from "@/types/chat2";
 import ChatDate from "./date";
 import { useChatItem } from "..";
 import Linkify from "linkify-react";
+import useAuth from "@/hooks/auth";
 
 type Props = {
   chat: Chat2ItemType;
 };
 export default function ChatItemContent({ chat }: Props) {
-  const { user: myAccount } = useProfile();
+  const { user: myAccount } = useAuth();
 
   const { getUser } = useChatItem();
 
   const user = getUser(chat.user);
 
-  const isMyUser = myAccount.id === user?.id;
+  const isMyUser = myAccount?.id === user?.id;
 
   const linkElement = (
     attributes: { [attr: string]: any },

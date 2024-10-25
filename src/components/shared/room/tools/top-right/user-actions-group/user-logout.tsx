@@ -1,14 +1,14 @@
 import CotopiaIconButton from "@/components/shared-ui/c-icon-button";
 import useLoading from "@/hooks/use-loading";
 import { LogOut } from "lucide-react";
-import { useRouter } from "next/navigation";
 import { useRoomContext } from "../../../room-context";
 import axiosInstance from "@/services/axios";
+import { useNavigate } from "react-router-dom";
 
 export default function UserLogoutButtonTool() {
   const { workspace_id } = useRoomContext();
 
-  const router = useRouter();
+  const navigate = useNavigate();
 
   const { startLoading, stopLoading, isLoading } = useLoading();
 
@@ -17,7 +17,7 @@ export default function UserLogoutButtonTool() {
     axiosInstance
       .get(`/rooms/leave`)
       .then((res) => {
-        router.push(`/workspaces/${workspace_id}`);
+        navigate(`/workspaces/${workspace_id}`);
         stopLoading();
       })
       .catch((err) => {

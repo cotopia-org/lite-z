@@ -8,7 +8,11 @@ import ErrorElement from "@/components/shared/error-boundry";
 import PrivateRoutes from "./private-wrarpper";
 
 //Home page
-const HomePage = lazy(() => import("@/pages/home/page"));
+const HomePage = lazy(() => import("@/pages/home"));
+
+//Workspace page
+const WorkspacePage = lazy(() => import("@/pages/workspace"));
+const WorkspaceRoomPage = lazy(() => import("@/pages/workspace/rooms/room"));
 
 //Auth pages
 const LoginPage = lazy(() => import("@/pages/auth/login"));
@@ -23,8 +27,30 @@ const router = createBrowserRouter([
     errorElement: <ErrorElement />,
     children: [
       {
+        path: "/",
+        element: <Navigate to={paths.dashboard} />,
+      },
+      {
         path: paths.dashboard,
         element: <HomePage />,
+      },
+      {
+        path: paths.workspaces.index,
+        children: [
+          {
+            path: paths.workspaces.view,
+            element: <WorkspacePage />,
+          },
+        ],
+      },
+      {
+        path: routeResolver(
+          paths.workspaces.index,
+          paths.workspaces.view,
+          paths.workspaces.rooms.index,
+          paths.workspaces.rooms.view
+        ),
+        element: <WorkspaceRoomPage />,
       },
     ],
   },

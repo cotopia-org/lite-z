@@ -2,11 +2,11 @@ import CotopiaInput, {
   CotopiaInputProps,
 } from "@/components/shared-ui/c-input";
 import useLoading from "@/hooks/use-loading";
-import axiosInstance from "@/lib/axios";
-import { useEffect, useState } from "react";
+import { ReactNode, useEffect, useState } from "react";
 import Loading from "./loading";
 import Valid from "./valid";
 import NotValid from "./not-valid";
+import axiosInstance from "@/services/axios";
 
 type Props = CotopiaInputProps & {
   onError?: () => void;
@@ -64,7 +64,7 @@ export default function CheckUserInput({
     };
   }, [value]);
 
-  let metaShow = null;
+  let metaShow: ReactNode = null;
 
   if (isValid) metaShow = <Valid />;
 

@@ -4,15 +4,13 @@ import CotopiaInput from "@/components/shared-ui/c-input";
 import CotopiaTextarea from "@/components/shared-ui/c-textarea";
 import TitleEl from "@/components/shared/title-el";
 import useLoading from "@/hooks/use-loading";
-import axiosInstance from "@/lib/axios";
 import { JobType } from "@/types/job";
 import { useFormik } from "formik";
 import { Save } from "lucide-react";
-import moment from "moment";
 import { toast } from "sonner";
 import * as Yup from "yup";
 import DeleteJobHandler from "../delete-job";
-import { useEffect } from "react";
+import axiosInstance from "@/services/axios";
 
 interface Props {
   onClose: () => void;

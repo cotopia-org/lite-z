@@ -13,9 +13,9 @@ export default function ErrorElement() {
   return (
     <div
       role='alert'
-      className='p-4 bg-red-100 text-red-700 rounded w-[700px] max-w-full mx-auto my-8 flex flex-col gap-y-4 items-center'
+      className='p-4 bg-black/10 text-black-700 rounded-md w-[700px] max-w-full mx-auto my-8 flex flex-col gap-y-4 items-center'
     >
-      <h2 className='text-lg font-semibold'>خطایی صورت گرفته است!</h2>
+      <h2 className='text-lg font-semibold'>Something went wrong!</h2>
       <div className='flex flex-row items-center gap-x-2'>
         <Button className='mt-4 p-2 rounded' onClick={backToHome} color='gray'>
           Back to home

@@ -1,15 +1,12 @@
 "use client";
-import { useSocket } from "@/app/(pages)/(protected)/protected-wrapper";
-import {
-  unreadMessagesAction,
-  updateMessagesAction,
-} from "@/store/redux/slices/room-slice";
-import { useAppDispatch } from "@/store/redux/store";
+import { unreadMessagesAction } from "@/store/slices/room-slice";
 import { ChatItemType } from "@/types/chat";
 import { useEffect, useRef, useState } from "react";
 import Linkify from "linkify-react";
 
 import "linkify-plugin-mention";
+import { useAppDispatch } from "@/store";
+import { useSocket } from "@/routes/private-wrarpper";
 
 type Props = {
   isMine: boolean;

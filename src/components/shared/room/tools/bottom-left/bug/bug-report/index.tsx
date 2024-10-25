@@ -3,7 +3,7 @@ import CotopiaInput from "@/components/shared-ui/c-input";
 import CotopiaTextarea from "@/components/shared-ui/c-textarea";
 import TitleEl from "@/components/shared/title-el";
 import UploaderList from "@/components/shared/uploader-list";
-import axiosInstance from "@/lib/axios";
+import axiosInstance from "@/services/axios";
 import { AttachmentFileType } from "@/types/file";
 import { useFormik } from "formik";
 import { toast } from "sonner";

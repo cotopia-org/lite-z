@@ -2,7 +2,7 @@
 
 import CotopiaButton from "@/components/shared-ui/c-button";
 import useLoading from "@/hooks/use-loading";
-import axiosInstance from "@/lib/axios";
+import axiosInstance from "@/services/axios";
 import { InviteType } from "@/types/invite";
 import { toast } from "sonner";
 

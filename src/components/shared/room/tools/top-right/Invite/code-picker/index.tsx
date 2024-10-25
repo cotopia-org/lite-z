@@ -7,15 +7,11 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-  DialogTrigger,
 } from "@/components/ui/dialog";
 import CotopiaInput from "@/components/shared-ui/c-input";
-import { CopyIcon } from "lucide-react";
-import { __VARS } from "@/app/const/vars";
-import CotopiaButton from "@/components/shared-ui/c-button";
 
-import copy from "copy-to-clipboard";
 import CopyBtn from "@/components/shared/copy-btn";
+import { VARZ } from "@/const/varz";
 
 type Props = {
   code: string;
@@ -23,7 +19,7 @@ type Props = {
   onCancel: () => void;
 };
 export function CodePicker({ code, onCopy, onCancel }: Props) {
-  const finalCopyUrl = `${__VARS.domain}/invite/${code}`;
+  const finalCopyUrl = `${VARZ.domain}/invite/${code}`;
 
   return (
     <Dialog open>

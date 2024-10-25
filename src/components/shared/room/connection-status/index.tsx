@@ -1,9 +1,9 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { ConnectionState, RoomEvent } from "livekit-client";
 import { useRoomContext } from "@livekit/components-react";
-import { __VARS } from "@/app/const/vars";
 import useQueryParams from "@/hooks/use-query-params";
 import DisconnectedInvisible from "./disconnected-invisible";
+import { VARZ } from "@/const/varz";
 
 function LiveKitConnectionStatus() {
   const { query } = useQueryParams();
@@ -59,11 +59,11 @@ function LiveKitConnectionStatus() {
   }, []);
 
   const onReconnect = () => {
-    if (!__VARS.serverUrl) return;
+    if (!VARZ.serverUrl) return;
 
     if (room.state === ConnectionState.Connected) return;
 
-    room.connect(__VARS.serverUrl, livekit_token);
+    room.connect(VARZ.serverUrl, livekit_token);
   };
 
   if (connectionStatus == RoomEvent.Disconnected)

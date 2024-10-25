@@ -2,8 +2,6 @@ import CotopiaButton from "@/components/shared-ui/c-button";
 import CRawDialog from "@/components/shared-ui/c-dialog/raw-dialog";
 import CotopiaIconButton from "@/components/shared-ui/c-icon-button";
 import { X } from "lucide-react";
-import Image from "next/image";
-import React from "react";
 
 export default function AllowVideoBtn() {
   return (
@@ -21,7 +19,7 @@ export default function AllowVideoBtn() {
           >
             <X className='text-black' />
           </CotopiaIconButton>
-          <Image
+          <img
             src={`/assets/permissions-flag.svg`}
             alt='Permissions flag'
             width={322.5}

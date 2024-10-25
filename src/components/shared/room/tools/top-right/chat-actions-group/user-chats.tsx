@@ -2,7 +2,7 @@ import CotopiaIconButton from "@/components/shared-ui/c-icon-button";
 import { Menu } from "lucide-react";
 import { useRoomContext } from "../../../room-context";
 import CBadge from "@/components/shared-ui/c-badge";
-import { useAppSelector } from "@/store/redux/store";
+import { useAppSelector } from "@/store";
 
 export default function UserChatsSettingsButtonTool() {
   const { openSidebar, closeSidebar, sidebar } = useRoomContext();
@@ -14,7 +14,7 @@ export default function UserChatsSettingsButtonTool() {
     }
   };
 
-  const roomSlice = useAppSelector((state) => state.roomSlice);
+  const roomSlice = useAppSelector((state) => state.room);
 
   const messagesCount = roomSlice?.messages_count ?? { room: [], objects: {} };
 

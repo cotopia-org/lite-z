@@ -5,8 +5,7 @@ import { CalendarDays } from "lucide-react";
 import React, { useCallback, useMemo, useState } from "react";
 import ShapesHandler from "./shapes/handler";
 import { ScheduleType } from "@/types/calendar";
-import moment from "moment";
-import { estimateTotalHoursBySchedules, timeStringToMoment } from "@/lib/utils";
+import { estimateTotalHoursBySchedules } from "@/lib/utils";
 
 export default function ScheduleButton() {
   const [myTotalSchedules, setMyTotalSchedules] = useState<ScheduleType[]>([]);

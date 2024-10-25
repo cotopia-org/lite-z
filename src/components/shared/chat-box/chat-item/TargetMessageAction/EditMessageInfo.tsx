@@ -1,21 +1,19 @@
-import React, { useCallback } from "react"
-import { _BUS } from "@/app/const/bus"
-import { Pencil } from "lucide-react"
-import TargetMessageAction from "."
-import { dispatch } from "use-bus"
-import colors from "tailwindcss/colors"
+import { useCallback } from "react";
+import { Pencil } from "lucide-react";
+import TargetMessageAction from ".";
+import colors from "tailwindcss/colors";
 
 interface Props {
-  title: string
-  desc: string
-  onSelect?: () => void
-  onClose: () => void
+  title: string;
+  desc: string;
+  onSelect?: () => void;
+  onClose: () => void;
 }
 
 const EditMessageInfo = ({ desc, title, onClose, onSelect }: Props) => {
   const selectInfoHandler = useCallback(() => {
-    if (onSelect) onSelect()
-  }, [onSelect])
+    if (onSelect) onSelect();
+  }, [onSelect]);
 
   return (
     <TargetMessageAction
@@ -25,7 +23,7 @@ const EditMessageInfo = ({ desc, title, onClose, onSelect }: Props) => {
       onClose={onClose}
       onSelect={selectInfoHandler}
     />
-  )
-}
+  );
+};
 
-export default EditMessageInfo
+export default EditMessageInfo;

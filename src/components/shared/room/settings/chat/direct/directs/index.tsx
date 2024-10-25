@@ -1,9 +1,8 @@
 import { UserMinimalType } from "@/types/user";
-import React from "react";
 import NotFound from "@/components/shared/layouts/not-found";
-import { useProfile } from "@/app/(pages)/(protected)/protected-wrapper";
 import UserCard from "../users/card";
 import { DirectType } from "@/types/direct";
+import useAuth from "@/hooks/auth";
 
 type Props = {
   search?: string;
@@ -12,7 +11,7 @@ type Props = {
 };
 
 export default function Directs({ search, onSelect, directs }: Props) {
-  const { user } = useProfile();
+  const { user } = useAuth();
 
   let finalDirects = [...directs];
 

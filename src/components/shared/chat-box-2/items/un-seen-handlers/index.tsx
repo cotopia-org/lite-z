@@ -1,8 +1,8 @@
-import { _BUS } from "@/app/const/bus";
 import CBadge from "@/components/shared-ui/c-badge";
 import CotopiaIconButton from "@/components/shared-ui/c-icon-button";
-import { seenAllMessages } from "@/store/redux/slices/chat-slice";
-import { useAppDispatch } from "@/store/redux/store";
+import { __BUS } from "@/const/bus";
+import { useAppDispatch } from "@/store";
+import { seenAllMessages } from "@/store/slices/chat-slice";
 import { Chat2ItemType } from "@/types/chat2";
 import { ChevronDown } from "lucide-react";
 import { dispatch as busDispatch } from "use-bus";
@@ -20,11 +20,11 @@ export default function UnSeenHandlers({ items }: Props) {
   const handleReachMessages = () => {
     if (chat_id) {
       dispatch(seenAllMessages({ chat_id }));
-      busDispatch(_BUS.scrollEndChatBox);
+      busDispatch(__BUS.scrollEndChatBox);
     }
   };
 
-  if (unSeenCount === 0) return;
+  if (unSeenCount === 0) return null;
 
   return (
     <CotopiaIconButton

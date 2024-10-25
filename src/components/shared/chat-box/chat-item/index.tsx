@@ -8,7 +8,6 @@ import { Reply, Pencil, Trash2 } from "lucide-react";
 import colors from "tailwindcss/colors";
 import MessageBox from "./message/MessageBox";
 import TargetMessageAction from "./TargetMessageAction";
-import { _BUS } from "@/app/const/bus";
 import { ReactNode, forwardRef, useState } from "react";
 import DeleteMessageAction from "./my-message/DeleteMessageAction";
 import {

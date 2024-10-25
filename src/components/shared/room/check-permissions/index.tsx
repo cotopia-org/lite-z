@@ -2,7 +2,7 @@ import CotopiaButton from "@/components/shared-ui/c-button";
 import { useEffect, useState } from "react";
 import Video from "./video";
 import { useRoomContext } from "../room-context";
-import { useSocket } from "@/app/(pages)/(protected)/protected-wrapper";
+import { useSocket } from "@/routes/private-wrarpper";
 
 type Props = {
   onChecked: () => void;

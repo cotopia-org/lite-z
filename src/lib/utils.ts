@@ -1,4 +1,8 @@
+import { mergePropsMain } from "@/components/shared/room/sessions/room-audio-renderer/use-media-track-by-source-or-name/merge-props";
+import { ScheduleType } from "@/types/calendar";
+import { TrackReferenceOrPlaceholder } from "@livekit/components-core";
 import { clsx, type ClassValue } from "clsx";
+import { Track } from "livekit-client";
 import moment from "moment";
 import { twMerge } from "tailwind-merge";
 const querystring = require("querystring");
@@ -51,6 +55,10 @@ export function cn(...inputs: ClassValue[]) {
 
 export function routeResolver(...args: string[]) {
   return `/${args.join("/")}`;
+}
+
+export function rawRouteResolver(...args: string[]) {
+  return `${args.join("/")}`;
 }
 
 type Item = {
@@ -115,3 +123,105 @@ export function convertMinutesToHHMMSS(minutes: number): string {
 
   return `${formattedHours}:${formattedMinutes}:${formattedSeconds}`;
 }
+
+export const estimateTotalHoursBySchedules = (schedules: ScheduleType[]) => {
+  let hours = 0;
+
+  if (schedules.length === 0) return 0;
+
+  for (let schedule of schedules) {
+    for (let scheduleDay of schedule.days) {
+      for (let time of scheduleDay.times) {
+        const startMoment = timeStringToMoment(time.start);
+        const endMoment = timeStringToMoment(time.end);
+
+        const diffMinutes = endMoment.diff(startMoment, "minutes");
+        const diffHours = Math.round(diffMinutes / 60);
+
+        hours += diffHours;
+      }
+    }
+  }
+
+  return hours;
+};
+
+export const limitChar = (inputString: string, maxLength: number) => {
+  if (inputString.length > maxLength) {
+    return inputString.substring(0, maxLength) + "...";
+  }
+  return inputString;
+};
+
+export const capitalizeWords = (str: string) => {
+  return str.replace(/\b\w/g, (char) => char.toUpperCase());
+};
+
+export const isScreenShareExist = (tracks: TrackReferenceOrPlaceholder[]) => {
+  let hasShareScreen = false;
+  let shareScreenTrack = [];
+
+  for (let track of tracks) {
+    if (track.source === Track.Source.ScreenShare) {
+      hasShareScreen = true;
+      shareScreenTrack.push(track);
+    }
+  }
+  return {
+    hasShareScreen,
+    shareScreenTrack: shareScreenTrack?.[0] || null,
+  };
+};
+
+export function isProp<
+  U extends HTMLElement,
+  T extends React.HTMLAttributes<U>
+>(prop: T | undefined): prop is T {
+  return prop !== undefined;
+}
+
+export function mergeProps<
+  U extends HTMLElement,
+  T extends Array<React.HTMLAttributes<U> | undefined>
+>(...props: T) {
+  return mergePropsMain(...(props.filter(isProp) as any));
+}
+
+export const getMiddleIndex = (length: number) => Math.floor((length - 1) / 2);
+
+export const getFocusedMessage = ({
+  message,
+  targetIndex,
+  changingClass,
+  removeTimeout = 1500,
+}: {
+  message: HTMLDivElement;
+  targetIndex: number;
+  removeTimeout?: number;
+  changingClass: string[];
+}): { focusHandler: () => void | undefined } => {
+  if (message === undefined || targetIndex < 0)
+    return { focusHandler: () => {} };
+
+  const findFocusedMessage = () => {
+    const nodes = message.childNodes as NodeListOf<HTMLDivElement>;
+    setTimeout(() => {
+      for (let item of nodes) {
+        const datesetIndex = item.dataset?.index;
+        if (datesetIndex === undefined) return;
+        if (Number(datesetIndex) === Number(targetIndex)) {
+          changingClass.map((clss) => {
+            return item.classList.add(clss);
+          });
+          setTimeout(() => {
+            changingClass.map((clss) => {
+              return item.classList.remove(clss);
+            });
+          }, removeTimeout);
+        }
+      }
+    }, 500);
+  };
+
+  return { focusHandler: findFocusedMessage };
+};

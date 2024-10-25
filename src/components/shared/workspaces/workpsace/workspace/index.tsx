@@ -1,12 +1,12 @@
 import { WorkspaceType } from "@/types/workspace";
 
-import Link from "next/link";
 import WorkspaceAvatar from "./avatar";
 import WorkspaceTitle from "./title";
 import WorkspaceDate from "./date";
 import { useState } from "react";
 //@ts-ignore
 import { useSocket } from "@/routes/private-wrarpper";
+import { Link } from "react-router-dom";
 
 type Props = {
   item: WorkspaceType;
@@ -25,7 +25,7 @@ export default function WorkspaceItem({ item }: Props) {
 
   return (
     <Link
-      href={`/workspaces/${localWorkspace.id}`}
+      to={`/workspaces/${localWorkspace.id}`}
       className='p-4 rounded-3xl bg-gray-50 hover:bg-gray-100 w-full flex flex-row items-center justify-between'
     >
       <div className='flex flex-row items-center gap-x-4'>

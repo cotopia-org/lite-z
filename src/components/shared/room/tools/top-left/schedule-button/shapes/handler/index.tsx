@@ -1,10 +1,10 @@
 import { useApi } from "@/hooks/swr";
 import AddScheduleButton from "../add-schedule";
 import { ScheduleType } from "@/types/calendar";
-import { FetchDataType } from "@/lib/axios";
 import FullLoading from "@/components/shared/full-loading";
 import Schedules from "@/components/shared/schedules";
 import { useEffect } from "react";
+import { FetchDataType } from "@/services/axios";
 
 type Props = {
   onGetMySchedules?: (schedules: ScheduleType[]) => void;

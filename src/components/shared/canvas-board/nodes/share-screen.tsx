@@ -1,4 +1,3 @@
-import React from "react";
 import ScreenShareCard from "../../room/components/screen-share-card";
 
 export default function ShareScreen(props: any) {

@@ -1,10 +1,9 @@
 "use client";
 
 import { LiveKitRoom } from "@livekit/components-react";
-import { __VARS } from "@/app/const/vars";
 import RoomContext from "./room-context";
 import RoomInner from "./room-inner";
-import { WorkspaceRoomJoinType, WorkspaceRoomType } from "@/types/room";
+import { WorkspaceRoomJoinType } from "@/types/room";
 import {
   createContext,
   useCallback,
@@ -17,15 +16,11 @@ import LiveKitConnectionStatus from "./connection-status";
 import CheckPermissions2 from "./check-permissions-2";
 import ChatWrapper from "../chat-wrapper";
 import { ReactFlowProvider } from "@xyflow/react";
-import axiosInstance, { FetchDataType } from "@/lib/axios";
-import { useSocket } from "@/app/(pages)/(protected)/protected-wrapper";
 import Disconnected from "./connection-status/disconnected";
 import { toast } from "sonner";
-import useLoading from "@/hooks/use-loading";
-import useBus from "use-bus";
-import { _BUS } from "@/app/const/bus";
-import { io, Socket } from "socket.io-client";
-import { useAppSelector } from "@/store/redux/store";
+import axiosInstance, { FetchDataType } from "@/services/axios";
+import { VARZ } from "@/const/varz";
+import { useSocket } from "@/routes/private-wrarpper";
 
 type MediaPermission = {
   audio: boolean;
@@ -230,11 +225,12 @@ export default function RoomHolder({
   }, []);
 
   let content = (
+    //@ts-ignore
     <LiveKitRoom
       video={state.permissions.video}
       audio
       token={token}
-      serverUrl={__VARS.serverUrl}
+      serverUrl={VARZ.serverUrl}
       options={{
         publishDefaults: {
           videoEncoding: {

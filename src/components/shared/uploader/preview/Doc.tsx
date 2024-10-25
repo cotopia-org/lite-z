@@ -1,7 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { File, Link2 } from "lucide-react";
-import Link from "next/link";
 import { AttachmentFileType } from "@/types/file";
+import { Link } from "react-router-dom";
 
 type Props = {
   document: AttachmentFileType;
@@ -17,7 +17,7 @@ export default function Doc({ document }: Props) {
         <span className='whitespace-pre-wrap w-[70%] text-ellipsis overflow-hidden'>
           {document.path.slice(0, 5)}
         </span>
-        <Link prefetch={false} href={`${BASE_URL}${document.url}`}>
+        <Link to={`${BASE_URL}${document.url}`}>
           <Button type='button'>
             <Link2 className='mr-2' size={16} />
             Open File

@@ -1,13 +1,10 @@
 import FullLoading from "@/components/shared/full-loading";
-import { useRoomContext } from "@/components/shared/room/room-context";
 import { useApi } from "@/hooks/swr";
-import { FetchDataType } from "@/lib/axios";
 import { UserMinimalType } from "@/types/user";
-import React from "react";
-import UserCard from "./card";
 import NotFound from "@/components/shared/layouts/not-found";
-import { useProfile } from "@/app/(pages)/(protected)/protected-wrapper";
 import UserList from "@/components/shared/user-selector/list";
+import useAuth from "@/hooks/auth";
+import { FetchDataType } from "@/services/axios";
 
 type Props = {
   search?: string;
@@ -20,7 +17,7 @@ export default function Users({
   onSelect,
   showNotFound = true,
 }: Props) {
-  const { user } = useProfile();
+  const { user } = useAuth();
 
   const { data, isLoading } = useApi<FetchDataType<UserMinimalType[]>>(
     `/users/search`,

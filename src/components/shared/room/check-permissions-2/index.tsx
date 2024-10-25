@@ -4,7 +4,7 @@ import React, { useEffect, useRef } from "react";
 import CotopiaButton from "@/components/shared-ui/c-button";
 import Video from "./video";
 import { useRoomHolder } from "..";
-import { useSocket } from "@/app/(pages)/(protected)/protected-wrapper";
+import { useSocket } from "@/routes/private-wrarpper";
 
 interface MediaAccessProps {
   onChecked: () => void;

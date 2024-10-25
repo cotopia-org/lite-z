@@ -29,12 +29,12 @@ const initialState: AuthState = {
 
 // Async thunk for login
 export const loginThunk = createAsyncThunk<
-  LoginResponse,
+  { data: LoginResponse },
   { username: string; password: string },
   { rejectValue: string }
 >("auth/login/password", async (credentials, { rejectWithValue }) => {
   try {
-    const response = await axiosInstance.post("//auth/login", {
+    const response = await axiosInstance.post("/auth/login", {
       ...credentials,
     });
     toast.success("You logged in successfully.");
@@ -95,9 +95,9 @@ const authSlice = createSlice({
       })
       .addCase(
         loginThunk.fulfilled,
-        (state, action: PayloadAction<LoginResponse>) => {
-          state.user = action.payload.user;
-          state.accessToken = action.payload.token;
+        (state, action: PayloadAction<{ data: LoginResponse }>) => {
+          state.user = action.payload.data?.user;
+          state.accessToken = action.payload.data?.token;
           state.isLoading = false;
         }
       )

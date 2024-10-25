@@ -5,6 +5,7 @@ import { paths } from "../paths";
 import { io, Socket } from "socket.io-client";
 import { VARZ } from "@/const/varz";
 import { toast } from "sonner";
+import { routeResolver } from "@/lib/utils";
 
 export const useSocket = (
   event?: string,
@@ -46,7 +47,7 @@ export default function PrivateRoutes() {
   const { accessToken } = useAuth();
   useEffect(() => {
     if (!accessToken) {
-      return navigate(paths.auth.login);
+      return navigate(routeResolver(paths.auth.index, paths.auth.login));
     }
     setInitState(true);
   }, [accessToken, navigate]);

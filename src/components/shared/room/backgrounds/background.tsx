@@ -1,5 +1,3 @@
-import Image from "next/image";
-import React from "react";
 import { useRoomContext } from "../room-context";
 
 export default function Background() {
@@ -15,8 +13,7 @@ export default function Background() {
         transform: `translateX(-1500px) translateY(-1500px)`,
       }}
     >
-      <Image
-        fill
+      <img
         src={room?.background?.url ?? `/assets/backgrounds/bg-sample.webp`}
         alt=''
         className='object-cover object-center'

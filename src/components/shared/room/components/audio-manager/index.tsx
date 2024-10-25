@@ -1,7 +1,7 @@
 import { useParticipants } from "@livekit/components-react";
 import { useRoomContext } from "../../room-context";
 import { UserMinimalType } from "@/types/user";
-import { useSocket } from "@/app/(pages)/(protected)/protected-wrapper";
+import { useSocket } from "@/routes/private-wrarpper";
 
 const DEFAULT_TILE_POSITION = [0, 0];
 const BOUNDRY_RADIUS = 50;
@@ -76,7 +76,7 @@ const LiveKitAudioManager = () => {
     }
   };
 
-  useSocket("updateCoordinates", (data) => {
+  useSocket("updateCoordinates", (data: any) => {
     checkBoundaries();
   });
 

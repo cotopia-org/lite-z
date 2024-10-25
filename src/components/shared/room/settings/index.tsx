@@ -3,13 +3,13 @@ import CTabs from "@/components/shared-ui/c-tabs";
 import { AudioLines, MessagesSquare, Users } from "lucide-react";
 import SettingsChatAction from "./chat/action";
 import UserChat from "./chat";
-import WorkspaceSidebar from "@/app/(pages)/(protected)/workspaces/sidebar";
 import WorkspaceUsers from "./users";
-import { useAppSelector } from "@/store/redux/store";
 import CBadgeSimple from "@/components/shared-ui/c-badge/c-badge-simple";
+import { useAppSelector } from "@/store";
+import WorkspaceSidebar from "@/routes/private-wrarpper/components/workspaces/sidebar";
 
 export default function RoomSettings() {
-  const roomSlice = useAppSelector((state) => state.roomSlice);
+  const roomSlice = useAppSelector((state) => state.room);
 
   const messagesCount = roomSlice?.messages_count ?? { room: [], objects: {} };
 

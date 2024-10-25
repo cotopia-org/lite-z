@@ -10,7 +10,7 @@ export const paths = {
   workspaces: {
     index: "workspaces",
     create: "create",
-    view: ":slug",
+    view: ":workspace_id",
     rooms: {
       index: "rooms",
       view: ":room_id",

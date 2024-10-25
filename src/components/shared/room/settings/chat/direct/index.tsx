@@ -5,19 +5,19 @@ import Users from "./users";
 import { UserMinimalType } from "@/types/user";
 import Directs from "./directs";
 import { DirectType } from "@/types/direct";
-import { useProfile } from "@/app/(pages)/(protected)/protected-wrapper";
 import SearchInputShower from "./search/SearchInputViewer";
 import RoomDirectEnv from "./direct-chat/RoomDirectEnv";
 import LocalDirectEnv from "./direct-chat/LocalDirectEnv";
 import { useApi } from "@/hooks/swr";
-import { FetchDataType } from "@/lib/axios";
 import FullLoading from "@/components/shared/full-loading";
 import ChatRoomCtxProvider, {
   RoomEnvironmentType,
 } from "@/context/chat-room-context";
+import useAuth from "@/hooks/auth";
+import { FetchDataType } from "@/services/axios";
 
 export default function UserChatDirect() {
-  const { user } = useProfile();
+  const { user } = useAuth();
   const [directId, setDirectId] = useState<number | undefined>(undefined);
 
   const [selectedUser, setSelectedUser] = useState<UserMinimalType>();
@@ -51,7 +51,7 @@ export default function UserChatDirect() {
       if (findedDirect) {
         setDirectId(findedDirect.id);
         setSelectedUser(
-          findedDirect.participants.find((x) => x.id !== user.id)
+          findedDirect.participants.find((x) => x.id !== user?.id)
         );
       } else {
         setSelectedUser(userSelected);
@@ -63,7 +63,7 @@ export default function UserChatDirect() {
   const selectDirectHandler = useCallback(
     (direct: DirectType) => {
       const currentRoomId = direct.id;
-      const selectedUser = direct.participants.find((u) => u.id !== user.id);
+      const selectedUser = direct.participants.find((u) => u.id !== user?.id);
       if (selectedUser) setSelectedUser(selectedUser);
       if (currentRoomId) setDirectId(currentRoomId);
     },

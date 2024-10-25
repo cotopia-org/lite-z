@@ -3,8 +3,9 @@ import { ScreenShare, X } from "lucide-react";
 import { useRoomContext } from "@livekit/components-react";
 import { useCallback, useEffect, useState } from "react";
 import useBus from "use-bus";
-import { _BUS } from "@/app/const/bus";
+
 import CotopiaTooltip from "@/components/shared-ui/c-tooltip";
+import { __BUS } from "@/const/bus";
 
 export default function ShareScreenButtonTool() {
   const room = useRoomContext();
@@ -45,7 +46,7 @@ export default function ShareScreenButtonTool() {
     }
   }, [room, isScreenSharing, stopScreenShare]);
 
-  useBus(_BUS.stopMyScreenSharing, () => {
+  useBus(__BUS.stopMyScreenSharing, () => {
     stopScreenShare();
   });
 

@@ -4,7 +4,6 @@ import useLoading from "@/hooks/use-loading";
 import axiosInstance from "@/services/axios";
 import { AttachmentFileType } from "@/types/file";
 import { GalleryItemType } from "@/types/gallery";
-import Image from "next/image";
 
 type Props = {
   item: GalleryItemType;
@@ -36,7 +35,7 @@ export default function GalleryItem({ item, room_id, workspace_id }: Props) {
         className='w-full h-[115px] relative cursor-pointer hover:opacity-80'
         onClick={handleSetBackground}
       >
-        <Image src={item.source} alt={item.title} fill />
+        <img src={item.source} alt={item.title} />
         {isLoading && (
           <FullLoading
             className={

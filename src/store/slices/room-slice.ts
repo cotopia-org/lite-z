@@ -399,39 +399,40 @@ const roomSlice = createSlice({
   },
   extraReducers: (builder) => {
     //ADD_INIT_MESSAGES
-    builder
-      .addCase(getInitMessages.pending, (state, action) => {
-        const meta = action.meta;
-        if (meta.arg.has_loading) {
-          state.loading = true;
-        } else {
+    return (
+      builder
+        .addCase(getInitMessages.pending, (state, action) => {
+          const meta = action.meta;
+          if (meta.arg.has_loading) {
+            state.loading = true;
+          } else {
+            state.loading = false;
+          }
+        })
+        .addCase(getInitMessages.rejected, (state, action) => {
           state.loading = false;
-        }
-      })
-      .addCase(getInitMessages.rejected, (state, action) => {
-        state.loading = false;
-      })
-      .addCase(getInitMessages.fulfilled, (state, action) => {
-        const response = action.payload;
-        const roomId = response.room_id;
-        const upperLimit = response.upper_limit;
-        let messages = response.messages;
+        })
+        .addCase(getInitMessages.fulfilled, (state, action) => {
+          const response = action.payload;
+          const roomId = response.room_id;
+          const upperLimit = response.upper_limit;
+          let messages = response.messages;
 
-        return {
-          ...state,
-          loading: false,
-          isRoomChecked: true,
-          chatRoom: {
-            ...(state?.chatRoom ?? {}),
-            [roomId]: {
-              ...(state?.chatRoom?.[roomId] ?? {}),
-              messages: [...messages],
-              upper_limit: upperLimit,
-              down_limit: 1,
+          return {
+            ...state,
+            loading: false,
+            isRoomChecked: true,
+            chatRoom: {
+              ...(state?.chatRoom ?? {}),
+              [roomId]: {
+                ...(state?.chatRoom?.[roomId] ?? {}),
+                messages: [...messages],
+                upper_limit: upperLimit,
+                down_limit: 1,
+              },
             },
-          },
-        };
-      }),
+          };
+        }),
       //FETCH_NEXT_MESSAGES
       builder
         .addCase(getNextMessages.pending, (state, action) => {
@@ -532,7 +533,8 @@ const roomSlice = createSlice({
               },
             },
           };
-        });
+        })
+    );
   },
 });
 

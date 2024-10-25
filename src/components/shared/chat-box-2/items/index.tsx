@@ -5,9 +5,9 @@ import { Chat2ItemType } from "@/types/chat2";
 import FetchingProgress from "./fetching-progress";
 import { UserMinimalType } from "@/types/user";
 import useBus from "use-bus";
-import { _BUS } from "@/app/const/bus";
-import { useProfile } from "@/app/(pages)/(protected)/protected-wrapper";
 import UnSeenHandlers from "./un-seen-handlers";
+import useAuth from "@/hooks/auth";
+import { __BUS } from "@/const/bus";
 
 type Props = {
   items: Chat2ItemType[];
@@ -24,7 +24,7 @@ export default function Items({
   getUser,
   onGetVirtualizer,
 }: Props) {
-  const { user: profile } = useProfile();
+  const { user: profile } = useAuth();
 
   const isScrollToTop = useRef(true);
   const parentRef = useRef<HTMLDivElement>(null);
@@ -44,7 +44,7 @@ export default function Items({
   });
 
   useBus(
-    _BUS.scrollEndChatBox,
+    __BUS.scrollEndChatBox,
     () => {
       if (items.length === 0) return;
 

@@ -1,6 +1,6 @@
 // PingComponent.tsx
-import { useSocket } from "@/app/(pages)/(protected)/protected-wrapper";
 import CotopiaTooltip from "@/components/shared-ui/c-tooltip";
+import { useSocket } from "@/routes/private-wrarpper";
 import { Signal, SignalHigh, SignalLow, SignalMedium } from "lucide-react";
 import React, { useEffect, useState } from "react";
 

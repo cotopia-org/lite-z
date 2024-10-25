@@ -1,6 +1,6 @@
 import CotopiaButton from "@/components/shared-ui/c-button";
 import useLoading from "@/hooks/use-loading";
-import axiosInstance from "@/lib/axios";
+import axiosInstance from "@/services/axios";
 import { Trash } from "lucide-react";
 import { toast } from "sonner";
 

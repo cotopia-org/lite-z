@@ -5,7 +5,7 @@ import { useRoomContext } from "../../room-context";
 export default function UserChat() {
   const { workspace_id } = useRoomContext();
 
-  if (!workspace_id) return;
+  if (!workspace_id) return null;
 
   return (
     <>

@@ -1,4 +1,5 @@
 import { VARZ } from "@/const/varz";
+import store from "@/store";
 import axios, { AxiosInstance, AxiosResponse } from "axios";
 import { toast } from "sonner";
 
@@ -21,7 +22,7 @@ axiosInstance.interceptors.request.use(
   (config: any) => {
     if (typeof window === "undefined") return config;
 
-    const accessToken = localStorage.getItem("accessToken");
+    const accessToken = store.getState().auth.accessToken;
     if (accessToken && config?.headers) {
       config.headers["Authorization"] = `Bearer ${accessToken}`;
     }

@@ -2,7 +2,6 @@ import CotopiaButton from "@/components/shared-ui/c-button";
 import ParticipantsWithPopover from "@/components/shared/participants/with-popover";
 import { WorkspaceRoomJoinType, WorkspaceRoomShortType } from "@/types/room";
 import { Cast } from "lucide-react";
-import { useRouter } from "next/navigation";
 import DeleteRoom from "./delete-room";
 import { UserMinimalType, WorkspaceUserType } from "@/types/user";
 import { uniqueById, urlWithQueryParams } from "@/lib/utils";
@@ -12,6 +11,7 @@ import useLoading from "@/hooks/use-loading";
 import { useSocket } from "@/routes/private-wrarpper";
 import axiosInstance, { FetchDataType } from "@/services/axios";
 import { playSoundEffect } from "@/lib/sound-effects";
+import { useNavigate } from "react-router-dom";
 
 type Props = {
   room: WorkspaceRoomShortType;
@@ -28,7 +28,7 @@ export default function WorkspaceRoom({
 }: Props) {
   const { sounds } = useSetting();
 
-  const router = useRouter();
+  const navigate = useNavigate();
 
   const socket = useSocket();
 
@@ -50,7 +50,7 @@ export default function WorkspaceRoom({
             if (sounds.userJoinLeft) playSoundEffect("joined");
 
             if (livekitToken) {
-              router.push(
+              navigate(
                 urlWithQueryParams(
                   `/workspaces/${workspace_id}/rooms/${room.id}`,
                   { token: livekitToken, isSwitching: true }

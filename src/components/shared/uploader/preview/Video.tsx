@@ -1,8 +1,8 @@
 import { Button } from "@/components/ui/button";
 import { VideoIcon } from "lucide-react";
 
-import Link from "next/link";
 import { AttachmentFileType } from "@/types/file";
+import { Link } from "react-router-dom";
 
 type Props = {
   video: AttachmentFileType;
@@ -18,7 +18,7 @@ export default function Video({ video }: Props) {
         <span className='whitespace-pre-wrap w-[70%] text-ellipsis overflow-hidden'>
           {video.path.slice(0, 5)}
         </span>
-        <Link prefetch={false} href={`${BASE_URL}${video.url}`} target='_blank'>
+        <Link to={`${BASE_URL}${video.url}`} target='_blank'>
           <Button type='button'>Open Video</Button>
         </Link>
       </div>

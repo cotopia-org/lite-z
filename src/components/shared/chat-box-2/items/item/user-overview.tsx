@@ -13,7 +13,7 @@ export default function ChatUserOverView({ chat }: Props) {
 
   const user = getUser(chat.user);
 
-  if (!user) return;
+  if (!user) return null;
 
   return (
     <ParticipantDetails user={user}>

@@ -49,7 +49,7 @@ export default function CBadgeItems({
 
     setSelected(nValue);
   };
-  if (items.length === 0) return;
+  if (items.length === 0) return null;
 
   return (
     <div className='flex flex-row items-center gap-2 flex-wrap'>

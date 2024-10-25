@@ -4,7 +4,7 @@ import FullLoading from "@/components/shared/full-loading";
 import Section from "@/components/shared/section";
 import Workspaces from "@/components/shared/workspaces/workspaces";
 import { useApi } from "@/hooks/swr";
-import { FetchDataType } from "@/lib/axios";
+import { FetchDataType } from "@/services/axios";
 import { WorkspaceType } from "@/types/workspace";
 
 type Props = {

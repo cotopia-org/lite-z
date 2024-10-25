@@ -3,14 +3,11 @@ import CotopiaInput from "@/components/shared-ui/c-input";
 import useAuth from "@/hooks/auth";
 import axiosInstance from "@/services/axios";
 import { useFormik } from "formik";
-import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import * as Yup from "yup";
 
 export default function UserDetailForm() {
   const { user } = useAuth();
-
-  const router = useRouter();
 
   const { isSubmitting, touched, errors, getFieldProps, handleSubmit } =
     useFormik({
@@ -30,7 +27,6 @@ export default function UserDetailForm() {
           .then((res) => {
             actions.setSubmitting(false);
             toast.success("Your information has been updated.");
-            router.refresh();
           })
           .catch((err) => {
             actions.setSubmitting(false);

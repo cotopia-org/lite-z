@@ -1,13 +1,12 @@
 import React, { useEffect, useState } from "react";
 import { Node, Viewport } from "@xyflow/react";
-import UserSession from "@/app/(pages)/(protected)/session";
 import {
   TrackReferenceOrPlaceholder,
   useParticipants,
 } from "@livekit/components-react";
-import useWindowSize from "@/hooks/use-window-size";
-import { useProfile } from "@/app/(pages)/(protected)/protected-wrapper";
 import useObjectSize from "@/hooks/use-object-size";
+import useAuth from "@/hooks/auth";
+import UserSession from "@/routes/private-wrarpper/components/session";
 
 type Props = {
   nodes: Node[];
@@ -16,7 +15,7 @@ type Props = {
 };
 
 const NodesPreview: React.FC<Props> = ({ tracks, nodes, viewport }) => {
-  const { user } = useProfile();
+  const { user } = useAuth();
 
   const participants = useParticipants();
 
@@ -61,7 +60,7 @@ const NodesPreview: React.FC<Props> = ({ tracks, nodes, viewport }) => {
 
   const finalNodes = outOfViewNodes
     .filter((x) => x.type === "userNode")
-    .filter((x) => x.id !== user.username);
+    .filter((x) => x.id !== user?.username);
 
   console.log("outOfViewNodes", outOfViewNodes);
 

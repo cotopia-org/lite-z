@@ -28,7 +28,7 @@ export default function ScheduleOverview({ selectedDay, item }: Props) {
     return output;
   }, [selectedDay, currentDay, item]);
 
-  if (currentDay.length === 0) return;
+  if (currentDay.length === 0) return null;
 
   return (
     <div className='flex flex-row items-center text-xs'>{labelOutput}</div>

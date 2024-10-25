@@ -1,6 +1,6 @@
 import CotopiaIconButton from "@/components/shared-ui/c-icon-button";
 import useLoading from "@/hooks/use-loading";
-import axiosInstance from "@/lib/axios";
+import axiosInstance from "@/services/axios";
 import { JobType } from "@/types/job";
 import { CheckCircle, Trash } from "lucide-react";
 import { toast } from "sonner";

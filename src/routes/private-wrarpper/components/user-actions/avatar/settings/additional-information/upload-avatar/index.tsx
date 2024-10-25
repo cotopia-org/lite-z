@@ -2,10 +2,8 @@ import Uploader from "@/components/shared/uploader";
 import useAuth from "@/hooks/auth";
 import axiosInstance from "@/services/axios";
 import { AttachmentFileType } from "@/types/file";
-import { useRouter } from "next/navigation";
 
 export default function UploadAvatar() {
-  const router = useRouter();
   const { user } = useAuth();
 
   const handleUpdateAvatar = (file: AttachmentFileType) => {
@@ -13,9 +11,7 @@ export default function UploadAvatar() {
       .put(`/users/update`, {
         avatar_id: file.id,
       })
-      .then((res) => {
-        router.refresh();
-      });
+      .then((res) => {});
   };
 
   const handleDeleteAvatar = () => {
@@ -23,9 +19,7 @@ export default function UploadAvatar() {
       .put(`/users/update`, {
         avatar_id: undefined,
       })
-      .then((res) => {
-        router.refresh();
-      });
+      .then((res) => {});
   };
 
   return (

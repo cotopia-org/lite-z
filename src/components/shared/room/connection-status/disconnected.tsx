@@ -1,6 +1,5 @@
 "use client";
 
-import { __VARS } from "@/app/const/vars";
 import { useEffect } from "react";
 export type DisconnectLayoutProps = {
   onReTry?: () => void;

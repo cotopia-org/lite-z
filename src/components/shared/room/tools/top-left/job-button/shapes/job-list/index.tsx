@@ -2,11 +2,11 @@
 
 import { useRoomContext } from "@/components/shared/room/room-context";
 import { useApi } from "@/hooks/swr";
-import { FetchDataType } from "@/lib/axios";
 import JobItem from "./job-item";
 import FullLoading from "@/components/shared/full-loading";
 import AddJobHandler from "../add-job";
 import { urlWithQueryParams } from "@/lib/utils";
+import { FetchDataType } from "@/services/axios";
 
 interface Props {}
 

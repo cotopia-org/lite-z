@@ -1,6 +1,6 @@
 export const VARZ = {
-  apiBaseUrl: process.env.REACT_APP_API_URL,
-  domain: process.env.REACT_APP_PUBLIC_HOME_URL,
+  apiBaseUrl: process.env.REACT_APP_PUBLIC_API_URL,
+  domain: process.env.REACT_APP_PUBLIC_PUBLIC_HOME_URL,
   serverUrl: process.env.REACT_APP_PUBLIC_LK_SERVER_URL,
   socketUrl: process.env.REACT_APP_PUBLIC_SOOCKET_URL ?? "",
   dashboardPage: "/dashboard",

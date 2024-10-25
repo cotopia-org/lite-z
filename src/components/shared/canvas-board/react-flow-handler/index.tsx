@@ -1,7 +1,3 @@
-import {
-  useProfile,
-  useSocket,
-} from "@/app/(pages)/(protected)/protected-wrapper";
 import { TrackReferenceOrPlaceholder } from "@livekit/components-react";
 import {
   Background,
@@ -20,7 +16,6 @@ import { useRoomContext } from "../../room/room-context";
 import UserNode from "../nodes/user";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import BackgroundNode from "../nodes/background";
-import { __VARS } from "@/app/const/vars";
 import { Track } from "livekit-client";
 import ShareScreen from "../nodes/share-screen";
 import { UserMinimalType } from "@/types/user";
@@ -34,7 +29,9 @@ import BottomLeftTools from "../../room/tools/bottom-left";
 import BottomMiddleTools from "../../room/tools/bottom-middle";
 import BottomRightTools from "../../room/tools/bottom-right";
 import useBus, { dispatch } from "use-bus";
-import { _BUS } from "@/app/const/bus";
+import useAuth from "@/hooks/auth";
+import { useSocket } from "@/routes/private-wrarpper";
+import { __BUS } from "@/const/bus";
 
 export const RF_BACKGROUND_ID = "bg-node-4214242141";
 export const RF_JAIL_ID = "jail-78412641267";
@@ -59,7 +56,7 @@ function ReactFlowHandler({ tracks }: Props) {
   const [viewPort, setViewPort] = useState<Viewport>();
 
   const [rf, setRf] = useState<ReactFlowInstance>();
-  const { user } = useProfile();
+  const { user } = useAuth();
 
   const { room, updateUserCoords, room_id } = useRoomContext();
 
@@ -220,13 +217,13 @@ function ReactFlowHandler({ tracks }: Props) {
 
   useSocket(
     "updateCoordinates",
-    (data) => {
+    (data: any) => {
       updateUserCoordinate(data);
     },
     [updateUserCoordinate]
   );
 
-  useBus(_BUS.changeMyUserCoord, (data) => {
+  useBus(__BUS.changeMyUserCoord, (data) => {
     console.log("data", data.data);
     updateUserCoordinate(data.data);
   });
@@ -245,7 +242,7 @@ function ReactFlowHandler({ tracks }: Props) {
           uniqueById(prev.filter((x) => x.id !== targetUser.username)) as Node[]
       );
 
-      if (user.id !== targetUser.id) playSoundEffect("elseUserleft");
+      if (user?.id !== targetUser.id) playSoundEffect("elseUserleft");
     },
     []
   );
@@ -268,7 +265,7 @@ function ReactFlowHandler({ tracks }: Props) {
         return nNodes;
       });
 
-      if (user.id !== targetUser.id) playSoundEffect("elseUserJoin");
+      if (user?.id !== targetUser.id) playSoundEffect("elseUserJoin");
     },
     []
   );
@@ -287,7 +284,7 @@ function ReactFlowHandler({ tracks }: Props) {
       socket?.emit("updateCoordinates", sendingObject);
 
       dispatch({
-        type: _BUS.changeMyUserCoord,
+        type: __BUS.changeMyUserCoord,
         data: {
           ...user,
           coordinates: newCoords,

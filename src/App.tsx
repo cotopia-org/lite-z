@@ -15,7 +15,7 @@ function App() {
           <RouterProvider router={router} />
         </Suspense>
       </PersistGate>
-      <Toaster dir='rtl' className='font-[IRANYekan]' />
+      <Toaster />
     </Provider>
   );
 }

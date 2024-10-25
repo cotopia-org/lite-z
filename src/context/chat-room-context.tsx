@@ -149,8 +149,6 @@ const ChatRoomCtxProvider = ({
   const chatRoom = roomSlice?.chatRoom ?? {};
   const loading = roomSlice?.loading ?? false;
 
-  if (!room_id) return null;
-
   let selectedRoom: RoomDetailsType | undefined = undefined;
 
   //collect all chat room ids
@@ -269,6 +267,8 @@ const ChatRoomCtxProvider = ({
   const changeBultHandler = (values: { [key: string]: any }) => {
     dispatch({ type: "CHANGE_BULK", payload: values });
   };
+
+  if (!room_id) return null;
 
   return (
     <ChatRoomCtx.Provider

@@ -2,9 +2,9 @@
 
 import CotopiaButton from "@/components/shared-ui/c-button";
 import DashboardMenus, { DashboardMenuItemType } from ".";
-import { usePathname, useRouter } from "next/navigation";
-import { ChevronDown, ChevronUp, Circle } from "lucide-react";
+import { ChevronDown, ChevronUp } from "lucide-react";
 import { useEffect, useState } from "react";
+import { useLocation, useNavigate } from "react-router-dom";
 
 type Props = {
   item: DashboardMenuItemType;
@@ -17,9 +17,9 @@ export default function DashboardMenuItem({ item, isChild = false }: Props) {
     if (item?.showByDefault !== undefined) setIsOpen(item.showByDefault);
   }, [item?.showByDefault]);
 
-  const router = useRouter();
-  const pathname = usePathname();
-  const isSelected = pathname.includes(item.href);
+  const navigate = useNavigate();
+  const location = useLocation();
+  const isSelected = location.pathname.includes(item.href);
 
   //has child
   const hasChild = !!item?.children;
@@ -27,7 +27,7 @@ export default function DashboardMenuItem({ item, isChild = false }: Props) {
   const handleClickMenu = () => {
     //Means item is normal menu without any children
     if (!hasChild) {
-      router.push(item.href);
+      navigate(item.href);
       return;
     }
 

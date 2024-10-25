@@ -5,7 +5,7 @@ import RoomSettings from "../settings";
 import LiveKitAudioManager from "../components/audio-manager";
 import InitRoom from "./init-room";
 import CanvasBoard from "../../canvas-board";
-import { useSocket } from "@/app/(pages)/(protected)/protected-wrapper";
+import { useSocket } from "@/routes/private-wrarpper";
 
 export default function RoomInner() {
   const socket = useSocket();

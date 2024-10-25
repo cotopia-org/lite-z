@@ -1,16 +1,17 @@
 "use client";
 
-import { useSocket } from "@/app/(pages)/(protected)/protected-wrapper";
 import useSetting from "@/hooks/use-setting";
 import { playSoundEffect } from "@/lib/sound-effects";
 import {
   removeMessageAction,
   unreadMessagesAction,
   updateMessagesAction,
-} from "@/store/redux/slices/room-slice";
-import { useAppDispatch } from "@/store/redux/store";
+} from "@/store/slices/room-slice";
+import { useAppDispatch } from "@/store";
 import { ChatItemType } from "@/types/chat";
+import { Chat2ItemType } from "@/types/chat2";
 import { ReactNode } from "react";
+import { useSocket } from "@/routes/private-wrarpper";
 
 type Props = {
   children: ReactNode;
@@ -53,11 +54,11 @@ export default function ChatWrapper({ children }: Props) {
     );
   });
 
-  useSocket("messageUpdated", (data) => {
+  useSocket("messageUpdated", (data: Chat2ItemType) => {
     console.log(data, "MESSAGE UPDATED");
     appDispatch(updateMessagesAction({ message: data }));
   });
-  useSocket("messageDeleted", (data) => {
+  useSocket("messageDeleted", (data: Chat2ItemType) => {
     console.log(data, "MESSAGE Deleted");
     appDispatch(removeMessageAction({ message: data }));
   });

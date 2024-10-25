@@ -1,8 +1,4 @@
 "use client";
-
-import NotFound from "../../layouts/not-found";
-import { Unlink } from "lucide-react";
-import { __VARS } from "@/app/const/vars";
 import { useEffect } from "react";
 export type DisconnectLayoutProps = {
   onReTry?: () => void;

@@ -1,7 +1,6 @@
 import { ChatItemType } from "@/types/chat";
 import { UIEvent, memo, useCallback, useEffect, useRef, useState } from "react";
 import { Virtuoso, VirtuosoHandle } from "react-virtuoso";
-import { _BUS } from "@/app/const/bus";
 import useBus from "use-bus";
 import {
   FetchMessageType,
@@ -12,14 +11,15 @@ import {
 import { ChevronDown } from "lucide-react";
 import CotopiaIconButton from "@/components/shared-ui/c-icon-button";
 import { toast } from "sonner";
-import { __VARS } from "@/app/const/vars";
-import { useAppDispatch, useAppSelector } from "@/store/redux/store";
 import { getFocusedMessage, getMiddleIndex } from "@/lib/utils";
 import NotFound from "../../layouts/not-found";
 import FullLoading from "../../full-loading";
 import RowItem from "./RowItem";
-import { getInitMessages } from "@/store/redux/slices/room-slice";
 import CBadge from "@/components/shared-ui/c-badge";
+import { VARZ } from "@/const/varz";
+import { useAppDispatch, useAppSelector } from "@/store";
+import { getInitMessages } from "@/store/slices/room-slice";
+import { __BUS } from "@/const/bus";
 
 type Props = {
   observer_user_id?: number;
@@ -51,13 +51,13 @@ function NewChatBox({ observer_user_id, className = "" }: Props) {
 
   const prevFetchRef = useRef<boolean>(true);
   const nextFetchRef = useRef<boolean>(true);
-  const totalLength = (__VARS.defaultPerPage / 2) * __VARS.pagesLimitDiff;
+  const totalLength = (VARZ.defaultPerPage / 2) * VARZ.pagesLimitDiff;
   const [isFirst, setIsFirst] = useState(true);
 
   const appDispatch = useAppDispatch();
   const [showGotoBottom, setShowGotoBottom] = useState(false);
 
-  const roomSlice = useAppSelector((state) => state.roomSlice);
+  const roomSlice = useAppSelector((state) => state.room);
 
   const nextLoading = roomSlice?.nextLoading ?? false;
   const prevLoading = roomSlice?.prevLoading ?? false;
@@ -83,12 +83,13 @@ function NewChatBox({ observer_user_id, className = "" }: Props) {
       if (!scrollerRef.current) return;
       scrollerRef.current.scrollTo({
         top: scrollerRef.current.scrollHeight,
+        //@ts-ignore
         behavior: "instant",
       });
     }, 200);
   }, []);
 
-  const isFirstView = upperLimit === __VARS.pagesLimitDiff;
+  const isFirstView = upperLimit === VARZ.pagesLimitDiff;
 
   let finalMsg = [...(messages as ChatItemType[])].reverse();
 
@@ -104,6 +105,7 @@ function NewChatBox({ observer_user_id, className = "" }: Props) {
       virtousoRef.current?.scrollTo({
         top:
           scrollerRef.current?.scrollHeight + scrollerRef.current?.clientHeight,
+        //@ts-ignore
         behavior: type,
       });
   };
@@ -128,7 +130,7 @@ function NewChatBox({ observer_user_id, className = "" }: Props) {
           let finded = false;
           let ul = upperLimit;
           let dl = downLimit;
-          const flatIndex = totalLength - __VARS.defaultPerPage;
+          const flatIndex = totalLength - VARZ.defaultPerPage;
           let finalItems: ChatItemType[] = [...messages].reverse();
           changeKey({
             key: "navigateLoading",
@@ -149,7 +151,7 @@ function NewChatBox({ observer_user_id, className = "" }: Props) {
             });
 
             let newItems = [];
-            if (ul === __VARS.pagesLimitDiff) {
+            if (ul === VARZ.pagesLimitDiff) {
               newItems = [...items].reverse();
             } else {
               newItems = [
@@ -161,7 +163,7 @@ function NewChatBox({ observer_user_id, className = "" }: Props) {
             const findedIndex = newItems.findIndex(
               (msg) => msg.id === originMessage.id
             );
-            if (findedIndex >= 0 || ul < __VARS.pagesLimitDiff) {
+            if (findedIndex >= 0 || ul < VARZ.pagesLimitDiff) {
               changeKey({ key: "navigateLoading", value: false });
               finded = true;
               virtousoRef.current?.scrollToIndex({
@@ -254,12 +256,13 @@ function NewChatBox({ observer_user_id, className = "" }: Props) {
   );
 
   useBus(
-    _BUS.scrollEndChatBox,
+    __BUS.scrollEndChatBox,
     (data) => {
       setTimeout(() => {
         if (!scrollerRef.current) return;
         scrollerRef.current.scrollTo({
           top: scrollerRef.current.scrollHeight,
+          //@ts-ignore
           behavior: "instant",
         });
       }, 200);
@@ -322,7 +325,7 @@ function NewChatBox({ observer_user_id, className = "" }: Props) {
               align: "center",
             });
             let newItems = [
-              ...finalItems.slice(__VARS.defaultPerPage),
+              ...finalItems.slice(VARZ.defaultPerPage),
               ...items,
             ].reverse();
             finalItems = [...newItems];
@@ -335,7 +338,7 @@ function NewChatBox({ observer_user_id, className = "" }: Props) {
                 let xFinded = false;
                 let xul = ul;
                 let xdl = dl;
-                const flatIndex = totalLength - __VARS.defaultPerPage;
+                const flatIndex = totalLength - VARZ.defaultPerPage;
                 let finalItems: ChatItemType[] = [...newItems];
                 changeKey({
                   key: "navigateLoading",
@@ -355,7 +358,7 @@ function NewChatBox({ observer_user_id, className = "" }: Props) {
                     align: "center",
                   });
                   let newItems = [];
-                  if (xul === __VARS.pagesLimitDiff) {
+                  if (xul === VARZ.pagesLimitDiff) {
                     newItems = [...items].reverse();
                   } else {
                     newItems = [
@@ -367,7 +370,7 @@ function NewChatBox({ observer_user_id, className = "" }: Props) {
                   const findedIndex = newItems.findIndex(
                     (msg) => msg.id === message.id
                   );
-                  if (findedIndex >= 0 || xul < __VARS.pagesLimitDiff) {
+                  if (findedIndex >= 0 || xul < VARZ.pagesLimitDiff) {
                     changeKey({ key: "navigateLoading", value: false });
                     xFinded = false;
                     virtousoRef.current?.scrollToIndex({
@@ -417,7 +420,7 @@ function NewChatBox({ observer_user_id, className = "" }: Props) {
       );
       const diff = y - x;
 
-      const targetIndex = __VARS.defaultPerPage;
+      const targetIndex = VARZ.defaultPerPage;
       const topIndex = targetIndex;
       const bottomIndex = totalLength - targetIndex;
 
