@@ -14,8 +14,7 @@ interface AuthState {
 }
 
 // Define the login response type
-interface LoginResponse {
-  user: UserType;
+interface LoginResponse extends UserType {
   token: string;
 }
 
@@ -96,8 +95,10 @@ const authSlice = createSlice({
       .addCase(
         loginThunk.fulfilled,
         (state, action: PayloadAction<{ data: LoginResponse }>) => {
-          state.user = action.payload.data?.user;
-          state.accessToken = action.payload.data?.token;
+          const { token, ...user } = action.payload.data;
+
+          state.user = user;
+          state.accessToken = token;
           state.isLoading = false;
         }
       )

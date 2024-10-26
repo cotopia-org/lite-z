@@ -1,14 +1,12 @@
 import { TrackReferenceOrPlaceholder } from "@livekit/components-react";
 import {
   Background,
-  MiniMap,
   //   Background,
   Node,
   NodeChange,
   NodeMouseHandler,
   ReactFlow,
   ReactFlowInstance,
-  ReactFlowProvider,
   useNodesState,
   Viewport,
 } from "@xyflow/react";
@@ -109,8 +107,6 @@ function ReactFlowHandler({ tracks }: Props) {
     []
   );
 
-  console.log("tracks", tracks);
-
   const addParticipants = (particpants: UserMinimalType[]) => {
     return uniqueById(
       particpants.map((participant) => {
@@ -127,6 +123,9 @@ function ReactFlowHandler({ tracks }: Props) {
         const track = tracks.find(
           (a) => a.participant.identity === participant.username
         );
+
+        console.log("user", user);
+        console.log("participant", participant);
 
         const isDraggable = user?.username === participant.username;
 
@@ -226,7 +225,6 @@ function ReactFlowHandler({ tracks }: Props) {
   );
 
   useBus(__BUS.changeMyUserCoord, (data) => {
-    console.log("data", data.data);
     updateUserCoordinate(data.data);
   });
 

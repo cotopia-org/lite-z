@@ -1,5 +1,3 @@
-"use client";
-
 import { LiveKitRoom } from "@livekit/components-react";
 import RoomContext from "./room-context";
 import RoomInner from "./room-inner";
@@ -315,6 +313,7 @@ export default function RoomHolder({
         });
     });
   }, [socket, room_id]);
+
   if (permissionChecked === false && !isReConnecting && !isSwitching)
     content = <CheckPermissions2 onChecked={handleJoin} />;
 
