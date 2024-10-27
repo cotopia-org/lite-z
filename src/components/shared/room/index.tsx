@@ -1,10 +1,9 @@
 import { LiveKitRoom } from "@livekit/components-react";
-import RoomContext from "./room-context";
+import RoomContext, { useRoomContext } from "./room-context";
 import RoomInner from "./room-inner";
 import { WorkspaceRoomJoinType } from "@/types/room";
 import {
   createContext,
-  useCallback,
   useContext,
   useEffect,
   useReducer,
@@ -19,6 +18,7 @@ import { toast } from "sonner";
 import axiosInstance, { FetchDataType } from "@/services/axios";
 import { VARZ } from "@/const/varz";
 import { useSocket } from "@/routes/private-wrarpper";
+import { useLoading } from "@/hooks";
 
 type MediaPermission = {
   audio: boolean;
@@ -45,6 +45,7 @@ const RoomHolderContext = createContext<{
   changeStreamState: (stream: MediaStream, type: "video" | "audio") => void;
   stream: InitStreamType;
   stream_loading: boolean;
+  // joinRoom: (room_id: number | string, onFulfilled?: () => void) => void;
 }>({
   mediaPermissions: DEFAULT_MEDIA_PERMISSIONS,
   enableVideoAccess: () => {},
@@ -54,6 +55,7 @@ const RoomHolderContext = createContext<{
   changeStreamState: () => {},
   stream: initialState,
   stream_loading: false,
+  // joinRoom: (room_id, onFulfilled) => {},
 });
 
 export const useRoomHolder = () => useContext(RoomHolderContext);
@@ -299,23 +301,10 @@ export default function RoomHolder({
     console.log("retry to connect!");
   };
 
-  const handleJoin = useCallback(async () => {
-    console.log("should join!");
-    console.log(socket);
-    socket?.emit("joinedRoom", room_id, async () => {
-      axiosInstance
-        .get<FetchDataType<WorkspaceRoomJoinType>>(`/rooms/${room_id}/join`)
-        .then((res) => {
-          setPermissionChecked(true);
-        })
-        .catch((err) => {
-          toast.error("Couldn't join to the room!");
-        });
-    });
-  }, [socket, room_id]);
-
   if (permissionChecked === false && !isReConnecting && !isSwitching)
-    content = <CheckPermissions2 onChecked={handleJoin} />;
+    content = (
+      <CheckPermissions2 onChecked={() => setPermissionChecked(true)} />
+    );
 
   return (
     <RoomHolderContext.Provider

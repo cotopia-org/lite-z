@@ -165,6 +165,10 @@ function ReactFlowHandler({ tracks }: Props) {
   }, [socketParticipants]);
 
   useEffect(() => {
+    initState.current = true;
+  }, [socketParticipants?.length]);
+
+  useEffect(() => {
     setNodes((prev) => [
       ...prev.filter((x) => x.type !== "shareSreenCard"),
       ...tracks

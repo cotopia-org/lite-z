@@ -1,17 +1,17 @@
 import CotopiaButton from "@/components/shared-ui/c-button";
 import ParticipantsWithPopover from "@/components/shared/participants/with-popover";
-import { WorkspaceRoomJoinType, WorkspaceRoomShortType } from "@/types/room";
+import { WorkspaceRoomShortType } from "@/types/room";
 import { Cast } from "lucide-react";
 import DeleteRoom from "./delete-room";
 import { UserMinimalType, WorkspaceUserType } from "@/types/user";
 import { uniqueById, urlWithQueryParams } from "@/lib/utils";
-import useSetting from "@/hooks/use-setting";
 import useLoading from "@/hooks/use-loading";
 //@ts-ignore
 import { useSocket } from "@/routes/private-wrarpper";
-import axiosInstance, { FetchDataType } from "@/services/axios";
-import { playSoundEffect } from "@/lib/sound-effects";
 import { useNavigate } from "react-router-dom";
+import useQueryParams from "@/hooks/use-query-params";
+import { useRoomHolder } from "@/components/shared/room";
+import { useRoomContext } from "@/components/shared/room/room-context";
 
 type Props = {
   room: WorkspaceRoomShortType;
@@ -26,43 +26,29 @@ export default function WorkspaceRoom({
   selected_room_id,
   participants,
 }: Props) {
-  const { sounds } = useSetting();
+  const { startLoading, stopLoading, isLoading } = useLoading();
+
+  const { joinRoom } = useRoomContext();
+
+  const { query } = useQueryParams();
 
   const navigate = useNavigate();
 
   const socket = useSocket();
-
-  const { startLoading, stopLoading, isLoading } = useLoading();
 
   const joinRoomHandler = async () => {
     if (!socket) return;
 
     if (selected_room_id !== room.id) {
       startLoading();
-      socket.emit("joinedRoom", room.id, () => {
-        axiosInstance
-          .get<FetchDataType<WorkspaceRoomJoinType>>(`/rooms/${room.id}/join`)
-          .then((res) => {
-            const livekitToken = res.data.data.token; //Getting livekit token from joinObject
-
-            stopLoading();
-
-            if (sounds.userJoinLeft) playSoundEffect("joined");
-
-            if (livekitToken) {
-              navigate(
-                urlWithQueryParams(
-                  `/workspaces/${workspace_id}/rooms/${room.id}`,
-                  { token: livekitToken, isSwitching: true }
-                )
-              );
-
-              return;
-            }
+      joinRoom(room.id, () => {
+        stopLoading();
+        navigate(
+          urlWithQueryParams(`/workspaces/${workspace_id}/rooms/${room.id}`, {
+            ...query,
+            isSwitching: true,
           })
-          .catch((err) => {
-            stopLoading();
-          });
+        );
       });
     }
   };

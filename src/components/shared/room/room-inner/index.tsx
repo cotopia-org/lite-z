@@ -6,28 +6,31 @@ import LiveKitAudioManager from "../components/audio-manager";
 import InitRoom from "./init-room";
 import CanvasBoard from "../../canvas-board";
 import { useSocket } from "@/routes/private-wrarpper";
+import { useParams } from "react-router-dom";
 
 export default function RoomInner() {
+  const { room_id } = useParams();
+
   const socket = useSocket();
 
   const { sidebar, joinRoom } = useRoomContext();
 
   useEffect(() => {
     const fn = () => {
-      joinRoom();
+      if (room_id) joinRoom(room_id);
     };
     socket?.on("connect", fn);
     return () => {
       socket?.off("connect", fn);
     };
-  }, [socket, joinRoom]);
+  }, [socket, joinRoom, room_id]);
 
   let mainRoomHolderClss = "main-room-holder w-full h-screen overflow-hidden";
   if (sidebar) mainRoomHolderClss += " pr-[376px]";
 
   useEffect(() => {
-    joinRoom();
-  }, []);
+    if (room_id) joinRoom(room_id);
+  }, [room_id]);
 
   return (
     <>

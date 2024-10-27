@@ -2,7 +2,6 @@
 
 import RoomHolder from "@/components/shared/room";
 import RoomWrapper from "@/components/shared/room/wrapper";
-import { useEffect, useState } from "react";
 import useQueryParams from "@/hooks/use-query-params";
 
 type Props = {
@@ -17,13 +16,6 @@ export default function RoomSpatialWrapper({
 }: Props) {
   const { query } = useQueryParams();
 
-  const [isSwitching, setIsSwitching] = useState(false);
-  useEffect(() => {
-    if (query?.isSwitching) {
-      setIsSwitching(true);
-    }
-  }, [query?.isSwitching]);
-
   return (
     <div className='max-h-screen'>
       <RoomWrapper>
@@ -31,7 +23,7 @@ export default function RoomSpatialWrapper({
           token={token}
           room_id={room_id}
           workspace_id={workspace_id}
-          isSwitching={isSwitching}
+          isSwitching={query?.isSwitching}
         />
       </RoomWrapper>
     </div>

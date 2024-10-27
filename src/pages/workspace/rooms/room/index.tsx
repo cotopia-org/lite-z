@@ -6,8 +6,6 @@ export default function WorkspaceRoomPage() {
   const { query } = useQueryParams();
   const { workspace_id, room_id } = useParams();
 
-  console.log("query", query);
-
   if (!workspace_id || !room_id) return null;
 
   return (

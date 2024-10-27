@@ -29,4 +29,6 @@ export type WorkspaceRoomShortType = {
   participants: UserMinimalType[];
 };
 
-export type WorkspaceRoomJoinType = RoomJoinType;
+export type WorkspaceRoomJoinType = RoomJoinType & {
+  participants: UserMinimalType[];
+};
