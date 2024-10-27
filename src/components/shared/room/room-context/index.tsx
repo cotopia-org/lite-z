@@ -1,3 +1,4 @@
+import { __BUS } from "@/const/bus";
 import { useApi } from "@/hooks/swr";
 import useLoading from "@/hooks/use-loading";
 import useQueryParams from "@/hooks/use-query-params";
@@ -21,6 +22,7 @@ import {
 } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
+import useBus from "use-bus";
 
 type LeftJoinType = { room_id: number; user: UserMinimalType };
 
@@ -88,15 +90,15 @@ export default function RoomContext({
 }: Props) {
   const [room, setRoom] = useState<WorkspaceRoomType>();
 
-  const updateRoomParticipants = (participants: UserMinimalType[]) => {
-    console.log("participants", participants);
+  // const updateRoomParticipants = (participants: UserMinimalType[]) => {
+  //   console.log("participants", participants);
 
-    setRoom((prev) => {
-      const nValue = { ...(prev as WorkspaceRoomType), participants };
+  //   setRoom((prev) => {
+  //     const nValue = { ...(prev as WorkspaceRoomType), participants };
 
-      return nValue;
-    });
-  };
+  //     return nValue;
+  //   });
+  // };
 
   const {
     startLoading: startJoinLoading,
@@ -198,6 +200,14 @@ export default function RoomContext({
         });
     });
   };
+
+  useBus(
+    __BUS.rejoinMeet,
+    () => {
+      handleJoin(room_id);
+    },
+    [room_id, handleJoin]
+  );
 
   // const handleJoinRoom = async () => {
   //   // Join user to the room by socket request

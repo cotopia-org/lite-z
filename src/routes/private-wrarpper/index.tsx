@@ -6,6 +6,8 @@ import { io, Socket } from "socket.io-client";
 import { VARZ } from "@/const/varz";
 import { toast } from "sonner";
 import { routeResolver } from "@/lib/utils";
+import { dispatch } from "use-bus";
+import { __BUS } from "@/const/bus";
 
 export const useSocket = (
   event?: string,
@@ -67,6 +69,7 @@ export default function PrivateRoutes() {
     socket.on("connect", () => {
       toast.success("Socket connected");
       setSocketState(socket);
+      dispatch(__BUS.rejoinMeet);
     });
 
     socket.on("disconnect", () => {

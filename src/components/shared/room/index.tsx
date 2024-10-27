@@ -1,7 +1,6 @@
 import { LiveKitRoom } from "@livekit/components-react";
-import RoomContext, { useRoomContext } from "./room-context";
+import RoomContext from "./room-context";
 import RoomInner from "./room-inner";
-import { WorkspaceRoomJoinType } from "@/types/room";
 import {
   createContext,
   useContext,
@@ -14,11 +13,9 @@ import CheckPermissions2 from "./check-permissions-2";
 import ChatWrapper from "../chat-wrapper";
 import { ReactFlowProvider } from "@xyflow/react";
 import Disconnected from "./connection-status/disconnected";
-import { toast } from "sonner";
-import axiosInstance, { FetchDataType } from "@/services/axios";
+import axiosInstance from "@/services/axios";
 import { VARZ } from "@/const/varz";
 import { useSocket } from "@/routes/private-wrarpper";
-import { useLoading } from "@/hooks";
 
 type MediaPermission = {
   audio: boolean;
