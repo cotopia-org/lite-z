@@ -201,34 +201,13 @@ export default function RoomContext({
     });
   };
 
-  useBus(
-    __BUS.rejoinMeet,
-    () => {
-      handleJoin(room_id);
-    },
-    [room_id, handleJoin]
-  );
-
-  // const handleJoinRoom = async () => {
-  //   // Join user to the room by socket request
-  //   if (socket) {
-  //     socket.emit("joinedRoom", room_id, () => {
-  //       axiosInstance
-  //         .get<FetchDataType<WorkspaceRoomJoinType>>(`/rooms/${room_id}/join`)
-  //         .then((res) => {
-  //           const livekitToken = res.data.data.token; //Getting livekit token from joinObject
-
-  //           if (livekitToken) {
-  //             if (settings.sounds.userJoinLeft) playSoundEffect("joined");
-  //             navigate(
-  //               `/workspaces/${workspace_id}/rooms/${room_id}?token=${livekitToken}`
-  //             );
-  //             return;
-  //           }
-  //         });
-  //     });
-  //   }
-  // };
+  // useBus(
+  //   __BUS.rejoinMeet,
+  //   () => {
+  //     handleJoin(room_id);
+  //   },
+  //   [room_id, handleJoin]
+  // );
 
   const [permissionState, setPermissionState] = useState({
     audio: true,
