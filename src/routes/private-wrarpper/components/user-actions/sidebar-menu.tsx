@@ -1,16 +1,15 @@
-"use client";
 
-import CotopiaIconButton from "@/components/shared-ui/c-icon-button";
-import useWindowSize from "@/hooks/use-window-size";
-import { AlignJustify } from "lucide-react";
-import { useDashboardContext } from "../dashboard-wrapper";
+import CotopiaIconButton from "@/components/shared-ui/c-icon-button"
+import useWindowSize from "@/hooks/use-window-size"
+import { AlignJustify } from "lucide-react"
+import { useDashboardContext } from "../dashboard-wrapper"
 
 export default function UserActionsMenuButton() {
-  const { windowSize } = useWindowSize();
-  const { sideBarOpen, setSideBarOpen } = useDashboardContext();
+  const { windowSize } = useWindowSize()
+  const { sideBarOpen, setSideBarOpen } = useDashboardContext()
 
   function handlerClick() {
-    setSideBarOpen(!sideBarOpen);
+    setSideBarOpen(!sideBarOpen)
   }
 
   return (
@@ -21,5 +20,5 @@ export default function UserActionsMenuButton() {
         </CotopiaIconButton>
       )}
     </>
-  );
+  )
 }

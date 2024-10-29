@@ -1,13 +1,12 @@
-import CotopiaButton from "@/components/shared-ui/c-button";
-import { FullModalBox } from "@/components/shared/modal-box";
-import { Plus } from "lucide-react";
-import React from "react";
-import AddScheduleContent from "./content";
+import CotopiaButton from "@/components/shared-ui/c-button"
+import { FullModalBox } from "@/components/shared/modal-box"
+import { Plus } from "lucide-react"
+import AddScheduleContent from "./content"
 
 type Props = {
-  onDelete: () => void;
-  onCreated: () => void;
-};
+  onDelete: () => void
+  onCreated: () => void
+}
 
 export default function AddScheduleButton({ onDelete, onCreated }: Props) {
   return (
@@ -17,17 +16,17 @@ export default function AddScheduleButton({ onDelete, onCreated }: Props) {
           Add Schedule
         </CotopiaButton>
       )}
-      className='w-[640px]'
+      className="w-[640px]"
     >
       {(open, close) => (
         <AddScheduleContent
           onClose={close}
           onCreated={() => {
-            if (onCreated) onCreated();
-            close();
+            if (onCreated) onCreated()
+            close()
           }}
         />
       )}
     </FullModalBox>
-  );
+  )
 }

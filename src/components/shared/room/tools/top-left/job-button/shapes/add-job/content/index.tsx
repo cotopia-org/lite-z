@@ -1,23 +1,23 @@
-import CotopiaButton from "@/components/shared-ui/c-button";
-import CotopiaDropdown from "@/components/shared-ui/c-dropdown";
-import CotopiaInput from "@/components/shared-ui/c-input";
-import CotopiaTextarea from "@/components/shared-ui/c-textarea";
-import TitleEl from "@/components/shared/title-el";
-import useLoading from "@/hooks/use-loading";
-import { JobType } from "@/types/job";
-import { useFormik } from "formik";
-import { Save } from "lucide-react";
-import { toast } from "sonner";
-import * as Yup from "yup";
-import DeleteJobHandler from "../delete-job";
-import axiosInstance from "@/services/axios";
+import CotopiaButton from "@/components/shared-ui/c-button"
+import CotopiaDropdown from "@/components/shared-ui/c-dropdown"
+import CotopiaInput from "@/components/shared-ui/c-input"
+import CotopiaTextarea from "@/components/shared-ui/c-textarea"
+import TitleEl from "@/components/shared/title-el"
+import useLoading from "@/hooks/use-loading"
+import axiosInstance from "@/services/axios"
+import { JobType } from "@/types/job"
+import { useFormik } from "formik"
+import { Plus } from "lucide-react"
+import { toast } from "sonner"
+import * as Yup from "yup"
+import DeleteJobHandler from "../delete-job"
 
 interface Props {
-  onClose: () => void;
-  defaultValue?: JobType;
-  onDelete?: () => void;
-  onCreated?: () => void;
-  workspaceId?: string;
+  onClose: () => void
+  defaultValue?: JobType
+  onDelete?: () => void
+  onCreated?: () => void
+  workspaceId?: string
 }
 
 const dropdownItems = [
@@ -25,7 +25,7 @@ const dropdownItems = [
   { title: "Completed", value: "completed" },
   { title: "Paused", value: "paused" },
   { title: "Started", value: "started" },
-];
+]
 
 const ManageJobContent = ({
   defaultValue,
@@ -34,8 +34,8 @@ const ManageJobContent = ({
   onDelete,
   onClose,
 }: Props) => {
-  const isEdit = defaultValue !== undefined;
-  const { isLoading, stopLoading, startLoading } = useLoading();
+  const isEdit = defaultValue !== undefined
+  const { isLoading, stopLoading, startLoading } = useLoading()
   const {
     errors,
     getFieldProps,
@@ -44,10 +44,10 @@ const ManageJobContent = ({
     setFieldValue,
     touched,
   } = useFormik<{
-    title: string;
-    description: string;
-    status: string;
-    estimate?: number;
+    title: string
+    description: string
+    status: string
+    estimate?: number
   }>({
     enableReinitialize: true,
     initialValues: {
@@ -60,59 +60,58 @@ const ManageJobContent = ({
       title: Yup.string().required("please enter job title"),
     }),
     onSubmit: async (values) => {
-      const { ...rest } = values;
+      const { ...rest } = values
 
       try {
         let payload: { [key: string]: string | number | undefined } = {
           ...rest,
           workspace_id: workspaceId,
-        };
+        }
 
-        if (!isEdit) payload["status"] = "in_progress";
-        startLoading();
+        if (!isEdit) payload["status"] = "in_progress"
+        startLoading()
         await axiosInstance({
           url: isEdit ? `/jobs/${defaultValue.id}` : `/jobs`,
           method: isEdit ? "PUT" : "POST",
           data: payload,
-        });
+        })
         toast.success(
           isEdit
             ? "Job has been updated successfully"
             : "Job has been created successfully"
-        );
-        if (onCreated) onCreated();
-        stopLoading();
+        )
+        if (onCreated) onCreated()
+        stopLoading()
       } catch (error) {
-        stopLoading();
+        stopLoading()
       }
     },
-  });
+  })
 
-  const isSubmitDisabled = !values.title;
+  const isSubmitDisabled = !values.title
 
   return (
-    <form onSubmit={handleSubmit} className='flex flex-col gap-y-5 px-4'>
-      <TitleEl title='Title'>
+    <form onSubmit={handleSubmit} className="flex flex-col gap-y-5 px-4">
+      <TitleEl title="Title">
         <CotopiaInput
           {...getFieldProps("title")}
           hasError={!!touched.title && !!errors.title}
           helperText={!!touched.title && errors.title}
-          placeholder='Enter Job Title'
+          placeholder="Enter Job Title"
         />
       </TitleEl>
-      <TitleEl title='Estimate Time (Hours)'>
-        <div className='flex items-center gap-x-4 justify-between'>
+      <TitleEl title="Estimate Time (Hours)">
+        <div className="flex items-center gap-x-4 justify-between">
           <CotopiaInput
             {...getFieldProps("estimate")}
             hasError={!!touched.estimate && !!errors.estimate}
             helperText={!!touched.estimate && errors.estimate}
-            placeholder='Estimate time'
+            placeholder="Estimate time"
           />
         </div>
       </TitleEl>
-
       {isEdit && (
-        <TitleEl title='Status'>
+        <TitleEl title="Status">
           <CotopiaDropdown
             onSelect={(item) => setFieldValue("status", item.value)}
             defaultValue={
@@ -122,34 +121,39 @@ const ManageJobContent = ({
           />
         </TitleEl>
       )}
-
-      <TitleEl title='Description'>
+      <TitleEl title="Description">
         <CotopiaTextarea
           {...getFieldProps("description")}
-          placeholder='Enter job Description'
+          placeholder="Enter job Description"
           rows={5}
-          className='resize-none'
+          className="resize-none"
         />
       </TitleEl>
-      <div className='flex flex-row justify-end gap-x-2'>
-        <CotopiaButton variant={"outline"} className='w-full' onClick={onClose}>
-          Close
-        </CotopiaButton>
+      <div className="flex flex-row justify-between w-full gap-x-8">
         {isEdit && (
           <DeleteJobHandler jobId={defaultValue.id} onDelete={onDelete} />
         )}
-        <CotopiaButton
-          type='submit'
-          className='w-full'
-          startIcon={<Save size={16} />}
-          loading={isLoading}
-          disabled={isSubmitDisabled}
-        >
-          {`${isEdit ? "Update" : "Create"} Job`}
-        </CotopiaButton>
+        <div className="flex items-center w-full justify-end gap-x-2">
+          <CotopiaButton
+            variant={"outline"}
+            className="min-w-[80px]"
+            onClick={onClose}
+          >
+            Close
+          </CotopiaButton>
+          <CotopiaButton
+            type="submit"
+            className="min-w-[138px]"
+            startIcon={<Plus size={16} />}
+            loading={isLoading}
+            disabled={isSubmitDisabled}
+          >
+            {`${isEdit ? "Update" : "Create"} Job`}
+          </CotopiaButton>
+        </div>
       </div>
     </form>
-  );
-};
+  )
+}
 
-export default ManageJobContent;
+export default ManageJobContent

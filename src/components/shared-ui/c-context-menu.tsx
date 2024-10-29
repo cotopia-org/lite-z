@@ -1,5 +1,3 @@
-"use client"
-
 import { Fragment, ReactNode, useRef } from "react"
 import {
   ContextMenu,

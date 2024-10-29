@@ -1,4 +1,3 @@
-"use client";
 
 import FullLoading from "@/components/shared/full-loading";
 import { UserMinimalType } from "@/types/user";

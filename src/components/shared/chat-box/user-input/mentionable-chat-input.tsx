@@ -1,5 +1,3 @@
-"use client"
-
 import { ReactNode, useState, useEffect, ChangeEvent, useCallback } from "react"
 import ChatUserInput from "."
 import { UserMinimalType } from "@/types/user"

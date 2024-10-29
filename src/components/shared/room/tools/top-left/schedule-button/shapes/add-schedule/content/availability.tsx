@@ -1,11 +1,11 @@
-import CBadgeItems from "@/components/shared-ui/c-badge-items";
-import { AvailabiltyType } from "@/types/calendar";
-import { Mic, Pencil, Video } from "lucide-react";
+import CBadgeItems from "@/components/shared-ui/c-badge-items"
+import { AvailabiltyType } from "@/types/calendar"
+import { Mic, Pencil, Video } from "lucide-react"
 
 type Props = {
-  value?: AvailabiltyType;
-  onChange: (change: AvailabiltyType) => void;
-};
+  value?: AvailabiltyType
+  onChange: (change: AvailabiltyType) => void
+}
 export default function AvailabilityType({ value, onChange }: Props) {
   return (
     <CBadgeItems
@@ -30,5 +30,5 @@ export default function AvailabilityType({ value, onChange }: Props) {
       defaultSelected={value !== undefined ? [value] : []}
       isSingular
     />
-  );
+  )
 }

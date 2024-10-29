@@ -1,4 +1,3 @@
-"use client"
 import { ChatItemType } from "@/types/chat"
 import ChatItem from "../chat-item"
 import { memo } from "react"
