@@ -111,25 +111,23 @@ export default function RoomContext({
     onFulfilled?: () => void
   ) => {
     startJoinLoading();
-    socket?.emit("joinedRoom", room_id, async () => {
-      axiosInstance
-        .get<FetchDataType<WorkspaceRoomJoinType>>(`/rooms/${room_id}/join`)
-        .then((res) => {
-          setRoom((prev) => {
-            return {
-              ...(prev as WorkspaceRoomType),
-              participants: res.data.data.participants ?? [],
-            };
-          });
-          stopJoinLoading();
-          if (onFulfilled) onFulfilled();
-        })
-        .catch((err) => {
-          toast.error("Couldn't join to the room!");
-          stopJoinLoading();
-          if (onFulfilled) onFulfilled();
+    axiosInstance
+      .get<FetchDataType<WorkspaceRoomJoinType>>(`/rooms/${room_id}/join`)
+      .then((res) => {
+        setRoom((prev) => {
+          return {
+            ...(prev as WorkspaceRoomType),
+            participants: res.data.data.participants ?? [],
+          };
         });
-    });
+        stopJoinLoading();
+        if (onFulfilled) onFulfilled();
+      })
+      .catch((err) => {
+        toast.error("Couldn't join to the room!");
+        stopJoinLoading();
+        if (onFulfilled) onFulfilled();
+      });
   };
 
   const { startLoading, stopLoading, isLoading } = useLoading();
@@ -169,36 +167,34 @@ export default function RoomContext({
     onFulfilled?: () => void
   ) => {
     startJoinLoading();
-    socket?.emit("joinedRoom", room_id, async () => {
-      axiosInstance
-        .get<FetchDataType<WorkspaceRoomJoinType>>(`/rooms/${room_id}/join`)
-        .then((res) => {
-          stopJoinLoading();
-          if (onFulfilled) onFulfilled();
+    axiosInstance
+      .get<FetchDataType<WorkspaceRoomJoinType>>(`/rooms/${room_id}/join`)
+      .then((res) => {
+        stopJoinLoading();
+        if (onFulfilled) onFulfilled();
 
-          setRoom((prev) => {
-            return {
-              ...(prev as WorkspaceRoomType),
-              participants: res.data.data.participants ?? [],
-            };
-          });
-
-          const livekitToken = res.data.data.token; //Getting livekit token from joinObject
-
-          if (livekitToken) {
-            if (settings.sounds.userJoinLeft) playSoundEffect("joined");
-            navigate(
-              `/workspaces/${workspace_id}/rooms/${room_id}?token=${livekitToken}`
-            );
-            return;
-          }
-        })
-        .catch((err) => {
-          toast.error("Couldn't join to the room!");
-          stopJoinLoading();
-          if (onFulfilled) onFulfilled();
+        setRoom((prev) => {
+          return {
+            ...(prev as WorkspaceRoomType),
+            participants: res.data.data.participants ?? [],
+          };
         });
-    });
+
+        const livekitToken = res.data.data.token; //Getting livekit token from joinObject
+
+        if (livekitToken) {
+          if (settings.sounds.userJoinLeft) playSoundEffect("joined");
+          navigate(
+            `/workspaces/${workspace_id}/rooms/${room_id}?token=${livekitToken}`
+          );
+          return;
+        }
+      })
+      .catch((err) => {
+        toast.error("Couldn't join to the room!");
+        stopJoinLoading();
+        if (onFulfilled) onFulfilled();
+      });
   };
 
   // useBus(
