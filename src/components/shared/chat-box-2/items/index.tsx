@@ -8,6 +8,8 @@ import useBus from "use-bus";
 import UnSeenHandlers from "./un-seen-handlers";
 import useAuth from "@/hooks/auth";
 import { __BUS } from "@/const/bus";
+import { formatChatDate } from "@/utils/utils";
+import { DateHeader } from "../dateHeader";
 
 type Props = {
   items: Chat2ItemType[];
@@ -123,10 +125,10 @@ export default function Items({
   }, [items.length, rowVirtualizer]);
 
   return (
-    <div className='flex-grow relative'>
+    <div className="flex-grow relative">
       <div
         ref={parentRef}
-        className='relative flex-grow overflow-y-auto mb-4 space-y-2'
+        className="relative flex-grow overflow-y-auto mb-4 space-y-2"
         style={{ contain: "strict", height: "100%" }}
       >
         {!!isFetching && <FetchingProgress />}
@@ -136,8 +138,14 @@ export default function Items({
             position: "relative",
           }}
         >
-          {rowVirtualizer.getVirtualItems().map((virtualRow) => {
+          {rowVirtualizer.getVirtualItems().map((virtualRow, index) => {
             const message = messages[virtualRow.index];
+            const messageDate = formatChatDate(message.created_at);
+            const showDateHeader =
+              index === 0 ||
+              messageDate !==
+                formatChatDate(messages[virtualRow.index - 1]?.created_at);
+
             return (
               <div
                 data-index={virtualRow.index}
@@ -150,6 +158,7 @@ export default function Items({
                   width: "100%",
                 }}
               >
+                {showDateHeader && <DateHeader messageDate={messageDate} />}
                 <ChatItem
                   item={message}
                   key={message.nonce_id}
