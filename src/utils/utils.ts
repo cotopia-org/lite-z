@@ -22,6 +22,7 @@ export function formatChatDate(timestamp: number): string {
   const today = dayjs();
   const yesterday = today.subtract(1, 'day');
   if (timestamp === undefined || timestamp <= 0) {
+    return ""
   }
   if (date.isSame(today, 'day')) {
     return "Today";
