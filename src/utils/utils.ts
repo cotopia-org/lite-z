@@ -31,6 +31,6 @@ export function formatChatDate(timestamp: number): string {
     return date.format("dddd, D MMMM")
   }
   else {
-    return date.format("dddd, MMMM D, YYYY");
+    return date.format("dddd, D MMMM, YYYY");
   }
 }
