@@ -27,7 +27,10 @@ export function formatChatDate(timestamp: number): string {
     return "Today";
   } else if (date.isSame(yesterday, 'day')) {
     return "Yesterday";
-  } else {
+  } else if (date.isSame(today, 'year')) {
+    return date.format("dddd, D MMMM")
+  }
+  else {
     return date.format("dddd, MMMM D, YYYY");
   }
 }
