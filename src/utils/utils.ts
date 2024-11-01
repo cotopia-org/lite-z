@@ -1,4 +1,5 @@
 import moment from "moment-jalaali";
+import dayjs from "dayjs";
 
 export const thunkResHandler = (
   thunkRes: Promise<any>,
@@ -14,3 +15,19 @@ export const thunkResHandler = (
     }
   });
 };
+
+
+export function formatChatDate(timestamp: number): string {
+  const date = dayjs(timestamp * 1000);
+  const today = dayjs();
+  const yesterday = today.subtract(1, 'day');
+  if (timestamp === undefined || timestamp <= 0) {
+  }
+  if (date.isSame(today, 'day')) {
+    return "Today";
+  } else if (date.isSame(yesterday, 'day')) {
+    return "Yesterday";
+  } else {
+    return date.format("dddd, MMMM D, YYYY");
+  }
+}
