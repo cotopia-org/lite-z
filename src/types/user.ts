@@ -20,6 +20,11 @@ export type UserType = {
   voice_status: null | string;
 };
 
+export type UserMinimalTypeScheduleType = {
+  hours: string;
+  minutes: number;
+};
+
 export type UserMinimalType = {
   avatar: null | AttachmentFileType;
   id: number;
@@ -32,6 +37,7 @@ export type UserMinimalType = {
   voice_status: null | string;
   screenshare_coordinates: null | string;
   screenshare_size: null | string;
+  schedule_hours_in_week?: UserMinimalTypeScheduleType;
 };
 
 export type WorkspaceUserType = {
@@ -44,4 +50,5 @@ export type WorkspaceUserType = {
   username: string;
   verified: boolean;
   room_id: number | null;
+  schedule_hours_in_week?: UserMinimalTypeScheduleType;
 };

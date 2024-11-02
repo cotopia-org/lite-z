@@ -124,28 +124,6 @@ export function convertMinutesToHHMMSS(minutes: number): string {
   return `${formattedHours}:${formattedMinutes}:${formattedSeconds}`;
 }
 
-export const estimateTotalHoursBySchedules = (schedules: ScheduleType[]) => {
-  let hours = 0;
-
-  if (schedules.length === 0) return 0;
-
-  for (let schedule of schedules) {
-    for (let scheduleDay of schedule.days) {
-      for (let time of scheduleDay.times) {
-        const startMoment = timeStringToMoment(time.start);
-        const endMoment = timeStringToMoment(time.end);
-
-        const diffMinutes = endMoment.diff(startMoment, "minutes");
-        const diffHours = Math.round(diffMinutes / 60);
-
-        hours += diffHours;
-      }
-    }
-  }
-
-  return hours;
-};
-
 export const limitChar = (inputString: string, maxLength: number) => {
   if (inputString.length > maxLength) {
     return inputString.substring(0, maxLength) + "...";

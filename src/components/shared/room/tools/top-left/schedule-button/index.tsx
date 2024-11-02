@@ -2,21 +2,19 @@ import CotopiaButton from "@/components/shared-ui/c-button";
 import PopupBox from "@/components/shared/popup-box";
 import PopupBoxChild from "@/components/shared/popup-box/child";
 import { CalendarDays } from "lucide-react";
-import React, { useCallback, useMemo, useState } from "react";
+import { useMemo } from "react";
 import ShapesHandler from "./shapes/handler";
-import { ScheduleType } from "@/types/calendar";
-import { estimateTotalHoursBySchedules } from "@/lib/utils";
+import { useRoomContext } from "../../../room-context";
+import useAuth from "@/hooks/auth";
 
 export default function ScheduleButton() {
-  const [myTotalSchedules, setMyTotalSchedules] = useState<ScheduleType[]>([]);
-  const onGetMySchedules = useCallback((schedules: ScheduleType[]) => {
-    setMyTotalSchedules(schedules);
-  }, []);
+  const { user } = useAuth();
+  const { workpaceUsers } = useRoomContext();
 
   const totalHours = useMemo(() => {
-    return estimateTotalHoursBySchedules(myTotalSchedules);
-  }, [myTotalSchedules]);
-
+    return workpaceUsers.find((x) => x.id === user?.id)?.schedule_hours_in_week
+      ?.hours;
+  }, [workpaceUsers, user]);
   return (
     <PopupBox
       trigger={(open) => (
@@ -39,7 +37,7 @@ export default function ScheduleButton() {
           title={`Schedule (${totalHours ?? 0}h) per week`}
           width={400}
         >
-          <ShapesHandler onGetMySchedules={onGetMySchedules} />
+          <ShapesHandler />
         </PopupBoxChild>
       )}
     </PopupBox>
