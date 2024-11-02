@@ -1,0 +1,50 @@
+name: Dev deploy
+
+on:
+  push:
+    branches: [ "dev" ]
+  pull_request:
+    branches: [ "dev" ]
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        node-version: [20.x]
+
+    steps:
+    - uses: actions/checkout@v4
+    - name: Use Node.js ${{ matrix.node-version }}
+      uses: actions/setup-node@v3
+      with:
+        node-version: ${{ matrix.node-version }}
+        cache: 'npm'
+    - run: npm ci
+    - run: npm run build --if-present
+      env:
+        CI: ""
+
+  deploy:
+    runs-on: ubuntu-latest
+    needs:  [ build ]
+    steps:
+    - name: Create SSH key
+      run: |
+        echo "$TEST_SSH_PRIVATE_KEY" > priv.key
+        chmod 600 priv.key
+      env:
+        TEST_SSH_PRIVATE_KEY: ${{secrets.TEST_PRIVATE_KEY}}
+
+    - name: Deploy
+      run: |
+        ssh -i ./priv.key -p "$TEST_SERVER_PORT" -o StrictHostKeyChecking=no "$TEST_SERVER_USERNAME"@"$TEST_SERVER_HOST" "cd /home/dev/lite-z && git pull origin dev"
+        ssh -i ./priv.key -p "$TEST_SERVER_PORT" -o StrictHostKeyChecking=no "$TEST_SERVER_USERNAME"@"$TEST_SERVER_HOST" "cd /home/dev/lite-z && npm install"
+        ssh -i ./priv.key -p "$TEST_SERVER_PORT" -o StrictHostKeyChecking=no "$TEST_SERVER_USERNAME"@"$TEST_SERVER_HOST" "cd /home/dev/lite-z && npm run build"
+      env:
+        TEST_SERVER_PORT: ${{secrets.TEST_SERVER_PORT}}
+        TEST_SSH_PRIVATE_KEY: ${{secrets.TEST_PRIVATE_KEY}}
+        TEST_SERVER_HOST: ${{secrets.TEST_SERVER_HOST}}
+        TEST_SERVER_USERNAME: ${{secrets.TEST_SERVER_USERNAME}}
