@@ -11,10 +11,11 @@ interface Props {
 
 const RoomItem = ({ room, isSelected, joinRoomHandler }: Props) => {
   let clss =
-    "flex items-center justify-between rounded-lg p-4 py-3 w-full cursor-pointer "
+    "flex items-center justify-between rounded-lg p-4 py-2 w-full cursor-pointer "
 
   if (isSelected) {
-    clss += "bg-primary [&_svg_path]:stroke-background [&_span]:text-background"
+    clss +=
+      "bg-primary [&_svg_path]:stroke-background !py-3 mb-1 [&_span]:text-background"
   }
 
   return (

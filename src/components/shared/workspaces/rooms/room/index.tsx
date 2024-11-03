@@ -56,7 +56,7 @@ export default function WorkspaceRoom({
   if (isSelected) clss += ` !bg-black/10 !text-black`
 
   return (
-    <div className="flex flex-col gap-y-3">
+    <div className="flex flex-col gap-y-2">
       <RoomItem
         joinRoomHandler={joinRoomHandler}
         room={room}

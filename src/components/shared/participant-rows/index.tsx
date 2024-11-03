@@ -14,8 +14,10 @@ const ParticipantRows = ({ participants }: Props) => {
 
   const { user } = useAuth()
 
+  if (participants.length === 0) return null
+
   return (
-    <div className="w-full flex gap-y-4 flex-col pl-6">
+    <div className="w-full flex gap-y-4 flex-col pl-6 pb-5">
       {participants.map((participant) => {
         let has_video = participant.has_video
         let has_mic = participant.has_mic
