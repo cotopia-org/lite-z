@@ -16,12 +16,10 @@ type Props = {
 export default function DeleteRoom({ room, onDelete }: Props) {
   const { startLoading, stopLoading, isLoading } = useLoading()
 
-  const { workspace_id } = useRoomContext()
-
   const handleDelete = () => {
     startLoading()
     axiosInstance
-      .delete(`workspaces/${workspace_id}/rooms/${room.id}`)
+      .delete(`/rooms/${room.id}`)
       .then((res) => {
         stopLoading()
         if (onDelete) onDelete()

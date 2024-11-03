@@ -20,6 +20,11 @@ export type UserType = {
   voice_status: null | string
 }
 
+export type UserMinimalTypeScheduleType = {
+  hours: string
+  minutes: number
+}
+
 export type UserMinimalType = {
   avatar: null | AttachmentFileType
   id: number
