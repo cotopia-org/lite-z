@@ -1,0 +1,54 @@
+name: Individual branch deployment
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [ "pirani", "rasti", "sadrzade", "zahedi" ]
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        node-version: [20.x]
+
+    steps:
+    - uses: actions/checkout@v4
+    - name: Use Node.js ${{ matrix.node-version }}
+      uses: actions/setup-node@v3
+      with:
+        node-version: ${{ matrix.node-version }}
+        cache: 'npm'
+    - run: npm ci
+    - run: npm run build --if-present
+      env:
+        CI: ""
+
+  deploy:
+    runs-on: ubuntu-latest
+    needs: [build]
+    steps:
+      - name: Create SSH key
+        run: |
+          echo "$TEST_SSH_PRIVATE_KEY" > priv.key
+          chmod 600 priv.key
+        env:
+          TEST_SSH_PRIVATE_KEY: ${{secrets.TEST_PRIVATE_KEY}}
+
+      - name: Get branch name
+        id: get_branch
+        run: echo "BRANCH_NAME=${GITHUB_REF##*/}" >> $GITHUB_ENV
+
+      - name: Deploy
+        run: |
+          ssh -i ./priv.key  -p "$TEST_SERVER_PORT" -o StrictHostKeyChecking=no "$TEST_SERVER_USERNAME"@"$TEST_SERVER_HOST" "cd /home/dev/lite-z-branches//${{ env.BRANCH_NAME }} && git pull origin ${{ env.BRANCH_NAME }}"
+          ssh -i ./priv.key  -p "$TEST_SERVER_PORT" -o StrictHostKeyChecking=no "$TEST_SERVER_USERNAME"@"$TEST_SERVER_HOST" "cd /home/dev/lite-z-branches//${{ env.BRANCH_NAME }} && npm install"
+          ssh -i ./priv.key  -p "$TEST_SERVER_PORT" -o StrictHostKeyChecking=no "$TEST_SERVER_USERNAME"@"$TEST_SERVER_HOST" "cd /home/dev/lite-z-branches//${{ env.BRANCH_NAME }} && npm run build"
+          ssh -i ./priv.key  -p "$TEST_SERVER_PORT" -o StrictHostKeyChecking=no "$TEST_SERVER_USERNAME"@"$TEST_SERVER_HOST" "cd /home/dev/lite-z-branches//${{ env.BRANCH_NAME }} && pm2 restart ${{ env.BRANCH_NAME }}"
+        env:
+          TEST_SERVER_PORT: ${{secrets.TEST_SERVER_PORT}}
+          TEST_SSH_PRIVATE_KEY: ${{secrets.TEST_PRIVATE_KEY}}
+          TEST_SERVER_HOST: ${{secrets.TEST_SERVER_HOST}}
+          TEST_SERVER_USERNAME: ${{secrets.TEST_SERVER_USERNAME}}
