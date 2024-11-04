@@ -5,16 +5,12 @@ import CotopiaButton from "@/components/shared-ui/c-button";
 import Video from "./video";
 import { useRoomHolder } from "..";
 import { useSocket } from "@/routes/private-wrarpper";
-import { useParams } from "react-router-dom";
-import { useRoomContext } from "../room-context";
 
 interface MediaAccessProps {
   onChecked: () => void;
 }
 
 const CheckPermissions2: React.FC<MediaAccessProps> = ({ onChecked }) => {
-  const { room_id } = useParams();
-
   const socket = useSocket();
 
   const {
@@ -26,8 +22,6 @@ const CheckPermissions2: React.FC<MediaAccessProps> = ({ onChecked }) => {
     disableAudioAccess,
     changeStreamState,
   } = useRoomHolder();
-
-  const { joinRoom } = useRoomContext();
 
   const permissions = stream.permissions;
   const hasVideoAccess = permissions.video;
@@ -85,6 +79,10 @@ const CheckPermissions2: React.FC<MediaAccessProps> = ({ onChecked }) => {
     }
   };
 
+  const handleJoin = async () => {
+    if (onChecked) onChecked();
+  };
+
   let videoButtonClss = "text-black border bg-white";
 
   if (hasVideoAccess && videoStream)
@@ -133,12 +131,7 @@ const CheckPermissions2: React.FC<MediaAccessProps> = ({ onChecked }) => {
         <CotopiaButton
           loading={!!!socket}
           disabled={stream_loading}
-          onClick={() => {
-            if (room_id)
-              joinRoom(room_id, () => {
-                if (onChecked) onChecked();
-              });
-          }}
+          onClick={handleJoin}
           className='bg-blue-500 min-w-[100px]'
         >
           Join Now

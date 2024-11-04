@@ -1,4 +1,3 @@
-import { __BUS } from "@/const/bus";
 import { useApi } from "@/hooks/swr";
 import useLoading from "@/hooks/use-loading";
 import useQueryParams from "@/hooks/use-query-params";
@@ -12,7 +11,8 @@ import { JobType } from "@/types/job";
 import { LeaderboardType } from "@/types/leaderboard";
 import { WorkspaceRoomJoinType, WorkspaceRoomType } from "@/types/room";
 import { UserMinimalType, UserType, WorkspaceUserType } from "@/types/user";
-import {
+import { useRouter } from "next/navigation";
+import React, {
   createContext,
   ReactNode,
   useContext,
@@ -20,9 +20,6 @@ import {
   useMemo,
   useState,
 } from "react";
-import { useNavigate } from "react-router-dom";
-import { toast } from "sonner";
-import useBus from "use-bus";
 
 type LeftJoinType = { room_id: number; user: UserMinimalType };
 
@@ -47,6 +44,7 @@ const RoomCtx = createContext<{
   videoState: boolean;
   audioState: boolean;
   changePermissionState: (key: "video" | "audio", newValue: boolean) => void;
+  joinRoom: () => void;
   leaderboard: LeaderboardType[];
   scheduled: ScheduleType[];
   workpaceUsers: WorkspaceUserType[];
@@ -55,11 +53,8 @@ const RoomCtx = createContext<{
   onlineUsers: UserMinimalType[];
   usersHaveJobs: UserMinimalType[];
   usersHaveInProgressJobs: UserMinimalType[];
-  updateRoom: (room: WorkspaceRoomType) => void;
-  joinRoom: (room_id: number | string, onFulfilled?: () => void) => void;
 }>({
   room: undefined,
-  updateRoom: (room) => {},
   livekit_token: undefined,
   room_id: 1,
   workspace_id: undefined,
@@ -70,6 +65,7 @@ const RoomCtx = createContext<{
   audioState: false,
   videoState: false,
   changePermissionState: (key, newValue) => {},
+  joinRoom: () => {},
   leaderboard: [],
   scheduled: [],
   workpaceUsers: [],
@@ -78,7 +74,6 @@ const RoomCtx = createContext<{
   onlineUsers: [],
   usersHaveJobs: [],
   usersHaveInProgressJobs: [],
-  joinRoom: (room_id, onFulfilled) => {},
 });
 
 export const useRoomContext = () => useContext(RoomCtx);
@@ -89,47 +84,6 @@ export default function RoomContext({
   workspace_id,
 }: Props) {
   const [room, setRoom] = useState<WorkspaceRoomType>();
-
-  // const updateRoomParticipants = (participants: UserMinimalType[]) => {
-  //   console.log("participants", participants);
-
-  //   setRoom((prev) => {
-  //     const nValue = { ...(prev as WorkspaceRoomType), participants };
-
-  //     return nValue;
-  //   });
-  // };
-
-  const {
-    startLoading: startJoinLoading,
-    stopLoading: stopJoinLoading,
-    isLoading: joinLoading,
-  } = useLoading();
-
-  const handleJoin = async (
-    room_id: string | number,
-    onFulfilled?: () => void
-  ) => {
-    startJoinLoading();
-    axiosInstance
-      .get<FetchDataType<WorkspaceRoomJoinType>>(`/rooms/${room_id}/join`)
-      .then((res) => {
-        setRoom((prev) => {
-          return {
-            ...(prev as WorkspaceRoomType),
-            participants: res.data.data.participants ?? [],
-          };
-        });
-        stopJoinLoading();
-        if (onFulfilled) onFulfilled();
-      })
-      .catch((err) => {
-        toast.error("Couldn't join to the room!");
-        stopJoinLoading();
-        if (onFulfilled) onFulfilled();
-      });
-  };
-
   const { startLoading, stopLoading, isLoading } = useLoading();
 
   const fetchRoom = (roomId: string | number) => {
@@ -153,6 +107,14 @@ export default function RoomContext({
     setRoom(data);
   });
 
+  //Update room object when background changed
+  useSocket("roomBackgroundChanged", (data: WorkspaceRoomType) => {
+    setRoom((prev) => ({
+      ...((prev ?? {}) as WorkspaceRoomType),
+      background: data.background,
+    }));
+  });
+
   const settings = useSetting();
 
   const { query } = useQueryParams();
@@ -160,50 +122,23 @@ export default function RoomContext({
 
   const socket = useSocket();
 
-  const navigate = useNavigate();
+  const router = useRouter();
 
-  const handleJoinRoom = async (
-    room_id: string | number,
-    onFulfilled?: () => void
-  ) => {
-    startJoinLoading();
+  const handleJoinRoom = async () => {
     axiosInstance
       .get<FetchDataType<WorkspaceRoomJoinType>>(`/rooms/${room_id}/join`)
       .then((res) => {
-        stopJoinLoading();
-        if (onFulfilled) onFulfilled();
-
-        setRoom((prev) => {
-          return {
-            ...(prev as WorkspaceRoomType),
-            participants: res.data.data.participants ?? [],
-          };
-        });
-
         const livekitToken = res.data.data.token; //Getting livekit token from joinObject
 
         if (livekitToken) {
           if (settings.sounds.userJoinLeft) playSoundEffect("joined");
-          navigate(
+          router.push(
             `/workspaces/${workspace_id}/rooms/${room_id}?token=${livekitToken}`
           );
           return;
         }
-      })
-      .catch((err) => {
-        toast.error("Couldn't join to the room!");
-        stopJoinLoading();
-        if (onFulfilled) onFulfilled();
       });
   };
-
-  // useBus(
-  //   __BUS.rejoinMeet,
-  //   () => {
-  //     handleJoin(room_id);
-  //   },
-  //   [room_id, handleJoin]
-  // );
 
   const [permissionState, setPermissionState] = useState({
     audio: true,
@@ -234,11 +169,6 @@ export default function RoomContext({
       ...participants[participant_index],
       coordinates: `${position.x},${position.y}`,
     };
-
-    console.log(
-      "participants[participant_index]",
-      participants[participant_index]
-    );
 
     setRoom({ ...room, participants });
   };
@@ -365,7 +295,6 @@ export default function RoomContext({
     <RoomCtx.Provider
       value={{
         room,
-        updateRoom: setRoom,
         room_id: +room_id,
         workspace_id,
         sidebar,

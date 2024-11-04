@@ -104,7 +104,7 @@
     ]
   },
   "devDependencies": {
-    "@babel/runtime": "^7.25.9",
+    "@babel/runtime": "^7.26.0",
     "@types/howler": "^2.2.12",
     "@types/jest": "^27.5.2",
     "@types/moment-jalaali": "^0.7.9",
