@@ -2,9 +2,9 @@ name: Dev deploy
 
 on:
   push:
-    branches: [ "zahedi" ]
+    branches: [ "dev" ]
   pull_request:
-    branches: [ "zahedi" ]
+    branches: [ "dev" ]
 
 jobs:
   build:
