@@ -69,7 +69,11 @@ export default function PrivateRoutes() {
     socket.on("connect", () => {
       toast.success("Socket connected");
       setSocketState(socket);
-      dispatch(__BUS.rejoinMeet);
+      dispatch(__BUS.rejoinRoom);
+      dispatch({
+        type: __BUS.startWorkTimer,
+        id: VARZ.userTimeTrackerId,
+      });
     });
 
     socket.on("disconnect", () => {

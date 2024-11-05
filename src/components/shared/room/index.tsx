@@ -1,8 +1,12 @@
+"use client";
+
 import { LiveKitRoom } from "@livekit/components-react";
 import RoomContext from "./room-context";
 import RoomInner from "./room-inner";
+import { WorkspaceRoomJoinType } from "@/types/room";
 import {
   createContext,
+  useCallback,
   useContext,
   useEffect,
   useReducer,
@@ -12,10 +16,16 @@ import LiveKitConnectionStatus from "./connection-status";
 import CheckPermissions2 from "./check-permissions-2";
 import ChatWrapper from "../chat-wrapper";
 import { ReactFlowProvider } from "@xyflow/react";
-import Disconnected from "./connection-status/disconnected";
-import axiosInstance from "@/services/axios";
+import { toast } from "sonner";
+import useBus from "use-bus";
+import axiosInstance, { FetchDataType } from "@/services/axios";
 import { VARZ } from "@/const/varz";
 import { useSocket } from "@/routes/private-wrarpper";
+import { __BUS } from "@/const/bus";
+import Disconnected from "./connection-status/disconnected";
+import { useAppDispatch } from "@/store";
+import { setToken } from "@/store/slices/livekit-slice";
+import LivekitRefactored from "../livekit-refactored";
 
 type MediaPermission = {
   audio: boolean;
@@ -42,7 +52,6 @@ const RoomHolderContext = createContext<{
   changeStreamState: (stream: MediaStream, type: "video" | "audio") => void;
   stream: InitStreamType;
   stream_loading: boolean;
-  // joinRoom: (room_id: number | string, onFulfilled?: () => void) => void;
 }>({
   mediaPermissions: DEFAULT_MEDIA_PERMISSIONS,
   enableVideoAccess: () => {},
@@ -52,13 +61,12 @@ const RoomHolderContext = createContext<{
   changeStreamState: () => {},
   stream: initialState,
   stream_loading: false,
-  // joinRoom: (room_id, onFulfilled) => {},
 });
 
 export const useRoomHolder = () => useContext(RoomHolderContext);
 
 type Props = {
-  token: string;
+  token?: string;
   workspace_id: string;
   room_id: number;
   isReConnecting?: boolean;
@@ -103,6 +111,8 @@ export default function RoomHolder({
   isReConnecting,
   isSwitching,
 }: Props) {
+  const reduxDispatch = useAppDispatch();
+
   const [state, dispatch] = useReducer(reducer, initialState);
 
   const [permissionChecked, setPermissionChecked] = useState(false);
@@ -221,76 +231,7 @@ export default function RoomHolder({
     getSettings();
   }, []);
 
-  let content = (
-    //@ts-ignore
-    <LiveKitRoom
-      video={state.permissions.video}
-      audio
-      token={token}
-      serverUrl={VARZ.serverUrl}
-      options={{
-        publishDefaults: {
-          videoEncoding: {
-            maxBitrate: 1_500_000,
-            maxFramerate: 30,
-          },
-          screenShareEncoding: {
-            maxBitrate: 3_000_000,
-            maxFramerate: 60,
-          },
-          dtx: true,
-          videoSimulcastLayers: [
-            {
-              width: 640,
-              height: 360,
-              resolution: {
-                width: 1280,
-                height: 720,
-                frameRate: 30,
-              },
-              encoding: {
-                maxBitrate: 500_000,
-                maxFramerate: 20,
-              },
-            },
-            {
-              width: 320,
-              height: 180,
-              resolution: {
-                width: 1280,
-                height: 720,
-                frameRate: 30,
-              },
-              encoding: {
-                maxBitrate: 150_000,
-                maxFramerate: 15,
-              },
-            },
-          ],
-        },
-        videoCaptureDefaults: {
-          deviceId: "",
-          facingMode: "user",
-          resolution: {
-            width: 94,
-            height: 94,
-            frameRate: 30,
-          },
-        },
-
-        audioCaptureDefaults: {
-          autoGainControl: true,
-          deviceId: "",
-          echoCancellation: true,
-          noiseSuppression: true,
-          sampleRate: 100,
-        },
-      }}
-    >
-      <LiveKitConnectionStatus />
-      <RoomInner />
-    </LiveKitRoom>
-  );
+  let content = null;
 
   const socket = useSocket();
 
@@ -298,10 +239,41 @@ export default function RoomHolder({
     console.log("retry to connect!");
   };
 
-  if (permissionChecked === false && !isReConnecting && !isSwitching)
-    content = (
-      <CheckPermissions2 onChecked={() => setPermissionChecked(true)} />
-    );
+  const handleJoin = useCallback(async () => {
+    axiosInstance
+      .get<FetchDataType<WorkspaceRoomJoinType>>(`/rooms/${room_id}/join`)
+      .then((res) => {
+        setPermissionChecked(true);
+        //Setting token in redux for livekit
+        reduxDispatch(setToken(res.data.data.token));
+      })
+      .catch((err) => {
+        toast.error("Couldn't join to the room!");
+      });
+  }, [room_id]);
+
+  const handlePassed =
+    permissionChecked === false && !isReConnecting && !isSwitching;
+
+  useBus(
+    __BUS.rejoinRoom,
+    () => {
+      console.log("xxx");
+      if (permissionChecked === true || isSwitching || isReConnecting) {
+        handleJoin();
+      }
+    },
+    [permissionChecked, isSwitching, isReConnecting]
+  );
+
+  content = (
+    <>
+      <LiveKitConnectionStatus />
+      <RoomInner />
+    </>
+  );
+
+  if (handlePassed) content = <CheckPermissions2 onChecked={handleJoin} />;
 
   return (
     <RoomHolderContext.Provider
@@ -325,7 +297,7 @@ export default function RoomHolder({
             {socket?.connected === false && (
               <Disconnected onReTry={handleReTry} />
             )}
-            {content}
+            <LivekitRefactored>{content}</LivekitRefactored>
           </RoomContext>
         </ChatWrapper>
       </ReactFlowProvider>
