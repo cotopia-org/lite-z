@@ -2,7 +2,6 @@ import CotopiaButton from "@/components/shared-ui/c-button";
 import ParticipantsWithPopover from "@/components/shared/participants/with-popover";
 import { WorkspaceRoomJoinType, WorkspaceRoomShortType } from "@/types/room";
 import { Cast } from "lucide-react";
-import { useRouter } from "next/navigation";
 import DeleteRoom from "./delete-room";
 import { UserMinimalType, WorkspaceUserType } from "@/types/user";
 import { uniqueById, urlWithQueryParams } from "@/lib/utils";
@@ -10,6 +9,9 @@ import useSetting from "@/hooks/use-setting";
 import { playSoundEffect } from "@/lib/sound-effects";
 import useLoading from "@/hooks/use-loading";
 import axiosInstance, { FetchDataType } from "@/services/axios";
+import { useNavigate } from "react-router-dom";
+import { useAppDispatch } from "@/store";
+import { setToken } from "@/store/slices/livekit-slice";
 
 type Props = {
   room: WorkspaceRoomShortType;
@@ -26,7 +28,9 @@ export default function WorkspaceRoom({
 }: Props) {
   const { sounds } = useSetting();
 
-  const router = useRouter();
+  const dispatch = useAppDispatch();
+
+  const navigate = useNavigate();
 
   const { startLoading, stopLoading, isLoading } = useLoading();
 
@@ -38,20 +42,18 @@ export default function WorkspaceRoom({
         .then((res) => {
           const livekitToken = res.data.data.token; //Getting livekit token from joinObject
 
+          //set livekit token
+          dispatch(setToken(livekitToken));
+
+          navigate(
+            urlWithQueryParams(`/workspaces/${workspace_id}/rooms/${room.id}`, {
+              isSwitching: true,
+            })
+          );
+
           stopLoading();
 
           if (sounds.userJoinLeft) playSoundEffect("joined");
-
-          if (livekitToken) {
-            router.push(
-              urlWithQueryParams(
-                `/workspaces/${workspace_id}/rooms/${room.id}`,
-                { token: livekitToken, isSwitching: true }
-              )
-            );
-
-            return;
-          }
         })
         .catch((err) => {
           stopLoading();

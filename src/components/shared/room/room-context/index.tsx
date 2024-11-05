@@ -11,8 +11,7 @@ import { JobType } from "@/types/job";
 import { LeaderboardType } from "@/types/leaderboard";
 import { WorkspaceRoomJoinType, WorkspaceRoomType } from "@/types/room";
 import { UserMinimalType, UserType, WorkspaceUserType } from "@/types/user";
-import { useRouter } from "next/navigation";
-import React, {
+import {
   createContext,
   ReactNode,
   useContext,
@@ -20,6 +19,7 @@ import React, {
   useMemo,
   useState,
 } from "react";
+import { useNavigate } from "react-router-dom";
 
 type LeftJoinType = { room_id: number; user: UserMinimalType };
 
@@ -122,7 +122,7 @@ export default function RoomContext({
 
   const socket = useSocket();
 
-  const router = useRouter();
+  const router = useNavigate();
 
   const handleJoinRoom = async () => {
     axiosInstance
@@ -132,7 +132,7 @@ export default function RoomContext({
 
         if (livekitToken) {
           if (settings.sounds.userJoinLeft) playSoundEffect("joined");
-          router.push(
+          router(
             `/workspaces/${workspace_id}/rooms/${room_id}?token=${livekitToken}`
           );
           return;

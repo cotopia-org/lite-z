@@ -2,10 +2,10 @@
 
 import RoomWrapper from "@/components/shared/room/wrapper";
 import useQueryParams from "@/hooks/use-query-params";
-import RoomHolder from "../room";
+import RoomHolder from "@/components/shared/room";
 
 type Props = {
-  token: string; //Currently we are using livekit, so livekit token
+  token?: string; //Currently we are using livekit, so livekit token
   workspace_id: string;
   room_id: number;
 };
