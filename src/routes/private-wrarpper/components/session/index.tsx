@@ -86,13 +86,18 @@ export default function UserSession({
 
   const { quality } = useConnectionQualityIndicator({ participant });
 
+  let finalQuality = quality;
+
+  if (participant?.identity === undefined)
+    finalQuality = ConnectionQuality.Lost;
+
   return (
     <TrackRefContextIfNeeded trackRef={trackReference}>
       <SpacialParticipantContextIfNeeded
         participant={participant ?? trackReference?.participant}
       >
         <SessionContext.Provider value={{ track: trackReference, draggable }}>
-          <WithConnectionQuality quality={quality}>
+          <WithConnectionQuality quality={finalQuality}>
             <DraggableCircle
               defaultIsDragging={isDragging}
               username={username}

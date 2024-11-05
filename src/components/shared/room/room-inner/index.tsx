@@ -1,13 +1,26 @@
-import React from "react";
-import { useRoomContext } from "../room-context";
+import React, { useEffect } from "react";
+import { useRoomContext as useLocalRoomContext } from "../room-context";
 import RoomSidebar from "../sidebar";
 import RoomSettings from "../settings";
 import LiveKitAudioManager from "../components/audio-manager";
 import InitRoom from "./init-room";
 import CanvasBoard from "../../canvas-board";
+import { useAppSelector } from "@/store";
+import { useRoomContext } from "@livekit/components-react";
+import { VARZ } from "@/const/varz";
 
 export default function RoomInner() {
-  const { sidebar } = useRoomContext();
+  const { disconnect, connect } = useRoomContext();
+
+  const { token } = useAppSelector((store) => store.livekit);
+  useEffect(() => {
+    if (token) {
+      disconnect();
+      connect(VARZ.serverUrl as string, token);
+    }
+  }, [token]);
+
+  const { sidebar } = useLocalRoomContext();
 
   let mainRoomHolderClss = "main-room-holder w-full h-screen overflow-hidden";
   if (sidebar) mainRoomHolderClss += " pr-[376px]";

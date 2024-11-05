@@ -215,10 +215,19 @@ export const ParticipantTile = React.forwardRef<
     participant: trackReference.participant,
   });
 
+  let finalQuality = quality;
+
   let finalTitle = userFullName;
 
-  if (quality === ConnectionQuality.Lost || quality === ConnectionQuality.Poor)
+  if (
+    finalQuality === ConnectionQuality.Lost ||
+    finalQuality === ConnectionQuality.Poor
+  )
     finalTitle = "Poor connection!";
+
+  if (targetUser?.username !== trackReference.participant?.identity) {
+    finalQuality = ConnectionQuality.Lost;
+  }
 
   return (
     <CotopiaTooltip title={finalTitle}>
@@ -259,6 +268,9 @@ export const ParticipantTile = React.forwardRef<
                   participant: trackReference.participant,
                   source: Track.Source.Microphone,
                 }}
+                forceMuted={
+                  trackReference?.participant?.identity !== targetUser?.username
+                }
               />
             </ActionsRight>
           </div>
