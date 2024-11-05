@@ -258,11 +258,12 @@ export default function RoomHolder({
   useBus(
     __BUS.rejoinRoom,
     () => {
+      console.log("xxx");
       if (permissionChecked === true || isSwitching || isReConnecting) {
         handleJoin();
       }
     },
-    [handlePassed]
+    [permissionChecked, isSwitching, isReConnecting]
   );
 
   content = (

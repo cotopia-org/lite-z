@@ -51,6 +51,10 @@ export default function WorkspaceRoom({
             })
           );
 
+          setTimeout(() => {
+            navigate(`/workspaces/${workspace_id}/rooms/${room.id}`);
+          }, 400);
+
           stopLoading();
 
           if (sounds.userJoinLeft) playSoundEffect("joined");
