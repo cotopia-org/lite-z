@@ -8,7 +8,6 @@ export default function SessionWrapper({ children }: Props) {
   return (
     <div className='relative'>
       <LiveKitVoiceFrequency />
-      {/* <VoiceEffects /> */}
       {children}
     </div>
   );

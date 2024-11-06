@@ -16,4 +16,7 @@ export const __BUS = {
   socketConnected: "SOCKET_CONNECTED",
   socketDisConnected: "SOCKET_DISCONNECTED",
   rejoinMeet: "REJOIN_MEET",
+  rejoinRoom: "REJOIN_ROOM",
+  startWorkTimer: "START_WORK_TIMER",
+  stopWorkTimer: "STOP_WORK_TIMER",
 };

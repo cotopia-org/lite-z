@@ -18,7 +18,7 @@ export default function OnlineUsers() {
   const onlineUsersCount = onlineUsers.length;
 
   return (
-    <TitleEl title={`Online (${onlineUsersCount})`}>
+    <TitleEl title={`Idle (${onlineUsersCount})`}>
       <ParticipantsWithPopover
         className='!pb-0'
         participants={onlineUsers.map((x) => x.user)}

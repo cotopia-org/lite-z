@@ -1,36 +1,29 @@
 import React, { useEffect } from "react"
-import { useRoomContext } from "../room-context"
+import { useRoomContext as useLocalRoomContext } from "../room-context"
 import RoomSidebar from "../sidebar"
 import RoomSettings from "../settings"
 import LiveKitAudioManager from "../components/audio-manager"
 import InitRoom from "./init-room"
 import CanvasBoard from "../../canvas-board"
-import { useSocket } from "@/routes/private-wrarpper"
-import { useParams } from "react-router-dom"
+import { useAppSelector } from "@/store"
+import { useRoomContext } from "@livekit/components-react"
+import { VARZ } from "@/const/varz"
 
 export default function RoomInner() {
-  const { room_id } = useParams()
+  const { disconnect, connect } = useRoomContext()
 
-  const socket = useSocket()
-
-  const { sidebar, joinRoom } = useRoomContext()
-
+  const { token } = useAppSelector((store) => store.livekit)
   useEffect(() => {
-    const fn = () => {
-      if (room_id) joinRoom(room_id)
+    if (token) {
+      disconnect()
+      connect(VARZ.serverUrl as string, token)
     }
-    socket?.on("connect", fn)
-    return () => {
-      socket?.off("connect", fn)
-    }
-  }, [socket, joinRoom, room_id])
+  }, [token])
+
+  const { sidebar } = useLocalRoomContext()
 
   let mainRoomHolderClss = "main-room-holder w-full h-screen overflow-hidden"
   if (sidebar) mainRoomHolderClss += " pr-[376px]"
-
-  useEffect(() => {
-    if (room_id) joinRoom(room_id)
-  }, [room_id])
 
   return (
     <>
