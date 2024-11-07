@@ -1,4 +1,5 @@
 import { AttachmentFileType } from "./file";
+import { JobType } from "./job";
 
 export type UserType = {
   active: null | 0 | 1;
@@ -41,6 +42,7 @@ export type UserMinimalType = {
 };
 
 export type WorkspaceUserType = {
+  active_job: JobType | null;
   avatar: AttachmentFileType;
   coordinates: string;
   id: number;

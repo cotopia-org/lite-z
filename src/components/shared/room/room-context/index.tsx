@@ -49,7 +49,7 @@ const RoomCtx = createContext<{
   scheduled: ScheduleType[];
   workpaceUsers: WorkspaceUserType[];
   workspaceJobs: JobType[];
-  workingUsers: UserType[];
+  workingUsers: WorkspaceUserType[];
   onlineUsers: UserMinimalType[];
   usersHaveJobs: UserMinimalType[];
   usersHaveInProgressJobs: UserMinimalType[];
@@ -192,7 +192,7 @@ export default function RoomContext({
   const { data: workspaceUsersData, mutate: mutateWorkspaceUsers } = useApi(
     `/workspaces/${workspace_id}/users`
   );
-  const workpaceUsers =
+  const workpaceUsers: WorkspaceUserType[] =
     workspaceUsersData !== undefined ? workspaceUsersData?.data : [];
 
   useSocket(
@@ -233,54 +233,15 @@ export default function RoomContext({
     [room, mutateWorkspaceUsers]
   );
 
-  const { data: workpaceJobs } = useApi(`/workspaces/${workspace_id}/jobs`);
-  const workpaceJobItems: JobType[] =
-    workpaceJobs !== undefined ? workpaceJobs?.data : [];
+  const workpaceJobItems: JobType[] = workpaceUsers
+    .filter((x) => x.active_job !== undefined)
+    .map((x) => x.active_job as JobType);
 
-  let usersHaveSchedules: number[] = [];
-  for (let job of workpaceJobItems) {
-    for (let jobMember of job.members) {
-      usersHaveSchedules.push(jobMember.id);
-    }
-  }
+  const usersHaveJobs: UserMinimalType[] = [];
 
-  const usersHaveJobs = useMemo(() => {
-    let users: UserMinimalType[] = [];
+  const usersHaveInProgressJobs: UserMinimalType[] = [];
 
-    for (let job of workpaceJobItems) {
-      for (let member of job.members) {
-        users.push(member);
-      }
-    }
-
-    return uniqueById(users) as UserMinimalType[];
-  }, [workpaceJobItems]);
-
-  const usersHaveInProgressJobs = useMemo(() => {
-    let users: UserMinimalType[] = [];
-
-    for (let job of workpaceJobItems) {
-      if (job.status === "in_progress")
-        for (let member of job.members) {
-          users.push(member);
-        }
-    }
-
-    return uniqueById(users) as UserMinimalType[];
-  }, [workpaceJobItems]);
-
-  const usersWithInprogressJobIds = usersHaveInProgressJobs.map((x) => x.id);
-
-  const workingUsers = leaderboardUsers
-    .filter(
-      (x) =>
-        x.user.active === 1 &&
-        x.user.room_id !== null &&
-        x.user.workspace_id === +(workspace_id as string) &&
-        usersHaveSchedules.includes(x.user.id) &&
-        usersWithInprogressJobIds.includes(x.user.id)
-    )
-    .map((x) => x.user);
+  const workingUsers = workpaceUsers.filter((x) => x.active_job !== null);
 
   const onlineUsers = leaderboardUsers
     .filter(
