@@ -9,7 +9,7 @@ import { useAppDispatch, useAppSelector } from "@/store";
 import { Chat2ItemType } from "@/types/chat2";
 import { UserType } from "@/types/user";
 import moment from "moment";
-import { RefObject, useEffect, useMemo } from "react";
+import { RefObject } from "react";
 import { dispatch as busDispatch } from "use-bus";
 import useAuth from "../auth";
 //@ts-ignore
@@ -57,8 +57,6 @@ export const useChat2 = (props?: {
 }) => {
   const { user } = useAuth();
 
-  const hasInitFetch = props?.hasInitFetch ?? true;
-  const workspace_id = props?.workspace_id;
   const chat_id = props?.chat_id;
 
   const socket = useSocket();
@@ -68,11 +66,6 @@ export const useChat2 = (props?: {
   );
 
   const dispatch = useAppDispatch();
-
-  useEffect(() => {
-    if (hasInitFetch === true && workspace_id)
-      dispatch(getChats({ workspace_id }));
-  }, [workspace_id, hasInitFetch]);
 
   useSocket("updateMessage", (data: Chat2ItemType) =>
     console.log("data", data)

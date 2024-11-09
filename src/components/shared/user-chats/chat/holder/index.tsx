@@ -43,7 +43,7 @@ export default function ChatInnerHolder({ chat, onBack, getUser }: Props) {
 
   return (
     <div className='flex flex-col gap-y-2 w-full h-[calc(100vh-132px)]'>
-      <div className='flex flex-row items-center gap-x-2'>
+      <div className='flex flex-row items-center gap-x-2 px-4'>
         <BackHolder onClick={onBack} />
         <ChatDetails title={chat.title} />
       </div>

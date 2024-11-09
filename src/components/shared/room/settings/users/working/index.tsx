@@ -10,7 +10,7 @@ export default function WorkingUsers() {
     <TitleEl
       title={`Working (${workingUsers.length}) ${emoji.get("sunglasses")}`}
     >
-      <div className='flex flex-col gap-y-2'>
+      <div className='flex flex-col gap-y-4'>
         {workingUsers.map((item) => (
           <WorkingCard user={item} key={item.id} />
         ))}

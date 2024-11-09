@@ -1,34 +1,34 @@
-import { SoundIcon } from "@/components/icons"
-import { WorkspaceRoomShortType } from "@/types/room"
-import RoomOptions from "./room-options"
-import { colors } from "@/const/varz"
+import { SoundIcon } from "@/components/icons";
+import { WorkspaceRoomShortType } from "@/types/room";
+import RoomOptions from "./room-options";
+import { colors } from "@/const/varz";
 
 interface Props {
-  room: WorkspaceRoomShortType
-  isSelected: boolean
-  joinRoomHandler: () => void
+  room: WorkspaceRoomShortType;
+  isSelected: boolean;
+  joinRoomHandler: () => void;
 }
 
 const RoomItem = ({ room, isSelected, joinRoomHandler }: Props) => {
   let clss =
-    "flex items-center justify-between rounded-lg p-4 py-2 w-full cursor-pointer "
+    "flex items-center justify-between rounded-lg p-4 py-2 w-full cursor-pointer mx-auto max-w-[95%]";
 
   if (isSelected) {
     clss +=
-      "bg-primary [&_svg_path]:stroke-background !py-3 mb-1 [&_span]:text-background"
+      " bg-primary [&_svg_path]:stroke-background !py-3 mb-1 [&_span]:text-background";
   }
 
   return (
     <div onClick={joinRoomHandler} className={clss}>
-      <div className="flex items-center gap-x-2 justify-start">
+      <div className='flex items-center gap-x-2 justify-start'>
         <SoundIcon size={20} color={colors.grayscale.grayscaleCaption} />
-        <span className="font-semibold text-grayscale-subtitle">
+        <span className='font-semibold text-grayscale-subtitle'>
           {room.title}
         </span>
       </div>
       {isSelected && <RoomOptions room={room} />}
     </div>
-  )
-}
+  );
+};
 
-export default RoomItem
+export default RoomItem;

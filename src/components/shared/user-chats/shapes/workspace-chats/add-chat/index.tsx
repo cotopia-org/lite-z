@@ -15,7 +15,7 @@ export default function AddChat({ workspace_id }: Props) {
       trigger={(open) => (
         <div className='w-full'>
           <CotopiaIconButton
-            className='text-gray-600 absolute bottom-4 right-4 z-10 shadow-lg w-12 h-12'
+            className='!bg-primary !text-white absolute bottom-4 right-4 z-10 shadow-lg w-12 h-12'
             variant={"ghost"}
             onClick={open}
           >
