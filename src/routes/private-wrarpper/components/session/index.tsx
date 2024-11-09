@@ -1,8 +1,5 @@
-"use client";
-
 import {
   ParticipantContext,
-  ParticipantTileProps,
   TrackRefContext,
   TrackReferenceOrPlaceholder,
   useConnectionQualityIndicator,

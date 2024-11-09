@@ -1,20 +1,18 @@
-"use client";
-
-import { mergeProps } from "@/lib/utils";
-import type { TrackIdentifier } from "@livekit/components-core";
-import { isTrackReference } from "@livekit/components-core";
+import { mergeProps } from "@/lib/utils"
+import type { TrackIdentifier } from "@livekit/components-core"
+import { isTrackReference } from "@livekit/components-core"
 import {
   setupMediaTrack,
   log,
   isLocal,
   getTrackByIdentifier,
-} from "@livekit/components-core";
-import * as React from "react";
+} from "@livekit/components-core"
+import * as React from "react"
 
 /** @public */
 export interface UseMediaTrackOptions {
-  element?: React.RefObject<HTMLMediaElement> | null;
-  props?: React.HTMLAttributes<HTMLVideoElement | HTMLAudioElement>;
+  element?: React.RefObject<HTMLMediaElement> | null
+  props?: React.HTMLAttributes<HTMLVideoElement | HTMLAudioElement>
 }
 
 /**
@@ -26,57 +24,57 @@ export function useMediaTrackBySourceOrName(
 ) {
   const [publication, setPublication] = React.useState(
     getTrackByIdentifier(observerOptions)
-  );
+  )
 
-  const [isMuted, setMuted] = React.useState(publication?.isMuted);
+  const [isMuted, setMuted] = React.useState(publication?.isMuted)
   const [isSubscribed, setSubscribed] = React.useState(
     publication?.isSubscribed
-  );
+  )
 
-  const [track, setTrack] = React.useState(publication?.track);
+  const [track, setTrack] = React.useState(publication?.track)
   const [orientation, setOrientation] = React.useState<
     "landscape" | "portrait"
-  >("landscape");
-  const previousElement = React.useRef<HTMLMediaElement | undefined | null>();
+  >("landscape")
+  const previousElement = React.useRef<HTMLMediaElement | undefined | null>()
 
   const { className, trackObserver } = React.useMemo(() => {
-    return setupMediaTrack(observerOptions);
+    return setupMediaTrack(observerOptions)
   }, [
     observerOptions.participant.sid ?? observerOptions.participant.identity,
     observerOptions.source,
     isTrackReference(observerOptions) && observerOptions.publication.trackSid,
-  ]);
+  ])
 
   React.useEffect(() => {
     const subscription = trackObserver.subscribe((publication) => {
-      log.debug("update track", publication);
-      setPublication(publication);
-      setMuted(publication?.isMuted);
-      setSubscribed(publication?.isSubscribed);
-      setTrack(publication?.track);
-    });
-    return () => subscription?.unsubscribe();
-  }, [trackObserver]);
+      log.debug("update track", publication)
+      setPublication(publication)
+      setMuted(publication?.isMuted)
+      setSubscribed(publication?.isSubscribed)
+      setTrack(publication?.track)
+    })
+    return () => subscription?.unsubscribe()
+  }, [trackObserver])
 
   React.useEffect(() => {
     if (track) {
       if (previousElement.current) {
-        track.detach(previousElement.current);
+        track.detach(previousElement.current)
       }
       if (
         options.element?.current &&
         !(isLocal(observerOptions.participant) && track?.kind === "audio")
       ) {
-        track.attach(options.element.current);
+        track.attach(options.element.current)
       }
     }
-    previousElement.current = options.element?.current;
+    previousElement.current = options.element?.current
     return () => {
       if (previousElement.current) {
-        track?.detach(previousElement.current);
+        track?.detach(previousElement.current)
       }
-    };
-  }, [track, options.element]);
+    }
+  }, [track, options.element])
 
   React.useEffect(() => {
     // Set the orientation of the video track.
@@ -88,10 +86,10 @@ export function useMediaTrackBySourceOrName(
       const orientation_ =
         publication.dimensions.width > publication.dimensions.height
           ? "landscape"
-          : "portrait";
-      setOrientation(orientation_);
+          : "portrait"
+      setOrientation(orientation_)
     }
-  }, [publication]);
+  }, [publication])
 
   return {
     publication,
@@ -106,5 +104,5 @@ export function useMediaTrackBySourceOrName(
         "data-lk-orientation": orientation,
       }),
     }),
-  };
+  }
 }

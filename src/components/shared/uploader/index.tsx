@@ -1,6 +1,5 @@
-"use client";
 
-import { Loader, Plus, Trash, Upload } from "lucide-react";
+import { Loader, Trash, Upload } from "lucide-react";
 import { ChangeEvent, useCallback, useEffect, useState } from "react";
 import { toast } from "sonner";
 import { Progress } from "@/components/ui/progress";

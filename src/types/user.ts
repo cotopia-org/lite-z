@@ -38,7 +38,7 @@ export type UserMinimalType = {
   voice_status: null | string;
   screenshare_coordinates: null | string;
   screenshare_size: null | string;
-  schedule_hours_in_week?: UserMinimalTypeScheduleType;
+  schedule_hours_in_week?: number;
 };
 
 export type WorkspaceUserType = {
@@ -50,7 +50,10 @@ export type WorkspaceUserType = {
   name: string;
   status: string;
   username: string;
+  has_video?: boolean;
+  has_screen_share?: boolean;
+  has_mic?: boolean;
   verified: boolean;
   room_id: number | null;
-  schedule_hours_in_week?: UserMinimalTypeScheduleType;
+  schedule_hours_in_week?: number;
 };

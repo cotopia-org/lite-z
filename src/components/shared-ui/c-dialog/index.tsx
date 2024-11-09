@@ -1,14 +1,12 @@
-"use client";
-
-import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
-import { ReactNode, useState } from "react";
+import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog"
+import { ReactNode, useState } from "react"
 
 export type CDialogProps = {
-  trigger: (open: () => void) => ReactNode;
-  children: (close: () => void) => ReactNode;
-  onClose?: () => void;
-  dialogContentCss?: string;
-};
+  trigger: (open: () => void) => ReactNode
+  children: (close: () => void) => ReactNode
+  onClose?: () => void
+  dialogContentCss?: string
+}
 export default function CDialog({
   trigger,
   children,
@@ -16,14 +14,14 @@ export default function CDialog({
   dialogContentCss,
   ...rest
 }: CDialogProps) {
-  const [isOpen, setIsOpen] = useState(false);
+  const [isOpen, setIsOpen] = useState(false)
 
-  const handleOpen = () => setIsOpen(true);
+  const handleOpen = () => setIsOpen(true)
 
   const handleClose = () => {
-    setIsOpen(false);
-    if (onClose) onClose();
-  };
+    setIsOpen(false)
+    if (onClose) onClose()
+  }
 
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen} modal>
@@ -32,5 +30,5 @@ export default function CDialog({
         {children(handleClose)}
       </DialogContent>
     </Dialog>
-  );
+  )
 }

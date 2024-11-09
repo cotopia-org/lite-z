@@ -1,6 +1,13 @@
 /** @type {import('tailwindcss').Config} */
 module.exports = {
-  content: ["./src/**/*.{js,jsx,ts,tsx}"],
+  darkMode: ["class"],
+  content: [
+    "./pages/**/*.{ts,tsx}",
+    "./components/**/*.{ts,tsx}",
+    "./app/**/*.{ts,tsx}",
+    "./src/**/*.{ts,tsx}",
+  ],
+  prefix: "",
   theme: {
     container: {
       center: true,
@@ -16,10 +23,14 @@ module.exports = {
         ring: "var(--ring)",
         background: "var(--background)",
         foreground: "var(--foreground)",
-        primaryBackground: "var(--primary-background)",
         primary: {
           DEFAULT: "var(--primary)",
+          background: "var(--primary-background)",
           foreground: "var(--primary-foreground)",
+          label: "var(--primary-label)",
+          light: "var(--primary-light)",
+          body: "var(--primary-body)",
+          border: "var(--primary-border)",
         },
         secondary: {
           DEFAULT: "var(--secondary)",
@@ -45,11 +56,34 @@ module.exports = {
           DEFAULT: "var(--card)",
           foreground: "var(--card-foreground)",
         },
+        grayscale: {
+          DEFAULT: "var(--grayscale)",
+          light: "var(--grayscale-light)",
+          subtitle: "var(--grayscale-subtitle)",
+          caption: "var(--grayscale-caption)",
+          paragraph: "var(--grayscale-paragraph)",
+          border: "var(--grayscale-border)",
+          title: "var(--grayscale-title)",
+          subtle: "var(--grayscale-subtle)",
+          disabled: "var(--grayscale-disabled)",
+        },
+        warning: {
+          DEFAULT: "var(--warning)",
+        },
+        success: {
+          DEFAULT: "var(--success)",
+        },
+        error: {
+          DEFAULT: "var(--error)",
+        },
       },
       borderRadius: {
         lg: "var(--radius)",
         md: "calc(var(--radius) - 2px)",
         sm: "calc(var(--radius) - 4px)",
+      },
+      boxShadow: {
+        "app-bar": "0 2px 4px rgba(0, 0, 0, 0.16)",
       },
       keyframes: {
         "accordion-down": {
@@ -91,12 +125,13 @@ module.exports = {
       },
       width: {
         "nearly-full": "90%",
-        "10.5": "10.25rem",
+        10.5: "10.25rem",
         wide: "666px",
       },
       height: {
-        "3.25": "3.125rem",
+        3.25: "3.125rem",
       },
     },
   },
+  plugins: [require("tailwindcss-animate")],
 }

@@ -1,67 +1,65 @@
-"use client";
-
-import useSetting from "@/hooks/use-setting";
-import { playSoundEffect } from "@/lib/sound-effects";
+import useSetting from "@/hooks/use-setting"
+import { playSoundEffect } from "@/lib/sound-effects"
 import {
   removeMessageAction,
   unreadMessagesAction,
   updateMessagesAction,
-} from "@/store/slices/room-slice";
-import { useAppDispatch } from "@/store";
-import { ChatItemType } from "@/types/chat";
-import { Chat2ItemType } from "@/types/chat2";
-import { ReactNode } from "react";
-import { useSocket } from "@/routes/private-wrarpper";
+} from "@/store/slices/room-slice"
+import { useAppDispatch } from "@/store"
+import { ChatItemType } from "@/types/chat"
+import { Chat2ItemType } from "@/types/chat2"
+import { ReactNode } from "react"
+import { useSocket } from "@/routes/private-wrarpper"
 
 type Props = {
-  children: ReactNode;
-};
+  children: ReactNode
+}
 export default function ChatWrapper({ children }: Props) {
-  const settings = useSetting();
+  const settings = useSetting()
 
-  const appDispatch = useAppDispatch();
+  const appDispatch = useAppDispatch()
 
   useSocket(
     "messageReceived",
     (data: ChatItemType) => {
-      console.log(data, "RECEIVED DATA");
-      const isDirect = data?.is_direct;
+      console.log(data, "RECEIVED DATA")
+      const isDirect = data?.is_direct
 
-      if (settings.sounds.messageIncoming) playSoundEffect("newMessage2");
+      if (settings.sounds.messageIncoming) playSoundEffect("newMessage2")
 
       appDispatch(
         updateMessagesAction({
           message: data,
         })
-      );
+      )
       appDispatch(
         unreadMessagesAction({
           message: data,
           messageType: isDirect ? "direct" : "room",
         })
-      );
+      )
     },
     [settings.sounds.messageIncoming]
-  );
+  )
 
   useSocket("messageSeen", (data) => {
-    const message = data.message;
-    let convertedMessage = { ...message, seen: true };
+    const message = data.message
+    let convertedMessage = { ...message, seen: true }
     appDispatch(
       updateMessagesAction({
         message: convertedMessage,
       })
-    );
-  });
+    )
+  })
 
   useSocket("messageUpdated", (data: Chat2ItemType) => {
-    console.log(data, "MESSAGE UPDATED");
-    appDispatch(updateMessagesAction({ message: data }));
-  });
+    console.log(data, "MESSAGE UPDATED")
+    appDispatch(updateMessagesAction({ message: data }))
+  })
   useSocket("messageDeleted", (data: Chat2ItemType) => {
-    console.log(data, "MESSAGE Deleted");
-    appDispatch(removeMessageAction({ message: data }));
-  });
+    console.log(data, "MESSAGE Deleted")
+    appDispatch(removeMessageAction({ message: data }))
+  })
 
-  return <>{children}</>;
+  return <>{children}</>
 }

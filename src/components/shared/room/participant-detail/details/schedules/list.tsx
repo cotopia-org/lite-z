@@ -20,8 +20,7 @@ export default function SchedulesList({ justView = true }: Props) {
   const schedules: ScheduleType[] = data !== undefined ? data?.data : [];
 
   const totalHours = useMemo(() => {
-    return workpaceUsers.find((x) => x.id === user?.id)?.schedule_hours_in_week
-      ?.hours;
+    return workpaceUsers.find((x) => x.id === user?.id)?.schedule_hours_in_week;
   }, [workpaceUsers, user]);
 
   if (data === undefined || isLoading) return <FullLoading />;

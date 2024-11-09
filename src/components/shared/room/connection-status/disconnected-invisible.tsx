@@ -1,25 +1,24 @@
-"use client";
-import { useEffect } from "react";
+import { useEffect } from "react"
 export type DisconnectLayoutProps = {
-  onReTry?: () => void;
-};
+  onReTry?: () => void
+}
 
 export default function DisconnectedInvisible({
   onReTry,
 }: DisconnectLayoutProps) {
   const onReloadHandler = async () => {
-    if (onReTry) onReTry();
-  };
+    if (onReTry) onReTry()
+  }
 
   useEffect(() => {
     const timeout = setInterval(() => {
-      onReloadHandler();
-    }, 2000);
+      onReloadHandler()
+    }, 2000)
 
     return () => {
-      clearTimeout(timeout);
-    };
-  }, []);
+      clearTimeout(timeout)
+    }
+  }, [])
 
-  return null;
+  return null
 }

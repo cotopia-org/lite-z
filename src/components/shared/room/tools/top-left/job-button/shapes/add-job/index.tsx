@@ -13,12 +13,17 @@ const AddJobHandler = ({ onCreated, workspaceId }: Props) => {
   if (workspaceId === undefined) return null
   return (
     <FullModalBox
+      title="Add job"
       trigger={(open) => (
-        <CotopiaButton startIcon={<Plus />} onClick={open}>
+        <CotopiaButton
+          className="min-w-[100px] !bg-primary"
+          startIcon={<Plus size={16} />}
+          onClick={open}
+        >
           Add Job
         </CotopiaButton>
       )}
-      className="w-[450px]"
+      className="w-[464px] [&_.dialog-title]:text-lg [&_.dialog-header]:pb-4 [&_.dialog-header]:border-b"
     >
       {(open, close) => {
         return (

@@ -1,37 +1,37 @@
-import { getDay } from "date-fns";
-import { ScheduleDayType } from "..";
-import TimePicker from "./time-picker";
-import { useCallback, useEffect, useState } from "react";
-import { Minus } from "lucide-react";
+import { getDay } from "date-fns"
+import { ScheduleDayType } from ".."
+import TimePicker from "./time-picker"
+import { useCallback, useEffect, useState } from "react"
+import { Minus } from "lucide-react"
 
 type Props = {
-  dayTime: ScheduleDayType["times"][0];
-  onChange: (dayTime: ScheduleDayType["times"][0]) => void;
-};
+  dayTime: ScheduleDayType["times"][0]
+  onChange: (dayTime: ScheduleDayType["times"][0]) => void
+}
 export default function DayTime({ dayTime, onChange }: Props) {
   const [time, setTime] = useState<ScheduleDayType["times"][0]>({
     from: "",
     to: "",
-  });
+  })
   useEffect(() => {
-    if (dayTime !== undefined) setTime(dayTime);
-  }, [dayTime]);
+    if (dayTime !== undefined) setTime(dayTime)
+  }, [dayTime])
 
   const handleChange = useCallback(
     (type: "from" | "to", value: string) => {
       setTime((prev) => {
-        const nValue = { ...prev, [type]: value };
+        const nValue = { ...prev, [type]: value }
 
-        if (onChange) onChange(nValue);
+        if (onChange) onChange(nValue)
 
-        return nValue;
-      });
+        return nValue
+      })
     },
     [onChange]
-  );
+  )
 
   return (
-    <div className='flex flex-row gap-x-4 items-center'>
+    <div className="flex flex-row gap-x-4 items-center">
       <TimePicker
         defaultValue={time?.from}
         onChange={(time: string) => handleChange("from", time)}
@@ -44,5 +44,5 @@ export default function DayTime({ dayTime, onChange }: Props) {
         onChange={(time: string) => handleChange("to", time)}
       />
     </div>
-  );
+  )
 }
