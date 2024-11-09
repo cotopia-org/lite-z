@@ -1,6 +1,7 @@
 import {
   addMessage,
   getChats,
+  seenAllMessages,
   seenMessage,
   updateMessage,
 } from "@/store/slices/chat-slice";
@@ -8,7 +9,7 @@ import { useAppDispatch, useAppSelector } from "@/store";
 import { Chat2ItemType } from "@/types/chat2";
 import { UserType } from "@/types/user";
 import moment from "moment";
-import { RefObject, useEffect } from "react";
+import { RefObject, useEffect, useMemo } from "react";
 import { dispatch as busDispatch } from "use-bus";
 import useAuth from "../auth";
 //@ts-ignore
@@ -78,14 +79,22 @@ export const useChat2 = (props?: {
   );
 
   const seenFn = (message: Chat2ItemType, onSuccess?: () => void) => {
+    const lastMessage = chats[message.chat_id].object.last_message;
+
     socket?.emit("seenMessage", {
       chat_id: message.chat_id,
       nonce_id: message.nonce_id,
     });
 
+    //Seen message
     dispatch(
       seenMessage({ chat_id: message.chat_id, nonce_id: message.nonce_id })
     );
+
+    //Because seening the last message means you've seen all messages before
+    if (message.id === lastMessage?.id) {
+      dispatch(seenAllMessages({ chat_id: message.chat_id }));
+    }
 
     if (onSuccess) onSuccess();
   };

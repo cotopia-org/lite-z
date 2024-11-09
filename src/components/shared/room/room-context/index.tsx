@@ -3,20 +3,18 @@ import useLoading from "@/hooks/use-loading";
 import useQueryParams from "@/hooks/use-query-params";
 import useSetting from "@/hooks/use-setting";
 import { playSoundEffect } from "@/lib/sound-effects";
-import { uniqueById } from "@/lib/utils";
 import { useSocket } from "@/routes/private-wrarpper";
 import axiosInstance, { FetchDataType } from "@/services/axios";
 import { ScheduleType } from "@/types/calendar";
 import { JobType } from "@/types/job";
 import { LeaderboardType } from "@/types/leaderboard";
 import { WorkspaceRoomJoinType, WorkspaceRoomType } from "@/types/room";
-import { UserMinimalType, UserType, WorkspaceUserType } from "@/types/user";
+import { UserMinimalType, WorkspaceUserType } from "@/types/user";
 import {
   createContext,
   ReactNode,
   useContext,
   useEffect,
-  useMemo,
   useState,
 } from "react";
 import { useNavigate } from "react-router-dom";

@@ -64,6 +64,9 @@ const chatSlice = createSlice({
       ];
 
       state.chats[chat_id].object.last_message = action.payload;
+
+      state.chats[chat_id].object.unseens =
+        state.chats[chat_id].object.unseens + 1;
     },
     updateMessage: (state, action: PayloadAction<Chat2ItemType>) => {
       const incoming_chat_message = action.payload;
@@ -94,6 +97,7 @@ const chatSlice = createSlice({
     },
     seenAllMessages: (state, action: PayloadAction<{ chat_id: number }>) => {
       const chat_id = action.payload.chat_id;
+      state.chats[chat_id].object.unseens = 0;
       state.chats[chat_id].messages.map((x) => {
         x.seen = true;
         return x;

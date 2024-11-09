@@ -50,6 +50,10 @@ export default function ChatItem({ item, getUser, isMine }: Props) {
     }
   }, [item, isVisible, isMine, seen]);
 
+  useEffect(() => {
+    if (item?.seen === false) seen(item);
+  }, [item, seen]);
+
   return (
     <ChatItemContext.Provider value={{ getUser }}>
       <div
