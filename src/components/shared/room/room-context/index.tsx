@@ -241,7 +241,9 @@ export default function RoomContext({
 
   const usersHaveInProgressJobs: UserMinimalType[] = [];
 
-  const workingUsers = workpaceUsers.filter((x) => x.active_job !== null);
+  const workingUsers = workpaceUsers.filter(
+    (x) => x.active_job !== null && x.status === "online"
+  );
 
   const onlineUsers = leaderboardUsers
     .filter(
