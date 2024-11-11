@@ -5,6 +5,7 @@ import UserMood from "./mood";
 import UserNavigate from "./navigate";
 import { useRoomContext } from "../../room-context";
 import useAuth from "@/hooks/auth";
+import UserJobs from "./jobs";
 
 export default function UserCover() {
   const { user, roomId } = useUserDetail();
@@ -18,14 +19,15 @@ export default function UserCover() {
   const isMineAccount = myAccount?.id === user?.id;
 
   return (
-    <div className='relative pb-[40px]'>
-      <div className='h-[80px] bg-black/70 w-full'></div>
+    <div className="relative pb-[40px]">
+      <div className="h-[80px] bg-black/70 w-full"></div>
       <CotopiaAvatar
         src={user?.avatar?.url}
-        className='absolute w-[80px] h-[80px] bottom-0 left-4 border-4 border-white'
+        className="absolute w-[80px] h-[80px] bottom-0 left-4 border-4 border-white"
       />
-      <div className='absolute bottom-2 right-2 flex flex-row items-center gap-x-2'>
+      <div className="absolute bottom-2 right-2 flex flex-row items-center gap-x-2">
         {inCurrentRoom && !isMineAccount && <UserNavigate />}
+        <UserJobs />
         <UserMood />
         <UserSchedules />
       </div>
