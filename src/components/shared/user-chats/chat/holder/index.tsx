@@ -21,11 +21,13 @@ export default function ChatInnerHolder({ chat, onBack, getUser }: Props) {
 
   const { chatObjects, send, seen } = useChat2({ chat_id: chat.id });
 
-  const chatMessages = chatObjects?.[chat.id]?.messages ?? [];
+  const chatMessages = [...(chatObjects?.[chat.id]?.messages ?? [])].sort(
+    (a, b) => b.nonce_id - a.nonce_id
+  );
 
   const handleSendMessage = useCallback(
     (text: string) => {
-      const message = send({ text });
+      const message = send({ text, seen: true });
       seen(message);
     },
     [seen, send]
@@ -42,7 +44,7 @@ export default function ChatInnerHolder({ chat, onBack, getUser }: Props) {
   if (loading) return <FullLoading />;
 
   return (
-    <div className='flex flex-col gap-y-2 w-full h-[calc(100vh-132px)]'>
+    <div className='flex flex-col gap-y-2 w-full h-[calc(100vh-72px)] overflow-hidden'>
       <div className='flex flex-row items-center gap-x-2 px-4'>
         <BackHolder onClick={onBack} />
         <ChatDetails title={chat.title} />

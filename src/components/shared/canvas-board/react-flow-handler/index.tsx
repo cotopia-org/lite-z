@@ -124,9 +124,6 @@ function ReactFlowHandler({ tracks }: Props) {
           (a) => a.participant.identity === participant.username
         );
 
-        console.log("user", user);
-        console.log("participant", participant);
-
         const isDraggable = user?.username === participant.username;
 
         let object: Node = {

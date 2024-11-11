@@ -61,7 +61,7 @@ export const useChat2 = (props?: {
 
   const socket = useSocket();
 
-  const { chats, error, loading, participants } = useAppSelector(
+  const { chats, error, loading, participants, currentChat } = useAppSelector(
     (store) => store.chat
   );
 
@@ -98,11 +98,13 @@ export const useChat2 = (props?: {
       mentions,
       links,
       files,
+      seen = false,
     }: {
       text: string;
       mentions?: any[];
       links?: any[];
       files?: number[];
+      seen?: boolean;
     },
     onSuccess?: () => void
   ) => {
@@ -112,7 +114,7 @@ export const useChat2 = (props?: {
       text,
     });
 
-    dispatch(addMessage(message));
+    dispatch(addMessage({ ...message, seen }));
 
     socket?.emit("sendMessage", message, (data: any) => {});
 
@@ -151,5 +153,6 @@ export const useChat2 = (props?: {
     loading,
     error,
     participants,
+    currentChat,
   };
 };

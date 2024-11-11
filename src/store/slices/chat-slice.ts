@@ -16,6 +16,7 @@ type ChatState = {
   error: string | null;
   loading: boolean;
   participants: UserMinimalType[];
+  currentChat?: ChatType;
 };
 
 const initialState: ChatState = {
@@ -23,6 +24,7 @@ const initialState: ChatState = {
   error: null,
   loading: false,
   participants: [],
+  currentChat: undefined,
 };
 
 // Async thunk to fetch chat by page
@@ -55,6 +57,12 @@ const chatSlice = createSlice({
   name: "chat",
   initialState,
   reducers: {
+    setCurrentChat: (state, action: PayloadAction<ChatType>) => {
+      state.currentChat = action.payload;
+    },
+    clearCurrentChat: (state) => {
+      state.currentChat = undefined;
+    },
     addMessage: (state, action: PayloadAction<Chat2ItemType>) => {
       const chat_id = action.payload.chat_id;
 
@@ -166,7 +174,13 @@ const chatSlice = createSlice({
   },
 });
 
-export const { addMessage, updateMessage, seenMessage, seenAllMessages } =
-  chatSlice.actions;
+export const {
+  addMessage,
+  updateMessage,
+  seenMessage,
+  seenAllMessages,
+  setCurrentChat,
+  clearCurrentChat,
+} = chatSlice.actions;
 
 export default chatSlice.reducer;

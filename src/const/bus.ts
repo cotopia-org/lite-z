@@ -19,4 +19,6 @@ export const __BUS = {
   rejoinRoom: "REJOIN_ROOM",
   startWorkTimer: "START_WORK_TIMER",
   stopWorkTimer: "STOP_WORK_TIMER",
+  showAddChat: "SHOW_ADD_CHAT",
+  hideAddChat: "HIDE_ADD_CHAT",
 };

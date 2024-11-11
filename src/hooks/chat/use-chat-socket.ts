@@ -121,9 +121,7 @@ export const useChatSocket = (
     );
 
     //Now message added to queue
-    socket?.emit("sendMessage", tempMessage, (message: ChatItemType) => {
-      console.log(message, "MESSAGE");
-    });
+    socket?.emit("sendMessage", tempMessage, (message: ChatItemType) => {});
   };
 
   const sendFirstDirect = async ({
@@ -150,9 +148,7 @@ export const useChatSocket = (
     );
 
     //Now message added to queue
-    socket?.emit("sendMessage", tempMessage, (message: ChatItemType) => {
-      console.log(message, "MESSAGE");
-    });
+    socket?.emit("sendMessage", tempMessage, (message: ChatItemType) => {});
   };
   const edit = async ({ message }: { message: ChatItemType }) => {
     appDispatch(

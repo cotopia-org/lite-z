@@ -5,8 +5,10 @@ type Props = {
 };
 export default function RoomSidebar({ children }: Props) {
   return (
-    <div className='min-h-screen overflow-y-auto'>
-      <div className='bg-white min-h-screen w-full'>{children}</div>
+    <div className='min-h-screen'>
+      <div className='bg-white min-h-screen w-full overflow-hidden'>
+        {children}
+      </div>
     </div>
   );
 }

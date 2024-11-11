@@ -10,11 +10,23 @@ type Props = {
   workspace_id: number;
 };
 export default function WorkspaceChats({ workspace_id }: Props) {
+  const { currentChat } = useChat2();
+
   const { add, update } = useChat2({ workspace_id });
 
-  useSocket("messageReceived", (data: Chat2ItemType) => {
-    add({ ...data, seen: false });
-  });
+  useSocket(
+    "messageReceived",
+    (data: Chat2ItemType) => {
+      let seen = false;
+
+      if (currentChat !== undefined && data.chat_id === currentChat.id) {
+        seen = true;
+      }
+
+      add({ ...data, seen });
+    },
+    [currentChat]
+  );
 
   useSocket("messageUpdated", (data: Chat2ItemType) => {
     update(data);

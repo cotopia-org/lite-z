@@ -26,7 +26,7 @@ export default function ChatsWrapper() {
   }, [chats]);
 
   let content = (
-    <div className='w-full chats-holder flex flex-col gap-y-0'>
+    <div className='w-full chats-holder flex flex-col gap-y-0 h-[calc(100vh-80px)] overflow-y-auto'>
       {chatSortedByLastMessage.map((chat) => (
         <Chat getUser={loadUserByUserId} chat={chat} key={chat?.id} />
       ))}

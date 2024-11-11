@@ -18,7 +18,7 @@ export default function Chats({ chats = [], getUser }: Props) {
 
   return (
     <SlidePusher>
-      <div className='w-full chats-holder flex flex-col gap-y-0'>
+      <div className='w-full chats-holder flex flex-col gap-y-0 overflow-y-auto'>
         {chatSortedByLastMessage.map((chat) => (
           <Chat getUser={getUser} chat={chat} key={chat.id} />
         ))}
