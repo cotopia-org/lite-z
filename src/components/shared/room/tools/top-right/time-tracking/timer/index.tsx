@@ -1,54 +1,60 @@
-import { __BUS } from "@/const/bus"
-import { convertMinutesToHHMMSS } from "@/lib/utils"
-import { ReactNode, useEffect, useState } from "react"
-import useBus from "use-bus"
+import { __BUS } from "@/const/bus";
+import { convertMinutesToHHMMSS } from "@/lib/utils";
+import { ReactNode, useEffect, useState } from "react";
+import useBus from "use-bus";
 
 type Props = {
-  initialSeconds: number
-  children: (time: string) => ReactNode
-  id?: string
-}
+  initialSeconds: number;
+  children: (time: string) => ReactNode;
+  id?: string;
+  stop?: boolean;
+};
 
-export default function Timer({ initialSeconds, children, id }: Props) {
-  let timer: NodeJS.Timeout
+export default function Timer({
+  initialSeconds,
+  children,
+  id,
+  stop = false,
+}: Props) {
+  let timer: NodeJS.Timeout;
 
-  const [seconds, setSeconds] = useState<number>(initialSeconds)
+  const [seconds, setSeconds] = useState<number>(initialSeconds);
   useEffect(() => {
-    if (initialSeconds !== undefined) setSeconds(initialSeconds)
-  }, [initialSeconds])
+    if (initialSeconds !== undefined) setSeconds(initialSeconds);
+  }, [initialSeconds]);
 
   const startTimer = () => {
     timer = setInterval(() => {
-      setSeconds((prevSeconds) => prevSeconds + 1)
-    }, 1000)
-  }
+      setSeconds((prevSeconds) => prevSeconds + 1);
+    }, 1000);
+  };
 
   const stopTimer = () => {
-    clearInterval(timer)
-  }
+    clearInterval(timer);
+  };
 
   useEffect(() => {
-    startTimer()
+    if (!stop) startTimer();
 
     // Cleanup the interval on component unmount
-    return () => stopTimer()
-  }, [])
+    return () => stopTimer();
+  }, [stop]);
 
   useBus(
     __BUS.stopWorkTimer,
     (evt) => {
-      if (evt.id === id) stopTimer()
+      if (evt.id === id) stopTimer();
     },
     [id]
-  )
+  );
 
   useBus(
     __BUS.startWorkTimer,
     (evt) => {
-      if (evt.id === id) startTimer()
+      if (evt.id === id) startTimer();
     },
     [id]
-  )
+  );
 
-  return <>{children(convertMinutesToHHMMSS((seconds ?? 0) / 60))}</>
+  return <>{children(convertMinutesToHHMMSS((seconds ?? 0) / 60))}</>;
 }
