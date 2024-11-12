@@ -7,13 +7,13 @@ import ParticipantsWithPopover from "@/components/shared/participants/with-popov
 import * as emoji from "node-emoji"
 
 export default function OfflineUsers() {
-  const { workpaceUsers, leaderboard, room_id } = useRoomContext()
+  const { workspaceUsers, leaderboard, room_id } = useRoomContext()
 
   const onlines = leaderboard
     ?.filter((x) => x.user.status === "online" && x.user.room_id !== null)
     .map((x) => x.user.id)
 
-  const allOfflineParticipants = workpaceUsers
+  const allOfflineParticipants = workspaceUsers
     .filter((x) => !onlines.includes(x.id))
     .filter((x) => x.last_login !== null)
     .sort((a, b) => moment(b.last_login).unix() - moment(a.last_login).unix())

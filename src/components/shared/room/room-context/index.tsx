@@ -45,7 +45,7 @@ const RoomCtx = createContext<{
   joinRoom: () => void;
   leaderboard: LeaderboardType[];
   scheduled: ScheduleType[];
-  workpaceUsers: WorkspaceUserType[];
+  workspaceUsers: WorkspaceUserType[];
   workspaceJobs: JobType[];
   workingUsers: WorkspaceUserType[];
   onlineUsers: UserMinimalType[];
@@ -66,7 +66,7 @@ const RoomCtx = createContext<{
   joinRoom: () => {},
   leaderboard: [],
   scheduled: [],
-  workpaceUsers: [],
+  workspaceUsers: [],
   workspaceJobs: [],
   workingUsers: [],
   onlineUsers: [],
@@ -190,7 +190,7 @@ export default function RoomContext({
   const { data: workspaceUsersData, mutate: mutateWorkspaceUsers } = useApi(
     `/workspaces/${workspace_id}/users`
   );
-  const workpaceUsers: WorkspaceUserType[] =
+  const workspaceUsers: WorkspaceUserType[] =
     workspaceUsersData !== undefined ? workspaceUsersData?.data : [];
 
   useSocket(
@@ -231,7 +231,7 @@ export default function RoomContext({
     [room, mutateWorkspaceUsers]
   );
 
-  const workpaceJobItems: JobType[] = workpaceUsers
+  const workpaceJobItems: JobType[] = workspaceUsers
     .filter((x) => x.active_job !== undefined)
     .map((x) => x.active_job as JobType);
 
@@ -239,7 +239,7 @@ export default function RoomContext({
 
   const usersHaveInProgressJobs: UserMinimalType[] = [];
 
-  const workingUsers = workpaceUsers.filter(
+  const workingUsers = workspaceUsers.filter(
     (x) => x.active_job !== null && x.status === "online"
   );
 
@@ -269,7 +269,7 @@ export default function RoomContext({
         joinRoom: handleJoinRoom,
         leaderboard: leaderboardUsers,
         scheduled: schedulesItems,
-        workpaceUsers,
+        workspaceUsers,
         workspaceJobs: workpaceJobItems,
         workingUsers: workingUsers,
         onlineUsers: onlineUsers,

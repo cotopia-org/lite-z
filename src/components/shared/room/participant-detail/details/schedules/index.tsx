@@ -32,7 +32,7 @@ export default function UserSchedules() {
           </CotopiaIconButton>
         </CotopiaTooltip>
       )}
-      className='w-[424px]'
+      className='w-auto'
     >
       {(open, close) => {
         return <SchedulesList justView />;

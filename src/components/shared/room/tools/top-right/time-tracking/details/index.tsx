@@ -13,7 +13,7 @@ import { AlarmClockOff } from "lucide-react";
 import CotopiaTooltip from "@/components/shared-ui/c-tooltip";
 
 export default function TimeTrackingDetails() {
-  const { workspace_id, workpaceUsers } = useRoomContext();
+  const { workspace_id, workspaceUsers } = useRoomContext();
 
   const { user } = useAuth();
 
@@ -39,10 +39,10 @@ export default function TimeTrackingDetails() {
             (item?.user?.status === "online" && item.user?.room_id !== null) ||
             isMe;
 
-          const userAvatar = workpaceUsers.find(
+          const userAvatar = workspaceUsers.find(
             (x) => x.id === item.user.id
           )?.avatar;
-          const userActiveJob = workpaceUsers.find(
+          const userActiveJob = workspaceUsers.find(
             (x) => x.id === item.user.id
           )?.active_job;
 

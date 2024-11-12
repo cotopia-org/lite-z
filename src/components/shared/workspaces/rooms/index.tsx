@@ -13,7 +13,7 @@ export default function WorkspaceRooms({
   rooms,
   selected_room_id,
 }: Props) {
-  const { workpaceUsers } = useRoomContext()
+  const { workspaceUsers } = useRoomContext()
 
   if (rooms.length === 0) return null
 
@@ -26,7 +26,7 @@ export default function WorkspaceRooms({
             key={room.id}
             workspace_id={workspace_id}
             room={room}
-            participants={workpaceUsers.filter(
+            participants={workspaceUsers.filter(
               (x) => x.room_id === room.id && x.status === "online"
             )}
           />

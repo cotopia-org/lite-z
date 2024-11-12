@@ -55,5 +55,7 @@ export type WorkspaceUserType = {
   has_mic?: boolean;
   verified: boolean;
   room_id: number | null;
-  schedule_hours_in_week?: number;
+  schedule_hours_in_week?: {
+    hours:string,minutes:number
+  };
 };

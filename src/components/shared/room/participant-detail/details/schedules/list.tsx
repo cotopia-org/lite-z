@@ -13,28 +13,26 @@ type Props = {
 };
 
 export default function SchedulesList({ justView = true }: Props) {
-  const { workpaceUsers } = useRoomContext();
+  const { workspaceUsers } = useRoomContext();
   const { user } = useUserDetail();
 
   const { data, isLoading } = useApi(`/users/${user?.id}/schedules`);
   const schedules: ScheduleType[] = data !== undefined ? data?.data : [];
 
   const totalHours = useMemo(() => {
-    return workpaceUsers.find((x) => x.id === user?.id)?.schedule_hours_in_week;
-  }, [workpaceUsers, user]);
+    return workspaceUsers.find((x) => x.id === user?.id)?.schedule_hours_in_week?.hours;
+  }, [workspaceUsers, user]);
 
+  console.log(totalHours)
   if (data === undefined || isLoading) return <FullLoading />;
 
   return (
-    <>
       <BoxHolder
-        title={`${capitalizeWords(
-          user?.username ?? ""
-        )}'s schedules (${totalHours}) per week`}
-        onClose={() => {}}
+          title={`${capitalizeWords(
+              user?.username ?? ""
+          )}'s schedules (${totalHours}) per week`}
       >
         <Schedules items={schedules} justView={justView} />
       </BoxHolder>
-    </>
   );
 }
