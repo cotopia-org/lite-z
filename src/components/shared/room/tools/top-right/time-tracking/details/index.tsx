@@ -86,12 +86,16 @@ export default function TimeTrackingDetails() {
                   </>
                 ) : (
                   <>
-                    <span className='text-xs opacity-85'>
-                      {convertMinutesToHHMMSS(item.working_minutes)}
-                    </span>
-                    <span className='text-xs opacity-85 text-yellow-600'>
-                      {convertMinutesToHHMMSS(item.idle_minutes)}
-                    </span>
+                    <CotopiaTooltip title='Working time'>
+                      <span className='text-xs opacity-85'>
+                        {convertMinutesToHHMMSS(item.working_minutes)}
+                      </span>
+                    </CotopiaTooltip>
+                    <CotopiaTooltip title='Idle time'>
+                      <span className='text-xs opacity-85 text-yellow-600'>
+                        {convertMinutesToHHMMSS(item.idle_minutes)}
+                      </span>
+                    </CotopiaTooltip>
                   </>
                 )}
               </div>
