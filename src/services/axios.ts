@@ -27,6 +27,9 @@ axiosInstance.interceptors.request.use(
       config.headers["Authorization"] = `Bearer ${accessToken}`;
     }
 
+    const socketId = localStorage.getItem("socket-id");
+
+    if (socketId) config.headers["socket-id"] = socketId;
     return config;
   },
   (error) => {

@@ -66,6 +66,8 @@ export default function PrivateRoutes() {
       },
     });
 
+    if (socket?.id) localStorage.setItem("socket-id", socket.id);
+
     socket.on("connect", () => {
       toast.success("Socket connected");
       setSocketState(socket);
