@@ -15,7 +15,7 @@ export default function AddDirect() {
         </CotopiaTooltip>
       )}
     >
-      {(open) => <AddDirectForm />}
+      {(_, close) => <AddDirectForm onCreateChat={close} />}
     </ModalBox>
   );
 }

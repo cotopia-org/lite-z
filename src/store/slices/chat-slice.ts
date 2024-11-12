@@ -57,6 +57,19 @@ const chatSlice = createSlice({
   name: "chat",
   initialState,
   reducers: {
+    addNewChat: (state, action: PayloadAction<ChatType>) => {
+      const chat = action.payload;
+
+      //There is nothing to do when chat has already existed
+      if (state.chats[chat.id]) return;
+
+      state.chats[chat.id] = {
+        loading: false,
+        messages: [],
+        object: chat,
+        page: 1,
+      };
+    },
     setCurrentChat: (state, action: PayloadAction<ChatType>) => {
       state.currentChat = action.payload;
     },
@@ -181,6 +194,7 @@ export const {
   seenAllMessages,
   setCurrentChat,
   clearCurrentChat,
+  addNewChat,
 } = chatSlice.actions;
 
 export default chatSlice.reducer;

@@ -3,6 +3,7 @@ import Chat from "./chat";
 import SlidePusher from "../slide-pusher";
 import { UserMinimalType } from "@/types/user";
 import { useMemo } from "react";
+import UserChatList from "./list";
 
 type Props = {
   chats: ChatType[];
@@ -18,11 +19,7 @@ export default function Chats({ chats = [], getUser }: Props) {
 
   return (
     <SlidePusher>
-      <div className='w-full chats-holder flex flex-col gap-y-0 overflow-y-auto'>
-        {chatSortedByLastMessage.map((chat) => (
-          <Chat getUser={getUser} chat={chat} key={chat.id} />
-        ))}
-      </div>
+      <UserChatList chats={chatSortedByLastMessage} getUser={getUser} />
     </SlidePusher>
   );
 }

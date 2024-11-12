@@ -21,4 +21,5 @@ export const __BUS = {
   stopWorkTimer: "STOP_WORK_TIMER",
   showAddChat: "SHOW_ADD_CHAT",
   hideAddChat: "HIDE_ADD_CHAT",
+  selectChat: "SELECT_CHAT",
 };

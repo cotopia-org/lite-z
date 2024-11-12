@@ -7,14 +7,15 @@ import {
 } from "@/store/slices/chat-slice";
 import { useAppDispatch, useAppSelector } from "@/store";
 import { Chat2ItemType } from "@/types/chat2";
-import { UserType } from "@/types/user";
+import { UserMinimalType, UserType } from "@/types/user";
 import moment from "moment";
-import { RefObject } from "react";
+import { RefObject, useMemo } from "react";
 import { dispatch as busDispatch } from "use-bus";
 import useAuth from "../auth";
 //@ts-ignore
 import { useSocket } from "@/routes/private-wrarpper";
 import { __BUS } from "@/const/bus";
+import { uniqueById } from "@/lib/utils";
 
 function generateTempChat({
   chat_id,
@@ -61,7 +62,7 @@ export const useChat2 = (props?: {
 
   const socket = useSocket();
 
-  const { chats, error, loading, participants, currentChat } = useAppSelector(
+  const { chats, error, loading, currentChat } = useAppSelector(
     (store) => store.chat
   );
 
@@ -142,6 +143,20 @@ export const useChat2 = (props?: {
   });
 
   const chatKeys = Object.keys(chats);
+
+  const participants: UserMinimalType[] = useMemo(() => {
+    const chatIds = Object.keys(chats);
+
+    let users = [];
+
+    for (let chatId of chatIds) {
+      for (let participant of chats[chatId].object.participants) {
+        users.push(participant);
+      }
+    }
+
+    return uniqueById(users) as UserMinimalType[];
+  }, [chats]);
 
   return {
     add,
