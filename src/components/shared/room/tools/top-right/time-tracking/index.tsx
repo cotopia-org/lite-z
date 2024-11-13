@@ -40,9 +40,11 @@ export default function TimeTrackingButtonTool() {
       )}
     >
       {(style, open, close) => {
+        console.log("style", style);
         return (
           <PopupBoxChild
             {...style}
+            left={style.left - style.width - 28}
             onClose={close}
             title='Leaderboard'
             width={300}

@@ -8,7 +8,7 @@ type Props = {
     handleClose: () => void
   ) => ReactNode;
   children?: (
-    style: { top: number; left: number; zIndex: number },
+    style: { top: number; left: number; width: number; zIndex: number },
     open: () => void,
     close: () => void
   ) => ReactNode;
@@ -77,9 +77,11 @@ export default function PopupBox({ trigger, children, className }: Props) {
           {
             top: (triggerPosition?.top ?? 0) + (triggerPosition?.height ?? 0),
             left: triggerPosition?.left,
+            width: triggerPosition?.width,
             zIndex: 21,
           } as {
             top: number;
+            width: number;
             left: number;
             zIndex: 21;
           },
