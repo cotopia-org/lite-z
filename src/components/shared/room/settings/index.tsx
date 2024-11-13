@@ -9,6 +9,7 @@ import { useRoomContext } from "../room-context";
 import { useAppDispatch } from "@/store";
 import { getChats } from "@/store/slices/chat-slice";
 import ChatIcon from "./chat-icon";
+import UserActionsAvatarButton from "../../user-actions-avatar-button";
 
 export default function RoomSettings() {
   const { workspace_id } = useRoomContext();
@@ -26,7 +27,11 @@ export default function RoomSettings() {
   return (
     <div className='flex flex-col gap-y-4'>
       <CTabs
-        title={<div></div>}
+        title={
+          <div>
+            <UserActionsAvatarButton size='large' />
+          </div>
+        }
         defaultValue={value}
         onChangeTab={setValue}
         className=' [&_.tab-holder]:p-6 [&_.tab-holder]:py-4 [&_.tab-holder]:shadow-app-bar'
