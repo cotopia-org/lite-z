@@ -6,5 +6,5 @@ type Props = {
 };
 export default function JobTotalHours({ job }: Props) {
   if (!job.total_hours) return null;
-  return <StatusBox label={job.total_hours} variant='info' />;
+  return <StatusBox label={`${job.total_hours} worked`} variant='info' />;
 }
