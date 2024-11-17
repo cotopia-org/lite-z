@@ -23,13 +23,16 @@ const Chat2: React.FC<Props> = ({
   return (
     <div className='flex flex-col h-full bg-black/[.04] p-4'>
       {/* Chat message list */}
-      <Items
-        items={items}
-        onFetchNewMessages={onFetchNewMessages}
-        marginFetching={300}
-        getUser={getUser}
-        onGetVirtualizer={onGetVirtualizer}
-      />
+      {
+        items.length > 0 ?  <Items
+            items={items}
+            onFetchNewMessages={onFetchNewMessages}
+            marginFetching={300}
+            getUser={getUser}
+            onGetVirtualizer={onGetVirtualizer}
+        /> : <div className={'text-center items-center justify-center m-auto h-full w-ful text-black/[0.5]'}><strong>No Messages Found</strong></div>
+      }
+
       {/* Chat input */}
       {addMessage !== undefined && <ChatInput addMessage={addMessage} />}
     </div>
