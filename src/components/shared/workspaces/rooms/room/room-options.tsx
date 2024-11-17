@@ -18,7 +18,7 @@ const RoomOptions = ({ room }: Props) => {
           type='button'
           className='!bg-transparent hover:!bg-black/[0.10] w-6 h-6'
         >
-          <MoreHorizontal size={16} color={colors.white} />
+          <MoreHorizontal size={16} />
         </CotopiaIconButton>
       }
       contentClassName='w-auto p-1 flex flex-col'
