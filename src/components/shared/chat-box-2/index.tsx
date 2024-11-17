@@ -30,7 +30,7 @@ const Chat2: React.FC<Props> = ({
             marginFetching={300}
             getUser={getUser}
             onGetVirtualizer={onGetVirtualizer}
-        /> : <div className={'text-center items-center justify-center m-auto h-full w-ful text-black/[0.5]'}><strong>No Messages Found 😢</strong></div>
+        /> : <div className={'text-center items-center justify-center m-auto h-full w-ful text-black/[0.5]'}><strong>No messages yet 😢</strong></div>
       }
 
       {/* Chat input */}
