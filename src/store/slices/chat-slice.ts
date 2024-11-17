@@ -71,7 +71,10 @@ const chatSlice = createSlice({
       };
     },
     setCurrentChat: (state, action: PayloadAction<ChatType>) => {
-      state.currentChat = action.payload;
+      const chatType = action.payload;
+
+      state.currentChat = chatType;
+      state.chats[chatType.id].object.unseens = 0;
     },
     clearCurrentChat: (state) => {
       state.currentChat = undefined;
@@ -86,6 +89,30 @@ const chatSlice = createSlice({
 
       state.chats[chat_id].object.last_message = action.payload;
 
+      state.chats[chat_id].object.unseens =
+        state.chats[chat_id].object.unseens + 1;
+    },
+    setChatMessages: (state, action: PayloadAction<Chat2ItemType[]>) => {
+      const messages = action.payload;
+      const chat_id = messages?.[0]?.chat_id;
+      state.chats[chat_id].messages = messages;
+      state.chats[chat_id].object.last_message = messages[0];
+    },
+    upcommingMessage: (
+      state,
+      action: PayloadAction<{
+        messages: Chat2ItemType[];
+        message: Chat2ItemType;
+      }>
+    ) => {
+      const { messages, message } = action.payload;
+
+      console.log("messages", messages);
+      console.log("message", message);
+
+      const chat_id = messages?.[0]?.chat_id;
+      state.chats[chat_id].messages = messages;
+      state.chats[chat_id].object.last_message = message;
       state.chats[chat_id].object.unseens =
         state.chats[chat_id].object.unseens + 1;
     },
@@ -195,6 +222,8 @@ export const {
   setCurrentChat,
   clearCurrentChat,
   addNewChat,
+  setChatMessages,
+  upcommingMessage,
 } = chatSlice.actions;
 
 export default chatSlice.reducer;

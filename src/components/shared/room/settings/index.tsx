@@ -10,6 +10,7 @@ import { useAppDispatch } from "@/store";
 import { getChats } from "@/store/slices/chat-slice";
 import ChatIcon from "./chat-icon";
 import UserActionsAvatarButton from "../../user-actions-avatar-button";
+import ChatEvents from "./chat-events";
 
 export default function RoomSettings() {
   const { workspace_id } = useRoomContext();
@@ -26,6 +27,7 @@ export default function RoomSettings() {
 
   return (
     <div className='flex flex-col gap-y-4'>
+      <ChatEvents />
       <CTabs
         title={
           <div>
