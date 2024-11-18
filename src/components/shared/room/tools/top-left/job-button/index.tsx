@@ -1,30 +1,30 @@
-import PopupBox from "@/components/shared/popup-box"
-import PopupBoxChild from "@/components/shared/popup-box/child"
-import ToolButton from "../../tool-button"
-import { BriefcaseIcon } from "@/components/icons"
-import { useRoomContext } from "../../../room-context"
-import { useApi } from "@/hooks/swr"
-import { urlWithQueryParams } from "@/lib/utils"
-import FullLoading from "@/components/shared/full-loading"
-import AddJobHandler from "./shapes/add-job"
-import { JobType } from "@/types/job"
-import { FetchDataType } from "@/services/axios"
-import Jobs from "./shapes/job-list/jobs"
+import PopupBox from "@/components/shared/popup-box";
+import PopupBoxChild from "@/components/shared/popup-box/child";
+import ToolButton from "../../tool-button";
+import { BriefcaseIcon } from "@/components/icons";
+import { useRoomContext } from "../../../room-context";
+import { useApi } from "@/hooks/swr";
+import { urlWithQueryParams } from "@/lib/utils";
+import FullLoading from "@/components/shared/full-loading";
+import AddJobHandler from "./shapes/add-job";
+import { JobType } from "@/types/job";
+import { FetchDataType } from "@/services/axios";
+import JobItems from "@/components/shared/job-items";
 
 export default function JobButton() {
-  const { workspace_id } = useRoomContext()
+  const { workspace_id } = useRoomContext();
 
   const { data, isLoading, mutate } = useApi<FetchDataType<JobType[]>>(
     urlWithQueryParams(`/users/me/jobs`, { workspace_id }),
     undefined,
     { isPaused: () => workspace_id === undefined }
-  )
+  );
 
-  let jobItems = (data && data?.data) ?? []
-  let job_label = "Create job"
-  const active_job = jobItems.find((j) => j.status === "in_progress")
-  if (active_job) job_label = active_job.title
-  if (!active_job && jobItems.length > 0) job_label = "Start job"
+  let jobItems = (data && data?.data) ?? [];
+  let job_label = "Create job";
+  const active_job = jobItems.find((j) => j.status === "in_progress");
+  if (active_job) job_label = active_job.title;
+  if (!active_job && jobItems.length > 0) job_label = "Start job";
 
   return (
     <PopupBox
@@ -39,26 +39,26 @@ export default function JobButton() {
       )}
     >
       {(triggerPosition, open, close) => {
-        let content = <Jobs items={jobItems} mutate={mutate} />
+        let content = <JobItems hasAction items={jobItems} onMutate={mutate} />;
 
-        if (isLoading || data === undefined) content = <FullLoading />
+        if (isLoading || data === undefined) content = <FullLoading />;
 
         return (
           <PopupBoxChild
             onClose={close}
-            title="Jobs"
+            title='Jobs'
             width={506}
             zIndex={triggerPosition.zIndex}
             top={triggerPosition.top}
             left={triggerPosition.left}
           >
-            <div className="flex w-full flex-col gap-y-6 items-end">
+            <div className='flex w-full flex-col gap-y-6 items-end'>
               {content}
               <AddJobHandler workspaceId={workspace_id} onCreated={mutate} />
             </div>
           </PopupBoxChild>
-        )
+        );
       }}
     </PopupBox>
-  )
+  );
 }

@@ -58,7 +58,7 @@ export default function ChatItem({ item, getUser, isMine }: Props) {
     <ChatItemContext.Provider value={{ getUser }}>
       <div
         ref={divRef}
-        className={`message-item p-2 flex flex-row items-end gap-x-2`}
+        className={`message-item p-2 px-0 flex flex-row items-end gap-x-2`}
       >
         <ChatUserOverView chat={item} />
         <ChatItemContent chat={item} />

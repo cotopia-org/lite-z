@@ -1,6 +1,5 @@
 import FullLoading from "@/components/shared/full-loading"
 import { useApi } from "@/hooks/swr"
-import AddRoom from "./add-room"
 import WorkspaceRooms from "@/components/shared/workspaces/rooms"
 import { WorkspaceRoomShortType } from "@/types/room"
 import { useEffect, useState } from "react"
@@ -17,9 +16,9 @@ export default function WorkspaceRoomsHolder({ workspace_id }: Props) {
 
   const [rooms, setRooms] = useState<WorkspaceRoomShortType[]>([])
 
-  const { data, isLoading, mutate } = useApi<
-    FetchDataType<WorkspaceRoomShortType[]>
-  >(`/workspaces/${workspace_id}/rooms`)
+  const { data, isLoading } = useApi<FetchDataType<WorkspaceRoomShortType[]>>(
+    `/workspaces/${workspace_id}/rooms`
+  )
   const items = !!data ? data?.data : []
 
   useEffect(() => {
@@ -39,7 +38,14 @@ export default function WorkspaceRoomsHolder({ workspace_id }: Props) {
     )
   })
 
-  const handleAddRoom = (room: WorkspaceRoomShortType) => mutate()
+  useSocket("roomCreated", (room: WorkspaceRoomShortType) => {
+    setRooms((prev) => [...prev, room])
+  })
+  useSocket("roomDeleted", (roomId: number) => {
+    setRooms((crt) => {
+      return crt.filter((r) => r.id !== roomId)
+    })
+  })
 
   let content = (
     <div className="flex flex-col h-full justify-between items-center">
@@ -48,7 +54,6 @@ export default function WorkspaceRoomsHolder({ workspace_id }: Props) {
         rooms={rooms}
         selected_room_id={room_id ? +room_id : undefined}
       />
-      <AddRoom workspace_id={workspace_id} onAdd={handleAddRoom} />
     </div>
   )
 

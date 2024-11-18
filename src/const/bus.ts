@@ -22,4 +22,7 @@ export const __BUS = {
   showAddChat: "SHOW_ADD_CHAT",
   hideAddChat: "HIDE_ADD_CHAT",
   selectChat: "SELECT_CHAT",
+  showChatMention: "SHOW_CHAT_MENTION",
+  hideChatMention: "HIDE_CHAT_MENTION",
+  chatInputFocus: "CHAT_INPUT_FOCUS",
 };

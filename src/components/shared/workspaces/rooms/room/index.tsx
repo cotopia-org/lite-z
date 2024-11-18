@@ -78,12 +78,6 @@ export default function WorkspaceRoom({
       <ParticipantRows
         participants={uniqueById(participants) as WorkspaceUserType[]}
       />
-      {/* <ParticipantsWithPopover
-        avatarClss="border border-primary"
-        className="ml-6"
-        roomId={room.id}
-        participants={uniquedParticipants as WorkspaceUserType[]}
-      /> */}
     </div>
   );
 }

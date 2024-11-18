@@ -12,7 +12,7 @@ export default function WorkingCard({ user }: Props) {
       <div className='flex flex-col'>
         <span className='text-sm capitalize font-medium'>{`${user.name} (${user.active_job?.total_hours})`}</span>
         <span className='text-xs text-black/70'>
-          {user.active_job?.title ?? "-"}
+          {user.active_job?.title ?? "Idle"}
         </span>
       </div>
     </div>

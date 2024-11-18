@@ -8,6 +8,7 @@ type Props = {
   contentClassName?: string;
   triggerClassName?: string;
   align?: "center" | "end" | "start";
+  onOpenChange?: (value: boolean) => void;
 };
 export default function CotopiaPopover({
   trigger,
@@ -16,9 +17,10 @@ export default function CotopiaPopover({
   contentClassName,
   triggerClassName = "",
   align = "end",
+  onOpenChange,
 }: Props) {
   return (
-    <Popover open={open}>
+    <Popover open={open} onOpenChange={onOpenChange}>
       <PopoverTrigger className={`popover-trigger ${triggerClassName}`}>
         {trigger}
       </PopoverTrigger>

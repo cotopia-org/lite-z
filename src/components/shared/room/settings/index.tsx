@@ -1,9 +1,8 @@
 import { useEffect, useState } from "react";
 import CTabs from "@/components/shared-ui/c-tabs";
 import UserChat from "./chat";
-import WorkspaceUsers from "./users";
 import WorkspaceSidebar from "@/routes/private-wrarpper/components/workspaces/sidebar";
-import { Profile2UserIcon, SoundIcon } from "@/components/icons";
+import { SoundIcon } from "@/components/icons";
 import { colors } from "@/const/varz";
 import { useRoomContext } from "../room-context";
 import { useAppDispatch } from "@/store";
@@ -48,13 +47,13 @@ export default function RoomSettings() {
             content: <UserChat />,
             value: "chat",
           },
-          {
-            icon: (
-              <Profile2UserIcon color={colors.grayscale.grayscaleCaption} />
-            ),
-            content: <WorkspaceUsers />,
-            value: "users",
-          },
+          // {
+          //   icon: (
+          //     <Profile2UserIcon color={colors.grayscale.grayscaleCaption} />
+          //   ),
+          //   content: <WorkspaceUsers />,
+          //   value: "users",
+          // },
         ]}
       />
     </div>

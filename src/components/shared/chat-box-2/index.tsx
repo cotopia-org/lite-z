@@ -20,7 +20,7 @@ const Chat2: React.FC<Props> = ({
   getUser,
   onGetVirtualizer,
 }) => {
-  return (
+  let content = (
     <div className='flex flex-col h-full bg-black/[.04] p-4'>
       {/* Chat message list */}
       <Items
@@ -31,8 +31,25 @@ const Chat2: React.FC<Props> = ({
         onGetVirtualizer={onGetVirtualizer}
       />
       {/* Chat input */}
-      {addMessage !== undefined && <ChatInput addMessage={addMessage} />}
     </div>
+  );
+
+  if (items.length === 0)
+    content = (
+      <div
+        className={
+          "flex text-center items-center justify-center m-auto h-full w-full"
+        }
+      >
+        <span>There's no messages yet 😢</span>
+      </div>
+    );
+
+  return (
+    <>
+      {content}
+      {addMessage !== undefined && <ChatInput addMessage={addMessage} />}
+    </>
   );
 };
 
