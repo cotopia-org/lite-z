@@ -3,10 +3,10 @@ import { TrashIcon } from "@/components/icons"
 import CotopiaButton from "@/components/shared-ui/c-button"
 import CDialog from "@/components/shared-ui/c-dialog"
 import CotopiaPromptContent from "@/components/shared-ui/c-prompt/content"
-import { useRoomContext } from "@/components/shared/room/room-context"
 import useLoading from "@/hooks/use-loading"
 import axiosInstance from "@/services/axios"
 import { WorkspaceRoomShortType } from "@/types/room"
+import { toast } from "sonner"
 
 type Props = {
   room: WorkspaceRoomShortType
@@ -16,12 +16,14 @@ type Props = {
 export default function DeleteRoom({ room, onDelete }: Props) {
   const { startLoading, stopLoading, isLoading } = useLoading()
 
-  const handleDelete = () => {
+  const handleDelete = (onClose?: () => void) => {
     startLoading()
     axiosInstance
       .delete(`/rooms/${room.id}`)
       .then((res) => {
+        toast.success(`"${room.title}" room has been deleted successfully`)
         stopLoading()
+        if (onClose) onClose()
         if (onDelete) onDelete()
       })
       .catch((err) => {
@@ -46,9 +48,10 @@ export default function DeleteRoom({ room, onDelete }: Props) {
       {(close) => (
         <CotopiaPromptContent
           title="Delete room"
+          loading={isLoading}
           submitText="Delete"
           description="Are you sure to delete this room?!"
-          onSubmit={handleDelete}
+          onSubmit={() => handleDelete(close)}
           onClose={close}
         />
       )}
