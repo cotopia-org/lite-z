@@ -21,18 +21,20 @@ const Chat2: React.FC<Props> = ({
   onGetVirtualizer,
 }) => {
   return (
-    <div className='flex flex-col h-full bg-black/[.04] p-4'>
-      {/* Chat message list */}
-      <Items
-        items={items}
-        onFetchNewMessages={onFetchNewMessages}
-        marginFetching={300}
-        getUser={getUser}
-        onGetVirtualizer={onGetVirtualizer}
-      />
-      {/* Chat input */}
+    <>
+      <div className='flex flex-col h-full bg-black/[.04] p-4'>
+        {/* Chat message list */}
+        <Items
+          items={items}
+          onFetchNewMessages={onFetchNewMessages}
+          marginFetching={300}
+          getUser={getUser}
+          onGetVirtualizer={onGetVirtualizer}
+        />
+        {/* Chat input */}
+      </div>
       {addMessage !== undefined && <ChatInput addMessage={addMessage} />}
-    </div>
+    </>
   );
 };
 

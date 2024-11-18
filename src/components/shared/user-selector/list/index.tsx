@@ -5,8 +5,14 @@ type Props = {
   items: UserMinimalType[];
   onPick?: (item: UserMinimalType) => void;
   defaultSelectedId?: number;
+  env?: "simple" | "detailed";
 };
-export default function UserList({ items, onPick, defaultSelectedId }: Props) {
+export default function UserList({
+  items,
+  onPick,
+  defaultSelectedId,
+  env = "detailed",
+}: Props) {
   if (items.length === 0) return null;
 
   return (
@@ -17,6 +23,7 @@ export default function UserList({ items, onPick, defaultSelectedId }: Props) {
           key={user.id}
           onPick={onPick}
           isSelected={defaultSelectedId === user?.id}
+          env={env}
         />
       ))}
     </div>

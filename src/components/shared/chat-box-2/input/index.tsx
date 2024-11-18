@@ -7,6 +7,8 @@ import React, {
 import EmojiHandlerButton from "./emoji";
 import SendHandlerButton from "./send";
 import MultilineTextarea from "./textarea";
+import Mentions from "./mentions";
+import { UserMinimalType } from "@/types/user";
 
 type ChatInputProps = {
   addMessage: (message: string) => void;
@@ -32,21 +34,30 @@ const ChatInput: React.FC<ChatInputProps> = ({ addMessage }) => {
     []
   );
 
+  const handleAddUserMention = useCallback(
+    (user: UserMinimalType) =>
+      setInputValue((prev) => `${prev}${user.username} `),
+    []
+  );
+
   return (
-    <form
-      onSubmit={handleSend}
-      className='flex items-end space-x-2 border border-black/10 rounded-lg p-2 bg-white'
-    >
-      <MultilineTextarea
-        defaultValue={inputValue}
-        onChange={setInputValue}
-        onSend={handleAddMessage}
-      />
-      <div className='flex flex-row items-center'>
-        <EmojiHandlerButton onPick={handleAddEmoji} />
-        <SendHandlerButton text={inputValue} />
-      </div>
-    </form>
+    <div className='relative mb-2'>
+      <Mentions value={inputValue} onAdd={handleAddUserMention} />
+      <form
+        onSubmit={handleSend}
+        className='flex items-end space-x-2 rounded-lg px-4 py-2 bg-white'
+      >
+        <MultilineTextarea
+          defaultValue={inputValue}
+          onChange={setInputValue}
+          onSend={handleAddMessage}
+        />
+        <div className='flex flex-row items-center'>
+          <EmojiHandlerButton onPick={handleAddEmoji} />
+          <SendHandlerButton text={inputValue} />
+        </div>
+      </form>
+    </div>
   );
 };
 
