@@ -20,19 +20,34 @@ const Chat2: React.FC<Props> = ({
   getUser,
   onGetVirtualizer,
 }) => {
+  let content = (
+    <div className='flex flex-col h-full bg-black/[.04] p-4'>
+      {/* Chat message list */}
+      <Items
+        items={items}
+        onFetchNewMessages={onFetchNewMessages}
+        marginFetching={300}
+        getUser={getUser}
+        onGetVirtualizer={onGetVirtualizer}
+      />
+      {/* Chat input */}
+    </div>
+  );
+
+  if (items.length === 0)
+    content = (
+      <div
+        className={
+          "flex text-center items-center justify-center m-auto h-full w-full"
+        }
+      >
+        <span>There's no messages yet 😢</span>
+      </div>
+    );
+
   return (
     <>
-      <div className='flex flex-col h-full bg-black/[.04] p-4'>
-        {/* Chat message list */}
-        <Items
-          items={items}
-          onFetchNewMessages={onFetchNewMessages}
-          marginFetching={300}
-          getUser={getUser}
-          onGetVirtualizer={onGetVirtualizer}
-        />
-        {/* Chat input */}
-      </div>
+      {content}
       {addMessage !== undefined && <ChatInput addMessage={addMessage} />}
     </>
   );
