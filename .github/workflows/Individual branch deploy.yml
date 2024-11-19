@@ -3,7 +3,7 @@ name: Individual branch deployment
 on:
   workflow_dispatch:
   push:
-    branches: ["pirani", "rasti", "sadrzade", "zahedi"]
+    branches: ["pirani", "rasti", "sadrzade", "zahedi" , "sameh"]
 
 jobs:
   build:
