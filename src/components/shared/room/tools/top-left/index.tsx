@@ -1,6 +1,7 @@
 import WorkspaceButton from "./workspace-button"
 import ScheduleButton from "./schedule-button"
 import JobButton from "./job-button"
+import PayrollButton from "./payroll-button"
 
 export default function TopLeftTools() {
   return (
@@ -8,6 +9,7 @@ export default function TopLeftTools() {
       <WorkspaceButton />
       <ScheduleButton />
       <JobButton />
+      <PayrollButton />
     </div>
   )
 }
