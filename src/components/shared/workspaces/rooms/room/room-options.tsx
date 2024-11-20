@@ -5,6 +5,7 @@ import DeleteRoom from "./delete-room"
 import { WorkspaceRoomShortType } from "@/types/room"
 import InviteUser from "./invite-user"
 
+import colors from "tailwindcss/colors"
 interface Props {
   room: WorkspaceRoomShortType
 }
