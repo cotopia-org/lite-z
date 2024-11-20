@@ -4,6 +4,8 @@ import ChatItemContent from "./content";
 import { UserMinimalType } from "@/types/user";
 import { createContext, useContext, useEffect, useRef, useState } from "react";
 import { useChat2 } from "@/hooks/chat/use-chat-2";
+import CotopiaContextMenu from "@/components/shared-ui/c-context-menu";
+import RightClickActions from "./right-click-actions";
 
 type Props = {
   item: Chat2ItemType;
@@ -56,13 +58,21 @@ export default function ChatItem({ item, getUser, isMine }: Props) {
 
   return (
     <ChatItemContext.Provider value={{ getUser }}>
-      <div
-        ref={divRef}
-        className={`message-item p-2 px-0 flex flex-row items-end gap-x-2`}
+      <CotopiaContextMenu
+        width={260}
+        className='bg-transparent border-0 shadow-none'
+        trigger={
+          <div
+            ref={divRef}
+            className={`message-item p-2 px-0 flex flex-row items-end gap-x-2`}
+          >
+            <ChatUserOverView chat={item} />
+            <ChatItemContent chat={item} />
+          </div>
+        }
       >
-        <ChatUserOverView chat={item} />
-        <ChatItemContent chat={item} />
-      </div>
+        <RightClickActions />
+      </CotopiaContextMenu>
     </ChatItemContext.Provider>
   );
 }
