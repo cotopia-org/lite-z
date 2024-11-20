@@ -1,9 +1,9 @@
 import { ChatItemType } from "@/types/chat";
 import MyMessage from "./my-message";
 import TheirMessage from "./their-message";
-import CotopiaContextMenu, {
+import CotopiaContextMenuLegacy, {
   ContextItemType,
-} from "@/components/shared-ui/c-context-menu";
+} from "@/components/shared-ui/c-context-menu-legacy";
 import { Reply, Pencil, Trash2 } from "lucide-react";
 import colors from "tailwindcss/colors";
 import MessageBox from "./message/MessageBox";
@@ -76,7 +76,7 @@ const ChatItem = forwardRef(
     }
 
     let content = (
-      <CotopiaContextMenu
+      <CotopiaContextMenuLegacy
         width={150}
         items={menuItems}
         trigger={

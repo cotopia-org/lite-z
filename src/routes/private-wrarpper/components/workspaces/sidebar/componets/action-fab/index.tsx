@@ -1,13 +1,13 @@
-import CotopiaIconButton from "@/components/shared-ui/c-icon-button";
-import { cn } from "@/lib/utils";
-import { Plus } from "lucide-react";
-import ModalBox from "@/components/shared/modal-box";
-import { DialogDescription, DialogTitle } from "@/components/ui/dialog";
-import AddRoomForm from "@/pages/workspace/rooms/add-room/form";
-import { useRoomContext } from "@/components/shared/room/room-context";
+import CotopiaIconButton from "@/components/shared-ui/c-icon-button"
+import { cn } from "@/lib/utils"
+import { Plus } from "lucide-react"
+import ModalBox from "@/components/shared/modal-box"
+import { DialogDescription, DialogTitle } from "@/components/ui/dialog"
+import AddRoomForm from "@/pages/workspace/rooms/add-room/form"
+import { useRoomContext } from "@/components/shared/room/room-context"
 
 export default function WorkspaceActionFab() {
-  const { workspace_id } = useRoomContext();
+  const { workspace_id } = useRoomContext()
 
   return (
     <div
@@ -38,9 +38,9 @@ export default function WorkspaceActionFab() {
                 onCreated={() => {}}
               />
             </>
-          );
+          )
         }}
       </ModalBox>
     </div>
-  );
+  )
 }

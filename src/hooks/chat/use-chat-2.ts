@@ -15,7 +15,7 @@ import useAuth from "../auth";
 //@ts-ignore
 import { useSocket } from "@/routes/private-wrarpper";
 import { __BUS } from "@/const/bus";
-import { uniqueById } from "@/lib/utils";
+import { extractMentions, uniqueById } from "@/lib/utils";
 
 function generateTempChat({
   chat_id,
@@ -96,28 +96,39 @@ export const useChat2 = (props?: {
   const send = (
     {
       text,
-      mentions,
       links,
       files,
       seen = false,
     }: {
       text: string;
-      mentions?: any[];
       links?: any[];
       files?: number[];
       seen?: boolean;
     },
     onSuccess?: () => void
   ) => {
+    const mentions = extractMentions(text);
+    const currentChatMembers = currentChat?.participants ?? [];
+
+    const properMentions = mentions.map((x) => ({
+      start_position: x.start_position,
+      model_type: "user",
+      model_id: currentChatMembers.find((a) => a.username === x.user)?.id,
+    }));
+
     const message = generateTempChat({
       chat_id: chat_id as number,
       user_id: (user as UserType)?.id,
       text,
     });
 
-    dispatch(addMessage({ ...message, seen }));
+    dispatch(addMessage({ ...message, mentions: properMentions, seen }));
 
-    socket?.emit("sendMessage", message, (data: any) => {});
+    socket?.emit(
+      "sendMessage",
+      { ...message, mentions: properMentions },
+      (data: any) => {}
+    );
 
     if (onSuccess) onSuccess();
     setTimeout(() => {
