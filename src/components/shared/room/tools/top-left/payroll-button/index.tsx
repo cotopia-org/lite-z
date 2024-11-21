@@ -2,6 +2,7 @@ import CotopiaButton from "@/components/shared-ui/c-button";
 import PopupBox from "@/components/shared/popup-box";
 import PopupBoxChild from "@/components/shared/popup-box/child";
 import { Wallet } from "lucide-react";
+import ToolButton from "../../tool-button";
 
 export default function PayrollButton() {
 
@@ -21,14 +22,15 @@ export default function PayrollButton() {
 
     return (
         <PopupBox
-            trigger={(open) => (
-                <CotopiaButton
-                    onClick={open}
-                    startIcon={<Wallet size={22} />}
-                    className="bg-white hover:bg-white text-black rounded-xl"
-                >
-                    Payroll
-                </CotopiaButton>
+            trigger={(open , isOpen) => (
+                <ToolButton
+                open={open}
+                onClick={open}
+                startIcon={<Wallet size={20} />}
+                isOpen={isOpen}
+              >
+                Payroll
+              </ToolButton>
             )}
         >
             {(triggerPosition, open, close) => (
@@ -43,7 +45,7 @@ export default function PayrollButton() {
                     <div className="my-4 flex items-center justify-between px-2">
                         <h3 className="text-lg font-semibold">Previous Payment</h3>
                         <span className="font-semibold text-black">
-                            220{" "}
+                            220
                             <span className="text-gray-400 font-medium text-sm">USDT</span>
                         </span>
                     </div>
@@ -52,7 +54,7 @@ export default function PayrollButton() {
                     <div className="my-4 flex items-center justify-between px-2">
                         <h3 className="text-lg font-semibold">Expected Payment</h3>
                         <span className="font-semibold text-black">
-                            500{" "}
+                            500
                             <span className="text-gray-400 font-medium text-sm">USDT</span>
                         </span>
                     </div>
