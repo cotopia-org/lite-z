@@ -1,25 +1,21 @@
-import Grid from "@/components/icons/grid";
-import UserAvatar from "@/components/shared/user-avatar";
-import { useAppSelector } from "@/store";
+import PayrollSideBar from "@/components/shared/cotopia-payroll/side-bar";
+import PayrollUserInformationHeader from "@/components/shared/cotopia-payroll/user-information/header";
+import PayrollPersonalProfile from "@/components/shared/cotopia-payroll/user-information/personal-profile";
 
 export default function PayrollPage() {
-    const user = useAppSelector((store) => store.auth.user);
-
     return (
-        <main className="flex bg-slate-50">
+        <main className="flex bg-slate-50 gap-x-2">
+            <PayrollSideBar />
+
+            <div className="flex gap-3 flex-1 p-3">
+                <PayrollPersonalProfile />
 
 
-            <div className="w-80 min-h-screen bg-white">
+                <div className="flex-1 bg-white shadow-lg border border-border p-3 rounded-md">
+                    <PayrollUserInformationHeader title="User Contract" altTitle="Ends in Feb 25 , 2050" />
 
-                <div className="w-full p-3 shadow-md flex items-center justify-between">
-                    <h1 className="text-xl font-semibold">Cotopia<span className="text-blue-500">Payroll.</span></h1>
-                    <UserAvatar src={user?.avatar?.url} title={user?.username!}/>
                 </div>
 
-                <ul className="p-8">
-                    <li className=""><Grid /> Dashboard</li>
-                </ul>
-                
             </div>
 
 
