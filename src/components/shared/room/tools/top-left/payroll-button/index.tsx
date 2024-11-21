@@ -59,7 +59,7 @@ export default function PayrollButton() {
                         <span className="font-semibold text-black">
                             {currentUser && userContract ? (
                                 <>
-                                    <span>{+(currentUser.working_minutes / 60).toFixed(2) * userContract?.amount}</span>
+                                    <span>{+(+(currentUser.working_minutes / 60).toFixed(2) * userContract?.amount).toFixed(2)}</span>
                                     <span className="text-gray-400 font-medium text-sm">USDT</span>
                                 </>
                             ) : (<span className="text-sm font-medium">User no have contract yet</span>)}
