@@ -10,7 +10,7 @@ export default function PayrollUserAvatar() {
             <span className="font-semibold text-sm py-1 px-2 shadow-sm border border-border rounded-full">
                 User {user?.status}</span>
 
-            <div>
+            <div className="text-center">
                 <h1 className="font-semibold">{user?.username}</h1>
                 <p className="text-sm font-semibold text-gray-400">Front-End Developer</p>
             </div>

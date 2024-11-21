@@ -8,9 +8,6 @@ export default function PayrollActiveJobs() {
     const { data, isLoading } = useApi(`/users/${userData?.user?.id}/jobs`);
     const jobs: JobType[] = data !== undefined ? data?.data : [];
 
-
-    console.log(jobs)
-
     return (
         <>
             <PayrollSectionTitle title="Active Jobs" />
