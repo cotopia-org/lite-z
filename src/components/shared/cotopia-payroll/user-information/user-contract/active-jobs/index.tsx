@@ -17,7 +17,7 @@ export default function PayrollActiveJobs() {
                     <div className="relative w-full bg-primary p-4 rounded-md flex items-center justify-between">
                         <h1 className="text-white text-lg font-semibold">{job.title}</h1>
                         <span className="text-white font-medium text-md">{job.total_hours}</span>
-                        <span className="py-1 px-4 rounded-md absolute top-10 left-1/2 -translate-x-1/2 text-white bg-black text-sm font-medium">{Number(job.total_hours.split("hours")[0]) * 1.5} USDT</span>
+                        <span className="py-1 px-4 rounded-md absolute top-10 left-1/2 -translate-x-1/2 text-white bg-black text-sm font-medium">80 USDT</span>
                     </div>
                 ))}
             </div>
