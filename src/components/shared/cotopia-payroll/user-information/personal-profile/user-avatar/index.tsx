@@ -1,8 +1,10 @@
 import UserAvatar from "@/components/shared/user-avatar";
+import useUserContract from "@/hooks/contract";
 import { useAppSelector } from "@/store";
 
 export default function PayrollUserAvatar() {
     const user = useAppSelector((store) => store.auth.user);
+    const { userContract } = useUserContract()
 
     return (
         <div className="flex flex-col items-center gap-y-3 w-full">
@@ -12,7 +14,9 @@ export default function PayrollUserAvatar() {
 
             <div className="text-center">
                 <h1 className="font-semibold">{user?.username}</h1>
-                <p className="text-sm font-semibold text-gray-400">Front-End Developer</p>
+                {userContract && (
+                    <p className="text-sm font-semibold text-gray-400">{userContract.role}</p>
+                )}   
             </div>
 
 
