@@ -3,11 +3,11 @@ import PopupBox from "@/components/shared/popup-box";
 import PopupBoxChild from "@/components/shared/popup-box/child";
 import { Wallet } from "lucide-react";
 import ToolButton from "../../tool-button";
-import { Link } from "react-router-dom";
 
 export default function PayrollButton() {
-    const currentURL = window.location.href;
-    const url = new URL(currentURL);
+    const currentURL = typeof window !== "undefined" ? window.location.href : "";
+    const url = currentURL ? new URL(currentURL).origin : "";
+
 
     return (
         <PopupBox
@@ -52,9 +52,11 @@ export default function PayrollButton() {
                     <CotopiaButton
                         className="bg-black text-white rounded-xl mt-3"
                     >
-                        <Link to={`${url}/payroll`}>
+
+                        <a href={`${url}/payroll`} target="_blank" rel="noopener noreferrer">
                             More
-                        </Link>
+                        </a>
+
                     </CotopiaButton>
                 </PopupBoxChild>
             )}
