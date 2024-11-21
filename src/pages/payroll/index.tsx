@@ -3,12 +3,6 @@ import PayrollPersonalProfile from "@/components/shared/cotopia-payroll/user-inf
 import PayrollUserContract from "@/components/shared/cotopia-payroll/user-information/user-contract";
 
 export default function PayrollPage() {
-    function handleSubmit() {
-        const currentURL = window.location.href;
-        const url = new URL(currentURL);
-    }
-
-
     return (
         <main className="flex bg-slate-50 gap-x-2">
             <PayrollSideBar />
@@ -17,10 +11,6 @@ export default function PayrollPage() {
                 <PayrollPersonalProfile />
                 <PayrollUserContract />
             </div>
-
-
-            <button onClick={handleSubmit}>Test</button>
-
         </main>
     )
 }
