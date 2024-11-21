@@ -8,7 +8,6 @@ export default function PayrollUserDetails() {
         { key: "Name", value: user?.name },
         { key: "User Id", value: user?.id },
         { key: "Email", value: user?.email },
-
     ]
 
     return (

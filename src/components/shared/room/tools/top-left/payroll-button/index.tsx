@@ -3,34 +3,23 @@ import PopupBox from "@/components/shared/popup-box";
 import PopupBoxChild from "@/components/shared/popup-box/child";
 import { Wallet } from "lucide-react";
 import ToolButton from "../../tool-button";
+import { Link } from "react-router-dom";
 
 export default function PayrollButton() {
-
-    const handleSendData = () => {
-        const targetWindow = window.open("https://cotopia-payroll.vercel.app");
-        const data = localStorage.getItem("persist:organization-panel");
-
-        console.log("Sending Data...", data)
-        if (targetWindow) {
-            const parseData = JSON.parse(data!);
-            const interval = setInterval(() => {
-                targetWindow.postMessage(parseData.auth, "https://cotopia-payroll.vercel.app");
-                clearInterval(interval);
-            }, 1000);
-        }
-    };
+    const currentURL = window.location.href;
+    const url = new URL(currentURL);
 
     return (
         <PopupBox
-            trigger={(open , isOpen) => (
+            trigger={(open, isOpen) => (
                 <ToolButton
-                open={open}
-                onClick={open}
-                startIcon={<Wallet size={20} />}
-                isOpen={isOpen}
-              >
-                Payroll
-              </ToolButton>
+                    open={open}
+                    onClick={open}
+                    startIcon={<Wallet size={20} />}
+                    isOpen={isOpen}
+                >
+                    Payroll
+                </ToolButton>
             )}
         >
             {(triggerPosition, open, close) => (
@@ -61,10 +50,11 @@ export default function PayrollButton() {
 
                     <hr />
                     <CotopiaButton
-                        onClick={handleSendData}
                         className="bg-black text-white rounded-xl mt-3"
                     >
-                        More
+                        <Link to={`${url}/payroll`}>
+                            More
+                        </Link>
                     </CotopiaButton>
                 </PopupBoxChild>
             )}
