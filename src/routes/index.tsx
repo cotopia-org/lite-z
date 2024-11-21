@@ -21,6 +21,9 @@ const RegisterPage = lazy(() => import("@/pages/auth/register"));
 //NotFound Page
 const NotFoundPage = lazy(() => import("@/pages/not-found"));
 
+// Payroll Page
+const PayrollPage = lazy(() => import("@/pages/payroll"));
+
 const router = createBrowserRouter([
   {
     element: <PrivateRoutes />,
@@ -29,6 +32,10 @@ const router = createBrowserRouter([
       {
         path: "/",
         element: <Navigate to={paths.dashboard} />,
+      },
+      {
+        path: "/payroll",
+        element: <PayrollPage />
       },
       {
         path: paths.dashboard,
