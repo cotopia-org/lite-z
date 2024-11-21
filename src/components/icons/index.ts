@@ -23,6 +23,12 @@ export { default as PlayCircleIcon } from "./play-circle"
 export { default as GpsIcon } from "./gps"
 export { default as EditIcon } from "./edit"
 export { default as TickIcon } from "./tick"
+export { default as ProfileIcon } from "./profile"
+export { default as MoneyRecive } from "./money-recive"
+export { default as WalletMinus } from "./wallet-minus"
+
+
+
 
 export const defaultColor = colors.black
 

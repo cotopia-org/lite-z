@@ -7,22 +7,28 @@ import ErrorElement from "@/components/shared/error-boundry";
 //@ts-ignore
 import PrivateRoutes from "./private-wrarpper";
 
-//Home page
+// Home page
 const HomePage = lazy(() => import("@/pages/home"));
 
-//Workspace page
+// Workspace page
 const WorkspacePage = lazy(() => import("@/pages/workspace"));
 const WorkspaceRoomPage = lazy(() => import("@/pages/workspace/rooms/room"));
 
-//Auth pages
+// Auth pages
 const LoginPage = lazy(() => import("@/pages/auth/login"));
 const RegisterPage = lazy(() => import("@/pages/auth/register"));
 
-//NotFound Page
+// NotFound Page
 const NotFoundPage = lazy(() => import("@/pages/not-found"));
 
-// Payroll Page
-const PayrollPage = lazy(() => import("@/pages/payroll"));
+// Payroll Pages
+const PayrollPage = lazy(() => import("@/pages/cotopia-payroll/payroll"));
+const PayrollDashboard = lazy(() => import("@/pages/cotopia-payroll/dashboard"));
+const PayrollPayments = lazy(() => import("@/pages/cotopia-payroll/payments"));
+const PayrollAdvance = lazy(() => import("@/pages/cotopia-payroll/advance"));
+const PayrollMessages = lazy(() => import("@/pages/cotopia-payroll/messages"));
+const PayrollReport = lazy(() => import("@/pages/cotopia-payroll/report"));
+
 
 const router = createBrowserRouter([
   {
@@ -34,8 +40,28 @@ const router = createBrowserRouter([
         element: <Navigate to={paths.dashboard} />,
       },
       {
-        path: "/payroll",
-        element: <PayrollPage />
+        path: "payroll",
+        element: <PayrollPage />,
+      },
+      {
+        path: "payroll-dashboard",
+        element: <PayrollDashboard />
+      },
+      {
+        path: "payroll-payments",
+        element: <PayrollPayments />,
+      },
+      {
+        path: "payroll-advance",
+        element: <PayrollAdvance />
+      },
+      {
+        path: "payroll-messages",
+        element: <PayrollMessages />,
+      },
+      {
+        path: "payroll-report",
+        element: <PayrollReport />
       },
       {
         path: paths.dashboard,
@@ -85,5 +111,6 @@ const router = createBrowserRouter([
     element: <NotFoundPage />,
   },
 ]);
+
 
 export default router;
