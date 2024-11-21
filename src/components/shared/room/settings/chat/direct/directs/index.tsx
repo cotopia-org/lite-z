@@ -36,8 +36,6 @@ export default function Directs({ search, onSelect, directs }: Props) {
           (x) =>
             x?.last_message !== undefined && x?.last_message?.nonce_id !== null
         )
-        //@ts-ignore
-        .sort((a, b) => b?.last_message?.nonce_id - a?.last_message?.nonce_id)
         .map((item, key) => {
           let defaultMessage = item.last_message;
           return (

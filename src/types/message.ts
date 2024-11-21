@@ -1,3 +1,4 @@
+import { Chat2ItemType } from "./chat2";
 import { AttachmentFileType } from "./file";
 
 export type MessageType = {
@@ -11,7 +12,7 @@ export type MessageType = {
   links: any[];
   mentions: any[];
   nonce_id: number;
-  reply_to: any;
+  reply_to: Chat2ItemType;
   seen: boolean;
   text: string;
   updated_at: number;

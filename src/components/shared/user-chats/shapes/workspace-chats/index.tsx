@@ -1,11 +1,25 @@
 import AddChat from "./add-chat";
 import SlidePusher from "@/components/shared/slide-pusher";
+import { useChat2 } from "@/hooks/chat/use-chat-2";
 import ChatsWrapper from "./chats-wrapper";
+import { Chat2ItemType } from "@/types/chat2";
+//@ts-ignore
+import { useSocket } from "@/routes/private-wrarpper";
 
 type Props = {
   workspace_id: number;
 };
 export default function WorkspaceChats({ workspace_id }: Props) {
+  const { add, update } = useChat2({ workspace_id });
+
+  useSocket("messageReceived", (data: Chat2ItemType) => {
+    add({ ...data, seen: false });
+  });
+
+  useSocket("messageUpdated", (data: Chat2ItemType) => {
+    update(data);
+  });
+
   let content = (
     <>
       <AddChat workspace_id={workspace_id} />

@@ -11,6 +11,11 @@ type ChatState = {
       messages: Chat2ItemType[];
       loading: boolean;
       page: number;
+      replyMessage?: Chat2ItemType;
+      pin?: {
+        items: Chat2ItemType[];
+        currentIndex: number;
+      };
     };
   };
   error: string | null;
@@ -53,6 +58,18 @@ export const getChatMessages = createAsyncThunk(
   }
 );
 
+// Async thunk to fetch chat messages by page
+export const getPinMessags = createAsyncThunk(
+  "chat/getPinMessags",
+  async ({ chat_id }: { chat_id: number }) => {
+    const res = await axiosInstance.get(`/chats/${chat_id}/pinnedMessages`);
+
+    const messages = res.data.data || [];
+
+    return messages;
+  }
+);
+
 const chatSlice = createSlice({
   name: "chat",
   initialState,
@@ -78,6 +95,23 @@ const chatSlice = createSlice({
     },
     clearCurrentChat: (state) => {
       state.currentChat = undefined;
+    },
+    bulkPinMessages: (state, action: PayloadAction<Chat2ItemType[]>) => {
+      const firstMessage = action.payload[0];
+
+      state.chats[firstMessage.chat_id].pin = {
+        items: action.payload,
+        currentIndex: 0,
+      };
+    },
+    setReplyMessage: (state, action: PayloadAction<Chat2ItemType>) => {
+      const item = action.payload;
+
+      state.chats[item.chat_id].replyMessage = item;
+    },
+    clearReplyMessage: (state, action: PayloadAction<number>) => {
+      const chat_id = action.payload;
+      state.chats[chat_id].replyMessage = undefined;
     },
     addMessage: (state, action: PayloadAction<Chat2ItemType>) => {
       const chat_id = action.payload.chat_id;
@@ -142,6 +176,17 @@ const chatSlice = createSlice({
 
         return x;
       });
+    },
+    pinMessage: (state, action: PayloadAction<Chat2ItemType>) => {
+      const chat_id = action.payload.chat_id;
+
+      const chatPin = state.chats[chat_id].pin;
+
+      if (chat_id)
+        state.chats[chat_id].pin = {
+          currentIndex: 0,
+          items: [...(chatPin?.items ?? []), action.payload],
+        };
     },
     seenAllMessages: (state, action: PayloadAction<{ chat_id: number }>) => {
       const chat_id = action.payload.chat_id;
@@ -210,6 +255,19 @@ const chatSlice = createSlice({
       .addCase(getChatMessages.rejected, (state, action) => {
         state.error = action.error.message || "Failed to fetch messages";
         state.loading = false;
+      })
+      .addCase(getPinMessags.pending, (state, action) => {
+        state.loading = true;
+      })
+      .addCase(
+        getPinMessags.fulfilled,
+        (state, action: PayloadAction<Chat2ItemType[]>) => {
+          console.log(action.payload);
+          state.loading = false;
+        }
+      )
+      .addCase(getPinMessags.rejected, (state, action) => {
+        state.loading = false;
       });
   },
 });
@@ -224,6 +282,10 @@ export const {
   addNewChat,
   setChatMessages,
   upcommingMessage,
+  setReplyMessage,
+  clearReplyMessage,
+  bulkPinMessages,
+  pinMessage,
 } = chatSlice.actions;
 
 export default chatSlice.reducer;

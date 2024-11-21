@@ -13,7 +13,6 @@ type Props = {
   items: Chat2ItemType[];
   onFetchNewMessages?: () => Promise<void>;
   marginFetching?: number;
-  getUser: (user_id: number) => UserMinimalType | undefined;
   onGetVirtualizer?: (vir: Virtualizer<HTMLDivElement, Element>) => void;
 };
 
@@ -21,7 +20,6 @@ export default function Items({
   items,
   marginFetching = 1000,
   onFetchNewMessages,
-  getUser,
   onGetVirtualizer,
 }: Props) {
   const { user: profile } = useAuth();
@@ -153,7 +151,6 @@ export default function Items({
                 <ChatItem
                   item={message}
                   key={message.nonce_id}
-                  getUser={getUser}
                   isMine={message?.user === profile?.id}
                 />
               </div>

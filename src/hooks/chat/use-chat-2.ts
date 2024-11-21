@@ -1,6 +1,7 @@
 import {
   addMessage,
-  getChats,
+  clearReplyMessage,
+  pinMessage,
   seenAllMessages,
   seenMessage,
   updateMessage,
@@ -21,15 +22,17 @@ function generateTempChat({
   chat_id,
   user_id,
   text,
+  reply,
 }: {
   chat_id: number;
   user_id: number;
   text: string;
+  reply?: Chat2ItemType;
 }) {
   const nonce_id = moment().unix() * 1000;
 
   //@ts-ignore
-  return {
+  const object: any = {
     chat_id,
     created_at: null,
     deleted_at: null,
@@ -39,7 +42,6 @@ function generateTempChat({
     links: [],
     mentions: [],
     nonce_id,
-    reply_to: null,
     seen: false,
     text,
     updated_at: nonce_id,
@@ -48,6 +50,13 @@ function generateTempChat({
     is_rejected: false,
     is_pending: false,
   } as Chat2ItemType;
+
+  if (reply) {
+    object["reply_to"] = reply;
+    object["reply_id"] = reply.id;
+  }
+
+  return object;
 }
 
 export const useChat2 = (props?: {
@@ -65,6 +74,16 @@ export const useChat2 = (props?: {
   const { chats, error, loading, currentChat } = useAppSelector(
     (store) => store.chat
   );
+
+  //current reply message
+  const replyMessage = currentChat
+    ? chats?.[currentChat?.id]?.replyMessage
+    : undefined;
+
+  //current pins
+  const currentChatPins = currentChat
+    ? chats?.[currentChat?.id]?.pin
+    : undefined;
 
   const dispatch = useAppDispatch();
 
@@ -99,11 +118,13 @@ export const useChat2 = (props?: {
       links,
       files,
       seen = false,
+      reply,
     }: {
       text: string;
       links?: any[];
       files?: number[];
       seen?: boolean;
+      reply?: Chat2ItemType;
     },
     onSuccess?: () => void
   ) => {
@@ -120,14 +141,28 @@ export const useChat2 = (props?: {
       chat_id: chat_id as number,
       user_id: (user as UserType)?.id,
       text,
+      reply,
     });
 
-    dispatch(addMessage({ ...message, mentions: properMentions, seen }));
+    const sendObject = { ...message, mentions: properMentions, seen };
+
+    if (reply) {
+      //@ts-ignore
+      sendObject["reply_id"] = reply.id;
+      sendObject["reply_to"] = reply;
+    }
+
+    dispatch(addMessage(sendObject));
+
+    //Clear reply message
+    if (currentChat && reply) dispatch(clearReplyMessage(currentChat?.id));
 
     socket?.emit(
       "sendMessage",
       { ...message, mentions: properMentions },
-      (data: any) => {}
+      (data: any) => {
+        if (seen === true) seenMessage(data);
+      }
     );
 
     if (onSuccess) onSuccess();
@@ -136,6 +171,16 @@ export const useChat2 = (props?: {
     }, 1);
 
     return message;
+  };
+
+  const pin = (message: Chat2ItemType) => {
+    dispatch(pinMessage(message));
+
+    socket?.send(
+      "pinMessage",
+      { chat_id: message.chat_id, nonce_id: message.nonce_id },
+      () => {}
+    );
   };
 
   const add = (message: Chat2ItemType, onSuccess?: () => void) => {
@@ -169,6 +214,10 @@ export const useChat2 = (props?: {
     return uniqueById(users) as UserMinimalType[];
   }, [chats]);
 
+  const getUser = (userId: number) => {
+    return currentChat?.participants?.find((x) => x.id === userId);
+  };
+
   return {
     add,
     send,
@@ -180,5 +229,9 @@ export const useChat2 = (props?: {
     error,
     participants,
     currentChat,
+    replyMessage,
+    getUser,
+    currentChatPins,
+    pin,
   };
 };

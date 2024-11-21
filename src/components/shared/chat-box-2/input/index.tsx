@@ -9,6 +9,8 @@ import SendHandlerButton from "./send";
 import MultilineTextarea from "./textarea";
 import Mentions from "./mentions";
 import { UserMinimalType } from "@/types/user";
+import ReplyBox from "./reply";
+import { useChat2 } from "@/hooks/chat/use-chat-2";
 
 type ChatInputProps = {
   addMessage: (message: string) => void;
@@ -17,10 +19,13 @@ type ChatInputProps = {
 const ChatInput: React.FC<ChatInputProps> = ({ addMessage }) => {
   const [inputValue, setInputValue] = useState("");
 
-  const handleAddMessage = useCallback((value: string) => {
-    setInputValue("");
-    addMessage(value.trim());
-  }, []);
+  const handleAddMessage = useCallback(
+    (value: string) => {
+      setInputValue("");
+      addMessage(value.trim());
+    },
+    [addMessage]
+  );
 
   const handleSend = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -40,9 +45,12 @@ const ChatInput: React.FC<ChatInputProps> = ({ addMessage }) => {
     []
   );
 
+  const { replyMessage } = useChat2();
+
   return (
     <div className='relative mb-2'>
       <Mentions value={inputValue} onAdd={handleAddUserMention} />
+      {replyMessage && <ReplyBox item={replyMessage} />}
       <form
         onSubmit={handleSend}
         className='flex items-end space-x-2 rounded-lg px-4 py-2 bg-white'

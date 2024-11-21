@@ -6,20 +6,30 @@ import { createContext, useContext, useEffect, useRef, useState } from "react";
 import { useChat2 } from "@/hooks/chat/use-chat-2";
 import CotopiaContextMenu from "@/components/shared-ui/c-context-menu";
 import RightClickActions from "./right-click-actions";
+import CotopiaPrompt from "@/components/shared-ui/c-prompt";
+import DeletePrompt from "./content/delete-prompt";
 
 type Props = {
   item: Chat2ItemType;
-  getUser: (user_id: number) => UserMinimalType | undefined;
   isMine?: boolean;
 };
 
 const ChatItemContext = createContext<{
-  getUser: (user_id: number) => UserMinimalType | undefined;
-}>({ getUser: (user_id) => undefined });
+  item: Chat2ItemType;
+  isShowDeletePrompt: boolean;
+  showDeletePrompt: React.Dispatch<React.SetStateAction<boolean>>;
+}>({
+  //@ts-ignore
+  item: undefined,
+  showDeletePrompt: () => {},
+  isShowDeletePrompt: false,
+});
 
 export const useChatItem = () => useContext(ChatItemContext);
 
-export default function ChatItem({ item, getUser, isMine }: Props) {
+export default function ChatItem({ item, isMine }: Props) {
+  const [isShowDeletePrompt, showDeletePrompt] = useState(false);
+
   const { seen } = useChat2();
 
   const divRef = useRef<HTMLDivElement>(null);
@@ -57,22 +67,31 @@ export default function ChatItem({ item, getUser, isMine }: Props) {
   }, [item, seen]);
 
   return (
-    <ChatItemContext.Provider value={{ getUser }}>
-      <CotopiaContextMenu
-        width={260}
-        className='bg-transparent border-0 shadow-none'
-        trigger={
-          <div
-            ref={divRef}
-            className={`message-item p-2 px-0 flex flex-row items-end gap-x-2`}
-          >
-            <ChatUserOverView chat={item} />
-            <ChatItemContent chat={item} />
-          </div>
-        }
+    <>
+      <ChatItemContext.Provider
+        value={{
+          item,
+          isShowDeletePrompt,
+          showDeletePrompt,
+        }}
       >
-        <RightClickActions />
-      </CotopiaContextMenu>
-    </ChatItemContext.Provider>
+        <CotopiaContextMenu
+          width={260}
+          className='bg-transparent border-0 shadow-none'
+          trigger={
+            <div
+              ref={divRef}
+              className={`message-item p-4 flex flex-row items-end gap-x-2`}
+            >
+              <ChatUserOverView chat={item} />
+              <ChatItemContent chat={item} />
+            </div>
+          }
+        >
+          <RightClickActions item={item} />
+        </CotopiaContextMenu>
+        <DeletePrompt />
+      </ChatItemContext.Provider>
+    </>
   );
 }

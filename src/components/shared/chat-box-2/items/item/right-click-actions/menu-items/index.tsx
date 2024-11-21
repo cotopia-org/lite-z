@@ -1,23 +1,15 @@
-import { ContextMenuItem } from "@/components/ui/context-menu";
-import { Copy, Pin, Reply, Trash } from "lucide-react";
+import Reply from "./reply";
+import Pin from "./pin";
+import CopyText from "./copy";
+import Delete from "./delete";
 
 export default function MenuItems() {
   return (
     <div className='bg-gray-700 rounded-md py-2'>
-      {[
-        { label: "Reply", icon: <Reply /> },
-        { label: "Pin", icon: <Pin /> },
-        { label: "Copy Text", icon: <Copy /> },
-        { label: "Delete", icon: <Trash /> },
-      ].map(({ icon, label }, index) => (
-        <ContextMenuItem
-          key={index}
-          className='py-2 px-4 cursor-pointer !text-white rounded-none gap-x-2'
-        >
-          {icon}
-          {label}
-        </ContextMenuItem>
-      ))}
+      <Reply />
+      <Pin />
+      <CopyText />
+      <Delete />
     </div>
   );
 }

@@ -4,12 +4,12 @@ import ChatInput from "./input";
 import { Chat2ItemType } from "@/types/chat2";
 import { UserMinimalType } from "@/types/user";
 import { Virtualizer } from "@tanstack/react-virtual";
+import PinMessages from "./pins";
 
 type Props = {
   items: Chat2ItemType[];
   addMessage?: (text: string) => void;
   onFetchNewMessages?: () => Promise<void>;
-  getUser: (user_id: number) => UserMinimalType | undefined;
   onGetVirtualizer?: (vir: Virtualizer<HTMLDivElement, Element>) => void;
 };
 
@@ -17,17 +17,16 @@ const Chat2: React.FC<Props> = ({
   items = [],
   addMessage,
   onFetchNewMessages,
-  getUser,
   onGetVirtualizer,
 }) => {
   let content = (
-    <div className='flex flex-col h-full bg-black/[.04] p-4'>
+    <div className='flex flex-col h-full bg-black/[.04] relative'>
+      <PinMessages />
       {/* Chat message list */}
       <Items
         items={items}
         onFetchNewMessages={onFetchNewMessages}
         marginFetching={300}
-        getUser={getUser}
         onGetVirtualizer={onGetVirtualizer}
       />
       {/* Chat input */}
@@ -48,7 +47,9 @@ const Chat2: React.FC<Props> = ({
   return (
     <>
       {content}
-      {addMessage !== undefined && <ChatInput addMessage={addMessage} />}
+      {typeof addMessage === "function" && (
+        <ChatInput addMessage={addMessage} />
+      )}
     </>
   );
 };
