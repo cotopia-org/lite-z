@@ -1,5 +1,5 @@
 import { convertMinutesToHHMMSS } from "@/lib/utils";
-import React from "react";
+import React, { useEffect } from "react";
 import Timer from "../timer";
 import { useRoomContext } from "@/components/shared/room/room-context";
 import UserAvatar from "@/components/shared/user-avatar";
@@ -22,6 +22,22 @@ export default function TimeTrackingDetails() {
   );
 
   const leaderboard: LeaderboardType[] = leaderboardData?.data ?? [];
+
+  useEffect(() => {
+    if (user && leaderboard.length > 0) {
+      const currentUser = leaderboard.find((item) => item.user.id === user.id);
+
+      if (currentUser) {
+        const workingHours = (currentUser.working_minutes / 60).toFixed(2);
+        const idleHours = (currentUser.idle_minutes / 60).toFixed(2);
+
+        console.log(`User Working Hours: ${workingHours} hrs`);
+        console.log(`User Idle Hours: ${idleHours} hrs`);
+      } else {
+        console.log("User not found in leaderboard");
+      }
+    }
+  }, [user, leaderboard]);
 
   let content = (
     <>
