@@ -7,9 +7,11 @@ import Profile from "@/components/icons/profile";
 import MoneyRecive from "@/components/icons/money-recive";
 import { WalletMinus } from "@/components/icons";
 import Edit from "@/components/icons/edit";
+import Profile2User from "@/components/icons/profile-2-user";
 
 const links = [
     { title: "User Profile", href: "/payroll", icon: <Profile /> },
+    { title: "Employees", href: "/payroll-employees", icon: <Profile2User /> },
     { title: "Dashboard", href: "/payroll-dashboard", icon: <Grid /> },
     { title: "Payments", href: "/payroll-payments", icon: <MoneyRecive /> },
     { title: "Advance", href: "/payroll-advance", icon: <WalletMinus /> },
