@@ -5,6 +5,8 @@ export type CBadgeProps = {
   size?: "small" | "normal" | "large";
   showAnimate?: boolean;
   className?: string;
+  postfix?: string;
+  prefix?: string;
 };
 
 let timeout: any = undefined;
@@ -14,6 +16,8 @@ export default function CBadge({
   showAnimate = true,
   size = "small",
   className,
+  postfix,
+  prefix,
 }: CBadgeProps) {
   const [hasAnimate, setHasAnimate] = useState(false);
 
@@ -57,7 +61,9 @@ export default function CBadge({
         hasAnimate ? "animate-scale-custom" : ""
       } ${clss}`}
     >
+      {!!prefix && prefix}
       {count}
+      {!!postfix && postfix}
     </div>
   );
 }

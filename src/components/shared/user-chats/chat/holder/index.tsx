@@ -4,12 +4,10 @@ import BackHolder from "./back";
 import ChatDetails from "../details";
 import Chat2 from "@/components/shared/chat-box-2";
 import { useChat2 } from "@/hooks/chat/use-chat-2";
-import { UserMinimalType } from "@/types/user";
 import { Virtualizer } from "@tanstack/react-virtual";
 import FullLoading from "@/components/shared/full-loading";
 import { useAppDispatch, useAppSelector } from "@/store";
 import { getChatMessages, getPinMessags } from "@/store/slices/chat-slice";
-import { useSlides } from "@/components/shared/slide-pusher";
 
 type Props = {
   chat_id?: number;
@@ -24,9 +22,7 @@ export default function ChatInnerHolder({ chat_id, onBack }: Props) {
   const { chatObjects, send, currentChat } = useChat2({ chat_id });
 
   const chatMessages = currentChat
-    ? [...(chatObjects?.[currentChat?.id]?.messages ?? [])].sort(
-        (a, b) => b.nonce_id - a.nonce_id
-      )
+    ? [...(chatObjects?.[currentChat?.id]?.messages ?? [])]
     : [];
 
   const reply =

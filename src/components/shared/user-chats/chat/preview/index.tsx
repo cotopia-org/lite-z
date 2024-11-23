@@ -1,11 +1,11 @@
 import React from "react";
 import CotopiaAvatar from "@/components/shared-ui/c-avatar";
 import ChatDetails from "../details";
-import { ChatType } from "@/types/chat2";
 import moment from "moment";
 import UnSeenMessages from "./un-seen-messages";
 import { useChat } from "..";
 import useAuth from "@/hooks/auth";
+import MentionedMessages from "./mentioned-messages";
 
 type Props = {};
 
@@ -36,7 +36,10 @@ export default function ChatPreview() {
         }
         description={chat?.last_message?.text}
       />
-      <UnSeenMessages />
+      <div className='flex flex-row items-center absolute bottom-2 right-2'>
+        <MentionedMessages />
+        <UnSeenMessages />
+      </div>
     </div>
   );
 }

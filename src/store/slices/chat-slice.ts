@@ -54,7 +54,7 @@ export const getChatMessages = createAsyncThunk(
 
     const chats = res.data.data || [];
 
-    return chats;
+    return [...[...chats]?.reverse()];
   }
 );
 
@@ -141,7 +141,7 @@ const chatSlice = createSlice({
     setChatMessages: (state, action: PayloadAction<Chat2ItemType[]>) => {
       const messages = action.payload;
       const chat_id = messages?.[0]?.chat_id;
-      state.chats[chat_id].messages = messages;
+      state.chats[chat_id].messages = [...messages.reverse()];
       state.chats[chat_id].object.last_message = messages[0];
     },
     upcommingMessage: (
