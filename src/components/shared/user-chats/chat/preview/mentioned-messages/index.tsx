@@ -2,9 +2,11 @@ import CBadge from "@/components/shared-ui/c-badge";
 
 import { useChat } from "../..";
 
-export default function UnSeenMessages() {
+export default function MentionedMessages() {
   //Getting locale chat item context
   const { chat } = useChat();
 
-  return <CBadge count={chat.unseens} size='normal' />;
+  if (chat.mentioned_messages === 0) return null;
+
+  return <CBadge hideCount prefix='@' size='normal' />;
 }

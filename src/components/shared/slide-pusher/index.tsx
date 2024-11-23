@@ -87,7 +87,7 @@ export default function SlidePusher({ children }: Props) {
         back: handleBackSlide,
       }}
     >
-      <div className='relative flex-grow h-full'>
+      <div className='relative h-full flex-grow'>
         <div
           ref={parentRef}
           className='viewport flex flex-row w-full h-full absolute top-0 left-0 transition-all'

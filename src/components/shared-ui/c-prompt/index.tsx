@@ -4,7 +4,7 @@ import {
   DialogOverlay,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { ReactNode, useState } from "react";
+import { ReactNode, useEffect, useState } from "react";
 import CotopiaPromptContent, { CotopiaPromptType } from "./content";
 import useBus from "use-bus";
 import { __BUS } from "@/const/bus";
@@ -13,7 +13,7 @@ type PartiallyOptional<T, K extends keyof T> = Omit<T, K> & Partial<Pick<T, K>>;
 
 type WithPortalProps = {
   isPortal?: true;
-  trigger: (open: () => void) => ReactNode;
+  trigger?: (open: () => void) => ReactNode;
 };
 
 type WithoutPortalProps = {
@@ -37,6 +37,9 @@ export default function CotopiaPrompt({
   ...rest
 }: Props) {
   const [isOpen, setIsOpen] = useState(open);
+  useEffect(() => {
+    if (open !== undefined) setIsOpen(open);
+  }, [open]);
 
   const handleOpen = () => setIsOpen(true);
 

@@ -1,10 +1,14 @@
 import { MessagesIcon } from "@/components/icons";
 import CBadgeSimple from "@/components/shared-ui/c-badge/c-badge-simple";
 import { colors } from "@/const/varz";
+import { useChat2 } from "@/hooks/chat/use-chat-2";
 import { useAppSelector } from "@/store";
 import { useMemo } from "react";
 
 export default function ChatIcon() {
+  const { chats: arrayChats } = useChat2();
+  const hasMentionedChat = !!arrayChats.find((x) => x.mentioned_messages > 0);
+
   const { chats } = useAppSelector((store) => store.chat);
 
   const totalUnSeenCount = useMemo(() => {
@@ -24,7 +28,11 @@ export default function ChatIcon() {
   }, [chats]);
 
   return (
-    <CBadgeSimple count={totalUnSeenCount}>
+    <CBadgeSimple
+      count={totalUnSeenCount}
+      hideCount={hasMentionedChat}
+      postfix={hasMentionedChat ? "@" : undefined}
+    >
       <MessagesIcon color={colors.grayscale.grayscaleCaption} />
     </CBadgeSimple>
   );

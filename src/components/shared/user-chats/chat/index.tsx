@@ -9,7 +9,6 @@ import { clearCurrentChat, setCurrentChat } from "@/store/slices/chat-slice";
 
 type Props = {
   chat: ChatType;
-  getUser: (user_id: number) => UserMinimalType | undefined;
 };
 
 //@ts-ignore
@@ -17,7 +16,7 @@ const ChatContext = createContext<{ chat: ChatType }>({ chat: undefined });
 
 export const useChat = () => useContext(ChatContext);
 
-export default function Chat({ chat, getUser }: Props) {
+export default function Chat({ chat }: Props) {
   const { push, back } = useSlides();
 
   const appDispatch = useAppDispatch();
@@ -29,9 +28,7 @@ export default function Chat({ chat, getUser }: Props) {
 
   const handleSelectChat = () => {
     appDispatch(setCurrentChat(chat));
-    push(
-      <ChatInnerHolder onBack={handleBackChat} chat={chat} getUser={getUser} />
-    );
+    push(<ChatInnerHolder onBack={handleBackChat} chat_id={chat?.id} />);
   };
 
   return (
