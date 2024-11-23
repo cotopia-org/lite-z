@@ -59,6 +59,18 @@ export const getChatMessages = createAsyncThunk(
 );
 
 // Async thunk to fetch chat messages by page
+export const getBeforeAndAfterMessages = createAsyncThunk(
+  "chat/getBeforeAndAfterMessages",
+  async ({ message_id }: { message_id: number }) => {
+    const res = await axiosInstance.get(`/messages/${message_id}`);
+
+    const chats = res.data.data || [];
+
+    return chats;
+  }
+);
+
+// Async thunk to fetch chat messages by page
 export const getPinMessags = createAsyncThunk(
   "chat/getPinMessags",
   async ({ chat_id }: { chat_id: number }) => {
@@ -141,9 +153,6 @@ const chatSlice = createSlice({
     ) => {
       const { messages, message } = action.payload;
 
-      console.log("messages", messages);
-      console.log("message", message);
-
       const chat_id = messages?.[0]?.chat_id;
       state.chats[chat_id].messages = messages;
       state.chats[chat_id].object.last_message = message;
@@ -177,6 +186,22 @@ const chatSlice = createSlice({
         return x;
       });
     },
+    surfPinMessages: (state) => {
+      if (!state.currentChat) return;
+
+      const chat = state.chats[state.currentChat?.id];
+
+      if (!chat.pin) return;
+
+      const currentIndex = chat?.pin?.currentIndex ?? 0;
+      const pinItems = chat?.pin?.items ?? [];
+
+      if (currentIndex < pinItems?.length - 1) {
+        chat.pin.currentIndex = currentIndex + 1;
+      } else {
+        chat.pin.currentIndex = 0;
+      }
+    },
     pinMessage: (state, action: PayloadAction<Chat2ItemType>) => {
       const chat_id = action.payload.chat_id;
 
@@ -186,6 +211,20 @@ const chatSlice = createSlice({
         state.chats[chat_id].pin = {
           currentIndex: 0,
           items: [...(chatPin?.items ?? []), action.payload],
+        };
+    },
+    unpinMessage: (state, action: PayloadAction<Chat2ItemType>) => {
+      const chat_id = action.payload.chat_id;
+
+      const chatPin = state.chats[chat_id].pin;
+
+      if (chat_id)
+        state.chats[chat_id].pin = {
+          currentIndex: 0,
+          items:
+            chatPin?.items?.filter(
+              (x) => x.nonce_id !== action.payload.nonce_id
+            ) ?? [],
         };
     },
     seenAllMessages: (state, action: PayloadAction<{ chat_id: number }>) => {
@@ -262,13 +301,43 @@ const chatSlice = createSlice({
       .addCase(
         getPinMessags.fulfilled,
         (state, action: PayloadAction<Chat2ItemType[]>) => {
-          console.log(action.payload);
+          const pinMessages = action.payload ?? [];
+
+          if (pinMessages.length > 0)
+            state.chats[pinMessages[0].chat_id].pin = {
+              currentIndex: 0,
+              items: pinMessages,
+            };
           state.loading = false;
         }
       )
       .addCase(getPinMessags.rejected, (state, action) => {
         state.loading = false;
-      });
+      })
+      .addCase(getBeforeAndAfterMessages.pending, (state, action) => {})
+      .addCase(
+        getBeforeAndAfterMessages.fulfilled,
+        (state, action: PayloadAction<Chat2ItemType[]>) => {
+          if (!state.currentChat?.id) return;
+
+          const chat_messages = action.payload;
+          state.chats[state.currentChat.id].messages = chat_messages;
+
+          const chat = state.chats[state.currentChat?.id];
+
+          if (!chat.pin) return;
+
+          const currentIndex = chat?.pin?.currentIndex ?? 0;
+          const pinItems = chat?.pin?.items ?? [];
+
+          if (currentIndex < pinItems?.length - 1) {
+            chat.pin.currentIndex = currentIndex + 1;
+          } else {
+            chat.pin.currentIndex = 0;
+          }
+        }
+      )
+      .addCase(getBeforeAndAfterMessages.rejected, (state, action) => {});
   },
 });
 
@@ -286,6 +355,8 @@ export const {
   clearReplyMessage,
   bulkPinMessages,
   pinMessage,
+  unpinMessage,
+  surfPinMessages,
 } = chatSlice.actions;
 
 export default chatSlice.reducer;

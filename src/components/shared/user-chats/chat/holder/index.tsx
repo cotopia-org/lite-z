@@ -64,7 +64,6 @@ export default function ChatInnerHolder({ chat_id, onBack }: Props) {
           title={chatObjects?.[currentChat?.id]?.object?.title ?? ""}
         />
       </div>
-      {reply?.text}
       <Chat2
         items={chatMessages}
         addMessage={handleSendMessage}

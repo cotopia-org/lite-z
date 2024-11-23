@@ -17,4 +17,5 @@ export type MessageType = {
   text: string;
   updated_at: number;
   user: number;
+  user_id?: number;
 };

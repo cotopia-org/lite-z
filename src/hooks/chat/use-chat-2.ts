@@ -4,6 +4,7 @@ import {
   pinMessage,
   seenAllMessages,
   seenMessage,
+  unpinMessage,
   updateMessage,
 } from "@/store/slices/chat-slice";
 import { useAppDispatch, useAppSelector } from "@/store";
@@ -176,8 +177,18 @@ export const useChat2 = (props?: {
   const pin = (message: Chat2ItemType) => {
     dispatch(pinMessage(message));
 
-    socket?.send(
+    socket?.emit(
       "pinMessage",
+      { chat_id: message.chat_id, nonce_id: message.nonce_id },
+      () => {}
+    );
+  };
+
+  const unpin = (message: Chat2ItemType) => {
+    dispatch(unpinMessage(message));
+
+    socket?.emit(
+      "unPinMessage",
       { chat_id: message.chat_id, nonce_id: message.nonce_id },
       () => {}
     );
@@ -233,5 +244,6 @@ export const useChat2 = (props?: {
     getUser,
     currentChatPins,
     pin,
+    unpin,
   };
 };

@@ -30,7 +30,10 @@ export const getTimeFormat = (
 
   const formattedHours = hours.toString().padStart(2, "0");
   const formattedMinutes = minutes.toString().padStart(2, "0");
-  const formattedSeconds = remainingSeconds.toString().padStart(2, "0");
+  const formattedSeconds = remainingSeconds
+    .toFixed(0)
+    .toString()
+    .padStart(2, "0");
 
   if (hasHours)
     return `${formattedHours}:${formattedMinutes}:${formattedSeconds}`;

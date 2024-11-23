@@ -55,6 +55,36 @@ export default function Items({
     [items.length, rowVirtualizer]
   );
 
+  useBus(
+    __BUS.scrollToTargetMessage,
+    (data: any) => {
+      const messageId = data?.messageId;
+
+      const itemIndex = items.findIndex((x) => +x.nonce_id === +messageId);
+
+      if (itemIndex === -1) return;
+
+      const rightIndex = items.length - (itemIndex + 1);
+
+      rowVirtualizer.scrollToIndex(rightIndex);
+
+      const messageEl: HTMLDivElement | null = document.querySelector(
+        `.chat-item[data-index="${rightIndex}"]`
+      );
+
+      if (!messageEl || !messageEl) return;
+
+      messageEl?.classList?.add("[&]:!bg-blue-500/20");
+      messageEl?.classList?.add("[&]:animate-pulse");
+
+      setTimeout(() => {
+        messageEl?.classList?.remove("[&]:!bg-blue-500/20");
+        messageEl?.classList?.remove("[&]:animate-pulse");
+      }, 1500);
+    },
+    [items]
+  );
+
   useEffect(() => {
     if (!rowVirtualizer) return;
 
@@ -147,6 +177,7 @@ export default function Items({
                   left: 0,
                   width: "100%",
                 }}
+                className='chat-item'
               >
                 <ChatItem
                   item={message}

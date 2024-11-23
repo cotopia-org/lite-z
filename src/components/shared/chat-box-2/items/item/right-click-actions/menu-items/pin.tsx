@@ -4,17 +4,21 @@ import { useChatItem } from "../..";
 import { useChat2 } from "@/hooks/chat/use-chat-2";
 
 export default function Pin() {
-  const { pin, currentChatPins } = useChat2();
+  const { pin, unpin, currentChatPins } = useChat2();
 
   const { item } = useChatItem();
-
-  const handlePinMessage = () => {
-    pin(item);
-  };
 
   const currentChatPinsIncludes = currentChatPins?.items.find(
     (a) => a.id === item.id
   );
+
+  const handlePinMessage = () => {
+    if (!currentChatPinsIncludes) {
+      pin(item);
+    } else {
+      unpin(item);
+    }
+  };
 
   console.log("currentChatPinsIncludes", currentChatPinsIncludes);
 

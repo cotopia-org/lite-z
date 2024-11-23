@@ -7,9 +7,10 @@ import { useApi } from "@/hooks/swr";
 import { urlWithQueryParams } from "@/lib/utils";
 import FullLoading from "@/components/shared/full-loading";
 import AddJobHandler from "./shapes/add-job";
-import { JobType } from "@/types/job";
+import { JobType, JobStatusType } from "@/types/job";
 import { FetchDataType } from "@/services/axios";
 import JobItems from "@/components/shared/job-items";
+import CTabs from "@/components/shared-ui/c-tabs";
 
 export default function JobButton() {
   const { workspace_id } = useRoomContext();
@@ -39,7 +40,39 @@ export default function JobButton() {
       )}
     >
       {(triggerPosition, open, close) => {
-        let content = <JobItems hasAction items={jobItems} onMutate={mutate} />;
+        let content = (
+          <CTabs
+            defaultValue='active'
+            items={[
+              {
+                title: "Active",
+                content: (
+                  <JobItems
+                    hasAction
+                    items={jobItems.filter((x) =>
+                      ["in_progress", "started"].includes(x.status)
+                    )}
+                    onMutate={mutate}
+                  />
+                ),
+                value: "active",
+              },
+              {
+                title: "Completed",
+                content: (
+                  <JobItems
+                    hasAction
+                    items={jobItems.filter((x) =>
+                      ["completed", "paused"].includes(x.status)
+                    )}
+                    onMutate={mutate}
+                  />
+                ),
+                value: "completed",
+              },
+            ]}
+          />
+        );
 
         if (isLoading || data === undefined) content = <FullLoading />;
 

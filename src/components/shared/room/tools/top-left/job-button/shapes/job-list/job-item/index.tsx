@@ -4,7 +4,6 @@ import { limitChar } from "@/lib/utils";
 import JobStatus from "./job-status";
 import JobActions from "./job-actions";
 import JobDate from "./job-date";
-import JobTotalHours from "./total-hours";
 import JobEstimate from "./estimate";
 
 interface Props {
@@ -40,7 +39,6 @@ const JobItem = ({ item, mutate, hasAction = false }: Props) => {
         <JobStatus status={item.status} />
         <JobDate date={item.created_at} />
         <JobEstimate job={item} />
-        <JobTotalHours job={item} />
       </div>
     </div>
   );
