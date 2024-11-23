@@ -4,14 +4,14 @@ import { useApi } from "@/hooks/swr";
 import { JobType } from "@/types/job";
 import useUserContract from "@/hooks/contract";
 
-function formatMinutesToHours(minutes: string): string {
+function formatMinutesToHours(minutes: number): string {
     const hours = Math.floor(+minutes / 60);
     const remainingMinutes = Math.round(+minutes % 60);
     return `${hours} hours ${remainingMinutes} minutes`;
 }
 
-function getHoursFromMinutes(minutes: string): number {
-    return +minutes / 60;
+function getHoursFromMinutes(minutes: number): number {
+    return +(minutes / 60);
 }
 
 export default function PayrollActiveJobs() {
