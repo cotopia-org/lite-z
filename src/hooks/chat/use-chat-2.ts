@@ -4,6 +4,7 @@ import {
   pinMessage,
   seenAllMessages,
   seenMessage,
+  subtractMentionedMessages,
   unpinMessage,
   updateMessage,
 } from "@/store/slices/chat-slice";
@@ -102,8 +103,19 @@ export const useChat2 = (props?: {
 
     //Seen message
     dispatch(
-      seenMessage({ chat_id: message.chat_id, nonce_id: message.nonce_id })
+      seenMessage({
+        chat_id: message.chat_id,
+        nonce_id: message.nonce_id,
+        user_id: (user as UserType)?.id,
+      })
     );
+
+    if (
+      message?.mentions?.length > 0 &&
+      message?.mentions?.findIndex((x) => x.model_id === user?.id) > -1
+    ) {
+      dispatch(subtractMentionedMessages({ chat_id: message.chat_id }));
+    }
 
     //Because seening the last message means you've seen all messages before
     if (message.id === lastMessage?.id) {
@@ -205,9 +217,19 @@ export const useChat2 = (props?: {
     if (onSuccess) onSuccess();
   };
 
-  useSocket("messageSeen", (data: Chat2ItemType) => {
-    dispatch(seenMessage({ chat_id: data.chat_id, nonce_id: data.nonce_id }));
-  });
+  useSocket(
+    "messageSeen",
+    (data: Chat2ItemType) => {
+      dispatch(
+        seenMessage({
+          chat_id: data.chat_id,
+          nonce_id: data.nonce_id,
+          user_id: (user as UserType).id,
+        })
+      );
+    },
+    [user?.id]
+  );
 
   const chatKeys = Object.keys(chats);
 

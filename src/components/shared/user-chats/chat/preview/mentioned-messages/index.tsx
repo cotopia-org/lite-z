@@ -8,5 +8,5 @@ export default function MentionedMessages() {
 
   if (chat.mentioned_messages === 0) return null;
 
-  return <CBadge count={chat.mentioned_messages} prefix='@' size='normal' />;
+  return <CBadge hideCount prefix='@' size='normal' />;
 }

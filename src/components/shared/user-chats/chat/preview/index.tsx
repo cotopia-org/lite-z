@@ -36,7 +36,7 @@ export default function ChatPreview() {
         }
         description={chat?.last_message?.text}
       />
-      <div className='flex flex-row items-center absolute bottom-2 right-2'>
+      <div className='flex flex-row gap-x-1 items-center absolute bottom-2 right-2'>
         <MentionedMessages />
         <UnSeenMessages />
       </div>
