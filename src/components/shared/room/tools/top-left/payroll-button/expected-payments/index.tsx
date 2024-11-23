@@ -13,7 +13,7 @@ export default function ExpectedPayments() {
     );
     const leaderboard: LeaderboardType[] = leaderboardData?.data ?? [];
     const currentUser = leaderboard.find((item) => item.user.id === user?.id);
-    const workingTime = +((currentUser?.working_minutes! + currentUser?.working_minutes!) / 60).toFixed(2);
+    const workingTime = +((currentUser?.working_minutes! + currentUser?.idle_minutes!) / 60).toFixed(2);
 
     return (
         <>
