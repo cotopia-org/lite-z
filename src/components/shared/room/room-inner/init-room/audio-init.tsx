@@ -1,33 +1,34 @@
-import { useLocalParticipant } from "@livekit/components-react"
-import { Track } from "livekit-client"
-import { useEffect } from "react"
-import { useRoomHolder } from "../.."
+import { useLocalParticipant } from "@livekit/components-react";
+import { Track } from "livekit-client";
+import { useEffect } from "react";
+import { useRoomHolder } from "../..";
 
 export default function AudioInit() {
-  const { mediaPermissions } = useRoomHolder()
+  const { mediaPermissions } = useRoomHolder();
 
-  const participant = useLocalParticipant()
+  const participant = useLocalParticipant();
 
-  const localParticipant = participant.localParticipant
-  let audioTrack = undefined
+  const localParticipant = participant.localParticipant;
+  let audioTrack = undefined;
   if (
     localParticipant &&
     typeof localParticipant?.getTrackPublication !== "undefined"
   ) {
-    audioTrack = localParticipant?.getTrackPublication(Track.Source.Microphone)
+    //@ts-nocheck
+    audioTrack = localParticipant?.getTrackPublication(Track.Source.Microphone);
   }
-  const track = audioTrack?.track
+  const track = audioTrack?.track;
 
   useEffect(() => {
     if (!track) {
-      return
+      return;
     }
     if (mediaPermissions?.audio === true) {
-      track.unmute()
+      track.unmute();
     } else {
-      track.mute()
+      track.mute();
     }
-  }, [mediaPermissions?.audio, track])
+  }, [mediaPermissions?.audio, track]);
 
-  return null
+  return null;
 }

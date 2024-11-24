@@ -1,69 +1,70 @@
-import CotopiaIconButton from "@/components/shared-ui/c-icon-button"
-import CotopiaTooltip from "@/components/shared-ui/c-tooltip"
-import { useLocalParticipant } from "@livekit/components-react"
-import { Track } from "livekit-client"
-import { Video, VideoOff } from "lucide-react"
-import { useRoomHolder } from "../../.."
-import { toast } from "sonner"
+import CotopiaIconButton from "@/components/shared-ui/c-icon-button";
+import CotopiaTooltip from "@/components/shared-ui/c-tooltip";
+import { useLocalParticipant } from "@livekit/components-react";
+import { Track } from "livekit-client";
+import { Video, VideoOff } from "lucide-react";
+import { useRoomHolder } from "../../..";
+import { toast } from "sonner";
 
 export default function VideoButtonTool() {
   const { enableVideoAccess, disableVideoAccess, stream_loading } =
-    useRoomHolder()
+    useRoomHolder();
 
-  const participant = useLocalParticipant()
+  const participant = useLocalParticipant();
 
-  const localParticipant = participant.localParticipant
+  const localParticipant = participant.localParticipant;
 
-  let videoTrack = undefined
+  let videoTrack = undefined;
 
   if (
     localParticipant &&
     typeof localParticipant?.getTrackPublication !== "undefined"
   ) {
-    videoTrack = localParticipant?.getTrackPublication(Track.Source.Camera)
+    //@ts-nocheck
+    videoTrack = localParticipant?.getTrackPublication(Track.Source.Camera);
   }
 
-  const track = videoTrack?.track
+  const track = videoTrack?.track;
 
-  const isUpstreamPaused = videoTrack?.isMuted ?? true
+  const isUpstreamPaused = videoTrack?.isMuted ?? true;
 
   const toggleUpstream = async () => {
     navigator.permissions.query({ name: "camera" } as any).then((res) => {
-      const permState = res.state
+      const permState = res.state;
       if (permState === "denied") {
         return toast.error(
           "Access to camera is blocked,please check your browser settings"
-        )
+        );
       } else {
         if (!track) {
           // eslint-disable-next-line no-sequences
-          return localParticipant.setCameraEnabled(true), enableVideoAccess()
+          return localParticipant.setCameraEnabled(true), enableVideoAccess();
         }
         if (isUpstreamPaused) {
-          enableVideoAccess()
-          track.unmute()
+          enableVideoAccess();
+          track.unmute();
         } else {
-          disableVideoAccess()
-          track.mute()
-          track.stop()
+          disableVideoAccess();
+          track.mute();
+          track.stop();
         }
       }
-    })
-  }
+    });
+  };
 
-  let title = "Video Off"
+  let title = "Video Off";
 
-  if (track?.isMuted) title = "Video on"
+  if (track?.isMuted) title = "Video on";
 
   return (
     <CotopiaTooltip title={title}>
       <CotopiaIconButton
         disabled={stream_loading}
-        className="text-black"
+        className='text-black'
         onClick={toggleUpstream}
       >
         {isUpstreamPaused ? <VideoOff size={20} /> : <Video size={20} />}
       </CotopiaIconButton>
     </CotopiaTooltip>
-  )
+  );
 }
