@@ -169,7 +169,6 @@ export const ParticipantTile = React.forwardRef<
         onSubscriptionStatusChanged={handleSubscribe}
       />
     )
-
     if (
       trackReference.publication?.kind === "video" &&
       trackReference.source === Track.Source.Camera

@@ -4,31 +4,51 @@ import { useLocalParticipant } from "@livekit/components-react"
 import { Track } from "livekit-client"
 import { Video, VideoOff } from "lucide-react"
 import { useRoomHolder } from "../../.."
+import { toast } from "sonner"
 
 export default function VideoButtonTool() {
   const { enableVideoAccess, disableVideoAccess, stream_loading } =
     useRoomHolder()
 
-  const { localParticipant } = useLocalParticipant()
+  const participant = useLocalParticipant()
 
-  const videoTrack = localParticipant.getTrackPublication(Track.Source.Camera)
+  const localParticipant = participant.localParticipant
+
+  let videoTrack = undefined
+
+  if (
+    localParticipant &&
+    typeof localParticipant?.getTrackPublication !== "undefined"
+  ) {
+    videoTrack = localParticipant?.getTrackPublication(Track.Source.Camera)
+  }
 
   const track = videoTrack?.track
 
   const isUpstreamPaused = videoTrack?.isMuted ?? true
 
   const toggleUpstream = async () => {
-    if (!track) {
-      return localParticipant.setCameraEnabled(true), enableVideoAccess()
-    }
-    if (isUpstreamPaused) {
-      enableVideoAccess()
-      track.unmute()
-    } else {
-      disableVideoAccess()
-      track.mute()
-      track.stop()
-    }
+    navigator.permissions.query({ name: "camera" } as any).then((res) => {
+      const permState = res.state
+      if (permState === "denied") {
+        return toast.error(
+          "Access to camera is blocked,please check your browser settings"
+        )
+      } else {
+        if (!track) {
+          // eslint-disable-next-line no-sequences
+          return localParticipant.setCameraEnabled(true), enableVideoAccess()
+        }
+        if (isUpstreamPaused) {
+          enableVideoAccess()
+          track.unmute()
+        } else {
+          disableVideoAccess()
+          track.mute()
+          track.stop()
+        }
+      }
+    })
   }
 
   let title = "Video Off"
