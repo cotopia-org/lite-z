@@ -9,13 +9,11 @@ export default function WorkspaceRoomPage() {
 
   if (!workspace_id || !room_id) return null;
 
-  return <SampleRfV2 />;
-
-  // return (
-  //   <RoomSpatialWrapper
-  //     token={token}
-  //     workspace_id={workspace_id}
-  //     room_id={+room_id}
-  //   />
-  // );
+  return (
+    <RoomSpatialWrapper
+      token={token}
+      workspace_id={workspace_id}
+      room_id={+room_id}
+    />
+  );
 }

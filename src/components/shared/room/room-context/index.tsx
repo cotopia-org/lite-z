@@ -9,6 +9,7 @@ import { ScheduleType } from "@/types/calendar";
 import { JobType } from "@/types/job";
 import { LeaderboardType } from "@/types/leaderboard";
 import { WorkspaceRoomJoinType, WorkspaceRoomType } from "@/types/room";
+import { updateCoordinatesEvent } from "@/types/socket";
 import { UserMinimalType, WorkspaceUserType } from "@/types/user";
 import {
   createContext,
@@ -81,6 +82,8 @@ export default function RoomContext({
   room_id,
   workspace_id,
 }: Props) {
+  //update user coordinates
+
   const [room, setRoom] = useState<WorkspaceRoomType>();
   const { startLoading, stopLoading, isLoading } = useLoading();
 
@@ -169,6 +172,14 @@ export default function RoomContext({
     };
 
     setRoom({ ...room, participants });
+
+    const sendingObject = {
+      room_id: room?.id,
+      coordinates: `${position.x},${position.y}`,
+      username: participants[participant_index].username,
+    };
+
+    socket?.emit("updateCoordinates", sendingObject);
   };
 
   const [sidebar, setSidebar] = useState<ReactNode>(<></>);
@@ -251,6 +262,26 @@ export default function RoomContext({
         x.user.workspace_id === +(workspace_id as string)
     )
     .map((x) => x.user);
+
+  useSocket("updateCoordinates", (data: updateCoordinatesEvent) => {
+    setRoom((prev) => {
+      return prev
+        ? {
+            ...prev,
+            participants: prev.participants.map((participant) => {
+              if (participant.username === data.username) {
+                return {
+                  ...participant,
+                  coordinates: data.coordinates,
+                };
+              }
+
+              return participant;
+            }),
+          }
+        : undefined;
+    });
+  });
 
   return (
     <RoomCtx.Provider
