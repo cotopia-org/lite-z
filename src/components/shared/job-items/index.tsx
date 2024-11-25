@@ -4,13 +4,11 @@ import { JobType } from "@/types/job";
 
 type Props = {
   items: JobType[];
-  length?:number;
   onMutate?: () => void;
   hasAction?: boolean;
 };
 export default function JobItems({
   items,
-  length,
   onMutate,
   hasAction = false,
 }: Props) {
@@ -20,7 +18,6 @@ export default function JobItems({
       {items.map((item, key) => {
         return (
           <JobItem
-            length={length}
             hasAction={hasAction}
             mutate={onMutate}
             item={item}
