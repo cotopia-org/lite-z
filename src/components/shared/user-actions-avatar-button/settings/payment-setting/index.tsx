@@ -24,10 +24,10 @@ export default function PaymentsSettings() {
             <PreviousPayments />
             <MonthCountdown/>
             <hr />
-            
-            <div className="w-full my-4 flex flex-col items-center justify-center gap-y-3 px-2">
+
+            <div className="w-full my-4 flex flex-col items-center justify-center px-2">
                 <CotopiaInput value={paymentAddress} onChange={e => handleChangePaymentAddress(e.target.value)} label="Payment Address" placeholder="Enter you're payment address" />
-                <CotopiaButton className="bg-primary text-white mt-8 px-5 w-full" onClick={() => setEditAddress(prevState => !prevState)}>{editAddress ? "Save" : "Edit"}</CotopiaButton>
+                <CotopiaButton className="bg-primary text-white px-5 w-full" onClick={() => setEditAddress(prevState => !prevState)}>{editAddress ? "Save" : "Edit"}</CotopiaButton>
             </div>
         </>
     )
