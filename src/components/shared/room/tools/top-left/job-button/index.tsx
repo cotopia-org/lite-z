@@ -52,6 +52,7 @@ export default function JobButton() {
                 title: "Active",
                 content: (
                   <JobItems
+                    length={activeJobs.length}
                     hasAction
                     items={jobItems.filter((x) =>
                       ["in_progress", "started"].includes(x.status)
@@ -59,7 +60,6 @@ export default function JobButton() {
                     onMutate={mutate}
                   />
                 ),
-                length: activeJobs.length,
                 value: "active",
               },
 
@@ -68,13 +68,13 @@ export default function JobButton() {
                 content: (
                   <JobItems
                     hasAction
+                    length={pausedJobs.length}
                     items={jobItems.filter((x) =>
                       ["paused"].includes(x.status)
                     )}
                     onMutate={mutate}
                   />
                 ),
-                length: pausedJobs.length,
                 value: "paused",
               },
               {
@@ -82,13 +82,13 @@ export default function JobButton() {
                 content: (
                   <JobItems
                     hasAction
+                    length={completedJobs.length}
                     items={jobItems.filter((x) =>
                       ["completed"].includes(x.status)
                     )}
                     onMutate={mutate}
                   />
                 ),
-                length: completedJobs.length,
                 value: "completed",
               },
             ]}

@@ -7,7 +7,6 @@ type Tab = {
   title?: ReactNode;
   icon?: ReactNode;
   content: ReactNode;
-  length?: number;
 };
 
 type Props = {
@@ -60,7 +59,6 @@ export default function CTabs({
               className='min-w-[48px] min-h-[48px] rounded-lg data-[state=active]:bg-primary data-[state=active]:text-white [&_svg_path]:data-[state=active]:stroke-white'
             >
               {x.icon ? x.icon : x.title}
-              <span className="text-sm font-medium bg-gray-200">{`(${x.length})`}</span>
             </TabsTrigger>
           ))}
         </TabsList>
