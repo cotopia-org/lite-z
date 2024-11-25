@@ -22,10 +22,13 @@ export default function JobButton() {
   );
 
   let jobItems = (data && data?.data) ?? [];
+  console.log("Job items : " , jobItems)
   let job_label = "Create job";
   const active_job = jobItems.find((j) => j.status === "in_progress");
   if (active_job) job_label = active_job.title;
   if (!active_job && jobItems.length > 0) job_label = "Start job";
+  console.log("Active Job : " , active_job)
+
 
   return (
     <PopupBox
@@ -55,20 +58,7 @@ export default function JobButton() {
                     onMutate={mutate}
                   />
                 ),
-                value: "active",
-              },
-              {
-                title: "Completed",
-                content: (
-                  <JobItems
-                    hasAction
-                    items={jobItems.filter((x) =>
-                      ["completed"].includes(x.status)
-                    )}
-                    onMutate={mutate}
-                  />
-                ),
-                value: "completed",
+                value: `active`,
               },
               {
                 title: "Paused",
@@ -82,6 +72,19 @@ export default function JobButton() {
                   />
                 ),
                 value: "paused",
+              },
+              {
+                title: "Completed",
+                content: (
+                  <JobItems
+                    hasAction
+                    items={jobItems.filter((x) =>
+                      ["completed"].includes(x.status)
+                    )}
+                    onMutate={mutate}
+                  />
+                ),
+                value: "completed",
               },
             ]}
           />
