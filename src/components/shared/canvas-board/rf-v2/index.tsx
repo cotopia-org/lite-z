@@ -1,4 +1,4 @@
-import { useCallback, useMemo, useRef } from "react";
+import { useCallback, useMemo, useRef, useState } from "react";
 import ReactFlowV2 from "../../react-flow/v2";
 import UserNode from "../nodes/user";
 import { useRoomContext } from "../../room/room-context";
@@ -8,6 +8,8 @@ import useAuth from "@/hooks/auth";
 import { Track } from "livekit-client";
 import ShareScreenNode from "./nodes/share-screen";
 import { useSocket } from "@/routes/private-wrarpper";
+import useBus from "use-bus";
+import { __BUS } from "@/const/bus";
 
 enum RoomRfNodeType {
   shareScreenNode = "shareScreenNode",
@@ -27,16 +29,18 @@ export default function WithReactFlowV2({
 
   const { room, updateUserCoords } = useRoomContext();
 
+  const [isDragging, setIsDragging] = useState(false);
+
   //Participant nodes
   const participantNodes =
     room?.participants?.map((participant) => {
-      const rfUserId = "" + participant?.username;
       const coords = participant?.coordinates?.split(",");
 
       let xcoord = coords?.[0] ?? 200;
       let ycoord = coords?.[1] ?? 200;
 
-      if (user?.username === participant.username) {
+      const rfUserId = "" + participant?.username;
+      if (user?.username === participant.username && isDragging) {
         xcoord =
           rf?.current?.getNode(rfUserId)?.position.x ?? coords?.[0] ?? 200;
         ycoord =
@@ -97,6 +101,7 @@ export default function WithReactFlowV2({
 
   const handleDragStopRfNodes = useCallback(
     (_: any, node: Node) => {
+      setIsDragging(false);
       switch (node.type) {
         case RoomRfNodeType.shareScreenNode:
           //emit socket
@@ -130,12 +135,13 @@ export default function WithReactFlowV2({
         defaultNode={defaultNodes ?? []}
         onInit={(rfinstance) => (rf.current = rfinstance)}
         onNodeDragStop={handleDragStopRfNodes}
+        onNodeDragStart={() => setIsDragging(true)}
         translateExtent={[
           [-200, 0],
           [3800, 1700],
         ]}
         hasJail
-        background='/assets/mock/gallery/template/sky-1.jpg'
+        background={room?.background?.url}
       />
     </div>
   );

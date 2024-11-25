@@ -32,6 +32,7 @@ type Props = {
   nodeTypes: NodeTypes;
   defaultNode: Node[];
   onNodeDragStop?: OnNodeDrag<Node>;
+  onNodeDragStart?: OnNodeDrag<Node>;
   onNodeDimensionChanges?: (changes: NodeDimensionChange[]) => void;
   onNodeDimensionChangesTurtle?: (changes: NodeDimensionChange[]) => void;
   translateExtent?: CoordinateExtent;
@@ -46,6 +47,7 @@ export default function ReactFlowV2({
   nodeTypes,
   defaultNode,
   onNodeDragStop,
+  onNodeDragStart,
   onNodeDimensionChanges,
   onNodeDimensionChangesTurtle,
   translateExtent,
@@ -148,6 +150,7 @@ export default function ReactFlowV2({
     <ReactFlow
       nodes={nodes}
       onNodesChange={handleChangeNode}
+      onNodeDragStart={onNodeDragStart}
       onNodeDragStop={onNodeDragStop}
       style={{ background: bgColor }}
       nodeTypes={finalNodeTypes}

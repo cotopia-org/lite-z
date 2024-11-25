@@ -17,9 +17,6 @@ export default function UserCover() {
 
   const inCurrentRoom = roomId === currentRoomId;
 
-  console.log("myAccount", myAccount);
-  console.log("user", user);
-
   const isMineAccount = myAccount?.id === user?.id;
 
   return (
