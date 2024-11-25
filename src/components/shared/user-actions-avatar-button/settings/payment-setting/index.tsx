@@ -1,24 +1,33 @@
 import CotopiaButton from "@/components/shared-ui/c-button";
+import CotopiaInput from "@/components/shared-ui/c-input";
 import ExpectedPayments from "@/components/shared/room/tools/top-left/payroll-button/expected-payments";
 import PreviousPayments from "@/components/shared/room/tools/top-left/payroll-button/previous-payments";
-import { Plus } from "lucide-react";
+import useUserContract from "@/hooks/contract";
+import React, { useRef, useState } from "react";
 
 export default function PaymentsSettings() {
-    const currentURL = typeof window !== "undefined" ? window.location.href : "";
-    const url = currentURL ? new URL(currentURL).origin : "";
+    const { userContract } = useUserContract();
+    const payment_address = userContract?.payment_address
+    const [paymentAddress, setPaymentAddress] = useState<string>(payment_address ? payment_address : "");
+    const [editAddress, setEditAddress] = useState<boolean>(false)
+
+    function handleChangePaymentAddress(value: string) {
+        if (value.length === payment_address?.length) {
+            setEditAddress(true);
+            setPaymentAddress(value);
+        }
+
+        setEditAddress(false)
+    }
 
     return (
         <>
             <ExpectedPayments />
             <PreviousPayments />
-            <CotopiaButton
-                className="bg-primary text-white rounded-xl mt-3 flex w-full items-end"
-            >
-
-                <a href={`${url}/payroll`} target="_blank" rel="noopener noreferrer" className="flex items-center justify-center gap-x-5">
-                    <Plus /> More
-                </a>
-            </CotopiaButton>
+            <div className="w-full flex items-center justify-center">
+                <CotopiaInput value={paymentAddress ? paymentAddress : "User no have any contract yet"} onChange={e => handleChangePaymentAddress(e.target.value)} label="Payment Address" />
+                <CotopiaButton className="bg-primary text-white">{editAddress ? "Save" : "Edit"}</CotopiaButton>
+            </div>
         </>
     )
 }

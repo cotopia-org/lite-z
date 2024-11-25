@@ -36,15 +36,15 @@ export default function PayrollButton() {
                     <PreviousPayments />
                     <ExpectedPayments />
 
-                    <CotopiaButton
-                        className="bg-primary text-white rounded-xl mt-3 flex w-full items-end"
-                    >
-
-                        <a href={`${url}/payroll`} target="_blank" rel="noopener noreferrer" className="flex items-center justify-center gap-x-5">
-                            <Plus /> More
-                        </a>
-                    </CotopiaButton>
-
+                    <div className="flex items-end w-full">
+                        <CotopiaButton
+                            className="bg-primary text-white rounded-xl mt-3"
+                        >
+                            <a href={`${url}/payroll`} target="_blank" rel="noopener noreferrer" className="flex items-center justify-center gap-x-5">
+                                <Plus /> More
+                            </a>
+                        </CotopiaButton>
+                    </div>
                 </PopupBoxChild>
             )}
         </PopupBox>
