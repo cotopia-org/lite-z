@@ -27,9 +27,9 @@ export default function JobButton() {
   if (active_job) job_label = active_job.title;
   if (!active_job && jobItems.length > 0) job_label = "Start job";
 
-  const activeJobs = jobItems.map((job) => job.status === "in_progress");
-  const completedJobs = jobItems.map((job) => job.status === "completed");
-  const pausedJobs = jobItems.map((job) => job.status === "paused");
+  const activeJobs = jobItems.filter((job) => job.status === "in_progress");
+  const completedJobs = jobItems.filter((job) => job.status === "completed");
+  const pausedJobs = jobItems.filter((job) => job.status === "paused");
 
 
   return (
