@@ -19,7 +19,6 @@ import { ReactFlowProvider } from "@xyflow/react";
 import { toast } from "sonner";
 import useBus from "use-bus";
 import axiosInstance, { FetchDataType } from "@/services/axios";
-import { VARZ } from "@/const/varz";
 import { useSocket } from "@/routes/private-wrarpper";
 import { __BUS } from "@/const/bus";
 import Disconnected from "./connection-status/disconnected";
@@ -97,8 +96,6 @@ const reducer = (state: InitStreamType, action: StreamActionType) => {
       return { ...state, loading: true };
     case "STOP_LOADING":
       return { ...state, loading: false };
-    case "CHANGE_VALUES":
-      return { ...state, ...action.payload };
     default:
       return state;
   }
@@ -185,8 +182,8 @@ export default function RoomHolder({
     try {
       dispatch({ type: "START_LOADING" });
       await axiosInstance.post("/settings", { key: "audio", value: "off" });
-      const videoTracks = audioStream.getTracks();
-      videoTracks.forEach((track) => {
+      const audioTracks = audioStream.getAudioTracks();
+      audioTracks.forEach((track) => {
         track.stop();
       });
       const obj_to_update = {

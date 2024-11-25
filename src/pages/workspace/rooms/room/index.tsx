@@ -1,6 +1,7 @@
 import RoomSpatialWrapper from "@/components/shared/room-spatial-wrapper";
 import { useAppSelector } from "@/store";
 import { useParams } from "react-router-dom";
+import SampleRfV2 from "./sample-rf-v2";
 
 export default function WorkspaceRoomPage() {
   const { token } = useAppSelector((store) => store.livekit);
