@@ -63,12 +63,25 @@ export default function JobButton() {
                   <JobItems
                     hasAction
                     items={jobItems.filter((x) =>
-                      ["completed", "paused"].includes(x.status)
+                      ["completed"].includes(x.status)
                     )}
                     onMutate={mutate}
                   />
                 ),
                 value: "completed",
+              },
+              {
+                title: "Paused",
+                content: (
+                  <JobItems
+                    hasAction
+                    items={jobItems.filter((x) =>
+                      ["paused"].includes(x.status)
+                    )}
+                    onMutate={mutate}
+                  />
+                ),
+                value: "paused",
               },
             ]}
           />
