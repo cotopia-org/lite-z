@@ -27,6 +27,11 @@ export default function JobButton() {
   if (active_job) job_label = active_job.title;
   if (!active_job && jobItems.length > 0) job_label = "Start job";
 
+  const activeJobs = jobItems.map((job) => job.status === "in_progress");
+  const completedJobs = jobItems.map((job) => job.status === "completed");
+  const pausedJobs = jobItems.map((job) => job.status === "paused");
+
+
   return (
     <PopupBox
       trigger={(open, isOpen) => (
@@ -50,12 +55,27 @@ export default function JobButton() {
                   <JobItems
                     hasAction
                     items={jobItems.filter((x) =>
-                      ["in_progress", "started"].includes(x.status)
+                      ["in_progress"].includes(x.status)
                     )}
                     onMutate={mutate}
                   />
                 ),
+                length: activeJobs.length,
                 value: "active",
+              },
+              {
+                title: "Paused",
+                content: (
+                  <JobItems
+                    hasAction
+                    items={jobItems.filter((x) =>
+                      ["paused"].includes(x.status)
+                    )}
+                    onMutate={mutate}
+                  />
+                ),
+                length: pausedJobs.length,
+                value: "paused",
               },
               {
                 title: "Completed",
@@ -63,11 +83,12 @@ export default function JobButton() {
                   <JobItems
                     hasAction
                     items={jobItems.filter((x) =>
-                      ["completed", "paused"].includes(x.status)
+                      ["completed"].includes(x.status)
                     )}
                     onMutate={mutate}
                   />
                 ),
+                length: completedJobs.length,
                 value: "completed",
               },
             ]}
