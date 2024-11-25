@@ -17,13 +17,13 @@ export default function ExpectedPayments() {
 
     return (
         <>
-            <div className="my-4 flex items-center justify-between px-2">
-                <h3 className="text-lg font-semibold">Expected Payment</h3>
+            <div className="w-full my-4 flex items-center justify-between px-2">
+                <h3 className="text-xl font-semibold">Expected Payment</h3>
                 <span className="font-semibold text-black">
                     {currentUser && userContract ? (
                         <>
-                            <span>{+(workingTime * userContract?.amount).toFixed(2)}</span>
-                            <span className="text-gray-400 font-medium text-sm">USDT</span>
+                            <span className="text-lg font-bold">{+(workingTime * userContract?.amount).toFixed(2)}</span>
+                            <span className="text-gray-400 font-medium text-sm"> USDT</span>
                         </>
                     ) : (<span className="text-sm font-medium">User no have contract yet</span>)}
                 </span>

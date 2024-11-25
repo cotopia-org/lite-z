@@ -1,7 +1,7 @@
 import CotopiaButton from "@/components/shared-ui/c-button";
 import PopupBox from "@/components/shared/popup-box";
 import PopupBoxChild from "@/components/shared/popup-box/child";
-import { Plus, Wallet } from "lucide-react";
+import { Wallet } from "lucide-react";
 import ToolButton from "../../tool-button";
 import ExpectedPayments from "./expected-payments";
 import PreviousPayments from "./previous-payments";
@@ -36,12 +36,12 @@ export default function PayrollButton() {
                     <PreviousPayments />
                     <ExpectedPayments />
 
-                    <div className="flex items-end w-full">
+                    <div className="w-full flex justify-end">
                         <CotopiaButton
                             className="bg-primary text-white rounded-xl mt-3"
                         >
                             <a href={`${url}/payroll`} target="_blank" rel="noopener noreferrer" className="flex items-center justify-center gap-x-5">
-                                <Plus /> More
+                                More
                             </a>
                         </CotopiaButton>
                     </div>
