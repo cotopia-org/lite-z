@@ -49,35 +49,35 @@ function MonthCountdown() {
                 <div className="flex items-center gap-4 text-gray-800">
                     {/* Days */}
                     <div className="flex flex-col items-center">
-                        <span className="text-2xl font-bold">{timeLeft.days}</span>
+                        <span className="text-lg font-bold">{timeLeft.days}</span>
                         <span className="text-sm font-medium">Days</span>
                     </div>
 
-                    <span className="text-2xl font-bold">:</span>
+                    <span className="text-lg font-bold">:</span>
 
                     {/* Hours */}
                     <div className="flex flex-col items-center">
-                        <span className="text-2xl font-bold">
+                        <span className="text-lg font-bold">
                             {timeLeft.hours.toString().padStart(2, "0")}
                         </span>
                         <span className="text-sm font-medium">Hours</span>
                     </div>
 
-                    <span className="text-2xl font-bold">:</span>
+                    <span className="text-lg font-bold">:</span>
 
                     {/* Minutes */}
                     <div className="flex flex-col items-center">
-                        <span className="text-2xl font-bold">
+                        <span className="text-lg font-bold">
                             {timeLeft.minutes.toString().padStart(2, "0")}
                         </span>
                         <span className="text-sm font-medium">Minutes</span>
                     </div>
 
-                    <span className="text-2xl font-bold">:</span>
+                    <span className="text-lg font-bold">:</span>
 
                     {/* Seconds */}
                     <div className="flex flex-col items-center">
-                        <span className="text-2xl font-bold">
+                        <span className="text-lg font-bold">
                             {timeLeft.seconds.toString().padStart(2, "0")}
                         </span>
                         <span className="text-sm font-medium">Seconds</span>
