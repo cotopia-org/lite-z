@@ -57,10 +57,6 @@ export default function SampleRfV2() {
             className: "shadow-md rounded-md bg-white",
           },
         ]}
-        minimapNodeColor={(n) => {
-          if (n.type === "userNode") return "#000";
-          return "#eee";
-        }}
         onInit={(rf) => (reactFlow.current = rf)}
       />
     </div>

@@ -1,4 +1,4 @@
-import { useCallback, useRef } from "react";
+import { useCallback, useMemo, useRef } from "react";
 import ReactFlowV2 from "../../react-flow/v2";
 import UserNode from "../nodes/user";
 import { useRoomContext } from "../../room/room-context";
@@ -30,10 +30,18 @@ export default function WithReactFlowV2({
   //Participant nodes
   const participantNodes =
     room?.participants?.map((participant) => {
+      const rfUserId = "" + participant?.username;
       const coords = participant?.coordinates?.split(",");
 
       let xcoord = coords?.[0] ?? 200;
       let ycoord = coords?.[1] ?? 200;
+
+      if (user?.username === participant.username) {
+        xcoord =
+          rf?.current?.getNode(rfUserId)?.position.x ?? coords?.[0] ?? 200;
+        ycoord =
+          rf?.current?.getNode(rfUserId)?.position.y ?? coords?.[1] ?? 200;
+      }
 
       if (typeof xcoord === "string") xcoord = +xcoord;
       if (typeof ycoord === "string") ycoord = +ycoord;
@@ -92,14 +100,12 @@ export default function WithReactFlowV2({
       switch (node.type) {
         case RoomRfNodeType.shareScreenNode:
           //emit socket
-          console.log("node", node);
-          // const sendingObject = {
-          //     room_id: room?.id,
-          //     coordinates: newCoords,
-          //     username,
-          //   };
-
-          //   socket?.emit("updateCoordinates", sendingObject);
+          const sendingObject = {
+            room_id: room?.id,
+            coordinates: node.position,
+            share_screen_id: node.id,
+          };
+          socket?.emit("updateShareScreenCoordinates", sendingObject);
           break;
         case RoomRfNodeType.userNode:
           if (!node?.data?.username) return;
@@ -110,20 +116,26 @@ export default function WithReactFlowV2({
     [socket, updateUserCoords]
   );
 
+  useSocket("updateShareScreenCoordinates", (data) => {
+    console.log("data", data);
+  });
+
   return (
-    <div className='w-screen h-screen'>
+    <div className='w-full h-screen'>
       <ReactFlowV2
         nodeTypes={{
           userNode: UserNode,
           shareScreenNode: ShareScreenNode,
         }}
         defaultNode={defaultNodes ?? []}
-        minimapNodeColor={(n) => {
-          if (n.type === "userNode") return "#000";
-          return "#eee";
-        }}
         onInit={(rfinstance) => (rf.current = rfinstance)}
         onNodeDragStop={handleDragStopRfNodes}
+        translateExtent={[
+          [-200, 0],
+          [3800, 1700],
+        ]}
+        hasJail
+        background='/assets/mock/gallery/template/sky-1.jpg'
       />
     </div>
   );
