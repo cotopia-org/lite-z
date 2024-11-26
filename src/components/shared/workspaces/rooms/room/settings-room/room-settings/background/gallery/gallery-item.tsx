@@ -11,17 +11,13 @@ type Props = {
   workspace_id: string;
 };
 
-export default function GalleryItem({ item, room_id, workspace_id }: Props) {
+export default function GalleryItem({ item, room_id }: Props) {
   const { isLoading, startLoading, stopLoading } = useLoading();
   const handleSetBackground = async () => {
     startLoading();
     try {
-      const res = await axiosInstance.post(`/files`, {
-        path: item.source,
-      });
-      const file: AttachmentFileType = res.data.data;
       await axiosInstance.put(`/rooms/${room_id}`, {
-        background_id: file.id,
+        background: item.source,
       });
       stopLoading();
     } catch (e) {
