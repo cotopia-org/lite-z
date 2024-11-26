@@ -10,7 +10,7 @@ export default function BackgroundNode() {
       style={{
         width: 3840,
         height: 2160,
-        backgroundImage: `url(${room?.background?.url})`,
+        backgroundImage: `url(${room?.background})`,
         backgroundSize: "cover",
         backgroundRepeat: "no-repeat",
       }}

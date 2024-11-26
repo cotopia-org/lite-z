@@ -141,7 +141,7 @@ export default function WithReactFlowV2({
           [3800, 1700],
         ]}
         hasJail
-        background={room?.background?.url}
+        background={room?.background}
       />
     </div>
   );

@@ -14,7 +14,7 @@ export default function Background() {
       }}
     >
       <img
-        src={room?.background?.url ?? `/assets/backgrounds/bg-sample.webp`}
+        src={room?.background ?? `/assets/backgrounds/bg-sample.webp`}
         alt=''
         className='object-cover object-center'
       />
