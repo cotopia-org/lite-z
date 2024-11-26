@@ -52,6 +52,14 @@ const RoomCtx = createContext<{
   onlineUsers: UserMinimalType[];
   usersHaveJobs: UserMinimalType[];
   usersHaveInProgressJobs: UserMinimalType[];
+  objects: {
+    [key: string]: { x: number; y: number; width?: number; height?: number };
+  };
+  setObjects: React.Dispatch<
+    React.SetStateAction<{
+      [key: string]: { x: number; y: number; width?: number; height?: number };
+    }>
+  >;
 }>({
   room: undefined,
   livekit_token: undefined,
@@ -73,6 +81,8 @@ const RoomCtx = createContext<{
   onlineUsers: [],
   usersHaveJobs: [],
   usersHaveInProgressJobs: [],
+  objects: {},
+  setObjects: () => {},
 });
 
 export const useRoomContext = () => useContext(RoomCtx);
@@ -83,6 +93,10 @@ export default function RoomContext({
   workspace_id,
 }: Props) {
   //update user coordinates
+
+  const [objects, setObjects] = useState<{
+    [key: string]: { x: number; y: number; width?: number; height?: number };
+  }>({});
 
   const [room, setRoom] = useState<WorkspaceRoomType>();
   const { startLoading, stopLoading, isLoading } = useLoading();
@@ -306,6 +320,8 @@ export default function RoomContext({
         onlineUsers: onlineUsers,
         usersHaveJobs: usersHaveJobs,
         usersHaveInProgressJobs: usersHaveInProgressJobs,
+        objects,
+        setObjects,
       }}
     >
       {children}

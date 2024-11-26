@@ -5,8 +5,11 @@ import { memo, useState } from "react";
 import Actions from "./actions";
 import { createPortal } from "react-dom";
 import { cn } from "@/lib/utils";
+import { useSocket } from "@/routes/private-wrarpper";
 
 function ShareScreenNode({ data }: any) {
+  const socket = useSocket();
+
   const [isFullScreen, setIsFullScreen] = useState(false);
 
   let content = (
@@ -22,7 +25,18 @@ function ShareScreenNode({ data }: any) {
         identity={data?.track?.participant?.identity}
         onFullScreen={() => setIsFullScreen(true)}
       />
-      <NodeResizeControl minWidth={500} minHeight={300} keepAspectRatio>
+      <NodeResizeControl
+        minWidth={500}
+        minHeight={300}
+        keepAspectRatio
+        onResizeEnd={(_, params) => {
+          socket?.emit("updateShareScreenSize", {
+            id: data?.id,
+            width: params?.width,
+            height: params?.height,
+          });
+        }}
+      >
         <SquareArrowOutDownRight />
       </NodeResizeControl>
       <VideoTrack trackRef={data?.track} />

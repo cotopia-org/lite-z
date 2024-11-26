@@ -27,7 +27,7 @@ export default function WithReactFlowV2({
 
   const rf = useRef<ReactFlowInstance<Node, Edge>>();
 
-  const { room, updateUserCoords } = useRoomContext();
+  const { room, updateUserCoords, objects, setObjects } = useRoomContext();
 
   const [isDragging, setIsDragging] = useState(false);
 
@@ -70,32 +70,39 @@ export default function WithReactFlowV2({
       return object;
     }) ?? [];
 
+  console.log("objects", objects);
+
   //Sharescreen Nodes
   const shareScreenNodes: Node[] = [
     ...tracks
       ?.filter((x) => x.source === Track.Source.ScreenShare)
-      ?.map(
-        (x, i) =>
-          ({
-            id: "share-screen-" + i,
-            type: "shareScreenNode",
-            data: {
-              track: x,
-              label: "Share screen node",
-            },
-            position: {
-              x: rf?.current?.getNode("share-screen-" + i)?.position.x ?? 200,
-              y: rf?.current?.getNode("share-screen-" + i)?.position.y ?? 200,
-            },
-            className: "bg-white shadow-md",
-            // extent: "parent",
-          } as Node)
-      ),
+      ?.map((x, i) => {
+        const shareScreenId = "share-screen-" + i;
+
+        const isDraggable = user?.username === x.participant.identity; //and admin here
+
+        return {
+          id: shareScreenId,
+          type: "shareScreenNode",
+          data: {
+            id: shareScreenId,
+            track: x,
+            label: "Share screen node",
+          },
+          position: {
+            x: objects?.[shareScreenId]?.x ?? 200,
+            y: objects?.[shareScreenId]?.y ?? 200,
+          },
+          className: "bg-white shadow-md",
+          draggable: isDraggable,
+          // extent: "parent",
+        } as Node;
+      }),
   ];
 
   const defaultNodes = useMemo(() => {
     return [...participantNodes, ...shareScreenNodes];
-  }, [participantNodes.length, shareScreenNodes.length]);
+  }, [participantNodes.length, shareScreenNodes.length, objects]);
 
   const handleDragStopRfNodes = useCallback(
     (_: any, node: Node) => {
@@ -120,7 +127,14 @@ export default function WithReactFlowV2({
   );
 
   useSocket("updateShareScreenCoordinates", (data) => {
-    console.log("data", data);
+    setObjects((prev) => ({
+      ...prev,
+      [data.share_screen_id]: { x: data.coordinates.x, y: data.coordinates.y },
+    }));
+  });
+
+  useSocket("updateShareScreenSize", (data) => {
+    console.log("updateShareScreenSize", data);
   });
 
   return (
