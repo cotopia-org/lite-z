@@ -10,7 +10,7 @@ export default memo(({ data }: any) => {
       <NodeResizeControl minWidth={rect.width} minHeight={rect.height}>
         <SquareArrowOutDownRight />
       </NodeResizeControl>
-      <div>{data.label}</div>
+      <div>{/* <VideoTrack trackRef={data?.track} /> */}</div>
     </>
   );
 });

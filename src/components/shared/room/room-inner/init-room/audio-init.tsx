@@ -3,6 +3,7 @@ import { Track } from "livekit-client";
 import { useEffect } from "react";
 import { useRoomHolder } from "../..";
 
+//@ts-ignore
 export default function AudioInit() {
   const { mediaPermissions } = useRoomHolder();
 

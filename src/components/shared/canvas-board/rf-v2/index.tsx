@@ -1,4 +1,4 @@
-import { useCallback, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import ReactFlowV2 from "../../react-flow/v2";
 import UserNode from "../nodes/user";
 import { useRoomContext } from "../../room/room-context";
@@ -87,17 +87,15 @@ export default function WithReactFlowV2({
               x: rf?.current?.getNode("share-screen-" + i)?.position.x ?? 200,
               y: rf?.current?.getNode("share-screen-" + i)?.position.y ?? 200,
             },
-            style: {
-              width: 500,
-              height: 200,
-            },
             className: "bg-white shadow-md",
             // extent: "parent",
           } as Node)
       ),
   ];
 
-  const defaultNodes = [...participantNodes, ...shareScreenNodes];
+  const defaultNodes = useMemo(() => {
+    return [...participantNodes, ...shareScreenNodes];
+  }, [participantNodes.length, shareScreenNodes.length]);
 
   const handleDragStopRfNodes = useCallback(
     (_: any, node: Node) => {

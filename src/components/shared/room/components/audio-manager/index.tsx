@@ -8,6 +8,7 @@ const BOUNDRY_RADIUS = 50;
 const BOUNDRY_CENTER_X = 500;
 const BOUNDRY_CENTER_Y = 500;
 
+//@ts-ignore
 const LiveKitAudioManager = () => {
   const participants = useParticipants();
 

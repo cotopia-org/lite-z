@@ -247,6 +247,7 @@ const roomSlice = createSlice({
         },
       };
     },
+    //@ts-ignore
     updateMessages: (
       state,
       action: PayloadAction<{
