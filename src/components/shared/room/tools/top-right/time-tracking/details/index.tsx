@@ -1,5 +1,5 @@
 import { convertMinutesToHHMMSS } from "@/lib/utils";
-import React from "react";
+import React, {ReactNode} from "react";
 import Timer from "../timer";
 import { useRoomContext } from "@/components/shared/room/room-context";
 import UserAvatar from "@/components/shared/user-avatar";
@@ -11,7 +11,73 @@ import { LeaderboardType } from "@/types/leaderboard";
 import useAuth from "@/hooks/auth";
 import { AlarmClockOff } from "lucide-react";
 import CotopiaTooltip from "@/components/shared-ui/c-tooltip";
+import {JobType} from "@/types/job";
 
+type Props = {
+  hasCount: boolean;
+  userActiveJob: JobType|null|undefined;
+  item: LeaderboardType ;
+};
+
+
+function Timers ({hasCount,userActiveJob,item}:Props) {
+return                <>
+  {hasCount ? (
+      <>
+        <Timer
+            initialSeconds={item.working_minutes * 60}
+            stop={userActiveJob === null}
+        >
+          {(time) => (
+              <CotopiaTooltip title='Working time'>
+                <strong className='text-xs'>{time}</strong>
+              </CotopiaTooltip>
+          )}
+        </Timer>
+        <Timer
+            initialSeconds={item.idle_minutes * 60}
+            stop={userActiveJob !== null}
+        >
+          {(time) => (
+              <CotopiaTooltip title='Idle time'>
+                <strong className='text-xs flex flex-row items-center gap-x-1 text-yellow-600'>
+                  {time}
+                </strong>
+              </CotopiaTooltip>
+          )}
+        </Timer>
+        {/*<Timer*/}
+        {/*    initialSeconds={item.sum_minutes * 60}*/}
+        {/*>*/}
+        {/*  {(time) => (*/}
+        {/*      <CotopiaTooltip title='Sum'>*/}
+        {/*        <strong className='text-xs flex flex-row items-center gap-x-1 text-blue-600'>*/}
+        {/*          {time}*/}
+        {/*        </strong>*/}
+        {/*      </CotopiaTooltip>*/}
+        {/*  )}*/}
+        {/*</Timer>*/}
+      </>
+  ) : (
+      <>
+        <CotopiaTooltip title='Working time'>
+                      <span className='text-xs opacity-85'>
+                        {convertMinutesToHHMMSS(item.working_minutes)}
+                      </span>
+        </CotopiaTooltip>
+        <CotopiaTooltip title='Idle time'>
+                      <span className='text-xs opacity-85 text-yellow-600'>
+                        {convertMinutesToHHMMSS(item.idle_minutes)}
+                      </span>
+        </CotopiaTooltip>
+        {/*<CotopiaTooltip title='Sum'>*/}
+        {/*              <span className='text-xs opacity-85 text-blue-600'>*/}
+        {/*                {convertMinutesToHHMMSS(item.sum_minutes)}*/}
+        {/*              </span>*/}
+        {/*</CotopiaTooltip>*/}
+      </>
+  )}</>
+}
 export default function TimeTrackingDetails() {
   const { workspace_id, workspaceUsers } = useRoomContext();
 
@@ -59,45 +125,7 @@ export default function TimeTrackingDetails() {
                 <span className='text-xs'>{item.user?.name ?? "-"}</span>
               </div>
               <div className='flex flex-col items-end gap-y-2 w-[80px]'>
-                {hasCount ? (
-                  <>
-                    <Timer
-                      initialSeconds={item.working_minutes * 60}
-                      stop={userActiveJob === null}
-                    >
-                      {(time) => (
-                        <CotopiaTooltip title='Working time'>
-                          <strong className='text-xs'>{time}</strong>
-                        </CotopiaTooltip>
-                      )}
-                    </Timer>
-                    <Timer
-                      initialSeconds={item.idle_minutes * 60}
-                      stop={userActiveJob !== null}
-                    >
-                      {(time) => (
-                        <CotopiaTooltip title='Idle time'>
-                          <strong className='text-xs flex flex-row items-center gap-x-1 text-yellow-600'>
-                            {time}
-                          </strong>
-                        </CotopiaTooltip>
-                      )}
-                    </Timer>
-                  </>
-                ) : (
-                  <>
-                    <CotopiaTooltip title='Working time'>
-                      <span className='text-xs opacity-85'>
-                        {convertMinutesToHHMMSS(item.working_minutes)}
-                      </span>
-                    </CotopiaTooltip>
-                    <CotopiaTooltip title='Idle time'>
-                      <span className='text-xs opacity-85 text-yellow-600'>
-                        {convertMinutesToHHMMSS(item.idle_minutes)}
-                      </span>
-                    </CotopiaTooltip>
-                  </>
-                )}
+                  <Timers hasCount={hasCount} userActiveJob={userActiveJob} item={item}/>
               </div>
             </BlurFade>
           );
