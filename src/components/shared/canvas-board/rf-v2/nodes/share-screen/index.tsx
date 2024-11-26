@@ -1,4 +1,3 @@
-import { VideoTrack } from "@livekit/components-react";
 import { NodeResizeControl } from "@xyflow/react";
 import { SquareArrowOutDownRight } from "lucide-react";
 import { memo, useState } from "react";
@@ -6,6 +5,7 @@ import Actions from "./actions";
 import { createPortal } from "react-dom";
 import { cn } from "@/lib/utils";
 import { useSocket } from "@/routes/private-wrarpper";
+import { VideoTrack } from "@/components/shared/video-track";
 
 function ShareScreenNode({ data }: any) {
   const socket = useSocket();
