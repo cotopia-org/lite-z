@@ -6,20 +6,15 @@ import * as emoji from "node-emoji";
 import User from "./user";
 import CotopiaButton from "@/components/shared-ui/c-button";
 import { Plus } from "lucide-react";
+import {UserType, WorkspaceUserType} from "@/types/user";
 
-export default function OfflineUsers() {
+type Props = {
+  allOfflineParticipants: WorkspaceUserType[];
+};
+export default function OfflineUsers({allOfflineParticipants}:Props) {
   const [isExpand, setIsExpand] = useState(false);
 
-  const { workspaceUsers, leaderboard, room_id } = useRoomContext();
 
-  const onlines = leaderboard
-    ?.filter((x) => x.user.status === "online" && x.user.room_id !== null)
-    .map((x) => x.user.id);
-
-  const allOfflineParticipants = workspaceUsers
-    .filter((x) => !onlines.includes(x.id))
-    .filter((x) => x.last_login !== null)
-    .sort((a, b) => moment(b.last_login).unix() - moment(a.last_login).unix());
 
   let finalShowParticipants = [...allOfflineParticipants];
 
