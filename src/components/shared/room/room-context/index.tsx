@@ -9,13 +9,17 @@ import { ScheduleType } from "@/types/calendar";
 import { JobType } from "@/types/job";
 import { LeaderboardType } from "@/types/leaderboard";
 import { WorkspaceRoomJoinType, WorkspaceRoomType } from "@/types/room";
-import { updateCoordinatesEvent } from "@/types/socket";
+import {
+  LivekitTrackPublishedType,
+  updateCoordinatesEvent,
+} from "@/types/socket";
 import { UserMinimalType, WorkspaceUserType } from "@/types/user";
 import {
   createContext,
   ReactNode,
   useContext,
   useEffect,
+  useMemo,
   useState,
 } from "react";
 import { useNavigate } from "react-router-dom";
@@ -27,6 +31,8 @@ type Props = {
   room_id: number;
   workspace_id?: string;
 };
+
+const DEFAULT_OBJECT_POSITION = { x: 200, y: 200 };
 
 const RoomCtx = createContext<{
   room_id: number;
@@ -53,7 +59,13 @@ const RoomCtx = createContext<{
   usersHaveJobs: UserMinimalType[];
   usersHaveInProgressJobs: UserMinimalType[];
   objects: {
-    [key: string]: { x: number; y: number; width?: number; height?: number };
+    [key: string]: {
+      x: number;
+      y: number;
+      width?: number;
+      height?: number;
+      meta?: any;
+    };
   };
   setObjects: React.Dispatch<
     React.SetStateAction<{
@@ -93,10 +105,48 @@ export default function RoomContext({
   workspace_id,
 }: Props) {
   //update user coordinates
-
   const [objects, setObjects] = useState<{
-    [key: string]: { x: number; y: number; width?: number; height?: number };
+    [key: string]: {
+      x: number;
+      y: number;
+      width?: number;
+      height?: number;
+      meta?: any;
+    };
   }>({});
+
+  const finalObjects = useMemo(() => {
+    return objects;
+  }, [objects]);
+
+  useSocket("livekitEvent", (data: LivekitTrackPublishedType) => {
+    switch (data.event) {
+      case "track_published":
+        switch (data.track.source) {
+          case "SCREEN_SHARE":
+            console.log("data", data);
+            setObjects((prev) => ({
+              ...prev,
+              [data.id]: {
+                ...DEFAULT_OBJECT_POSITION,
+                width: data.track.width,
+                height: data.track.height,
+                meta: data,
+              },
+            }));
+            break;
+        }
+        break;
+      case "track_unpublished":
+        switch (data.track.source) {
+          case "SCREEN_SHARE":
+            delete objects[data.id];
+            setObjects(objects);
+            break;
+        }
+        break;
+    }
+  });
 
   const [room, setRoom] = useState<WorkspaceRoomType>();
   const { startLoading, stopLoading, isLoading } = useLoading();
@@ -320,7 +370,7 @@ export default function RoomContext({
         onlineUsers: onlineUsers,
         usersHaveJobs: usersHaveJobs,
         usersHaveInProgressJobs: usersHaveInProgressJobs,
-        objects,
+        objects: finalObjects,
         setObjects,
       }}
     >

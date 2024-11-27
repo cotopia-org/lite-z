@@ -3,9 +3,7 @@ import ReactFlowV2 from "../../react-flow/v2";
 import UserNode from "../nodes/user";
 import { useRoomContext } from "../../room/room-context";
 import { Edge, Node, ReactFlowInstance } from "@xyflow/react";
-import { TrackReferenceOrPlaceholder } from "@livekit/components-core";
 import useAuth from "@/hooks/auth";
-import { Track } from "livekit-client";
 import ShareScreenNode from "./nodes/share-screen";
 import { useSocket } from "@/routes/private-wrarpper";
 import useBus, { dispatch } from "use-bus";
@@ -16,11 +14,7 @@ enum RoomRfNodeType {
   userNode = "userNode",
 }
 
-export default function WithReactFlowV2({
-  tracks,
-}: {
-  tracks: TrackReferenceOrPlaceholder[];
-}) {
+export default function WithReactFlowV2() {
   const socket = useSocket();
 
   const { user } = useAuth();
@@ -29,6 +23,8 @@ export default function WithReactFlowV2({
 
   const { room, updateUserCoords, objects, setObjects } = useRoomContext();
 
+  console.log("objects", objects);
+
   const [isDragging, setIsDragging] = useState(false);
 
   //Participant nodes
@@ -36,10 +32,13 @@ export default function WithReactFlowV2({
     room?.participants?.map((participant) => {
       const coords = participant?.coordinates?.split(",");
 
-      let xcoord = coords?.[0] ?? 200;
-      let ycoord = coords?.[1] ?? 200;
-
       const rfUserId = "" + participant?.username;
+
+      let xcoord =
+        coords?.[0] ?? rf?.current?.getNode(rfUserId)?.position.x ?? 200;
+      let ycoord =
+        coords?.[1] ?? rf?.current?.getNode(rfUserId)?.position.y ?? 200;
+
       if (user?.username === participant.username && isDragging) {
         xcoord =
           rf?.current?.getNode(rfUserId)?.position.x ?? coords?.[0] ?? 200;
@@ -70,44 +69,47 @@ export default function WithReactFlowV2({
       return object;
     }) ?? [];
 
+  const shareScreenObjects = Object.keys(objects)
+    .map((objectKey) => ({ ...objects[objectKey] }))
+    .filter((x) => x?.meta && x?.meta?.track?.source === "SCREEN_SHARE");
+
   //Sharescreen Nodes
   const shareScreenNodes: Node[] = [
-    ...tracks
-      ?.filter((x) => x.source === Track.Source.ScreenShare)
-      ?.map((x, i) => {
-        const shareScreenId = "share-screen-" + i;
+    ...shareScreenObjects?.map((x, i) => {
+      const shareScreenId = x?.meta?.id;
 
-        const isDraggable = user?.username === x.participant.identity; //and admin here
+      const isDraggable = user?.username === x?.meta?.participant?.identity; //and admin here
 
-        return {
+      return {
+        id: shareScreenId,
+        type: "shareScreenNode",
+        data: {
+          room_id: room?.id,
           id: shareScreenId,
-          type: "shareScreenNode",
-          data: {
-            room_id: room?.id,
-            id: shareScreenId,
-            track: x,
-            label: "Share screen node",
-          },
-          position: {
-            x:
-              objects?.[shareScreenId]?.x ??
-              rf?.current?.getNode(shareScreenId)?.position.x ??
-              200,
-            y:
-              objects?.[shareScreenId]?.y ??
-              rf?.current?.getNode(shareScreenId)?.position.y ??
-              200,
-          },
-          className: "bg-white shadow-md",
-          draggable: isDraggable,
-          // extent: "parent",
-        } as Node;
-      }),
+          track: x?.meta,
+          label: "Share screen node",
+        },
+        position: {
+          x:
+            objects?.[shareScreenId]?.x ??
+            rf?.current?.getNode(shareScreenId)?.position.x ??
+            200,
+          y:
+            objects?.[shareScreenId]?.y ??
+            rf?.current?.getNode(shareScreenId)?.position.y ??
+            200,
+        },
+        className: "bg-white shadow-md",
+        draggable: isDraggable,
+        // extent: "parent",
+      } as Node;
+    }),
   ];
 
-  const defaultNodes = useMemo(() => {
-    return [...participantNodes, ...shareScreenNodes];
-  }, [participantNodes, shareScreenNodes.length, objects]);
+  const defaultNodes = useMemo(
+    () => [...shareScreenNodes, ...participantNodes],
+    [shareScreenNodes.length, participantNodes]
+  );
 
   const handleDragStopRfNodes = useCallback(
     (_: any, node: Node) => {

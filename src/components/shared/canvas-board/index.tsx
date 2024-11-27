@@ -1,14 +1,12 @@
 // Canvas.tsx
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useState } from "react";
 import UserSessions from "../room/sessions";
-import ReactFlowHandler from "./react-flow-handler";
 import {
   TrackRefContext,
   TrackReferenceOrPlaceholder,
   useTracks,
 } from "@livekit/components-react";
 import { RoomEvent, Track } from "livekit-client";
-import FullLoading from "../full-loading";
 import WithReactFlowV2 from "./rf-v2";
 
 const Canvas: React.FC = () => {
@@ -55,7 +53,7 @@ const Canvas: React.FC = () => {
     <div id='canvas-board' className='w-full h-[1080px] relative'>
       <TrackRefContext.Provider value={track}>
         <UserSessions>
-          <WithReactFlowV2 tracks={tracks} />
+          <WithReactFlowV2 />
           {/* <ReactFlowHandler tracks={tracks} /> */}
         </UserSessions>
       </TrackRefContext.Provider>

@@ -6,9 +6,19 @@ import { createPortal } from "react-dom";
 import { cn } from "@/lib/utils";
 import { useSocket } from "@/routes/private-wrarpper";
 import { VideoTrack } from "@/components/shared/video-track";
+import { useTracks } from "@livekit/components-react";
 
 function ShareScreenNode({ data }: any) {
   const socket = useSocket();
+
+  const alltracks = useTracks();
+
+  const targetTrack = alltracks.find(
+    (track) =>
+      track.source?.toLowerCase() ===
+        data?.track?.track?.source?.toLowerCase() &&
+      track?.participant?.identity === data?.track?.participant?.identity
+  );
 
   const [isFullScreen, setIsFullScreen] = useState(false);
 
@@ -40,7 +50,7 @@ function ShareScreenNode({ data }: any) {
       >
         <SquareArrowOutDownRight />
       </NodeResizeControl>
-      <VideoTrack trackRef={data?.track} />
+      {!!targetTrack && <VideoTrack trackRef={targetTrack} />}
     </div>
   );
 
