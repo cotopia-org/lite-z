@@ -1,16 +1,23 @@
-import { NodeResizeControl } from "@xyflow/react";
+import { NodeResizeControl, useReactFlow } from "@xyflow/react";
 import { SquareArrowOutDownRight } from "lucide-react";
 import { memo, useState } from "react";
 import Actions from "./actions";
 import { createPortal } from "react-dom";
-import { cn } from "@/lib/utils";
+import { cn, getPositionFromStringCoordinates } from "@/lib/utils";
 import { useSocket } from "@/routes/private-wrarpper";
 import { VideoTrack } from "@/components/shared/video-track";
 import { useTracks } from "@livekit/components-react";
 import useAuth from "@/hooks/auth";
+import {
+  doCirclesMeet,
+  doCirclesMeetRaw,
+} from "@/components/shared/room/sessions/room-audio-renderer";
+import { VARZ } from "@/const/varz";
 
 function ShareScreenNode({ data }: any) {
   const socket = useSocket();
+
+  const [isFullScreen, setIsFullScreen] = useState(false);
 
   const { user } = useAuth();
 
@@ -25,7 +32,27 @@ function ShareScreenNode({ data }: any) {
 
   const canResize = user?.username === targetTrack?.participant.identity;
 
-  const [isFullScreen, setIsFullScreen] = useState(false);
+  const rf = useReactFlow();
+
+  if (!user) return null;
+
+  const myUser = rf.getNode(user.username);
+  const targetUser = rf.getNode(data?.livekit?.participant?.identity);
+
+  const currentPositionCoords = myUser?.position;
+
+  if (currentPositionCoords === undefined) return null;
+
+  if (targetUser === undefined) return null;
+
+  const { meet } = doCirclesMeetRaw(
+    46,
+    VARZ.voiceAreaRadius,
+    currentPositionCoords,
+    targetUser?.position
+  );
+
+  if (!meet) return null;
 
   let content = (
     <>
