@@ -3,10 +3,10 @@ export const getCSSVariableValue = (variable: string) => {
   if (typeof window !== "undefined") {
     return getComputedStyle(document.documentElement)
       .getPropertyValue(variable)
-      .trim()
+      .trim();
   }
-  return ""
-}
+  return "";
+};
 
 export const colors = {
   primary: {
@@ -39,7 +39,7 @@ export const colors = {
     default: getCSSVariableValue("--success"),
   },
   // Add more as needed
-}
+};
 
 export const VARZ = {
   apiBaseUrl: process.env.REACT_APP_PUBLIC_API_URL,
@@ -53,6 +53,7 @@ export const VARZ = {
   signOutApiPage: `/api/auth/sign-out`,
   voiceAreaRadius: 200,
   defaultPositionOfUserX: 400,
+  jailNodeId: "jail-node-custom",
   jailNodeType: "jailNode",
   backgroundNodeType: "backgroundNode",
   defaultPerPage: 20,
@@ -60,4 +61,4 @@ export const VARZ = {
   defaultPositionOfUserY: 400,
   teleportMargin: 40,
   userTimeTrackerId: "user-timer-tracker",
-}
+};

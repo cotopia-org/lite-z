@@ -151,6 +151,7 @@ export default function RoomHolder({
       const obj_to_update = {
         loading: false,
         permissions: perm_obj,
+        //@ts-ignore
         videoStream: null,
       };
       dispatch({ type: "CHANGE_VALUES", payload: obj_to_update });
@@ -192,6 +193,7 @@ export default function RoomHolder({
       const obj_to_update = {
         loading: false,
         permissions: perm_obj,
+        //@ts-ignore
         audioStream: null,
       };
       dispatch({ type: "CHANGE_VALUES", payload: obj_to_update });

@@ -79,6 +79,7 @@ export default function PrivateRoutes() {
     });
 
     socket.on("disconnect", () => {
+      setSocketState(undefined);
       toast.error("Socket disconnected");
     });
 

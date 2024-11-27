@@ -24,7 +24,7 @@ export default function JobButton() {
   let jobItems = (data && data?.data) ?? [];
   let job_label = "Create job";
   const active_job = jobItems.find((j) => j.status === "in_progress");
-  if (active_job) job_label = active_job.title;
+  if (active_job) job_label = active_job.title.length > 20 ? active_job.title.slice(0, 20) + '... ' : active_job.title;
   if (!active_job && jobItems.length > 0) job_label = "Start job";
 
   const activeJobs = jobItems.filter((job) => job.status === "in_progress");
@@ -47,10 +47,10 @@ export default function JobButton() {
       {(triggerPosition, open, close) => {
         let content = (
           <CTabs
-            defaultValue='active'
+            defaultValue='in_progress'
             items={[
               {
-                title: "Active",
+                title: "In Progress",
                 content: (
                   <JobItems
                     hasAction
@@ -61,7 +61,7 @@ export default function JobButton() {
                   />
                 ),
                 length: activeJobs.length,
-                value: "active",
+                value: "in_progress",
               },
               {
                 title: "Paused",
@@ -78,7 +78,7 @@ export default function JobButton() {
                 value: "paused",
               },
               {
-                title: "Completed",
+                title: "Paused",
                 content: (
                   <JobItems
                     hasAction

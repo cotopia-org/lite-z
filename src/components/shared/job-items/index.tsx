@@ -12,7 +12,7 @@ export default function JobItems({
   onMutate,
   hasAction = false,
 }: Props) {
-  if (items.length === 0) return <NotFound title='No job items here!' />;
+  if (items.length === 0) return <NotFound  title='No job yet! 😞' />;
   return (
     <div className='flex flex-col w-full gap-y-4 max-h-[350px] py-2 overflow-auto'>
       {items.map((item, key) => {

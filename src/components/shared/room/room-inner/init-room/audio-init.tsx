@@ -4,6 +4,7 @@ import React, { useEffect } from "react";
 import { useRoomContext } from "../../room-context";
 import { useRoomHolder } from "../..";
 
+//@ts-ignore
 export default function AudioInit() {
   const { mediaPermissions } = useRoomHolder();
 

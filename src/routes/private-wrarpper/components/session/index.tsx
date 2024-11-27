@@ -31,9 +31,11 @@ function SpacialParticipantContextIfNeeded(
 const SessionContext = createContext<{
   track?: TrackReferenceType;
   draggable: boolean;
+  meet?: boolean;
 }>({
   track: undefined,
   draggable: false,
+  meet: false,
 });
 
 export const useUserTile = () => useContext(SessionContext);
@@ -59,13 +61,16 @@ type Props = {
   draggable?: boolean;
   isDragging?: boolean;
   username: string;
+  meet?: boolean;
 };
+
 export default function UserSession({
   participant,
   track,
   draggable = false,
   isDragging = false,
   username,
+  meet = false,
 }: Props) {
   const trackRef = track;
 
@@ -93,7 +98,9 @@ export default function UserSession({
       <SpacialParticipantContextIfNeeded
         participant={participant ?? trackReference?.participant}
       >
-        <SessionContext.Provider value={{ track: trackReference, draggable }}>
+        <SessionContext.Provider
+          value={{ track: trackReference, draggable, meet }}
+        >
           <WithConnectionQuality quality={finalQuality}>
             <DraggableCircle
               defaultIsDragging={isDragging}

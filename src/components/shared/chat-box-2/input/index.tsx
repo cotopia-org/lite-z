@@ -30,6 +30,9 @@ const ChatInput: React.FC<ChatInputProps> = ({ addMessage }) => {
   const handleSend = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (inputValue.trim()) {
+
+
+
       handleAddMessage(inputValue.trim());
     }
   };
@@ -41,6 +44,7 @@ const ChatInput: React.FC<ChatInputProps> = ({ addMessage }) => {
 
   const handleAddUserMention = useCallback(
     (user: UserMinimalType) =>
+
       setInputValue((prev) => `${prev}${user.username} `),
     []
   );

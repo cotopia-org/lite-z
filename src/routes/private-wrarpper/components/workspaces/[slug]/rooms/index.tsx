@@ -6,12 +6,14 @@ import { useEffect, useState } from "react"
 import { FetchDataType } from "@/services/axios"
 import { useSocket } from "@/routes/private-wrarpper"
 import { useParams } from "react-router-dom"
+import {WorkspaceUserType} from "@/types/user";
 
 type Props = {
-  workspace_id: string
+  workspace_id: string,
+  workspaceUsers:WorkspaceUserType[]
 }
 
-export default function WorkspaceRoomsHolder({ workspace_id }: Props) {
+export default function WorkspaceRoomsHolder({ workspace_id ,workspaceUsers}: Props) {
   const { room_id } = useParams()
 
   const [rooms, setRooms] = useState<WorkspaceRoomShortType[]>([])
@@ -52,6 +54,8 @@ export default function WorkspaceRoomsHolder({ workspace_id }: Props) {
       <WorkspaceRooms
         workspace_id={+workspace_id}
         rooms={rooms}
+        workspaceUsers={workspaceUsers}
+
         selected_room_id={room_id ? +room_id : undefined}
       />
     </div>

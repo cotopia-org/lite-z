@@ -28,7 +28,7 @@ const UserJobs = (props: Props) => {
       className='w-auto'
     >
       {(open, close) => {
-        return <UserJobList userId={user?.id as number} />;
+        return <div className={'w-[400px]'}><UserJobList  userId={user?.id as number} /></div>;
       }}
     </ModalBox>
   );

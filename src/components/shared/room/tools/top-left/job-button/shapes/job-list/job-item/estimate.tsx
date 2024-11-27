@@ -19,9 +19,9 @@ export default function JobEstimate({ job }: Props) {
         <div className='flex flex-row items-center gap-x-1'>
           <span
             className={cn(workedMoreThanEstimate ? "text-yellow-600" : "")}
-          >{` ${getTimeFormat(jobWorkedSeconds, true)} h worked`}</span>
+          >{` ${getTimeFormat(jobWorkedSeconds, true)}`}</span>
           <span>/</span>
-          <span>{`${getTimeFormat(jobEstimateSeconds, true)} h`}</span>
+          <span>{`${getTimeFormat(jobEstimateSeconds, true)}`}</span>
         </div>
       }
       variant='info'
