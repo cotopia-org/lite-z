@@ -1,19 +1,21 @@
 import { WorkspaceRoomShortType } from "@/types/room"
 import WorkspaceRoom from "./room"
 import { useRoomContext } from "../../room/room-context"
+import {WorkspaceUserType} from "@/types/user";
 
 type Props = {
   rooms: WorkspaceRoomShortType[]
   workspace_id: number
-  selected_room_id?: number
+  selected_room_id?: number,
+  workspaceUsers: WorkspaceUserType[],
 }
 
 export default function WorkspaceRooms({
   workspace_id,
   rooms,
   selected_room_id,
+  workspaceUsers,
 }: Props) {
-  const { workspaceUsers } = useRoomContext()
 
   if (rooms.length === 0) return null
 
