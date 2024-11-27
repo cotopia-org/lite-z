@@ -1,7 +1,7 @@
 import CotopiaIconButton from "@/components/shared-ui/c-icon-button";
 import CotopiaTooltip from "@/components/shared-ui/c-tooltip";
 import { LocateFixed } from "lucide-react";
-import { useReactFlow } from "@xyflow/react";
+import { useReactFlow, XYPosition } from "@xyflow/react";
 import { useUserDetail } from ".";
 import { useCallback } from "react";
 import { useRoomContext } from "../../room-context";
@@ -10,6 +10,7 @@ import useAuth from "@/hooks/auth";
 import { VARZ } from "@/const/varz";
 import { dispatch } from "use-bus";
 import { __BUS } from "@/const/bus";
+import { doCirclesMeetRaw } from "../../sessions/room-audio-renderer";
 
 interface Props {}
 
@@ -40,15 +41,43 @@ const getAroundPoints = (r: number, margin: number) => {
 };
 
 const UserNavigate = (props: Props) => {
-  const socket = useSocket();
-
   const { user } = useUserDetail();
   const { user: myAccount } = useAuth();
 
-  const { room, updateUserCoords } = useRoomContext();
+  const { updateUserCoords } = useRoomContext();
   const rf = useReactFlow();
 
   const nodes = rf.getNodes();
+
+  const handleCircleMeet = (
+    targetUserName: string,
+    targetPosition: XYPosition
+  ) => {
+    const targetUserNode = rf?.getNode(targetUserName);
+
+    if (targetUserNode === undefined) return;
+
+    const position = targetPosition;
+
+    if (!user?.username) return;
+
+    const myUserPosition = rf?.getNode(user?.username)?.position;
+
+    if (myUserPosition === undefined) return;
+
+    const { meet } = doCirclesMeetRaw(
+      46,
+      VARZ.voiceAreaRadius,
+      myUserPosition,
+      position
+    );
+
+    rf?.updateNode(targetUserName, {
+      data: { ...targetUserNode?.data, meet },
+    });
+
+    return meet;
+  };
 
   const navigateHandler = () => {
     if (!myAccount) return;
@@ -85,6 +114,10 @@ const UserNavigate = (props: Props) => {
       };
 
       updateUserCoords(myAccount?.username, nPosition);
+
+      handleCircleMeet(currentUserNode.id, currentUserNode.position);
+
+      rf.updateNode(myAccount.username, { position: nPosition });
 
       dispatch({
         type: __BUS.changeMyUserCoord,

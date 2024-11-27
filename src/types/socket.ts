@@ -1,4 +1,5 @@
 import { XYPosition } from "@xyflow/react";
+import { UserMinimalType } from "./user";
 
 export type updateCoordinatesEvent = {
   coordinates: string;
@@ -46,3 +47,5 @@ export type LivekitTrackPublishedType = {
     width: number;
   };
 };
+
+export type UserLeftJoinType = { room_id: number; user: UserMinimalType };

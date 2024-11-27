@@ -28,20 +28,24 @@ function ShareScreenNode({ data }: any) {
   const [isFullScreen, setIsFullScreen] = useState(false);
 
   let content = (
-    <div
-      className={cn(
-        "h-full w-full [&_video]:!object-contain [&:hover_.actions]:opacity-100 [&:hover_.actions]:visible",
-        isFullScreen
-          ? "fixed top-0 left-0 bg-black"
-          : "relative border shadow-lg rounded-xl overflow-hidden"
-      )}
-    >
-      <Actions
-        isFullScreen={isFullScreen}
-        onExitFullScreen={() => setIsFullScreen(false)}
-        identity={data?.livekit?.participant?.identity}
-        onFullScreen={() => setIsFullScreen((prev) => !prev)}
-      />
+    <>
+      <div
+        className={cn(
+          "h-full w-full [&_video]:!object-contain [&:hover_.actions]:opacity-100 [&:hover_.actions]:visible",
+          isFullScreen
+            ? "fixed top-0 left-0 bg-black"
+            : "relative border shadow-lg rounded-xl overflow-hidden"
+        )}
+      >
+        <Actions
+          isFullScreen={isFullScreen}
+          onExitFullScreen={() => setIsFullScreen(false)}
+          identity={data?.livekit?.participant?.identity}
+          onFullScreen={() => setIsFullScreen((prev) => !prev)}
+        />
+
+        {!!targetTrack && <VideoTrack trackRef={targetTrack} />}
+      </div>
       {canResize && (
         <NodeResizeControl
           minWidth={500}
@@ -59,8 +63,7 @@ function ShareScreenNode({ data }: any) {
           <SquareArrowOutDownRight />
         </NodeResizeControl>
       )}
-      {!!targetTrack && <VideoTrack trackRef={targetTrack} />}
-    </div>
+    </>
   );
 
   return isFullScreen

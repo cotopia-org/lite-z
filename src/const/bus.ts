@@ -26,4 +26,5 @@ export const __BUS = {
   showChatMention: "SHOW_CHAT_MENTION",
   hideChatMention: "HIDE_CHAT_MENTION",
   chatInputFocus: "CHAT_INPUT_FOCUS",
+  initRoomParticipantsOnRf: "INIT_ROOM_PARTICPIANTS_ON_RF",
 };

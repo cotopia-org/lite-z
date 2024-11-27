@@ -35,6 +35,7 @@ const DEFAULT_OBJECT_POSITION = { x: 200, y: 200 };
 
 const RoomCtx = createContext<{
   room_id: number;
+  updateParticipants: (participants: UserMinimalType[]) => void;
   room?: WorkspaceRoomType;
   workspace_id?: string;
   livekit_token?: string;
@@ -59,6 +60,7 @@ const RoomCtx = createContext<{
   usersHaveInProgressJobs: UserMinimalType[];
 }>({
   room: undefined,
+  updateParticipants: (participants: UserMinimalType[]) => {},
   livekit_token: undefined,
   room_id: 1,
   workspace_id: undefined,
@@ -141,6 +143,8 @@ export default function RoomContext({
           );
           return;
         }
+
+        console.log("res", res.data);
       });
   };
 
@@ -266,10 +270,15 @@ export default function RoomContext({
     )
     .map((x) => x.user);
 
+  const updateParticipants = (participants: UserMinimalType[]) => {
+    setRoom((prev) => ({ ...(prev as WorkspaceRoomType), participants }));
+  };
+
   return (
     <RoomCtx.Provider
       value={{
         room,
+        updateParticipants,
         room_id: +room_id,
         workspace_id,
         sidebar,

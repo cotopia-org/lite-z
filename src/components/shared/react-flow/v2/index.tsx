@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useMemo, useState } from "react";
 
 import "@xyflow/react/dist/style.css";
 
@@ -34,7 +34,6 @@ type Props = {
   onNodeDimensionChangesTurtle?: (changes: NodeDimensionChange[]) => void;
   translateExtent?: CoordinateExtent;
   onInit?: (rf: ReactFlowInstance<Node, Edge>) => void;
-  background?: string;
   hasJail?: boolean;
 };
 
@@ -50,7 +49,6 @@ export default function ReactFlowV2({
   translateExtent,
   onInit,
   hasJail = false,
-  background,
 }: Props) {
   const defaultViewport = { x: 0, y: 0, zoom: 1.5 };
 
@@ -86,25 +84,10 @@ export default function ReactFlowV2({
   let finalNodeTypes = nodeTypes;
 
   if (hasJail) finalNodeTypes["jailNode"] = JailNode;
-  if (background) finalNodeTypes["bgNode"] = BgNode;
-
-  let finalNodes = nodes;
-
-  if (background)
-    finalNodes = [
-      {
-        id: "bg-node",
-        position: { x: -200, y: -200 },
-        data: { background },
-        type: "bgNode",
-        draggable: false,
-      },
-      ...nodes,
-    ];
 
   return (
     <ReactFlow
-      nodes={finalNodes}
+      nodes={nodes}
       onNodeDrag={onNodeDragging}
       onNodesChange={handleChangeNode}
       onNodeDragStart={onNodeDragStart}

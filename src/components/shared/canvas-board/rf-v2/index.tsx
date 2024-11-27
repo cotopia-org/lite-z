@@ -12,11 +12,15 @@ import {
   updateCoordinatesEvent,
   updateShareScreenCoordinatesEvent,
   updateShareScreenSizeEvent,
+  UserLeftJoinType,
 } from "@/types/socket";
 import UserNode from "./nodes/user";
 import { doCirclesMeetRaw } from "../../room/sessions/room-audio-renderer";
 import { VARZ } from "@/const/varz";
 import JailNode from "./nodes/jail-node";
+import { getPositionFromStringCoordinates } from "@/lib/utils";
+import { UserMinimalType } from "@/types/user";
+import BgNode from "./nodes/bg-node";
 
 enum RoomRfNodeType {
   shareScreenNode = "shareScreenNode",
@@ -35,64 +39,60 @@ export default function WithReactFlowV2() {
   //Init react flow
   const init = useRef<boolean>(false);
 
-  //Init first (initial) tracks
-  const initTracks = useRef<boolean>(false);
-  //Todo - Mohammad hossein should give us current tracks api
+  const participantsToRfNodes = useCallback(
+    (participants: UserMinimalType[]) => {
+      return (
+        participants?.map((participant) => {
+          const coords = participant?.coordinates?.split(",");
 
-  useEffect(() => {
-    if (!rf.current) return;
+          const rfUserId = "" + participant?.username;
 
-    if (room?.participants?.length === 0) return;
+          let xcoord =
+            coords?.[0] ?? rf?.current?.getNode(rfUserId)?.position.x ?? 200;
+          let ycoord =
+            coords?.[1] ?? rf?.current?.getNode(rfUserId)?.position.y ?? 200;
 
-    if (init.current === true) return;
+          if (typeof xcoord === "string" && !isNaN(+xcoord)) {
+            xcoord = +xcoord;
+          } else {
+            xcoord = 200;
+          }
+          if (typeof ycoord === "string" && !isNaN(+ycoord)) {
+            ycoord = +ycoord;
+          } else {
+            ycoord = 200;
+          }
 
-    let nodes =
-      room?.participants?.map((participant) => {
-        const coords = participant?.coordinates?.split(",");
+          const isMyNode = user?.username === participant.username;
 
-        const rfUserId = "" + participant?.username;
+          const isDraggable = !!isMyNode;
+          const isMeet = !!isMyNode;
 
-        let xcoord =
-          coords?.[0] ?? rf?.current?.getNode(rfUserId)?.position.x ?? 200;
-        let ycoord =
-          coords?.[1] ?? rf?.current?.getNode(rfUserId)?.position.y ?? 200;
+          let object: Node = {
+            id: "" + participant?.username,
+            type: "userNode",
+            data: {
+              username: participant.username,
+              draggable: isDraggable,
+              isDragging: false,
+              meet: isMeet,
+            },
+            position: { x: xcoord, y: ycoord },
+            extent: "parent",
+            deletable: false,
+          };
 
-        if (typeof xcoord === "string" && !isNaN(+xcoord)) {
-          xcoord = +xcoord;
-        } else {
-          xcoord = 200;
-        }
-        if (typeof ycoord === "string" && !isNaN(+ycoord)) {
-          ycoord = +ycoord;
-        } else {
-          ycoord = 200;
-        }
+          if (!isDraggable) object["draggable"] = false;
 
-        const isMyNode = user?.username === participant.username;
+          return object;
+        }) ?? []
+      );
+    },
+    [user?.username]
+  );
 
-        const isDraggable = !!isMyNode;
-        const isMeet = !!isMyNode;
-
-        let object: Node = {
-          id: "" + participant?.username,
-          type: "userNode",
-          data: {
-            username: participant.username,
-            draggable: isDraggable,
-            isDragging: false,
-            meet: isMeet,
-          },
-          position: { x: xcoord, y: ycoord },
-          extent: "parent",
-          deletable: false,
-        };
-
-        if (!isDraggable) object["draggable"] = false;
-
-        return object;
-      }) ?? [];
-
-    rf.current.setNodes([
+  const addNodesToRf = useCallback((nodes: Node[], bgNode?: Node) => {
+    let finalNodes: Node[] = [
       {
         id: VARZ.jailNodeId,
         position: {
@@ -106,6 +106,10 @@ export default function WithReactFlowV2() {
         deletable: false,
         selectable: false,
       },
+    ];
+
+    finalNodes = [
+      ...finalNodes,
       ...nodes.map(
         (x) =>
           ({
@@ -114,10 +118,58 @@ export default function WithReactFlowV2() {
             extent: "parent",
           } as Node)
       ),
-    ]);
+    ];
 
-    init.current = false;
-  }, [rf.current, room?.participants]);
+    if (bgNode) finalNodes = [...finalNodes, bgNode];
+
+    rf?.current?.setNodes(finalNodes);
+  }, []);
+
+  useEffect(() => {
+    if (!rf.current) return;
+
+    if (room?.participants?.length === 0) return;
+
+    if (init.current === true) return;
+
+    //Convert participants to rf nodes Node[]
+    let nodes = participantsToRfNodes(room?.participants ?? []);
+
+    //Add Node[] to react flow canvas
+    addNodesToRf(nodes, {
+      id: "bg-node",
+      position: { x: -200, y: -200 },
+      data: { background: room?.background },
+      type: "bgNode",
+      draggable: false,
+    });
+
+    init.current = true;
+  }, [
+    rf.current,
+    room?.background,
+    room?.participants,
+    addNodesToRf,
+    participantsToRfNodes,
+  ]);
+
+  useBus(
+    __BUS.initRoomParticipantsOnRf,
+    (data: any) => {
+      //Convert participants to rf nodes Node[]
+      const nodes = participantsToRfNodes(data?.participants ?? []);
+
+      //Add Node[] to react flow canvas
+      addNodesToRf(nodes, {
+        id: "bg-node",
+        position: { x: -200, y: -200 },
+        data: { background: data?.background },
+        type: "bgNode",
+        draggable: false,
+      });
+    },
+    []
+  );
 
   const handleDragStopRfNodes = useCallback(
     (_: any, node: Node) => {
@@ -182,75 +234,68 @@ export default function WithReactFlowV2() {
     return meet;
   };
 
+  useSocket("updateCoordinates", (data: updateCoordinatesEvent) => {
+    const coordsSplitted = data.coordinates.split(",");
+
+    if (coordsSplitted.length !== 2) return;
+
+    const position = {
+      x: +coordsSplitted?.[0],
+      y: +coordsSplitted?.[1],
+    };
+
+    const node = rf.current?.getNode(data.username);
+
+    if (!node) return;
+
+    handleCircleMeet(data.username, position);
+
+    rf.current?.updateNode(data.username, { position });
+  });
+
   useSocket(
-    "updateCoordinates",
-    (data: updateCoordinatesEvent) => {
-      const coordsSplitted = data.coordinates.split(",");
+    "livekitEvent",
+    (data: LivekitTrackPublishedType) => {
+      switch (data.event) {
+        case "track_published":
+          switch (data.track.source) {
+            case "SCREEN_SHARE":
+              const isMyShareScreen =
+                user?.username === data.participant.identity; //Or admin
 
-      if (coordsSplitted.length !== 2) return;
+              const shareScreenNode = {
+                id: data.track.sid,
+                data: {
+                  room_id: room?.id,
+                  livekit: data,
+                },
+                position: { x: 200, y: 200 },
+                parentId: VARZ.jailNodeId,
+                extent: "parent",
+                type: "shareScreenNode",
+                draggable: isMyShareScreen,
+              } as Node;
 
-      const position = {
-        x: +coordsSplitted?.[0],
-        y: +coordsSplitted?.[1],
-      };
+              rf.current?.setNodes((prev) => {
+                return [...prev, shareScreenNode];
+              });
 
-      const node = rf.current?.getNode(data.username);
-
-      if (!node) return;
-
-      handleCircleMeet(data.username, position);
-
-      rf.current?.updateNode(data.username, { position });
+              break;
+          }
+          break;
+        case "track_unpublished":
+          switch (data.track.source) {
+            case "SCREEN_SHARE":
+              rf.current?.setNodes((prev) => {
+                return prev.filter((n) => n.id !== data.track.sid);
+              });
+              break;
+          }
+          break;
+      }
     },
     [rf.current]
   );
-
-  useSocket("livekitEvent", (data: LivekitTrackPublishedType) => {
-    switch (data.event) {
-      case "track_published":
-        switch (data.track.source) {
-          case "SCREEN_SHARE":
-            const isMyShareScreen =
-              user?.username === data.participant.identity; //Or admin
-
-            const shareScreenNode = {
-              id: data.id,
-              data: {
-                room_id: room?.id,
-                livekit: data,
-              },
-              position: { x: 200, y: 200 },
-              parentId: VARZ.jailNodeId,
-              extent: "parent",
-              type: "shareScreenNode",
-              draggable: isMyShareScreen,
-            } as Node;
-
-            rf.current?.setNodes((prev) => {
-              return [...prev, shareScreenNode];
-            });
-
-            break;
-        }
-        break;
-      case "track_unpublished":
-        switch (data.track.source) {
-          case "SCREEN_SHARE":
-            rf.current?.setNodes((prev) =>
-              prev.filter(
-                (n) =>
-                  !(
-                    n.id === data.id &&
-                    (n?.data as any)?.livekit?.participant?.identity ===
-                      data.participant.identity
-                  )
-              )
-            );
-            break;
-        }
-        break;
-    }
-  });
 
   useSocket(
     "updateShareScreenCoordinates",
@@ -274,6 +319,60 @@ export default function WithReactFlowV2() {
     });
   });
 
+  useSocket(
+    "userLeftFromRoom",
+    (data: UserLeftJoinType) => {
+      if (data.room_id === room?.id) {
+        rf.current?.setNodes((prev) => {
+          console.log(
+            "nodes",
+            prev.filter((n) => n.id !== data.user.username)
+          );
+          return prev.filter((n) => n.id !== data.user.username);
+        });
+      }
+    },
+    [room?.id]
+  );
+
+  useSocket(
+    "userJoinedToRoom",
+    (data: UserLeftJoinType) => {
+      if (!data?.user) return;
+
+      if (data.room_id !== room?.id) return;
+
+      if (!user) return;
+
+      const isMe = user?.username === data.user.username;
+
+      const currentPositionCoords = getPositionFromStringCoordinates(
+        data.user.coordinates ?? ""
+      ) ?? { x: 200, y: 200 };
+
+      const meet = handleCircleMeet(data.user.username, currentPositionCoords);
+
+      rf.current?.setNodes((prev) => [
+        ...prev,
+        {
+          id: data.user.username,
+          type: "userNode",
+          data: {
+            username: data.user.username,
+            draggable: isMe,
+            isDragging: false,
+            meet,
+          },
+          position: { x: currentPositionCoords.x, y: currentPositionCoords.y },
+          extent: "parent",
+          deletable: false,
+          draggable: isMe,
+        },
+      ]);
+    },
+    [user?.username]
+  );
+
   return (
     <div className='w-full h-screen'>
       <ReactFlowV2
@@ -281,6 +380,7 @@ export default function WithReactFlowV2() {
           userNode: UserNode,
           shareScreenNode: ShareScreenNode,
           jailNode: JailNode,
+          bgNode: BgNode,
         }}
         onInit={(rfinstance) => {
           rf.current = rfinstance;
@@ -291,7 +391,6 @@ export default function WithReactFlowV2() {
           [3800, 1700],
         ]}
         hasJail
-        background={room?.background}
       />
     </div>
   );
