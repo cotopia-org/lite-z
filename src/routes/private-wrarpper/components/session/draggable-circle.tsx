@@ -153,23 +153,19 @@ export const ParticipantTile = React.forwardRef<
   let clss =
     "relative z-[10] user-circle transition-all w-full h-full [&_.lk-participant-tile]:!absolute [&_.lk-participant-tile]:w-full [&_.lk-participant-tile]:h-full [&_.lk-participant-tile]:top-0 [&_.lk-participant-tile]:left-0 rounded-full p-1 [&_video]:h-full [&_video]:object-cover [&_video]:rounded-full [&_video]:h-full [&_video]:w-full w-[96px] h-[96px] flex flex-col items-center justify-center";
 
-  const { user } = useAuth();
-
   const { room } = useRoomContext();
 
   const participants = room?.participants ?? [];
-
-  const updatedMyUser = participants?.find(
-    (x) => x?.username === user?.username
-  );
 
   const targetUser = participants?.find((x) => x?.username === username);
 
   const userFullName = getUserFullname(targetUser);
 
   let trackContent = null;
+  let trackType = "audio";
 
   if (isTrackReference(trackReference)) {
+    trackType = "audio";
     //Default state
     trackContent = (
       //@ts-ignore
@@ -180,8 +176,10 @@ export const ParticipantTile = React.forwardRef<
     );
     if (
       trackReference.publication?.kind === "video" &&
-      trackReference.source === Track.Source.Camera
+      trackReference.source === Track.Source.Camera &&
+      !trackReference?.publication?.track?.isMuted
     ) {
+      trackType = "video";
       trackContent = (
         //@ts-ignore
         <VideoTrack
@@ -195,11 +193,7 @@ export const ParticipantTile = React.forwardRef<
 
   let showAvatar = true;
 
-  //I heet the circles? checking
-  // const { meet } = doCirclesMeet(updatedMyUser, targetUser)
-
-  if (!isMuted && trackRef?.source === Track.Source.Camera && meet)
-    showAvatar = false;
+  if (trackType === "video" && meet) showAvatar = false;
 
   //Scale down the user profile if user isn't in user's area
   if (!meet) clss += ` scale-[0.6]`;
