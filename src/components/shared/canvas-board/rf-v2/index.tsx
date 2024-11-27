@@ -11,6 +11,7 @@ import {
   LivekitTrackPublishedType,
   updateCoordinatesEvent,
   updateShareScreenCoordinatesEvent,
+  updateShareScreenSizeEvent,
 } from "@/types/socket";
 import UserNode from "./nodes/user";
 import { doCirclesMeetRaw } from "../../room/sessions/room-audio-renderer";
@@ -259,8 +260,11 @@ export default function WithReactFlowV2() {
 
   useBus(__BUS.changeMyShareScreenCoord, ({ data }) => {});
 
-  useSocket("updateShareScreenSize", (data) => {
-    console.log("updateShareScreenSize", data);
+  useSocket("updateShareScreenSize", (data: updateShareScreenSizeEvent) => {
+    rf.current?.updateNode(data.id, {
+      width: data.width,
+      height: data.height,
+    });
   });
 
   return (

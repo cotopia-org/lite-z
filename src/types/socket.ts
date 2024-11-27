@@ -12,6 +12,13 @@ export type updateShareScreenCoordinatesEvent = {
   share_screen_id: string;
 };
 
+export type updateShareScreenSizeEvent = {
+  height: number;
+  id: string;
+  room_id: number;
+  width: number;
+};
+
 export type LivekitTrackPublishedType = {
   createdAt: string;
   event: string;
