@@ -43,6 +43,7 @@ const UserNode = (props: any) => {
         draggable={data?.draggable ?? false}
         isDragging={dragging}
         username={data?.username ?? ""}
+        meet={data?.meet ?? false}
       />
     </>
   );

@@ -1,6 +1,5 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import ReactFlowV2 from "../../react-flow/v2";
-import UserNode from "../nodes/user";
 import { useRoomContext } from "../../room/room-context";
 import { Edge, Node, ReactFlowInstance } from "@xyflow/react";
 import useAuth from "@/hooks/auth";
@@ -9,6 +8,9 @@ import { useSocket } from "@/routes/private-wrarpper";
 import useBus, { dispatch } from "use-bus";
 import { __BUS } from "@/const/bus";
 import { updateCoordinatesEvent } from "@/types/socket";
+import UserNode from "./nodes/user";
+import { doCirclesMeetRaw } from "../../room/sessions/room-audio-renderer";
+import { VARZ } from "@/const/varz";
 
 enum RoomRfNodeType {
   shareScreenNode = "shareScreenNode",
@@ -56,7 +58,10 @@ export default function WithReactFlowV2() {
           ycoord = 200;
         }
 
-        const isDraggable = user?.username === participant.username;
+        const isMyNode = user?.username === participant.username;
+
+        const isDraggable = !!isMyNode;
+        const isMeet = !!isMyNode;
 
         let object: Node = {
           id: "" + participant?.username,
@@ -65,6 +70,7 @@ export default function WithReactFlowV2() {
             username: participant.username,
             draggable: isDraggable,
             isDragging: false,
+            meet: isMeet,
           },
           position: { x: xcoord, y: ycoord },
           extent: "parent",
@@ -78,33 +84,6 @@ export default function WithReactFlowV2() {
 
     init.current = false;
   }, [rf.current, room?.participants]);
-
-  //Sharescreen Nodes
-  // const shareScreenNodes: Node[] = [
-  //   ...shareScreenObjects?.map((x, i) => {
-  //     const shareScreenId = x?.meta?.id;
-
-  //     const isDraggable = user?.username === x?.meta?.participant?.identity; //and admin here
-
-  //     return {
-  //       id: shareScreenId,
-  //       type: "shareScreenNode",
-  //       data: {
-  //         room_id: room?.id,
-  //         id: shareScreenId,
-  //         track: x?.meta,
-  //         label: "Share screen node",
-  //       },
-  //       position: {
-  //         x: rf?.current?.getNode(shareScreenId)?.position.x ?? 200,
-  //         y: rf?.current?.getNode(shareScreenId)?.position.y ?? 200,
-  //       },
-  //       className: "bg-white shadow-md",
-  //       draggable: isDraggable,
-  //       // extent: "parent",
-  //     } as Node;
-  //   }),
-  // ];
 
   const handleDragStopRfNodes = useCallback(
     (_: any, node: Node) => {
@@ -124,7 +103,15 @@ export default function WithReactFlowV2() {
           break;
         case RoomRfNodeType.userNode:
           if (!node?.data?.username) return;
-          updateUserCoords((node.data as any)?.username, node.position);
+
+          const targetUserName = (node.data as any)?.username;
+          updateUserCoords(targetUserName, node.position);
+
+          const allNodes = rf.current?.getNodes() ?? [];
+          for (let node of allNodes) {
+            const isMeet = handleCircleMeet(node.id);
+            console.log(node.id, isMeet);
+          }
 
           break;
       }
@@ -132,17 +119,50 @@ export default function WithReactFlowV2() {
     [socket, updateUserCoords]
   );
 
-  useSocket("updateCoordinates", (data: updateCoordinatesEvent) => {
-    const coordsSplitted = data.coordinates.split(",");
+  const handleCircleMeet = (targetUserName: string) => {
+    const targetUserNode = rf?.current?.getNode(targetUserName);
 
-    if (coordsSplitted.length !== 2) return;
+    if (targetUserNode === undefined) return;
 
-    const position = {
-      x: +coordsSplitted?.[0],
-      y: +coordsSplitted?.[1],
-    };
-    rf.current?.updateNode(data.username, { position });
-  });
+    const position = targetUserNode.position;
+
+    if (!user?.username) return;
+
+    const myUserPosition = rf.current?.getNode(user?.username)?.position;
+
+    if (myUserPosition === undefined) return;
+
+    const { meet } = doCirclesMeetRaw(
+      46,
+      VARZ.voiceAreaRadius,
+      myUserPosition,
+      position
+    );
+
+    rf.current?.updateNode(targetUserName, {
+      data: { ...targetUserNode?.data, meet },
+    });
+
+    return meet;
+  };
+
+  useSocket(
+    "updateCoordinates",
+    (data: updateCoordinatesEvent) => {
+      const coordsSplitted = data.coordinates.split(",");
+
+      if (coordsSplitted.length !== 2) return;
+
+      const position = {
+        x: +coordsSplitted?.[0],
+        y: +coordsSplitted?.[1],
+      };
+      rf.current?.updateNode(data.username, { position });
+
+      const meet = handleCircleMeet(data.username);
+    },
+    []
+  );
 
   useSocket("updateShareScreenCoordinates", (data) => {
     setObjects((prev) => ({
