@@ -26,43 +26,53 @@ const JobTable = (props: Props) => {
   if (props.loading) return <FullLoading/>;
 
   return (
-      <div className='w-full max-h-[400px] overflow-auto'>
-
-        <table className="table-auto w-full">
-            <thead className={''}>
-            <tr>
-              <th></th>
-              <th></th>
-              <th className={'text-sm text-left'}>Time/Estimated</th>
-            </tr>
-            </thead>
-          <tbody>
-          {
-            props.items.map(job => {
-              return <tr>
-                <td><JobStatus status={job.status}/></td>
-                <td className={'text-sm'}>{job.title.length > 20 ? job.title.slice(0, 20) + '... ':job.title}</td>
-                <td className={'text-xs'}>{Math.round(job.total_hours / 60)} hrs / {job.estimate === null ? 0 : job.estimate}</td>
-              </tr>
-            })
-          }
+      <div className='max-h-[400px] overflow-auto'>
 
 
-          <tr>
-            <td><strong>Total</strong></td>
-            <td></td>
-            <td><strong>~{Math.round(props.items.reduce((sum, item) => sum + item.total_hours,0) / 60)} hrs / {Math.round(props.items.reduce((sum,item)=>sum + item.estimate,0) )} hrs</strong></td>
-          </tr>
+        <div className={'flex flex-row justify-between p-2 w-full border-b'}>
 
-          </tbody>
-        </table>
+          <div className={'text-sm flex flex-row   items-center gap-x-1'}>
+            Job
+          </div>
+
+          <div className={'text-sm flex flex-row   items-center gap-x-1'}>
+            Time(hr)/Estimated(hr)
+          </div>
+
+        </div>
+
+        {props.items.map(job => {
 
 
-        {/*<div className={'flex flex-row items-end  gap-x-4 w-full bg-slate-200 p-2 rounded  sticky bottom-0'}>*/}
-        {/*  <strong>Total</strong>*/}
-        {/*  <strong></strong>*/}
-        {/*  <strong></strong>*/}
-        {/*</div>*/}
+          return <div className={'flex flex-row justify-between items-center p-2 w-full '}>
+
+            <div className={'text-sm flex flex-row   items-center gap-x-1'}>
+              <JobStatus status={job.status}/> {job.title.length > 20 ? job.title.slice(0, 20) + '... ' : job.title}
+            </div>
+
+            <div className={'text-sm flex flex-row  items-center gap-x-1'}>
+              {Math.round(job.total_hours / 60)} / {job.estimate === null ? 0 : job.estimate}
+            </div>
+
+          </div>
+        })}
+
+        <div className={'flex flex-row justify-between items-center p-2 w-full bottom-0 sticky bg-slate-100'}>
+
+          <div className={'text-sm flex flex-row   items-center gap-x-1'}>
+            <strong>
+              Total
+            </strong>
+          </div>
+
+          <div className={'text-sm flex flex-row  items-center gap-x-1'}><strong>
+            ~{Math.round(props.items.reduce((sum, item) => sum + item.total_hours, 0) / 60)} / {Math.round(props.items.reduce((sum, item) => sum + item.estimate, 0))}
+          </strong></div>
+
+        </div>
+
+
+
       </div>
   );
 };
