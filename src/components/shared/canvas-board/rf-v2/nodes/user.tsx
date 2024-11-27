@@ -1,4 +1,4 @@
-import { memo, useMemo } from "react";
+import { useMemo } from "react";
 import { useParticipants, useTracks } from "@livekit/components-react";
 import { RoomEvent, Track } from "livekit-client";
 import UserSession from "@/routes/private-wrarpper/components/session";
@@ -48,4 +48,4 @@ const UserNode = (props: any) => {
   );
 };
 
-export default memo(UserNode);
+export default UserNode;

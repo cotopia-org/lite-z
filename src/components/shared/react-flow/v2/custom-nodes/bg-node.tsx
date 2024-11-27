@@ -1,16 +1,13 @@
 import React from "react";
-import { useRoomContext } from "../../room/room-context";
 
-export default function BackgroundNode() {
-  const { room } = useRoomContext();
-
+export default function BgNode({ data }: any) {
   return (
     <div
       className='flex flex-col pointer-events-none z-0'
       style={{
-        width: 3840,
+        width: 4000,
         height: 2160,
-        backgroundImage: `url(${room?.background})`,
+        backgroundImage: `url(${data.background})`,
         backgroundSize: "cover",
         backgroundRepeat: "no-repeat",
       }}

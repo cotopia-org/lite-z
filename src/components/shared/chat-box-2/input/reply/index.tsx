@@ -24,7 +24,7 @@ export default function ReplyBox({ item }: Props) {
         </div>
         <div className='flex flex-col gap-y-1'>
           <strong className='text-primary'>{`Reply to ${user?.name}`}</strong>
-          <span className='whitespace-nowrap text-ellipsis overflow-hidden'>
+          <span className='whitespace-nowrap text-ellipsis overflow-hidden max-w-[200px]'>
             {item.text}
           </span>
         </div>
