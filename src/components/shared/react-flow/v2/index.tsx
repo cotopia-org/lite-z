@@ -1,22 +1,12 @@
-import {
-  useState,
-  useEffect,
-  useCallback,
-  ReactNode,
-  useMemo,
-  useRef,
-} from "react";
+import { useState } from "react";
 
 import "@xyflow/react/dist/style.css";
 
 import {
   ReactFlow,
   useNodesState,
-  MiniMap,
-  Controls,
   Node,
   NodeTypes,
-  GetMiniMapNodeAttribute,
   OnNodeDrag,
   CoordinateExtent,
   NodeChange,
@@ -62,11 +52,6 @@ export default function ReactFlowV2({
   hasJail = false,
   background,
 }: Props) {
-  //Generate ranom jail node
-  const jailId = useMemo(() => {
-    return `jail-custom-node`;
-  }, []);
-
   const defaultViewport = { x: 0, y: 0, zoom: 1.5 };
 
   const [nodes, setNodes, onNodesChange] = useNodesState<Node>([]);
@@ -96,40 +81,6 @@ export default function ReactFlowV2({
     onNodesChange(changes);
   };
   const [bgColor] = useState(initBgColor);
-
-  const initJail = useRef(false);
-  useEffect(() => {
-    if (nodes.length === 0) return;
-
-    if (initJail.current === true) return;
-
-    let modifiedNodes: Node[] = [...nodes];
-
-    if (hasJail !== undefined && hasJail === true) {
-      modifiedNodes = [
-        {
-          id: jailId,
-          position: {
-            x: 0,
-            y: 0,
-          },
-          type: "jailNode",
-          draggable: false,
-          data: {},
-          focusable: false,
-          deletable: false,
-          selectable: false,
-        },
-        ...modifiedNodes.map((n) => {
-          n.parentId = jailId;
-          n.extent = "parent";
-          return n;
-        }),
-      ];
-      setNodes(modifiedNodes);
-      initJail.current = true;
-    }
-  }, [hasJail, jailId, nodes]);
 
   //We define finalNodeTypes because we want to add custom node type but always static such as jailNode and ...
   let finalNodeTypes = nodeTypes;

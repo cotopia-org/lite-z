@@ -7,10 +7,14 @@ import ShareScreenNode from "./nodes/share-screen";
 import { useSocket } from "@/routes/private-wrarpper";
 import useBus, { dispatch } from "use-bus";
 import { __BUS } from "@/const/bus";
-import { updateCoordinatesEvent } from "@/types/socket";
+import {
+  LivekitTrackPublishedType,
+  updateCoordinatesEvent,
+} from "@/types/socket";
 import UserNode from "./nodes/user";
 import { doCirclesMeetRaw } from "../../room/sessions/room-audio-renderer";
 import { VARZ } from "@/const/varz";
+import JailNode from "./nodes/jail-node";
 
 enum RoomRfNodeType {
   shareScreenNode = "shareScreenNode",
@@ -24,11 +28,7 @@ export default function WithReactFlowV2() {
 
   const rf = useRef<ReactFlowInstance<Node, Edge>>();
 
-  const { room, updateUserCoords, objects, setObjects } = useRoomContext();
-
-  const shareScreenObjects = Object.keys(objects)
-    .map((objectKey) => ({ ...objects[objectKey] }))
-    .filter((x) => x?.meta && x?.meta?.track?.source === "SCREEN_SHARE");
+  const { room, updateUserCoords } = useRoomContext();
 
   const init = useRef<boolean>(false);
 
@@ -39,7 +39,7 @@ export default function WithReactFlowV2() {
 
     if (init.current === true) return;
 
-    rf.current.setNodes(
+    let nodes =
       room?.participants?.map((participant) => {
         const coords = participant?.coordinates?.split(",");
 
@@ -77,13 +77,37 @@ export default function WithReactFlowV2() {
           },
           position: { x: xcoord, y: ycoord },
           extent: "parent",
+          deletable: false,
         };
 
         if (!isDraggable) object["draggable"] = false;
 
         return object;
-      }) ?? []
-    );
+      }) ?? [];
+
+    rf.current.setNodes([
+      {
+        id: VARZ.jailNodeId,
+        position: {
+          x: 0,
+          y: 0,
+        },
+        type: "jailNode",
+        draggable: false,
+        data: {},
+        focusable: false,
+        deletable: false,
+        selectable: false,
+      },
+      ...nodes.map(
+        (x) =>
+          ({
+            ...x,
+            parentId: VARZ.jailNodeId,
+            extent: "parent",
+          } as Node)
+      ),
+    ]);
 
     init.current = false;
   }, [rf.current, room?.participants]);
@@ -113,7 +137,6 @@ export default function WithReactFlowV2() {
           const allNodes = rf.current?.getNodes() ?? [];
           for (let node of allNodes) {
             const isMeet = handleCircleMeet(node.id, node.position);
-            console.log(node.id, isMeet);
           }
 
           break;
@@ -175,26 +198,48 @@ export default function WithReactFlowV2() {
     [rf.current]
   );
 
-  useSocket("updateShareScreenCoordinates", (data) => {
-    setObjects((prev) => ({
-      ...prev,
-      [data.share_screen_id]: { x: data.coordinates.x, y: data.coordinates.y },
-    }));
+  useSocket("livekitEvent", (data: LivekitTrackPublishedType) => {
+    switch (data.event) {
+      case "track_published":
+        switch (data.track.source) {
+          case "SCREEN_SHARE":
+            const isMyShareScreen =
+              user?.username === data.participant.identity; //Or admin
+
+            const shareScreenNode = {
+              id: data.id,
+              data: data,
+              position: { x: 200, y: 200 },
+              parentId: VARZ.jailNodeId,
+              extent: "parent",
+              type: "shareScreenNode",
+              draggable: isMyShareScreen,
+            } as Node;
+
+            rf.current?.setNodes((prev) => {
+              return [...prev, shareScreenNode];
+            });
+
+            break;
+        }
+        break;
+      case "track_unpublished":
+        switch (data.track.source) {
+          case "SCREEN_SHARE":
+            rf.current?.setNodes((prev) =>
+              prev.filter((n) => n.id !== data.id)
+            );
+            break;
+        }
+        break;
+    }
   });
 
-  useSocket("updateShareScreenCoordinates", (data) => {
-    setObjects((prev) => ({
-      ...prev,
-      [data.share_screen_id]: { x: data.coordinates.x, y: data.coordinates.y },
-    }));
-  });
+  useSocket("updateShareScreenCoordinates", (data) => {});
 
-  useBus(__BUS.changeMyShareScreenCoord, ({ data }) => {
-    setObjects((prev) => ({
-      ...prev,
-      [data.share_screen_id]: { x: data.coordinates.x, y: data.coordinates.y },
-    }));
-  });
+  useSocket("updateShareScreenCoordinates", (data) => {});
+
+  useBus(__BUS.changeMyShareScreenCoord, ({ data }) => {});
 
   useSocket("updateShareScreenSize", (data) => {
     console.log("updateShareScreenSize", data);
@@ -206,6 +251,7 @@ export default function WithReactFlowV2() {
         nodeTypes={{
           userNode: UserNode,
           shareScreenNode: ShareScreenNode,
+          jailNode: JailNode,
         }}
         onInit={(rfinstance) => {
           rf.current = rfinstance;

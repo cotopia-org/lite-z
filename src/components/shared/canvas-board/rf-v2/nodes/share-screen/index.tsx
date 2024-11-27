@@ -7,18 +7,22 @@ import { cn } from "@/lib/utils";
 import { useSocket } from "@/routes/private-wrarpper";
 import { VideoTrack } from "@/components/shared/video-track";
 import { useTracks } from "@livekit/components-react";
+import useAuth from "@/hooks/auth";
 
 function ShareScreenNode({ data }: any) {
   const socket = useSocket();
+
+  const { user } = useAuth();
 
   const alltracks = useTracks();
 
   const targetTrack = alltracks.find(
     (track) =>
-      track.source?.toLowerCase() ===
-        data?.track?.track?.source?.toLowerCase() &&
-      track?.participant?.identity === data?.track?.participant?.identity
+      track.source?.toLowerCase() === data?.track?.source?.toLowerCase() &&
+      data?.participant?.identity === data?.participant?.identity
   );
+
+  const canResize = user?.username === targetTrack?.participant.identity;
 
   const [isFullScreen, setIsFullScreen] = useState(false);
 
@@ -35,21 +39,23 @@ function ShareScreenNode({ data }: any) {
         identity={data?.track?.participant?.identity}
         onFullScreen={() => setIsFullScreen((prev) => !prev)}
       />
-      <NodeResizeControl
-        minWidth={500}
-        minHeight={300}
-        keepAspectRatio
-        onResizeEnd={(_, params) => {
-          socket?.emit("updateShareScreenSize", {
-            room_id: data.room_id,
-            id: data?.id,
-            width: params?.width,
-            height: params?.height,
-          });
-        }}
-      >
-        <SquareArrowOutDownRight />
-      </NodeResizeControl>
+      {canResize && (
+        <NodeResizeControl
+          minWidth={500}
+          minHeight={300}
+          keepAspectRatio
+          onResizeEnd={(_, params) => {
+            socket?.emit("updateShareScreenSize", {
+              room_id: data.room_id,
+              id: data?.id,
+              width: params?.width,
+              height: params?.height,
+            });
+          }}
+        >
+          <SquareArrowOutDownRight />
+        </NodeResizeControl>
+      )}
       {!!targetTrack && <VideoTrack trackRef={targetTrack} />}
     </div>
   );

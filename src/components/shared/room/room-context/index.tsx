@@ -19,7 +19,6 @@ import {
   ReactNode,
   useContext,
   useEffect,
-  useMemo,
   useState,
 } from "react";
 import { useNavigate } from "react-router-dom";
@@ -58,20 +57,6 @@ const RoomCtx = createContext<{
   onlineUsers: UserMinimalType[];
   usersHaveJobs: UserMinimalType[];
   usersHaveInProgressJobs: UserMinimalType[];
-  objects: {
-    [key: string]: {
-      x: number;
-      y: number;
-      width?: number;
-      height?: number;
-      meta?: any;
-    };
-  };
-  setObjects: React.Dispatch<
-    React.SetStateAction<{
-      [key: string]: { x: number; y: number; width?: number; height?: number };
-    }>
-  >;
 }>({
   room: undefined,
   livekit_token: undefined,
@@ -93,8 +78,6 @@ const RoomCtx = createContext<{
   onlineUsers: [],
   usersHaveJobs: [],
   usersHaveInProgressJobs: [],
-  objects: {},
-  setObjects: () => {},
 });
 
 export const useRoomContext = () => useContext(RoomCtx);
@@ -104,50 +87,6 @@ export default function RoomContext({
   room_id,
   workspace_id,
 }: Props) {
-  //update user coordinates
-  const [objects, setObjects] = useState<{
-    [key: string]: {
-      x: number;
-      y: number;
-      width?: number;
-      height?: number;
-      meta?: any;
-    };
-  }>({});
-
-  const finalObjects = useMemo(() => {
-    return objects;
-  }, [objects]);
-
-  useSocket("livekitEvent", (data: LivekitTrackPublishedType) => {
-    switch (data.event) {
-      case "track_published":
-        switch (data.track.source) {
-          case "SCREEN_SHARE":
-            console.log("data", data);
-            setObjects((prev) => ({
-              ...prev,
-              [data.id]: {
-                ...DEFAULT_OBJECT_POSITION,
-                width: data.track.width,
-                height: data.track.height,
-                meta: data,
-              },
-            }));
-            break;
-        }
-        break;
-      case "track_unpublished":
-        switch (data.track.source) {
-          case "SCREEN_SHARE":
-            delete objects[data.id];
-            setObjects(objects);
-            break;
-        }
-        break;
-    }
-  });
-
   const [room, setRoom] = useState<WorkspaceRoomType>();
   const { startLoading, stopLoading, isLoading } = useLoading();
 
@@ -370,8 +309,6 @@ export default function RoomContext({
         onlineUsers: onlineUsers,
         usersHaveJobs: usersHaveJobs,
         usersHaveInProgressJobs: usersHaveInProgressJobs,
-        objects: finalObjects,
-        setObjects,
       }}
     >
       {children}
