@@ -96,10 +96,10 @@ export default function TimeTrackingButtonTool() {
             return (
                 <PopupBoxChild
                     {...style}
-                    left={style.left - style.width - (selectedUser === null ? 28 : 176)}
+                    left={style.left - style.width - (selectedUser === null ? 28 : 28)}
                     onClose={close}
                     title={header}
-                    width={selectedUser === null ? 300 : 450}
+                    width={selectedUser === null ? 300 : 300}
                     button={      selectedUser && <CotopiaIconButton
                         onClick={()=>{
                             setSelectedUser(null)

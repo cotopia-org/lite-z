@@ -36,9 +36,9 @@ export const getTimeFormat = (
     .padStart(2, "0");
 
   if (hasHours)
-    return `${formattedHours}:${formattedMinutes}`;
+    return `${formattedHours}h ${formattedMinutes}m`;
 
-  return `${formattedMinutes}`;
+  return `${formattedMinutes}m`;
 };
 
 export function persianToEnglishNumbers(inputStr: string): string {

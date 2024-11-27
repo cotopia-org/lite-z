@@ -6,7 +6,7 @@ import JobTable from "@/components/shared/room/tools/top-left/job-button/shapes/
 type Props = {
   userId: number | null;
 };
-export default function UserJobList({ userId }: Props) {
+export default function   UserJobList({ userId }: Props) {
   const { data, isLoading } = useApi(`/users/${userId}/jobs`);
   const jobs: JobType[] = data !== undefined ? data?.data : [];
 
@@ -14,5 +14,5 @@ export default function UserJobList({ userId }: Props) {
 
   if (isLoading || data === undefined) content = <FullLoading />;
 
-  return <div className={'w-[400px] min-w-full'}>{content}</div>;
+  return <div className={'w-full min-w-full'}>{content}</div>;
 }
