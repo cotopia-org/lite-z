@@ -74,6 +74,8 @@ export default function WithReactFlowV2() {
       rf.current?.setNodes((prev) => {
         return [...prev, shareScreenNode];
       });
+
+      initShareScreenTracks.current = true;
     }
   }, [rf.current, shareScreenTracks]);
 
