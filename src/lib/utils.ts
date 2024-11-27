@@ -36,9 +36,9 @@ export const getTimeFormat = (
     .padStart(2, "0");
 
   if (hasHours)
-    return `${formattedHours}:${formattedMinutes}:${formattedSeconds}`;
+    return `${formattedHours}:${formattedMinutes}`;
 
-  return `${formattedMinutes}:${formattedSeconds}`;
+  return `${formattedMinutes}`;
 };
 
 export function persianToEnglishNumbers(inputStr: string): string {
@@ -115,7 +115,7 @@ export const timeStringToMoment = (time: string) => {
   return momentDate;
 };
 
-export function convertMinutesToHHMMSS(minutes: number): string {
+export function convertMinutesToHHMMSS(minutes: number,short:boolean): string {
   const hours = Math.floor(minutes / 60);
   const mins = Math.floor(minutes % 60);
   const secs = Math.floor((minutes * 60) % 60);
@@ -123,9 +123,14 @@ export function convertMinutesToHHMMSS(minutes: number): string {
   const formattedHours = String(hours).padStart(2, "0");
   const formattedMinutes = String(mins).padStart(2, "0");
   const formattedSeconds = String(secs).padStart(2, "0");
+if (short){
+  return `${formattedHours} h`;
 
+}
   return `${formattedHours}:${formattedMinutes}:${formattedSeconds}`;
 }
+
+
 
 export const estimateTotalHoursBySchedules = (schedules: ScheduleType[]) => {
   let hours = 0;
@@ -236,7 +241,7 @@ export const getTwelveClockFormat = (time: string) => {
 export function extractMentions(
   message: string
 ): { start_position: number; user: string }[] {
-  const mentionRegex = /@(\w+)/g;
+  const mentionRegex = /@(\S+)/g; // Fixed when a DOT was in the username.
   const mentions: { start_position: number; user: string }[] = [];
   let match: RegExpExecArray | null;
 

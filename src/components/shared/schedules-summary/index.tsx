@@ -23,7 +23,7 @@ export default function SchedulesSummary({ schedules }: Props) {
     <TitleEl
       title={`Scheduled (${localSchedules.length}) ${emoji.get("scream")}`}
     >
-      <div className='flex flex-col gap-y-2'>
+      <div className='flex flex-col gap-y-3'>
         {localSchedules.map((sch) => (
           <Card
             key={sch.id}
