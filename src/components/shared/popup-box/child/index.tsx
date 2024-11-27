@@ -1,5 +1,7 @@
-import { ReactNode } from "react"
+import React, { ReactNode } from "react"
 import BoxHolder from "../../box-holder"
+import Rank from "@/components/shared/room/tools/top-right/time-tracking/details/rank";
+import UserAvatar from "@/components/shared/user-avatar";
 
 type Props = {
   children: ReactNode
@@ -29,9 +31,13 @@ export default function PopupBoxChild({
         zIndex: zIndex ?? 100,
       }}
     >
-      <BoxHolder has_divider title={title} onClose={onClose}>
-        {children}
-      </BoxHolder>
+        <BoxHolder has_divider title={title} onClose={onClose}>
+
+
+            {children}
+
+
+        </BoxHolder>
     </div>
   )
 }

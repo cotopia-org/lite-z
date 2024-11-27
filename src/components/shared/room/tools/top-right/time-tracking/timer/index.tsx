@@ -8,6 +8,7 @@ type Props = {
   children: (time: string) => ReactNode;
   id?: string;
   stop?: boolean;
+  short?: boolean;
 };
 
 export default function Timer({
@@ -15,6 +16,7 @@ export default function Timer({
   children,
   id,
   stop = false,
+    short=false
 }: Props) {
   let timer: NodeJS.Timeout;
 
@@ -56,5 +58,5 @@ export default function Timer({
     [id]
   );
 
-  return <>{children(convertMinutesToHHMMSS((seconds ?? 0) / 60))}</>;
+  return <>{children(convertMinutesToHHMMSS((seconds ?? 0) / 60,short))}</>;
 }

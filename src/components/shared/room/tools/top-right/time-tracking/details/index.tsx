@@ -23,59 +23,40 @@ type Props = {
 function Timers ({hasCount,userActiveJob,item}:Props) {
 return                <>
   {hasCount ? (
-      <>
+      <div className={'flex flex-row gap-x-2 items-start justify-between'}>
         <Timer
             initialSeconds={item.working_minutes * 60}
             stop={userActiveJob === null}
+            short={true}
         >
           {(time) => (
-              <CotopiaTooltip title='Working time'>
-                <strong className='text-xs'>{time}</strong>
-              </CotopiaTooltip>
+                <strong className='text-xs w-[40px]'>{time}</strong>
           )}
         </Timer>
         <Timer
             initialSeconds={item.idle_minutes * 60}
             stop={userActiveJob !== null}
+            short={true}
+
         >
           {(time) => (
-              <CotopiaTooltip title='Idle time'>
-                <strong className='text-xs flex flex-row items-center gap-x-1 text-yellow-600'>
+                <strong className='text-xs w-[40px] text-yellow-600'>
                   {time}
                 </strong>
-              </CotopiaTooltip>
           )}
         </Timer>
-        {/*<Timer*/}
-        {/*    initialSeconds={item.sum_minutes * 60}*/}
-        {/*>*/}
-        {/*  {(time) => (*/}
-        {/*      <CotopiaTooltip title='Sum'>*/}
-        {/*        <strong className='text-xs flex flex-row items-center gap-x-1 text-blue-600'>*/}
-        {/*          {time}*/}
-        {/*        </strong>*/}
-        {/*      </CotopiaTooltip>*/}
-        {/*  )}*/}
-        {/*</Timer>*/}
-      </>
+
+      </div>
   ) : (
-      <>
-        <CotopiaTooltip title='Working time'>
-                      <span className='text-xs opacity-85'>
-                        {convertMinutesToHHMMSS(item.working_minutes)}
+      <div className={'flex flex-row gap-x-2 items-start justify-between'}>
+                      <span className='text-xs opacity-85 w-[40px]'>
+                        {convertMinutesToHHMMSS(item.working_minutes,true)}
                       </span>
-        </CotopiaTooltip>
-        <CotopiaTooltip title='Idle time'>
-                      <span className='text-xs opacity-85 text-yellow-600'>
-                        {convertMinutesToHHMMSS(item.idle_minutes)}
+                      <span className='text-xs opacity-85 w-[40px] text-yellow-600'>
+                        {convertMinutesToHHMMSS(item.idle_minutes,true)}
                       </span>
-        </CotopiaTooltip>
-        {/*<CotopiaTooltip title='Sum'>*/}
-        {/*              <span className='text-xs opacity-85 text-blue-600'>*/}
-        {/*                {convertMinutesToHHMMSS(item.sum_minutes)}*/}
-        {/*              </span>*/}
-        {/*</CotopiaTooltip>*/}
-      </>
+
+      </div>
   )}</>
 }
 export default function TimeTrackingDetails() {
@@ -97,7 +78,7 @@ export default function TimeTrackingDetails() {
           const isMe = item.user.id === user?.id;
 
           let clss =
-            "flex flex-row items-center justify-between p-2 border-b last:border-0";
+            "flex flex-row items-center justify-between p-2 border-b last:border-0 hover:bg-blue-100 hover:cursor-pointer";
 
           if (isMe) clss += ` bg-sky-300`;
 
@@ -118,13 +99,15 @@ export default function TimeTrackingDetails() {
               className={clss}
               key={key}
               delay={0.05 + key * 0.05}
+
+
             >
               <div className='flex flex-row items-center gap-x-2'>
                 <Rank rank={key + 1} />
                 <UserAvatar title={item.user?.name} src={userAvatar?.url} />
                 <span className='text-xs'>{item.user?.name ?? "-"}</span>
               </div>
-              <div className='flex flex-col items-end gap-y-2 w-[80px]'>
+              <div className='flex flex-col   w-[80px] justify-between'>
                   <Timers hasCount={hasCount} userActiveJob={userActiveJob} item={item}/>
               </div>
             </BlurFade>
