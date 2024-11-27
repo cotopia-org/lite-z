@@ -6,7 +6,7 @@ export default function ChatActionsGroup() {
   const { sidebar, closeSidebar } = useRoomContext();
 
   return (
-    <div className='flex flex-row items-center bg-white rounded-xl px-2'>
+    <div className='flex flex-row items-center bg-white rounded-lg h-[48px] px-2'>
       {!!sidebar ? (
         <CloseSidebar onClick={closeSidebar} />
       ) : (

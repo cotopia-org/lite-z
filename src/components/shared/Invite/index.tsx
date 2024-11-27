@@ -1,27 +1,30 @@
-import CotopiaButton from "@/components/shared-ui/c-button";
 import useLoading from "@/hooks/use-loading";
-import { UserRoundPlus } from "lucide-react";
-import { useRoomContext } from "../../../room-context";
+import { useRoomContext } from "../room/room-context";
+import axiosInstance from "@/services/axios";
 import CotopiaPrompt from "@/components/shared-ui/c-prompt";
 import UserSelector from "@/components/shared/user-selector";
-import { useState } from "react";
+import { ReactNode, useState } from "react";
 import { UserMinimalType } from "@/types/user";
 import { toast } from "sonner";
 import SelectedUser from "./selected-user";
 import { InviteType } from "@/types/invite";
 import { CodePicker } from "./code-picker";
-import axiosInstance from "@/services/axios";
+import { WorkspaceRoomShortType } from "@/types/room";
 
-export default function InviteButtonTool() {
+type Props = {
+  room: WorkspaceRoomShortType;
+  render: (open: () => void) => ReactNode;
+};
+
+export default function InviteButtonTool({ render, room }: Props) {
   const [selectedUser, setSelectedUser] = useState<UserMinimalType>();
 
-  const { room_id } = useRoomContext();
   const { startLoading, stopLoading, isLoading } = useLoading();
 
   const [invite, setInvite] = useState<InviteType>();
 
   const handleInviteUser = () => {
-    if (room_id === undefined) return;
+    if (room?.id === undefined) return;
 
     if (selectedUser === undefined) {
       toast.error("Please select at least a user to invite");
@@ -32,7 +35,7 @@ export default function InviteButtonTool() {
     axiosInstance
       .post(`/invites`, {
         model: "room",
-        model_id: room_id,
+        model_id: room.id,
         user_id: selectedUser.id,
       })
       .then((res) => {
@@ -79,16 +82,7 @@ export default function InviteButtonTool() {
               />
             </>
           }
-          trigger={(open) => (
-            <CotopiaButton
-              onClick={open}
-              loading={isLoading}
-              startIcon={<UserRoundPlus />}
-              className='bg-white hover:bg-white text-black rounded-xl'
-            >
-              Invite
-            </CotopiaButton>
-          )}
+          trigger={render}
         />
       )}
     </>

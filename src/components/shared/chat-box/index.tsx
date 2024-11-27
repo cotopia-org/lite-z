@@ -88,7 +88,7 @@ export default function ChatBox({
   useBus(
     __BUS.scrollToTargetMessage,
     (data: any) => {
-      const messageId = data?.payload;
+      const messageId = data?.messageId;
 
       const messageEl: HTMLDivElement | null = document.querySelector(
         `.chat-item[data-id="${messageId}"]`

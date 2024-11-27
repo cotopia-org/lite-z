@@ -1,13 +1,10 @@
-"use client"
-
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown"
-import React, { useCallback, useEffect, useRef, useState } from "react"
-import CotopiaButton from "../c-button"
+import { useCallback, useEffect, useRef, useState } from "react"
 import { ChevronDown } from "lucide-react"
 
 export type DropdownItemType = { title: string; value: string }

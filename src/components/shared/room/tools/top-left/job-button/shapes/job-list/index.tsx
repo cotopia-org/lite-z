@@ -1,5 +1,3 @@
-"use client";
-
 import { useRoomContext } from "@/components/shared/room/room-context";
 import { useApi } from "@/hooks/swr";
 import JobItem from "./job-item";
@@ -7,6 +5,7 @@ import FullLoading from "@/components/shared/full-loading";
 import AddJobHandler from "../add-job";
 import { urlWithQueryParams } from "@/lib/utils";
 import { FetchDataType } from "@/services/axios";
+import JobItems from "@/components/shared/job-items";
 
 interface Props {}
 
@@ -21,19 +20,13 @@ const JobList = (props: Props) => {
 
   let jobItems: any[] = (data && data?.data) ?? [];
 
-  let content = (
-    <div className='flex flex-col w-full gap-y-2 max-h-[350px] py-2 overflow-auto'>
-      {jobItems.map((item, key) => {
-        return <JobItem mutate={mutate} item={item} key={key + 1} />;
-      })}
-    </div>
-  );
+  let content = <JobItems items={jobItems} onMutate={mutate} hasAction />;
 
   const loading = data === undefined || isLoading;
 
   if (!loading && jobItems.length === 0)
     content = (
-      <span className='w-full font-medium text-center py-4'>
+      <span className='w-full text-lg text-grayscale-paragraph font-medium text-center py-4'>
         There is no job to show!
       </span>
     );

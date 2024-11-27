@@ -1,4 +1,5 @@
 import { AttachmentFileType } from "./file";
+import { JobType } from "./job";
 
 export type UserType = {
   active: null | 0 | 1;
@@ -20,6 +21,11 @@ export type UserType = {
   voice_status: null | string;
 };
 
+export type UserMinimalTypeScheduleType = {
+  hours: string;
+  minutes: number;
+};
+
 export type UserMinimalType = {
   avatar: null | AttachmentFileType;
   id: number;
@@ -32,9 +38,11 @@ export type UserMinimalType = {
   voice_status: null | string;
   screenshare_coordinates: null | string;
   screenshare_size: null | string;
+  schedule_hours_in_week?: number;
 };
 
 export type WorkspaceUserType = {
+  active_job: JobType | null;
   avatar: AttachmentFileType;
   coordinates: string;
   id: number;
@@ -42,6 +50,12 @@ export type WorkspaceUserType = {
   name: string;
   status: string;
   username: string;
+  has_video?: boolean;
+  has_screen_share?: boolean;
+  has_mic?: boolean;
   verified: boolean;
   room_id: number | null;
+  schedule_hours_in_week?: {
+    hours:string,minutes:number
+  };
 };

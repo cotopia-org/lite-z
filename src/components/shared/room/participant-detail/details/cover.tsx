@@ -5,6 +5,8 @@ import UserMood from "./mood";
 import UserNavigate from "./navigate";
 import { useRoomContext } from "../../room-context";
 import useAuth from "@/hooks/auth";
+import UserJobs from "./jobs";
+import UserDirect from "./direct";
 
 export default function UserCover() {
   const { user, roomId } = useUserDetail();
@@ -14,6 +16,9 @@ export default function UserCover() {
   const { room_id: currentRoomId } = useRoomContext();
 
   const inCurrentRoom = roomId === currentRoomId;
+
+  console.log("myAccount", myAccount);
+  console.log("user", user);
 
   const isMineAccount = myAccount?.id === user?.id;
 
@@ -28,6 +33,8 @@ export default function UserCover() {
         {inCurrentRoom && !isMineAccount && <UserNavigate />}
         <UserMood />
         <UserSchedules />
+        <UserJobs />
+        {!isMineAccount && <UserDirect />}
       </div>
     </div>
   );

@@ -1,8 +1,8 @@
-import { JobStatuType } from "@/types/job";
 import type { StatusBoxVariant } from "@/components/shared/status-box";
 import StatusBox from "@/components/shared/status-box";
+import { JobStatusType } from "@/types/job";
 interface Props {
-  status: JobStatuType;
+  status: JobStatusType;
 }
 
 const JobStatus = ({ status }: Props) => {

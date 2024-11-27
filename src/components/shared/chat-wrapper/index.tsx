@@ -1,5 +1,3 @@
-"use client";
-
 import useSetting from "@/hooks/use-setting";
 import { playSoundEffect } from "@/lib/sound-effects";
 import {
@@ -24,7 +22,6 @@ export default function ChatWrapper({ children }: Props) {
   useSocket(
     "messageReceived",
     (data: ChatItemType) => {
-      console.log(data, "RECEIVED DATA");
       const isDirect = data?.is_direct;
 
       if (settings.sounds.messageIncoming) playSoundEffect("newMessage2");
@@ -55,11 +52,9 @@ export default function ChatWrapper({ children }: Props) {
   });
 
   useSocket("messageUpdated", (data: Chat2ItemType) => {
-    console.log(data, "MESSAGE UPDATED");
     appDispatch(updateMessagesAction({ message: data }));
   });
   useSocket("messageDeleted", (data: Chat2ItemType) => {
-    console.log(data, "MESSAGE Deleted");
     appDispatch(removeMessageAction({ message: data }));
   });
 

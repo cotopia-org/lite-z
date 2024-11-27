@@ -1,17 +1,15 @@
-import CotopiaButton from "@/components/shared-ui/c-button";
-import ParticipantsWithPopover from "@/components/shared/participants/with-popover";
-import { WorkspaceRoomShortType } from "@/types/room";
-import { Cast } from "lucide-react";
-import DeleteRoom from "./delete-room";
-import { UserMinimalType, WorkspaceUserType } from "@/types/user";
+import { WorkspaceRoomJoinType, WorkspaceRoomShortType } from "@/types/room";
+import { WorkspaceUserType } from "@/types/user";
 import { uniqueById, urlWithQueryParams } from "@/lib/utils";
+import useSetting from "@/hooks/use-setting";
+import { playSoundEffect } from "@/lib/sound-effects";
 import useLoading from "@/hooks/use-loading";
-//@ts-ignore
-import { useSocket } from "@/routes/private-wrarpper";
+import axiosInstance, { FetchDataType } from "@/services/axios";
 import { useNavigate } from "react-router-dom";
-import useQueryParams from "@/hooks/use-query-params";
-import { useRoomHolder } from "@/components/shared/room";
-import { useRoomContext } from "@/components/shared/room/room-context";
+import { useAppDispatch } from "@/store";
+import { setToken } from "@/store/slices/livekit-slice";
+import RoomItem from "./room-item";
+import ParticipantRows from "@/components/shared/participant-rows";
 
 type Props = {
   room: WorkspaceRoomShortType;
@@ -26,30 +24,42 @@ export default function WorkspaceRoom({
   selected_room_id,
   participants,
 }: Props) {
-  const { startLoading, stopLoading, isLoading } = useLoading();
+  const { sounds } = useSetting();
 
-  const { joinRoom } = useRoomContext();
-
-  const { query } = useQueryParams();
+  const dispatch = useAppDispatch();
 
   const navigate = useNavigate();
 
-  const socket = useSocket();
+  const { startLoading, stopLoading } = useLoading();
 
   const joinRoomHandler = async () => {
-    if (!socket) return;
-
     if (selected_room_id !== room.id) {
       startLoading();
-      joinRoom(room.id, () => {
-        stopLoading();
-        navigate(
-          urlWithQueryParams(`/workspaces/${workspace_id}/rooms/${room.id}`, {
-            ...query,
-            isSwitching: true,
-          })
-        );
-      });
+      axiosInstance
+        .get<FetchDataType<WorkspaceRoomJoinType>>(`/rooms/${room.id}/join`)
+        .then((res) => {
+          const livekitToken = res.data.data.token; //Getting livekit token from joinObject
+
+          //set livekit token
+          dispatch(setToken(livekitToken));
+
+          navigate(
+            urlWithQueryParams(`/workspaces/${workspace_id}/rooms/${room.id}`, {
+              isSwitching: true,
+            })
+          );
+
+          setTimeout(() => {
+            navigate(`/workspaces/${workspace_id}/rooms/${room.id}`);
+          }, 400);
+
+          stopLoading();
+
+          if (sounds.userJoinLeft) playSoundEffect("joined");
+        })
+        .catch((err) => {
+          stopLoading();
+        });
     }
   };
 
@@ -60,22 +70,13 @@ export default function WorkspaceRoom({
 
   return (
     <div className='flex flex-col gap-y-2'>
-      <div className='flex flex-row items-center justify-between gap-x-2'>
-        <CotopiaButton
-          onClick={joinRoomHandler}
-          className={clss}
-          variant={isSelected ? "default" : "ghost"}
-          startIcon={<Cast className='mr-2' size={16} />}
-          disabled={isLoading}
-          loading={isLoading}
-        >
-          {room.title}
-        </CotopiaButton>
-        <DeleteRoom room={room} onDelete={() => {}} />
-      </div>
-      <ParticipantsWithPopover
-        roomId={room.id}
-        participants={uniqueById(participants) as UserMinimalType[]}
+      <RoomItem
+        joinRoomHandler={joinRoomHandler}
+        room={room}
+        isSelected={isSelected}
+      />
+      <ParticipantRows
+        participants={uniqueById(participants) as WorkspaceUserType[]}
       />
     </div>
   );

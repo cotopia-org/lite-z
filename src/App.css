@@ -1,4 +1,3 @@
-
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -16,17 +15,22 @@ input[type="number"]::-webkit-outer-spin-button {
     --background: #ffffff;
     --foreground: #1c1c1e;
 
-    --primary-background: #ebf0ff;
-
     --card: #ffffff;
     --card-foreground: #1c1c1e;
 
     --popover: #ffffff;
     --popover-foreground: #1c1c1e;
 
-    --primary: #1c1c1e;
+    /*Primary*/
+    --primary: #1b5bff;
+    --primary-label: #0040e0;
     --primary-foreground: #ffffff;
+    --primary-light: #d1deff;
+    --primary-body: #1b5bff;
+    --primary-background: #ebf0ff;
+    --primary-border: #1b5bff;
 
+    /*Secondary*/
     --secondary: #d1e8ff;
     --secondary-foreground: #1c1c2d;
 
@@ -40,8 +44,32 @@ input[type="number"]::-webkit-outer-spin-button {
     --destructive-foreground: #d1e8ff;
 
     --border: #e4eaf0;
+
     --input: #e4eaf0;
+
     --ring: #1c1c1e;
+
+    /*Grayscale */
+
+    --grayscale: #333652;
+    --grayscale-light: #f2f2f2;
+    --grayscale-subtitle: #656b9f;
+    --grayscale-paragraph: #333652;
+    --grayscale-caption: #a4a7c6;
+    --grayscale-border: #babcd4;
+    --grayscale-title: #191b29;
+    --grayscale-subtle: #fdfdfd;
+    --grayscale-disabled: #e6e6e6;
+
+    /*Error*/
+
+    --error: #a80027;
+
+    /*Warning*/
+    --warning: #ad9c00;
+    --warning-light: #fffad1;
+    /*Success*/
+    --success: #00ad26;
 
     --radius: 8px;
   }
@@ -110,8 +138,8 @@ input[type="number"]::-webkit-outer-spin-button {
 .user-circle .lk-participant-media-video,
 .mirror-video {
   transform: rotateY(180deg);
-    -webkit-transform:rotateY(180deg);  
-    -moz-transform:rotateY(180deg); 
+  -webkit-transform: rotateY(180deg);
+  -moz-transform: rotateY(180deg);
 }
 
 .react-flow__node {
@@ -120,10 +148,10 @@ input[type="number"]::-webkit-outer-spin-button {
 
 /* Hide scrollbar for all major browsers */
 * {
-  scrollbar-width: none;  /* Firefox */
-  -ms-overflow-style: none;  /* Internet Explorer 10+ */
+  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none; /* Internet Explorer 10+ */
 }
 
 *::-webkit-scrollbar {
-  display: none;  /* Safari and Chrome */
+  display: none; /* Safari and Chrome */
 }

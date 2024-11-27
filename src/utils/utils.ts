@@ -1,5 +1,3 @@
-import moment from "moment-jalaali";
-
 export const thunkResHandler = (
   thunkRes: Promise<any>,
   thunkKey: string,
@@ -7,7 +5,7 @@ export const thunkResHandler = (
   onError: (res: any) => void
 ): void => {
   thunkRes.then((res) => {
-    if (res.type === `${thunkKey}/fullfield`) {
+    if (res.type === `${thunkKey}/fulfilled`) {
       onSuccess(res);
     } else if (res.type === `${thunkKey}/rejected`) {
       onError(res);

@@ -1,5 +1,3 @@
-"use client"
-
 import { ChatItemType } from "@/types/chat"
 import Avatar from "../avatar"
 import { getUserFullname } from "@/lib/utils"

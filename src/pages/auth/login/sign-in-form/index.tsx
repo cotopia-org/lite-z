@@ -1,5 +1,3 @@
-"use client";
-
 import CotopiaButton from "@/components/shared-ui/c-button";
 import CotopiaInput from "@/components/shared-ui/c-input";
 import CotopiaPasswordInput from "@/components/shared-ui/c-password-input";
@@ -38,9 +36,7 @@ export default function SignInForm({ onLoggedIn }: Props) {
           loginThunk({ username: values.username, password: values.password })
         ),
         "auth/login/password",
-        (res) => {
-          console.log("res", res);
-        },
+        (res) => {},
         () => {}
       );
     },

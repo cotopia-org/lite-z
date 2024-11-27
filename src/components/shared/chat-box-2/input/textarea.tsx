@@ -1,4 +1,6 @@
+import { __BUS } from "@/const/bus";
 import React, { useState, useRef, useEffect } from "react";
+import useBus, { dispatch } from "use-bus";
 
 type Props = {
   onChange: (value: string) => void;
@@ -33,19 +35,37 @@ const MultilineTextarea: React.FC<Props> = ({
     }
   };
 
+  const handleInputChange = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
+    const { value, selectionStart } = event.target;
+
+    setText(value);
+    onChange(value);
+
+    if (selectionStart !== null && selectionStart > 0) {
+      const cursorPosition = selectionStart - 1; // character before the cursor
+      if (value[cursorPosition] === "@") {
+        dispatch(__BUS.showChatMention);
+      } else {
+        dispatch(__BUS.hideChatMention);
+      }
+    } else {
+      dispatch(__BUS.hideChatMention);
+    }
+  };
+
+  useBus(__BUS.chatInputFocus, () => {
+    textareaRef.current?.focus();
+  });
+
   return (
     <textarea
       ref={textareaRef}
       value={text}
-      onChange={(e) => {
-        const value = e.target.value;
-        setText(value);
-        onChange(value);
-      }}
+      onChange={handleInputChange}
       onKeyDown={handleKeyDown}
       placeholder='Type your message here...'
       rows={1} // Start with one line by default
-      className='outline-none w-full min-h-[32px] overflow-y-auto max-h-[200px] text-sm'
+      className='outline-none w-full min-h-[32px] overflow-y-auto max-h-[100px] text-sm'
       style={{ resize: "none" }}
     />
   );

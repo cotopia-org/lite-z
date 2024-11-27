@@ -1,10 +1,13 @@
 import { useEffect, useState } from "react";
 
 export type CBadgeProps = {
-  count: number;
+  count?: number;
   size?: "small" | "normal" | "large";
   showAnimate?: boolean;
   className?: string;
+  postfix?: string;
+  prefix?: string;
+  hideCount?: boolean;
 };
 
 let timeout: any = undefined;
@@ -14,6 +17,9 @@ export default function CBadge({
   showAnimate = true,
   size = "small",
   className,
+  postfix,
+  prefix,
+  hideCount,
 }: CBadgeProps) {
   const [hasAnimate, setHasAnimate] = useState(false);
 
@@ -49,7 +55,7 @@ export default function CBadge({
       break;
   }
 
-  if (count <= 0) return null;
+  if (count !== undefined && count <= 0) return null;
 
   return (
     <div
@@ -57,7 +63,9 @@ export default function CBadge({
         hasAnimate ? "animate-scale-custom" : ""
       } ${clss}`}
     >
-      {count}
+      {!!prefix && prefix}
+      {!!!hideCount && count}
+      {!!postfix && postfix}
     </div>
   );
 }

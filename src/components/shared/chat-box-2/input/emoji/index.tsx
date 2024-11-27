@@ -18,7 +18,10 @@ export default function EmojiHandlerButton({ onPick }: Props) {
       }
       contentClassName='!p-0 !border-0'
     >
-      <EmojiPicker onEmojiClick={(emoji) => onPick(emoji.emoji)} />
+      <EmojiPicker
+        onEmojiClick={(emoji) => onPick(emoji.emoji)}
+        lazyLoadEmojis
+      />
     </CotopiaPopover>
   );
 }

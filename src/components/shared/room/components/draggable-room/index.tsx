@@ -1,27 +1,25 @@
-"use client";
-
 import DraggableComponent, {
   DraggableProps,
-} from "@/components/shared/draggable";
-import { useScreen } from "@/hooks/use-screen";
-import { ReactNode, useEffect, useState } from "react";
+} from "@/components/shared/draggable"
+import { useScreen } from "@/hooks/use-screen"
+import { ReactNode, useEffect, useState } from "react"
 
 type Props = {
-  children: ReactNode;
-} & DraggableProps;
+  children: ReactNode
+} & DraggableProps
 export default function DraggableRoom({ children, ...rest }: Props) {
-  const { height, width } = useScreen();
+  const { height, width } = useScreen()
 
-  const [leftDashboardColWidth, setLeftDashboardColWidth] = useState(0);
+  const [leftDashboardColWidth, setLeftDashboardColWidth] = useState(0)
   useEffect(() => {
-    const leftDashboardWidth = document.getElementById("dashboard-left-col");
+    const leftDashboardWidth = document.getElementById("dashboard-left-col")
 
-    if (!leftDashboardWidth) return;
+    if (!leftDashboardWidth) return
 
-    setLeftDashboardColWidth(leftDashboardWidth.getBoundingClientRect().width);
-  }, []);
+    setLeftDashboardColWidth(leftDashboardWidth.getBoundingClientRect().width)
+  }, [])
 
-  const finalWidth = width + leftDashboardColWidth;
+  const finalWidth = width + leftDashboardColWidth
 
   return (
     <DraggableComponent
@@ -39,5 +37,5 @@ export default function DraggableRoom({ children, ...rest }: Props) {
     >
       {children}
     </DraggableComponent>
-  );
+  )
 }

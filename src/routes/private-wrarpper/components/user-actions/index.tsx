@@ -1,4 +1,4 @@
-import UserActionsAvatarButton from "./avatar";
+import UserActionsAvatarButton from "../../../../components/shared/user-actions-avatar-button";
 import UserActionsMenuButton from "./sidebar-menu";
 
 export default function UserActions() {

@@ -1,5 +1,3 @@
-"use client";
-
 import CotopiaAvatar from "@/components/shared-ui/c-avatar";
 import { FullModalBox } from "@/components/shared/modal-box";
 import { getUserFullname } from "@/lib/utils";
@@ -19,8 +17,13 @@ export default function UserActionsAvatarButton({ size = "large" }: Props) {
 
   let avatarClss = "cursor-pointer";
 
-  if (size === "normal") {
-    avatarClss += ` w-[32px] h-[32px]`;
+  switch (size) {
+    case "large":
+      avatarClss += ` w-[40px] h-[40px] border`;
+      break;
+    case "normal":
+      avatarClss += ` w-[32px] h-[32px] border`;
+      break;
   }
 
   return (

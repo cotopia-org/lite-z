@@ -1,28 +1,23 @@
-import { __BUS } from "@/const/bus";
 import { useApi } from "@/hooks/swr";
 import useLoading from "@/hooks/use-loading";
 import useQueryParams from "@/hooks/use-query-params";
 import useSetting from "@/hooks/use-setting";
 import { playSoundEffect } from "@/lib/sound-effects";
-import { uniqueById } from "@/lib/utils";
 import { useSocket } from "@/routes/private-wrarpper";
 import axiosInstance, { FetchDataType } from "@/services/axios";
 import { ScheduleType } from "@/types/calendar";
 import { JobType } from "@/types/job";
 import { LeaderboardType } from "@/types/leaderboard";
 import { WorkspaceRoomJoinType, WorkspaceRoomType } from "@/types/room";
-import { UserMinimalType, UserType, WorkspaceUserType } from "@/types/user";
+import { UserMinimalType, WorkspaceUserType } from "@/types/user";
 import {
   createContext,
   ReactNode,
   useContext,
   useEffect,
-  useMemo,
   useState,
 } from "react";
 import { useNavigate } from "react-router-dom";
-import { toast } from "sonner";
-import useBus from "use-bus";
 
 type LeftJoinType = { room_id: number; user: UserMinimalType };
 
@@ -47,19 +42,17 @@ const RoomCtx = createContext<{
   videoState: boolean;
   audioState: boolean;
   changePermissionState: (key: "video" | "audio", newValue: boolean) => void;
+  joinRoom: () => void;
   leaderboard: LeaderboardType[];
   scheduled: ScheduleType[];
-  workpaceUsers: WorkspaceUserType[];
+  workspaceUsers: WorkspaceUserType[];
   workspaceJobs: JobType[];
-  workingUsers: UserType[];
+  workingUsers: WorkspaceUserType[];
   onlineUsers: UserMinimalType[];
   usersHaveJobs: UserMinimalType[];
   usersHaveInProgressJobs: UserMinimalType[];
-  updateRoom: (room: WorkspaceRoomType) => void;
-  joinRoom: (room_id: number | string, onFulfilled?: () => void) => void;
 }>({
   room: undefined,
-  updateRoom: (room) => {},
   livekit_token: undefined,
   room_id: 1,
   workspace_id: undefined,
@@ -70,15 +63,15 @@ const RoomCtx = createContext<{
   audioState: false,
   videoState: false,
   changePermissionState: (key, newValue) => {},
+  joinRoom: () => {},
   leaderboard: [],
   scheduled: [],
-  workpaceUsers: [],
+  workspaceUsers: [],
   workspaceJobs: [],
   workingUsers: [],
   onlineUsers: [],
   usersHaveJobs: [],
   usersHaveInProgressJobs: [],
-  joinRoom: (room_id, onFulfilled) => {},
 });
 
 export const useRoomContext = () => useContext(RoomCtx);
@@ -89,49 +82,6 @@ export default function RoomContext({
   workspace_id,
 }: Props) {
   const [room, setRoom] = useState<WorkspaceRoomType>();
-
-  // const updateRoomParticipants = (participants: UserMinimalType[]) => {
-  //   console.log("participants", participants);
-
-  //   setRoom((prev) => {
-  //     const nValue = { ...(prev as WorkspaceRoomType), participants };
-
-  //     return nValue;
-  //   });
-  // };
-
-  const {
-    startLoading: startJoinLoading,
-    stopLoading: stopJoinLoading,
-    isLoading: joinLoading,
-  } = useLoading();
-
-  const handleJoin = async (
-    room_id: string | number,
-    onFulfilled?: () => void
-  ) => {
-    startJoinLoading();
-    socket?.emit("joinedRoom", room_id, async () => {
-      axiosInstance
-        .get<FetchDataType<WorkspaceRoomJoinType>>(`/rooms/${room_id}/join`)
-        .then((res) => {
-          setRoom((prev) => {
-            return {
-              ...(prev as WorkspaceRoomType),
-              participants: res.data.data.participants ?? [],
-            };
-          });
-          stopJoinLoading();
-          if (onFulfilled) onFulfilled();
-        })
-        .catch((err) => {
-          toast.error("Couldn't join to the room!");
-          stopJoinLoading();
-          if (onFulfilled) onFulfilled();
-        });
-    });
-  };
-
   const { startLoading, stopLoading, isLoading } = useLoading();
 
   const fetchRoom = (roomId: string | number) => {
@@ -155,6 +105,14 @@ export default function RoomContext({
     setRoom(data);
   });
 
+  //Update room object when background changed
+  useSocket("roomBackgroundChanged", (data: WorkspaceRoomType) => {
+    setRoom((prev) => ({
+      ...((prev ?? {}) as WorkspaceRoomType),
+      background: data.background,
+    }));
+  });
+
   const settings = useSetting();
 
   const { query } = useQueryParams();
@@ -162,52 +120,23 @@ export default function RoomContext({
 
   const socket = useSocket();
 
-  const navigate = useNavigate();
+  const router = useNavigate();
 
-  const handleJoinRoom = async (
-    room_id: string | number,
-    onFulfilled?: () => void
-  ) => {
-    startJoinLoading();
-    socket?.emit("joinedRoom", room_id, async () => {
-      axiosInstance
-        .get<FetchDataType<WorkspaceRoomJoinType>>(`/rooms/${room_id}/join`)
-        .then((res) => {
-          stopJoinLoading();
-          if (onFulfilled) onFulfilled();
+  const handleJoinRoom = async () => {
+    axiosInstance
+      .get<FetchDataType<WorkspaceRoomJoinType>>(`/rooms/${room_id}/join`)
+      .then((res) => {
+        const livekitToken = res.data.data.token; //Getting livekit token from joinObject
 
-          setRoom((prev) => {
-            return {
-              ...(prev as WorkspaceRoomType),
-              participants: res.data.data.participants ?? [],
-            };
-          });
-
-          const livekitToken = res.data.data.token; //Getting livekit token from joinObject
-
-          if (livekitToken) {
-            if (settings.sounds.userJoinLeft) playSoundEffect("joined");
-            navigate(
-              `/workspaces/${workspace_id}/rooms/${room_id}?token=${livekitToken}`
-            );
-            return;
-          }
-        })
-        .catch((err) => {
-          toast.error("Couldn't join to the room!");
-          stopJoinLoading();
-          if (onFulfilled) onFulfilled();
-        });
-    });
+        if (livekitToken) {
+          if (settings.sounds.userJoinLeft) playSoundEffect("joined");
+          router(
+            `/workspaces/${workspace_id}/rooms/${room_id}?token=${livekitToken}`
+          );
+          return;
+        }
+      });
   };
-
-  // useBus(
-  //   __BUS.rejoinMeet,
-  //   () => {
-  //     handleJoin(room_id);
-  //   },
-  //   [room_id, handleJoin]
-  // );
 
   const [permissionState, setPermissionState] = useState({
     audio: true,
@@ -239,11 +168,6 @@ export default function RoomContext({
       coordinates: `${position.x},${position.y}`,
     };
 
-    console.log(
-      "participants[participant_index]",
-      participants[participant_index]
-    );
-
     setRoom({ ...room, participants });
   };
 
@@ -266,7 +190,7 @@ export default function RoomContext({
   const { data: workspaceUsersData, mutate: mutateWorkspaceUsers } = useApi(
     `/workspaces/${workspace_id}/users`
   );
-  const workpaceUsers =
+  const workspaceUsers: WorkspaceUserType[] =
     workspaceUsersData !== undefined ? workspaceUsersData?.data : [];
 
   useSocket(
@@ -307,54 +231,17 @@ export default function RoomContext({
     [room, mutateWorkspaceUsers]
   );
 
-  const { data: workpaceJobs } = useApi(`/workspaces/${workspace_id}/jobs`);
-  const workpaceJobItems: JobType[] =
-    workpaceJobs !== undefined ? workpaceJobs?.data : [];
+  const workpaceJobItems: JobType[] = workspaceUsers
+    .filter((x) => x.active_job !== undefined)
+    .map((x) => x.active_job as JobType);
 
-  let usersHaveSchedules: number[] = [];
-  for (let job of workpaceJobItems) {
-    for (let jobMember of job.members) {
-      usersHaveSchedules.push(jobMember.id);
-    }
-  }
+  const usersHaveJobs: UserMinimalType[] = [];
 
-  const usersHaveJobs = useMemo(() => {
-    let users: UserMinimalType[] = [];
+  const usersHaveInProgressJobs: UserMinimalType[] = [];
 
-    for (let job of workpaceJobItems) {
-      for (let member of job.members) {
-        users.push(member);
-      }
-    }
-
-    return uniqueById(users) as UserMinimalType[];
-  }, [workpaceJobItems]);
-
-  const usersHaveInProgressJobs = useMemo(() => {
-    let users: UserMinimalType[] = [];
-
-    for (let job of workpaceJobItems) {
-      if (job.status === "in_progress")
-        for (let member of job.members) {
-          users.push(member);
-        }
-    }
-
-    return uniqueById(users) as UserMinimalType[];
-  }, [workpaceJobItems]);
-
-  const usersWithInprogressJobIds = usersHaveInProgressJobs.map((x) => x.id);
-
-  const workingUsers = leaderboardUsers
-    .filter(
-      (x) =>
-        x.user.active === 1 &&
-        x.user.room_id !== null &&
-        x.user.workspace_id === +(workspace_id as string) &&
-        usersHaveSchedules.includes(x.user.id) &&
-        usersWithInprogressJobIds.includes(x.user.id)
-    )
-    .map((x) => x.user);
+  const workingUsers = workspaceUsers.filter(
+    (x) => x.active_job !== null && x.status === "online"
+  );
 
   const onlineUsers = leaderboardUsers
     .filter(
@@ -369,7 +256,6 @@ export default function RoomContext({
     <RoomCtx.Provider
       value={{
         room,
-        updateRoom: setRoom,
         room_id: +room_id,
         workspace_id,
         sidebar,
@@ -383,7 +269,7 @@ export default function RoomContext({
         joinRoom: handleJoinRoom,
         leaderboard: leaderboardUsers,
         scheduled: schedulesItems,
-        workpaceUsers,
+        workspaceUsers,
         workspaceJobs: workpaceJobItems,
         workingUsers: workingUsers,
         onlineUsers: onlineUsers,

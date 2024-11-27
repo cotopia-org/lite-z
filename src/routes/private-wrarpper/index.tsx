@@ -66,10 +66,16 @@ export default function PrivateRoutes() {
       },
     });
 
+    if (socket?.id) localStorage.setItem("socket-id", socket.id);
+
     socket.on("connect", () => {
       toast.success("Socket connected");
       setSocketState(socket);
-      dispatch(__BUS.rejoinMeet);
+      dispatch(__BUS.rejoinRoom);
+      dispatch({
+        type: __BUS.startWorkTimer,
+        id: VARZ.userTimeTrackerId,
+      });
     });
 
     socket.on("disconnect", () => {

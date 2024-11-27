@@ -1,4 +1,3 @@
-"use client";
 import { unreadMessagesAction } from "@/store/slices/room-slice";
 import { ChatItemType } from "@/types/chat";
 import { useEffect, useRef, useState } from "react";

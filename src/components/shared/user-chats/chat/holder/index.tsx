@@ -4,53 +4,65 @@ import BackHolder from "./back";
 import ChatDetails from "../details";
 import Chat2 from "@/components/shared/chat-box-2";
 import { useChat2 } from "@/hooks/chat/use-chat-2";
-import { UserMinimalType } from "@/types/user";
 import { Virtualizer } from "@tanstack/react-virtual";
 import FullLoading from "@/components/shared/full-loading";
-import { useAppDispatch } from "@/store";
-import { getChatMessages } from "@/store/slices/chat-slice";
+import { useAppDispatch, useAppSelector } from "@/store";
+import { getChatMessages, getPinMessags } from "@/store/slices/chat-slice";
 
 type Props = {
-  chat: ChatType;
+  chat_id?: number;
   onBack: () => void;
-  getUser: (user_id: number) => UserMinimalType | undefined;
 };
 
-export default function ChatInnerHolder({ chat, onBack, getUser }: Props) {
+export default function ChatInnerHolder({ chat_id, onBack }: Props) {
   const chatRef = useRef<Virtualizer<HTMLDivElement, Element>>();
 
-  const { chatObjects, send, seen } = useChat2({ chat_id: chat.id });
+  const chatDetails = useAppSelector((store) => store.chat);
 
-  const chatMessages = chatObjects?.[chat.id]?.messages ?? [];
+  const { chatObjects, send, currentChat } = useChat2({ chat_id });
+
+  const chatMessages = currentChat
+    ? [...(chatObjects?.[currentChat?.id]?.messages ?? [])]
+    : [];
+
+  const reply =
+    chatDetails?.chats?.[(chatDetails?.currentChat as ChatType)?.id]
+      ?.replyMessage;
 
   const handleSendMessage = useCallback(
     (text: string) => {
-      const message = send({ text });
-      seen(message);
+      if (!chatDetails?.currentChat?.id) return;
+      send({ text, seen: true, reply });
     },
-    [seen, send]
+    [reply, chatDetails, send]
   );
 
   const dispatch = useAppDispatch();
 
   useEffect(() => {
-    dispatch(getChatMessages({ chat_id: chat.id }));
-  }, [chat?.id]);
+    if (currentChat?.id) {
+      dispatch(getChatMessages({ chat_id: currentChat?.id }));
+      dispatch(getPinMessags({ chat_id: currentChat?.id }));
+    }
+  }, [currentChat?.id]);
 
   const { loading } = useChat2();
 
   if (loading) return <FullLoading />;
 
+  if (!currentChat?.id) return null;
+
   return (
-    <div className='flex flex-col gap-y-2 w-full h-[calc(100vh-132px)]'>
-      <div className='flex flex-row items-center gap-x-2'>
+    <div className='flex flex-col w-full h-[calc(100vh-72px)] overflow-hidden'>
+      <div className='flex flex-row items-center gap-x-2 py-2 px-4'>
         <BackHolder onClick={onBack} />
-        <ChatDetails title={chat.title} />
+        <ChatDetails
+          title={chatObjects?.[currentChat?.id]?.object?.title ?? ""}
+        />
       </div>
       <Chat2
         items={chatMessages}
         addMessage={handleSendMessage}
-        getUser={getUser}
         onGetVirtualizer={(vir) => (chatRef.current = vir)}
       />
     </div>

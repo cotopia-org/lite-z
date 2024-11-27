@@ -32,7 +32,7 @@ export default function Details({ user, roomId }: Props) {
               <UserDate />
             </div>
           </div>
-          {/* <SendingDirect /> */}
+           {/*<SendingDirect /> */}
         </div>
       </div>
     </UserDetailContext.Provider>

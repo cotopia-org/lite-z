@@ -1,4 +1,5 @@
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { cn } from "@/lib/utils";
 import { ReactNode } from "react";
 
 type Tab = {
@@ -16,6 +17,7 @@ type Props = {
   defaultValue?: string;
   dividerBetweenContentAndTabs?: boolean;
   onChangeTab?: (tab: string) => void;
+  stickyTab?: boolean;
 };
 
 export default function CTabs({
@@ -25,6 +27,7 @@ export default function CTabs({
   className,
   titleClassName,
   dividerBetweenContentAndTabs = false,
+  stickyTab = false,
   onChangeTab,
 }: Props) {
   let clss = "w-full flex flex-col";
@@ -42,10 +45,19 @@ export default function CTabs({
       className={clss}
       onValueChange={handleChangeTab}
     >
-      <div className='tab-holder flex flex-row items-center justify-between'>
-        <TabsList className='flex flex-row justify-start bg-black/5'>
+      <div
+        className={cn(
+          "tab-holder flex flex-row items-center justify-between",
+          stickyTab ? "sticky top-0 z-10 bg-background" : ""
+        )}
+      >
+        <TabsList className='tabs-list flex flex-row gap-x-2 justify-start bg-transparent'>
           {items.map((x) => (
-            <TabsTrigger value={x.value} key={x.value}>
+            <TabsTrigger
+              value={x.value}
+              key={x.value}
+              className='min-w-[48px] min-h-[48px] rounded-lg data-[state=active]:bg-primary data-[state=active]:text-white [&_svg_path]:data-[state=active]:stroke-white'
+            >
               {x.icon ? x.icon : x.title}
             </TabsTrigger>
           ))}

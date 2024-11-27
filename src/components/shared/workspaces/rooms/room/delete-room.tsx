@@ -1,52 +1,60 @@
-import CDialog from "@/components/shared-ui/c-dialog";
-import CotopiaIconButton from "@/components/shared-ui/c-icon-button";
-import CotopiaPromptContent from "@/components/shared-ui/c-prompt/content";
-import { useRoomContext } from "@/components/shared/room/room-context";
-import useLoading from "@/hooks/use-loading";
-import axiosInstance from "@/services/axios";
-import { WorkspaceRoomShortType } from "@/types/room";
-import { Trash } from "lucide-react";
+import { colors } from "@/const/varz"
+import { TrashIcon } from "@/components/icons"
+import CotopiaButton from "@/components/shared-ui/c-button"
+import CDialog from "@/components/shared-ui/c-dialog"
+import CotopiaPromptContent from "@/components/shared-ui/c-prompt/content"
+import useLoading from "@/hooks/use-loading"
+import axiosInstance from "@/services/axios"
+import { WorkspaceRoomShortType } from "@/types/room"
+import { toast } from "sonner"
 
 type Props = {
-  room: WorkspaceRoomShortType;
-  onDelete: () => void;
-};
+  room: WorkspaceRoomShortType
+  onDelete?: () => void
+}
 
 export default function DeleteRoom({ room, onDelete }: Props) {
-  const { startLoading, stopLoading, isLoading } = useLoading();
+  const { startLoading, stopLoading, isLoading } = useLoading()
 
-  const { workspace_id } = useRoomContext();
-
-  const handleDelete = () => {
-    startLoading();
+  const handleDelete = (onClose?: () => void) => {
+    startLoading()
     axiosInstance
-      .delete(`workspaces/${workspace_id}/rooms/${room.id}`)
+      .delete(`/rooms/${room.id}`)
       .then((res) => {
-        stopLoading();
-        if (onDelete) onDelete();
+        toast.success(`"${room.title}" room has been deleted successfully`)
+        stopLoading()
+        if (onClose) onClose()
+        if (onDelete) onDelete()
       })
       .catch((err) => {
-        stopLoading();
-      });
-  };
+        stopLoading()
+      })
+  }
 
   return (
     <CDialog
       trigger={(open) => (
-        <CotopiaIconButton onClick={open} disabled={isLoading}>
-          <Trash size={16} className='text-red-600' />
-        </CotopiaIconButton>
+        <CotopiaButton
+          variant={"ghost"}
+          startIcon={<TrashIcon size={20} color={colors.destructive} />}
+          onClick={open}
+          className="text-sm"
+          disabled={isLoading}
+        >
+          Delete room
+        </CotopiaButton>
       )}
     >
       {(close) => (
         <CotopiaPromptContent
-          title='Delete room'
-          submitText='Delete'
-          description='Are you sure to delete this room?!'
-          onSubmit={handleDelete}
+          title="Delete room"
+          loading={isLoading}
+          submitText="Delete"
+          description="Are you sure to delete this room?!"
+          onSubmit={() => handleDelete(close)}
           onClose={close}
         />
       )}
     </CDialog>
-  );
+  )
 }

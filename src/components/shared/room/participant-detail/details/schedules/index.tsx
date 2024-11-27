@@ -1,7 +1,6 @@
 import CotopiaIconButton from "@/components/shared-ui/c-icon-button";
 import CotopiaTooltip from "@/components/shared-ui/c-tooltip";
 import { Calendar } from "lucide-react";
-import React from "react";
 import { useUserDetail } from "..";
 import { capitalizeWords } from "@/lib/utils";
 import ModalBox from "@/components/shared/modal-box";
@@ -32,7 +31,7 @@ export default function UserSchedules() {
           </CotopiaIconButton>
         </CotopiaTooltip>
       )}
-      className='w-[424px]'
+      className='w-auto'
     >
       {(open, close) => {
         return <SchedulesList justView />;

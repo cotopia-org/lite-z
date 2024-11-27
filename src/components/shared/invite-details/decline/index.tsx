@@ -1,32 +1,30 @@
-"use client";
-
-import CotopiaButton from "@/components/shared-ui/c-button";
-import useLoading from "@/hooks/use-loading";
-import axiosInstance from "@/services/axios";
-import { InviteType } from "@/types/invite";
-import { toast } from "sonner";
+import CotopiaButton from "@/components/shared-ui/c-button"
+import useLoading from "@/hooks/use-loading"
+import axiosInstance from "@/services/axios"
+import { InviteType } from "@/types/invite"
+import { toast } from "sonner"
 
 type Props = {
-  invite: InviteType;
-};
+  invite: InviteType
+}
 
 export default function InviteDeclineButton({ invite }: Props) {
-  const { startLoading, stopLoading, isLoading } = useLoading();
+  const { startLoading, stopLoading, isLoading } = useLoading()
 
   const handleDecline = async () => {
-    startLoading();
+    startLoading()
     try {
-      await axiosInstance.get(`/invites/${invite.code}/decline`);
-      toast.success("You declined your invitation link!");
-      stopLoading();
+      await axiosInstance.get(`/invites/${invite.code}/decline`)
+      toast.success("You declined your invitation link!")
+      stopLoading()
     } catch (e) {
-      stopLoading();
+      stopLoading()
     }
-  };
+  }
 
   return (
     <CotopiaButton
-      className='w-[120px]'
+      className="w-[120px]"
       size={"sm"}
       variant={"outline"}
       onClick={handleDecline}
@@ -34,5 +32,5 @@ export default function InviteDeclineButton({ invite }: Props) {
     >
       Declined
     </CotopiaButton>
-  );
+  )
 }

@@ -1,8 +1,9 @@
 import { Chat2ItemType } from "@/types/chat2";
 import ChatDate from "./date";
-import { useChatItem } from "..";
 import Linkify from "linkify-react";
 import useAuth from "@/hooks/auth";
+import ChatRepliedItem from "./replied-item";
+import { useChat2 } from "@/hooks/chat/use-chat-2";
 
 type Props = {
   chat: Chat2ItemType;
@@ -10,7 +11,7 @@ type Props = {
 export default function ChatItemContent({ chat }: Props) {
   const { user: myAccount } = useAuth();
 
-  const { getUser } = useChatItem();
+  const { getUser } = useChat2();
 
   const user = getUser(chat.user);
 
@@ -43,8 +44,14 @@ export default function ChatItemContent({ chat }: Props) {
   };
 
   return (
-    <div className='flex flex-1 flex-col bg-black/5 rounded-xl rounded-bl-none p-2 max-w-full w-full'>
-      {!!!isMyUser && <strong>{user?.name}</strong>}
+    <div className='flex flex-1 flex-col gap-y-2 bg-black/5 rounded-xl rounded-bl-none p-2 max-w-full w-full'>
+      {/* HEADER */}
+      {chat?.reply_to ? (
+        <ChatRepliedItem item={chat.reply_to} />
+      ) : (
+        !!!isMyUser && <strong>{user?.name}</strong>
+      )}
+      {/* HEADER */}
       <p
         className='text-wrap mb-3 w-full'
         dir='auto'

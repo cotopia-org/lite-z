@@ -16,4 +16,13 @@ export const __BUS = {
   socketConnected: "SOCKET_CONNECTED",
   socketDisConnected: "SOCKET_DISCONNECTED",
   rejoinMeet: "REJOIN_MEET",
+  rejoinRoom: "REJOIN_ROOM",
+  startWorkTimer: "START_WORK_TIMER",
+  stopWorkTimer: "STOP_WORK_TIMER",
+  showAddChat: "SHOW_ADD_CHAT",
+  hideAddChat: "HIDE_ADD_CHAT",
+  selectChat: "SELECT_CHAT",
+  showChatMention: "SHOW_CHAT_MENTION",
+  hideChatMention: "HIDE_CHAT_MENTION",
+  chatInputFocus: "CHAT_INPUT_FOCUS",
 };

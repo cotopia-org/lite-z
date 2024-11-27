@@ -1,10 +1,8 @@
 import { UserType } from "./user";
 
 export type LeaderboardType = {
-  activities: any[];
-  count: number;
-  data: any[];
-  sum_hours: string;
+  idle_minutes: number;
   sum_minutes: number;
   user: UserType;
+  working_minutes: number;
 };

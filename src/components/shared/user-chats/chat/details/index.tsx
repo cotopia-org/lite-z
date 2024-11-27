@@ -7,7 +7,7 @@ type Props = {
 };
 export default function ChatDetails({ title, sub_title, description }: Props) {
   return (
-    <div className='flex flex-col gap-y-1 flex-1'>
+    <div className='flex flex-col gap-y-1 flex-1 w-full'>
       <div className='flex flex-row items-center justify-between'>
         <strong>{title}</strong>
         {!!sub_title && (
@@ -15,7 +15,9 @@ export default function ChatDetails({ title, sub_title, description }: Props) {
         )}
       </div>
       {!!description && (
-        <span className='text-sm text-gray-500'>{description}</span>
+        <span className='text-sm text-gray-500 text-ellipsis whitespace-nowrap overflow-hidden w-[300px]'>
+          {description}
+        </span>
       )}
     </div>
   );

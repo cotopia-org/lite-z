@@ -1,46 +1,39 @@
-import React, { useEffect } from "react";
-import { useRoomContext } from "../room-context";
-import RoomSidebar from "../sidebar";
-import RoomSettings from "../settings";
-import LiveKitAudioManager from "../components/audio-manager";
-import InitRoom from "./init-room";
-import CanvasBoard from "../../canvas-board";
-import { useSocket } from "@/routes/private-wrarpper";
-import { useParams } from "react-router-dom";
+import React, { useEffect } from "react"
+import { useRoomContext as useLocalRoomContext } from "../room-context"
+import RoomSidebar from "../sidebar"
+import RoomSettings from "../settings"
+import LiveKitAudioManager from "../components/audio-manager"
+import InitRoom from "./init-room"
+import CanvasBoard from "../../canvas-board"
+import { useAppSelector } from "@/store"
+import { useRoomContext } from "@livekit/components-react"
+import { VARZ } from "@/const/varz"
 
 export default function RoomInner() {
-  const { room_id } = useParams();
+  const { disconnect, connect } = useRoomContext()
 
-  const socket = useSocket();
-
-  const { sidebar, joinRoom } = useRoomContext();
-
+  const { token } = useAppSelector((store) => store.livekit)
   useEffect(() => {
-    const fn = () => {
-      if (room_id) joinRoom(room_id);
-    };
-    socket?.on("connect", fn);
-    return () => {
-      socket?.off("connect", fn);
-    };
-  }, [socket, joinRoom, room_id]);
+    if (token) {
+      disconnect()
+      connect(VARZ.serverUrl as string, token)
+    }
+  }, [token])
 
-  let mainRoomHolderClss = "main-room-holder w-full h-screen overflow-hidden";
-  if (sidebar) mainRoomHolderClss += " pr-[376px]";
+  const { sidebar } = useLocalRoomContext()
 
-  useEffect(() => {
-    if (room_id) joinRoom(room_id);
-  }, [room_id]);
+  let mainRoomHolderClss = "main-room-holder w-full h-screen overflow-hidden"
+  if (sidebar) mainRoomHolderClss += " pr-[376px]"
 
   return (
     <>
       <InitRoom />
-      <div id='main-room-holder' className={mainRoomHolderClss}>
-        <div className='w-full   h-full relative'>
+      <div id="main-room-holder" className={mainRoomHolderClss}>
+        <div className="w-full h-full relative">
           <CanvasBoard />
         </div>
         {!!sidebar && (
-          <div className='fixed right-0 top-0 bottom-0 w-[376px] bg-white h-screen overflow-y-auto'>
+          <div className="fixed right-0 top-0 bottom-0 w-[376px] bg-white h-screen overflow-y-auto">
             <RoomSidebar>
               <RoomSettings />
             </RoomSidebar>
@@ -49,5 +42,5 @@ export default function RoomInner() {
         <LiveKitAudioManager />
       </div>
     </>
-  );
+  )
 }
