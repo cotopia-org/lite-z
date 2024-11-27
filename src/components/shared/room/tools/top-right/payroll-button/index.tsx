@@ -6,6 +6,7 @@ import ExpectedPayments from "./expected-payments";
 import PreviousPayments from "./previous-payments";
 import CTabs from "@/components/shared-ui/c-tabs";
 import { MoneyRecive } from "@/components/icons";
+import UserContract from "./user-contract";
 
 export default function PayrollButton() {
   const currentURL = typeof window !== "undefined" ? window.location.href : "";
@@ -55,7 +56,7 @@ export default function PayrollButton() {
               {
                 title: "Contract",
                 content: (
-                  <h1>user contract .....</h1>
+                  <UserContract />
                 ),
                 value: "contract",
               },
@@ -71,7 +72,7 @@ export default function PayrollButton() {
             width={506}
             zIndex={triggerPosition.zIndex}
             top={triggerPosition.top}
-            left={triggerPosition.left}
+            left={300}
           >
             <div className='flex w-full flex-col gap-y-6 items-end'>
               {content}

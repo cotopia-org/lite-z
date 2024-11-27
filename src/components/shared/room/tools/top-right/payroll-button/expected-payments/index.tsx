@@ -23,7 +23,7 @@ export default function ExpectedPayments() {
                         <span className="text-base font-bold">{+(workingTime * userContract?.amount).toFixed(2)}</span>
                         <span className="text-gray-400 font-medium text-sm"> USDT</span>
                     </>
-                ) : (<span className="text-sm font-medium">User no have contract yet</span>)}
+                ) : (<span className="text-sm font-medium">No have contract yet</span>)}
             </span>
         </>
     )

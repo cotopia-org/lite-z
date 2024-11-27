@@ -26,7 +26,7 @@ export default function PaymentsSettings() {
             <hr />
 
             <div className="w-full my-4 flex flex-col items-center justify-center px-2">
-                <CotopiaInput value={paymentAddress} onChange={e => handleChangePaymentAddress(e.target.value)} label="Payment Address" placeholder="Enter you're payment address" />
+                <CotopiaInput value={paymentAddress ? paymentAddress : payment_address} onChange={e => handleChangePaymentAddress(e.target.value)} label="Payment Address" placeholder="Enter you're payment address" />
                 <CotopiaButton className="bg-primary text-white px-5 w-full mt-3" onClick={() => setEditAddress(prevState => !prevState)}>{editAddress ? "Save" : "Edit"}</CotopiaButton>
             </div>
         </>
