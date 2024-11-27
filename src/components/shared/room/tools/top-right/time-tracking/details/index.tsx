@@ -7,54 +7,59 @@ import Rank from "./rank";
 import BlurFade from "@/components/magicui/blur-fade";
 import { LeaderboardType } from "@/types/leaderboard";
 import useAuth from "@/hooks/auth";
-import {JobType} from "@/types/job";
-import {WorkspaceUserType} from "@/types/user";
+import { JobType } from "@/types/job";
+import { WorkspaceUserType } from "@/types/user";
+import CotopiaTooltip from "@/components/shared-ui/c-tooltip";
 
 type Props = {
   hasCount: boolean;
-  userActiveJob: JobType|null|undefined;
-  item: LeaderboardType ;
+  userActiveJob: JobType | null | undefined;
+  item: LeaderboardType;
 };
 
 
-function Timers ({hasCount,userActiveJob,item}:Props) {
-return                <>
-  {hasCount ? (
+function Timers({ hasCount, userActiveJob, item }: Props) {
+  return <>
+    {hasCount ? (
       <div className={'flex flex-row gap-x-2 items-start justify-between'}>
         <Timer
-            initialSeconds={item.working_minutes * 60}
-            stop={userActiveJob === null}
-            short={true}
+          initialSeconds={item.working_minutes * 60}
+          stop={userActiveJob === null}
+          short={true}
         >
           {(time) => (
-                <strong className='text-xs w-[40px]'>{time}</strong>
+            <CotopiaTooltip title={time}>
+              <strong className='text-xs w-[40px]'>{time}</strong>
+            </CotopiaTooltip>
           )}
         </Timer>
         <Timer
-            initialSeconds={item.idle_minutes * 60}
-            stop={userActiveJob !== null}
-            short={true}
+          initialSeconds={item.idle_minutes * 60}
+          stop={userActiveJob !== null}
+          short={true}
 
         >
           {(time) => (
-                <strong className='text-xs w-[40px] text-yellow-600'>
-                  {time}
-                </strong>
+            <CotopiaTooltip title={time}>
+              <strong className='text-xs w-[40px] text-yellow-600'>
+                {time}
+              </strong>
+            </CotopiaTooltip>
           )}
         </Timer>
 
       </div>
-  ) : (
+    ) : (
       <div className={'flex flex-row gap-x-2 items-start justify-between'}>
-                      <span className='text-xs opacity-85 w-[40px]'>
-                        {convertMinutesToHHMMSS(item.working_minutes,true)}
-                      </span>
-                      <span className='text-xs opacity-85 w-[40px] text-yellow-600'>
-                        {convertMinutesToHHMMSS(item.idle_minutes,true)}
-                      </span>
+        <span className='text-xs opacity-85 w-[40px]'>
+          {convertMinutesToHHMMSS(item.working_minutes, true)}
+        </span>
+        <span className='text-xs opacity-85 w-[40px] text-yellow-600'>
+          {convertMinutesToHHMMSS(item.idle_minutes, true)}
+        </span>
 
       </div>
-  )}</>
+    )}</>
 }
 
 
@@ -63,14 +68,14 @@ return                <>
 
 
 type TimeTrackingDetailProps = {
-  leaderboard:LeaderboardType[],
-  workspaceUsers:WorkspaceUserType[],
-  setSelectedUser:Function
+  leaderboard: LeaderboardType[],
+  workspaceUsers: WorkspaceUserType[],
+  setSelectedUser: Function
 
 };
 
 
-export default function TimeTrackingDetails({leaderboard,workspaceUsers,setSelectedUser}:TimeTrackingDetailProps) {
+export default function TimeTrackingDetails({ leaderboard, workspaceUsers, setSelectedUser }: TimeTrackingDetailProps) {
 
   const { user } = useAuth();
 
@@ -98,29 +103,29 @@ export default function TimeTrackingDetails({leaderboard,workspaceUsers,setSelec
           )?.active_job;
 
           return (
-              <div onClick={()=>{
-                setSelectedUser(item.user)
+            <div onClick={() => {
+              setSelectedUser(item.user)
 
-              }}>
+            }}>
 
-            <BlurFade
-              inView
-              className={clss}
-              key={key}
-              delay={0.05 + key * 0.05}
+              <BlurFade
+                inView
+                className={clss}
+                key={key}
+                delay={0.05 + key * 0.05}
 
 
-            >
-              <div  className='flex flex-row items-center gap-x-2'>
-                <Rank rank={key + 1} />
-                <UserAvatar title={item.user?.name} src={userAvatar?.url} />
-                <span className='text-xs'>{item.user?.name ?? "-"}</span>
-              </div>
-              <div className='flex flex-col   w-[80px] justify-between'>
-                  <Timers hasCount={hasCount} userActiveJob={userActiveJob} item={item}/>
-              </div>
-            </BlurFade>
-              </div>
+              >
+                <div className='flex flex-row items-center gap-x-2'>
+                  <Rank rank={key + 1} />
+                  <UserAvatar title={item.user?.name} src={userAvatar?.url} />
+                  <span className='text-xs'>{item.user?.name ?? "-"}</span>
+                </div>
+                <div className='flex flex-col   w-[80px] justify-between'>
+                  <Timers hasCount={hasCount} userActiveJob={userActiveJob} item={item} />
+                </div>
+              </BlurFade>
+            </div>
 
           );
         })}
