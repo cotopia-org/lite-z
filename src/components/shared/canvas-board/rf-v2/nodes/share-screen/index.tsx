@@ -31,7 +31,9 @@ function ShareScreenNode({ data }: any) {
     <div
       className={cn(
         "h-full w-full [&_video]:!object-contain [&:hover_.actions]:opacity-100 [&:hover_.actions]:visible",
-        isFullScreen ? "fixed top-0 left-0 bg-black" : "relative"
+        isFullScreen
+          ? "fixed top-0 left-0 bg-black"
+          : "relative border shadow-lg rounded-xl overflow-hidden"
       )}
     >
       <Actions

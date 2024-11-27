@@ -237,7 +237,14 @@ export default function WithReactFlowV2() {
         switch (data.track.source) {
           case "SCREEN_SHARE":
             rf.current?.setNodes((prev) =>
-              prev.filter((n) => n.id !== data.id)
+              prev.filter(
+                (n) =>
+                  !(
+                    n.id === data.id &&
+                    (n?.data as any)?.livekit?.participant?.identity ===
+                      data.participant.identity
+                  )
+              )
             );
             break;
         }
