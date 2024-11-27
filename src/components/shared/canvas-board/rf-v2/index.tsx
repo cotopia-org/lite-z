@@ -70,8 +70,6 @@ export default function WithReactFlowV2({
       return object;
     }) ?? [];
 
-  console.log("objects", objects);
-
   //Sharescreen Nodes
   const shareScreenNodes: Node[] = [
     ...tracks
@@ -102,7 +100,7 @@ export default function WithReactFlowV2({
 
   const defaultNodes = useMemo(() => {
     return [...participantNodes, ...shareScreenNodes];
-  }, [participantNodes.length, shareScreenNodes.length, objects]);
+  }, [participantNodes, shareScreenNodes.length, objects]);
 
   const handleDragStopRfNodes = useCallback(
     (_: any, node: Node) => {
