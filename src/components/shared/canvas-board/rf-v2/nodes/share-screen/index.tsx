@@ -54,7 +54,7 @@ function ShareScreenNode({ data }: any) {
           onResizeEnd={(_, params) => {
             socket?.emit("updateShareScreenSize", {
               room_id: data.room_id,
-              id: data?.livekit?.id,
+              id: data?.livekit?.track?.sid,
               width: params?.width,
               height: params?.height,
             });
