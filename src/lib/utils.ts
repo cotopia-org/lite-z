@@ -36,9 +36,9 @@ export const getTimeFormat = (
     .padStart(2, "0");
 
   if (hasHours)
-    return `${formattedHours}:${formattedMinutes}:${formattedSeconds}`;
+    return `${formattedHours}:${formattedMinutes}`;
 
-  return `${formattedMinutes}:${formattedSeconds}`;
+  return `${formattedMinutes}`;
 };
 
 export function persianToEnglishNumbers(inputStr: string): string {
@@ -241,7 +241,7 @@ export const getTwelveClockFormat = (time: string) => {
 export function extractMentions(
   message: string
 ): { start_position: number; user: string }[] {
-  const mentionRegex = /@(\w+)/g;
+  const mentionRegex = /@(\S+)/g; // Fixed when a DOT was in the username.
   const mentions: { start_position: number; user: string }[] = [];
   let match: RegExpExecArray | null;
 

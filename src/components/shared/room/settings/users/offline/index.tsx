@@ -30,7 +30,7 @@ export default function OfflineUsers() {
     <TitleEl
       title={`Offline (${allOfflineParticipants.length}) ${emoji.get("zzz")}`}
     >
-      <div className='flex flex-col items-start gap-y-2 mb-6'>
+      <div className='flex flex-col items-start gap-y-3 mb-6'>
         {finalShowParticipants.map((item) => (
           <User user={item} key={item.id} />
         ))}

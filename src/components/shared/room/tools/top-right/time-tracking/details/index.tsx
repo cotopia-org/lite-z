@@ -1,17 +1,14 @@
 import { convertMinutesToHHMMSS } from "@/lib/utils";
-import React, {ReactNode} from "react";
+import React from "react";
 import Timer from "../timer";
-import { useRoomContext } from "@/components/shared/room/room-context";
 import UserAvatar from "@/components/shared/user-avatar";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import Rank from "./rank";
 import BlurFade from "@/components/magicui/blur-fade";
-import { useApi } from "@/hooks/swr";
 import { LeaderboardType } from "@/types/leaderboard";
 import useAuth from "@/hooks/auth";
-import { AlarmClockOff } from "lucide-react";
-import CotopiaTooltip from "@/components/shared-ui/c-tooltip";
 import {JobType} from "@/types/job";
+import {WorkspaceUserType} from "@/types/user";
 
 type Props = {
   hasCount: boolean;
@@ -59,16 +56,23 @@ return                <>
       </div>
   )}</>
 }
-export default function TimeTrackingDetails() {
-  const { workspace_id, workspaceUsers } = useRoomContext();
+
+
+
+
+
+
+type TimeTrackingDetailProps = {
+  leaderboard:LeaderboardType[],
+  workspaceUsers:WorkspaceUserType[],
+  setSelectedUser:Function
+
+};
+
+
+export default function TimeTrackingDetails({leaderboard,workspaceUsers,setSelectedUser}:TimeTrackingDetailProps) {
 
   const { user } = useAuth();
-
-  const { data: leaderboardData } = useApi(
-    `/workspaces/${workspace_id}/leaderboard`
-  );
-
-  const leaderboard: LeaderboardType[] = leaderboardData?.data ?? [];
 
   let content = (
     <>
@@ -94,6 +98,11 @@ export default function TimeTrackingDetails() {
           )?.active_job;
 
           return (
+              <div onClick={()=>{
+                setSelectedUser(item.user)
+
+              }}>
+
             <BlurFade
               inView
               className={clss}
@@ -102,7 +111,7 @@ export default function TimeTrackingDetails() {
 
 
             >
-              <div className='flex flex-row items-center gap-x-2'>
+              <div  className='flex flex-row items-center gap-x-2'>
                 <Rank rank={key + 1} />
                 <UserAvatar title={item.user?.name} src={userAvatar?.url} />
                 <span className='text-xs'>{item.user?.name ?? "-"}</span>
@@ -111,10 +120,15 @@ export default function TimeTrackingDetails() {
                   <Timers hasCount={hasCount} userActiveJob={userActiveJob} item={item}/>
               </div>
             </BlurFade>
+              </div>
+
           );
         })}
     </>
   );
+
+
+
 
   return (
     <ScrollArea className='h-72 flex flex-col gap-y-4 w-full'>

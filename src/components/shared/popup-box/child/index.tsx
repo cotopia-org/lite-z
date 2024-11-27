@@ -2,6 +2,8 @@ import React, { ReactNode } from "react"
 import BoxHolder from "../../box-holder"
 import Rank from "@/components/shared/room/tools/top-right/time-tracking/details/rank";
 import UserAvatar from "@/components/shared/user-avatar";
+import CotopiaButton from "@/components/shared-ui/c-button";
+import {ArrowLeft, Plus} from "lucide-react";
 
 type Props = {
   children: ReactNode
@@ -10,7 +12,8 @@ type Props = {
   left: number
   zIndex?: number
   width?: number
-  title: string | ReactNode
+  title: string | ReactNode,
+  button?:  ReactNode,
 }
 export default function PopupBoxChild({
   children,
@@ -20,6 +23,7 @@ export default function PopupBoxChild({
   zIndex,
   width = 300,
   title,
+    button
 }: Props) {
   return (
     <div
@@ -31,7 +35,7 @@ export default function PopupBoxChild({
         zIndex: zIndex ?? 100,
       }}
     >
-        <BoxHolder has_divider title={title} onClose={onClose}>
+        <BoxHolder has_divider title={title} button={button} onClose={onClose}>
 
 
             {children}

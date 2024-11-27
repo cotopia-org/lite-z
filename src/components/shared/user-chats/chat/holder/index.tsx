@@ -32,6 +32,8 @@ export default function ChatInnerHolder({ chat_id, onBack }: Props) {
   const handleSendMessage = useCallback(
     (text: string) => {
       if (!chatDetails?.currentChat?.id) return;
+
+
       send({ text, seen: true, reply });
     },
     [reply, chatDetails, send]
