@@ -1,8 +1,8 @@
 import CotopiaButton from "@/components/shared-ui/c-button";
 import CotopiaInput from "@/components/shared-ui/c-input";
 import MonthCountdown from "@/components/shared/cotopia-payroll/counter";
-import ExpectedPayments from "@/components/shared/room/tools/top-left/payroll-button/expected-payments";
-import PreviousPayments from "@/components/shared/room/tools/top-left/payroll-button/previous-payments";
+import ExpectedPayments from "@/components/shared/room/tools/top-right/payroll-button/expected-payments";
+import PreviousPayments from "@/components/shared/room/tools/top-right/payroll-button/previous-payments";
 import useUserContract from "@/hooks/contract";
 import {useState} from "react";
 

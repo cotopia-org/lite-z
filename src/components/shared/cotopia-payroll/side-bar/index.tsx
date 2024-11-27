@@ -2,11 +2,9 @@ import { PayrollSideBarType } from "@/types/payroll-sidebar";
 import { NavLink } from "react-router-dom";
 import PayrollSideBarHeader from "./header";
 import Grid from "@/components/icons/grid";
-import Messages from "@/components/icons/messages";
 import Profile from "@/components/icons/profile";
 import MoneyRecive from "@/components/icons/money-recive";
 import { WalletMinus } from "@/components/icons";
-import Edit from "@/components/icons/edit";
 import Profile2User from "@/components/icons/profile-2-user";
 
 const links = [
@@ -15,8 +13,6 @@ const links = [
     { title: "Dashboard", href: "/payroll-dashboard", icon: <Grid /> },
     { title: "Payments", href: "/payroll-payments", icon: <MoneyRecive /> },
     { title: "Advance", href: "/payroll-advance", icon: <WalletMinus /> },
-    { title: "Messages", href: "/payroll-messages", icon: <Messages /> },
-    { title: "Report", href: "/payroll-report", icon: <Edit /> }
 ] as PayrollSideBarType[];
 
 export default function PayrollSideBar() {
