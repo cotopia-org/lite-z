@@ -1,4 +1,11 @@
-import { useState, useEffect, useCallback, ReactNode, useMemo } from "react";
+import {
+  useState,
+  useEffect,
+  useCallback,
+  ReactNode,
+  useMemo,
+  useRef,
+} from "react";
 
 import "@xyflow/react/dist/style.css";
 
@@ -30,7 +37,6 @@ const initBgColor = "#c9f1dd";
 
 type Props = {
   nodeTypes: NodeTypes;
-  defaultNode?: Node[];
   onNodeDragStop?: OnNodeDrag<Node>;
   onNodeDragging?: OnNodeDrag<Node>;
   onNodeDragStart?: OnNodeDrag<Node>;
@@ -46,7 +52,6 @@ let timeout: NodeJS.Timeout;
 
 export default function ReactFlowV2({
   nodeTypes,
-  defaultNode = [],
   onNodeDragStop,
   onNodeDragging,
   onNodeDragStart,
@@ -92,11 +97,16 @@ export default function ReactFlowV2({
   };
   const [bgColor] = useState(initBgColor);
 
+  const initJail = useRef(false);
   useEffect(() => {
-    let finalDefaultNodes = defaultNode ?? [];
+    if (nodes.length === 0) return;
+
+    if (initJail.current === true) return;
+
+    let modifiedNodes: Node[] = [...nodes];
 
     if (hasJail !== undefined && hasJail === true) {
-      finalDefaultNodes = [
+      modifiedNodes = [
         {
           id: jailId,
           position: {
@@ -110,37 +120,16 @@ export default function ReactFlowV2({
           deletable: false,
           selectable: false,
         },
-        ...finalDefaultNodes.map((n) => {
+        ...modifiedNodes.map((n) => {
           n.parentId = jailId;
           n.extent = "parent";
           return n;
         }),
       ];
+      setNodes(modifiedNodes);
+      initJail.current = true;
     }
-
-    if (background !== undefined) {
-      finalDefaultNodes = [
-        {
-          id: "background-node",
-          position: {
-            x: -200,
-            y: -200,
-          },
-          type: "bgNode",
-          draggable: false,
-          data: {
-            background,
-          },
-          focusable: false,
-          deletable: false,
-          selectable: false,
-        },
-        ...finalDefaultNodes,
-      ];
-    }
-
-    setNodes(finalDefaultNodes ?? []);
-  }, [defaultNode, hasJail, jailId]);
+  }, [hasJail, jailId, nodes]);
 
   //We define finalNodeTypes because we want to add custom node type but always static such as jailNode and ...
   let finalNodeTypes = nodeTypes;
@@ -148,9 +137,23 @@ export default function ReactFlowV2({
   if (hasJail) finalNodeTypes["jailNode"] = JailNode;
   if (background) finalNodeTypes["bgNode"] = BgNode;
 
+  let finalNodes = nodes;
+
+  if (background)
+    finalNodes = [
+      {
+        id: "bg-node",
+        position: { x: -200, y: -200 },
+        data: { background },
+        type: "bgNode",
+        draggable: false,
+      },
+      ...nodes,
+    ];
+
   return (
     <ReactFlow
-      nodes={nodes}
+      nodes={finalNodes}
       onNodeDrag={onNodeDragging}
       onNodesChange={handleChangeNode}
       onNodeDragStart={onNodeDragStart}

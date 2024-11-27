@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import ReactFlowV2 from "../../react-flow/v2";
 import { useRoomContext } from "../../room/room-context";
-import { Edge, Node, ReactFlowInstance } from "@xyflow/react";
+import { Edge, Node, ReactFlowInstance, XYPosition } from "@xyflow/react";
 import useAuth from "@/hooks/auth";
 import ShareScreenNode from "./nodes/share-screen";
 import { useSocket } from "@/routes/private-wrarpper";
@@ -34,6 +34,9 @@ export default function WithReactFlowV2() {
 
   useEffect(() => {
     if (!rf.current) return;
+
+    if (room?.participants?.length === 0) return;
+
     if (init.current === true) return;
 
     rf.current.setNodes(
@@ -109,7 +112,7 @@ export default function WithReactFlowV2() {
 
           const allNodes = rf.current?.getNodes() ?? [];
           for (let node of allNodes) {
-            const isMeet = handleCircleMeet(node.id);
+            const isMeet = handleCircleMeet(node.id, node.position);
             console.log(node.id, isMeet);
           }
 
@@ -119,12 +122,15 @@ export default function WithReactFlowV2() {
     [socket, updateUserCoords]
   );
 
-  const handleCircleMeet = (targetUserName: string) => {
+  const handleCircleMeet = (
+    targetUserName: string,
+    targetPosition: XYPosition
+  ) => {
     const targetUserNode = rf?.current?.getNode(targetUserName);
 
     if (targetUserNode === undefined) return;
 
-    const position = targetUserNode.position;
+    const position = targetPosition;
 
     if (!user?.username) return;
 
@@ -157,11 +163,16 @@ export default function WithReactFlowV2() {
         x: +coordsSplitted?.[0],
         y: +coordsSplitted?.[1],
       };
-      rf.current?.updateNode(data.username, { position });
 
-      const meet = handleCircleMeet(data.username);
+      const node = rf.current?.getNode(data.username);
+
+      if (!node) return;
+
+      handleCircleMeet(data.username, position);
+
+      rf.current?.updateNode(data.username, { position });
     },
-    []
+    [rf.current]
   );
 
   useSocket("updateShareScreenCoordinates", (data) => {
@@ -189,10 +200,6 @@ export default function WithReactFlowV2() {
     console.log("updateShareScreenSize", data);
   });
 
-  const nodes = useMemo(() => {
-    return rf.current?.getNodes() ?? [];
-  }, []);
-
   return (
     <div className='w-full h-screen'>
       <ReactFlowV2
@@ -200,7 +207,6 @@ export default function WithReactFlowV2() {
           userNode: UserNode,
           shareScreenNode: ShareScreenNode,
         }}
-        defaultNode={nodes}
         onInit={(rfinstance) => {
           rf.current = rfinstance;
         }}

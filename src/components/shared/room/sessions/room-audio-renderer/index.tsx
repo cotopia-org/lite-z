@@ -136,7 +136,7 @@ export function doCirclesMeetRaw(
   circle1: { x: number; y: number },
   circle2: { x: number; y: number }
 ) {
-  const radiusHearing = area - radius;
+  const radiusHearing = area - (radius + 4);
 
   // Calculate the distance between the centers of the circles
   const distance = Math.sqrt(
