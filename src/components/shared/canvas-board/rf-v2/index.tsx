@@ -8,7 +8,7 @@ import useAuth from "@/hooks/auth";
 import { Track } from "livekit-client";
 import ShareScreenNode from "./nodes/share-screen";
 import { useSocket } from "@/routes/private-wrarpper";
-import useBus from "use-bus";
+import useBus, { dispatch } from "use-bus";
 import { __BUS } from "@/const/bus";
 
 enum RoomRfNodeType {
@@ -83,13 +83,20 @@ export default function WithReactFlowV2({
           id: shareScreenId,
           type: "shareScreenNode",
           data: {
+            room_id: room?.id,
             id: shareScreenId,
             track: x,
             label: "Share screen node",
           },
           position: {
-            x: objects?.[shareScreenId]?.x ?? 200,
-            y: objects?.[shareScreenId]?.y ?? 200,
+            x:
+              objects?.[shareScreenId]?.x ??
+              rf?.current?.getNode(shareScreenId)?.position.x ??
+              200,
+            y:
+              objects?.[shareScreenId]?.y ??
+              rf?.current?.getNode(shareScreenId)?.position.y ??
+              200,
           },
           className: "bg-white shadow-md",
           draggable: isDraggable,
@@ -114,6 +121,10 @@ export default function WithReactFlowV2({
             share_screen_id: node.id,
           };
           socket?.emit("updateShareScreenCoordinates", sendingObject);
+          dispatch({
+            type: __BUS.changeMyShareScreenCoord,
+            data: sendingObject,
+          });
           break;
         case RoomRfNodeType.userNode:
           if (!node?.data?.username) return;
@@ -125,6 +136,13 @@ export default function WithReactFlowV2({
   );
 
   useSocket("updateShareScreenCoordinates", (data) => {
+    setObjects((prev) => ({
+      ...prev,
+      [data.share_screen_id]: { x: data.coordinates.x, y: data.coordinates.y },
+    }));
+  });
+
+  useBus(__BUS.changeMyShareScreenCoord, ({ data }) => {
     setObjects((prev) => ({
       ...prev,
       [data.share_screen_id]: { x: data.coordinates.x, y: data.coordinates.y },

@@ -23,7 +23,7 @@ function ShareScreenNode({ data }: any) {
         isFullScreen={isFullScreen}
         onExitFullScreen={() => setIsFullScreen(false)}
         identity={data?.track?.participant?.identity}
-        onFullScreen={() => setIsFullScreen(true)}
+        onFullScreen={() => setIsFullScreen((prev) => !prev)}
       />
       <NodeResizeControl
         minWidth={500}
@@ -31,6 +31,7 @@ function ShareScreenNode({ data }: any) {
         keepAspectRatio
         onResizeEnd={(_, params) => {
           socket?.emit("updateShareScreenSize", {
+            room_id: data.room_id,
             id: data?.id,
             width: params?.width,
             height: params?.height,

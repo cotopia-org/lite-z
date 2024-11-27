@@ -57,7 +57,7 @@ export default function ReactFlowV2({
 }: Props) {
   //Generate ranom jail node
   const jailId = useMemo(() => {
-    return `jail-${(Math.random() * 100000000000).toFixed(0)}`;
+    return `jail-custom-node`;
   }, []);
 
   const defaultViewport = { x: 0, y: 0, zoom: 1.5 };
@@ -95,11 +95,6 @@ export default function ReactFlowV2({
 
     if (hasJail !== undefined && hasJail === true) {
       finalDefaultNodes = [
-        ...finalDefaultNodes.map((n) => {
-          n.parentId = jailId;
-          n.extent = "parent";
-          return n;
-        }),
         {
           id: jailId,
           position: {
@@ -113,6 +108,11 @@ export default function ReactFlowV2({
           deletable: false,
           selectable: false,
         },
+        ...finalDefaultNodes.map((n) => {
+          n.parentId = jailId;
+          n.extent = "parent";
+          return n;
+        }),
       ];
     }
 
