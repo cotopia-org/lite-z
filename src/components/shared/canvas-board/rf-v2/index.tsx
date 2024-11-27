@@ -10,6 +10,7 @@ import { __BUS } from "@/const/bus";
 import {
   LivekitTrackPublishedType,
   updateCoordinatesEvent,
+  updateShareScreenCoordinatesEvent,
 } from "@/types/socket";
 import UserNode from "./nodes/user";
 import { doCirclesMeetRaw } from "../../room/sessions/room-audio-renderer";
@@ -30,7 +31,12 @@ export default function WithReactFlowV2() {
 
   const { room, updateUserCoords } = useRoomContext();
 
+  //Init react flow
   const init = useRef<boolean>(false);
+
+  //Init first (initial) tracks
+  const initTracks = useRef<boolean>(false);
+  //Todo - Mohammad hossein should give us current tracks api
 
   useEffect(() => {
     if (!rf.current) return;
@@ -208,7 +214,10 @@ export default function WithReactFlowV2() {
 
             const shareScreenNode = {
               id: data.id,
-              data: data,
+              data: {
+                room_id: room?.id,
+                livekit: data,
+              },
               position: { x: 200, y: 200 },
               parentId: VARZ.jailNodeId,
               extent: "parent",
@@ -235,9 +244,18 @@ export default function WithReactFlowV2() {
     }
   });
 
-  useSocket("updateShareScreenCoordinates", (data) => {});
+  useSocket(
+    "updateShareScreenCoordinates",
+    (data: updateShareScreenCoordinatesEvent) => {
+      rf.current?.updateNode(data.share_screen_id, {
+        position: data.coordinates,
+      });
+    }
+  );
 
-  useSocket("updateShareScreenCoordinates", (data) => {});
+  useSocket("updateShareScreenCoordinates", (data) => {
+    console.log("data", data);
+  });
 
   useBus(__BUS.changeMyShareScreenCoord, ({ data }) => {});
 

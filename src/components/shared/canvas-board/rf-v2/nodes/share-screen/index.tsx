@@ -18,8 +18,10 @@ function ShareScreenNode({ data }: any) {
 
   const targetTrack = alltracks.find(
     (track) =>
-      track.source?.toLowerCase() === data?.track?.source?.toLowerCase() &&
-      data?.participant?.identity === data?.participant?.identity
+      track.source?.toLowerCase() ===
+        data?.livekit?.track?.source?.toLowerCase() &&
+      data?.livekit?.participant?.identity ===
+        data?.livekit?.participant?.identity
   );
 
   const canResize = user?.username === targetTrack?.participant.identity;
@@ -36,7 +38,7 @@ function ShareScreenNode({ data }: any) {
       <Actions
         isFullScreen={isFullScreen}
         onExitFullScreen={() => setIsFullScreen(false)}
-        identity={data?.track?.participant?.identity}
+        identity={data?.livekit?.track?.participant?.identity}
         onFullScreen={() => setIsFullScreen((prev) => !prev)}
       />
       {canResize && (
@@ -47,7 +49,7 @@ function ShareScreenNode({ data }: any) {
           onResizeEnd={(_, params) => {
             socket?.emit("updateShareScreenSize", {
               room_id: data.room_id,
-              id: data?.id,
+              id: data?.livekit?.id,
               width: params?.width,
               height: params?.height,
             });

@@ -1,7 +1,15 @@
+import { XYPosition } from "@xyflow/react";
+
 export type updateCoordinatesEvent = {
   coordinates: string;
   room_id: number;
   username: string;
+};
+
+export type updateShareScreenCoordinatesEvent = {
+  coordinates: XYPosition;
+  room_id: number;
+  share_screen_id: string;
 };
 
 export type LivekitTrackPublishedType = {
