@@ -1,5 +1,5 @@
 import ReactFlowV2 from "@/components/shared/react-flow/v2";
-import userNode from "./custom-node/user-node";
+import UserNode from "@/components/shared/canvas-board/rf-v2/nodes/user";
 import { useRef } from "react";
 import { Edge, Node, ReactFlowInstance } from "@xyflow/react";
 import screenShareNode from "./custom-node/screen-share-node";
@@ -27,7 +27,7 @@ export default function SampleRfV2() {
     <div className='w-screen h-screen'>
       <ReactFlowV2
         nodeTypes={{
-          userNode,
+          UserNode,
           screenShareNode,
         }}
         onInit={(rf) => (reactFlow.current = rf)}
