@@ -30,8 +30,9 @@ const initBgColor = "#c9f1dd";
 
 type Props = {
   nodeTypes: NodeTypes;
-  defaultNode: Node[];
+  defaultNode?: Node[];
   onNodeDragStop?: OnNodeDrag<Node>;
+  onNodeDragging?: OnNodeDrag<Node>;
   onNodeDragStart?: OnNodeDrag<Node>;
   onNodeDimensionChanges?: (changes: NodeDimensionChange[]) => void;
   onNodeDimensionChangesTurtle?: (changes: NodeDimensionChange[]) => void;
@@ -45,8 +46,9 @@ let timeout: NodeJS.Timeout;
 
 export default function ReactFlowV2({
   nodeTypes,
-  defaultNode,
+  defaultNode = [],
   onNodeDragStop,
+  onNodeDragging,
   onNodeDragStart,
   onNodeDimensionChanges,
   onNodeDimensionChangesTurtle,
@@ -149,6 +151,7 @@ export default function ReactFlowV2({
   return (
     <ReactFlow
       nodes={nodes}
+      onNodeDrag={onNodeDragging}
       onNodesChange={handleChangeNode}
       onNodeDragStart={onNodeDragStart}
       onNodeDragStop={onNodeDragStop}

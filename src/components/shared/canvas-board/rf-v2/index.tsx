@@ -23,55 +23,50 @@ export default function WithReactFlowV2() {
 
   const { room, updateUserCoords, objects, setObjects } = useRoomContext();
 
-  console.log("objects", objects);
-
-  const [isDragging, setIsDragging] = useState(false);
-
-  //Participant nodes
-  const participantNodes =
-    room?.participants?.map((participant) => {
-      const coords = participant?.coordinates?.split(",");
-
-      const rfUserId = "" + participant?.username;
-
-      let xcoord =
-        coords?.[0] ?? rf?.current?.getNode(rfUserId)?.position.x ?? 200;
-      let ycoord =
-        coords?.[1] ?? rf?.current?.getNode(rfUserId)?.position.y ?? 200;
-
-      if (user?.username === participant.username && isDragging) {
-        xcoord =
-          rf?.current?.getNode(rfUserId)?.position.x ?? coords?.[0] ?? 200;
-        ycoord =
-          rf?.current?.getNode(rfUserId)?.position.y ?? coords?.[1] ?? 200;
-      }
-
-      if (typeof xcoord === "string") xcoord = +xcoord;
-      if (typeof ycoord === "string") ycoord = +ycoord;
-
-      const isDraggable = user?.username === participant.username;
-
-      let object: Node = {
-        id: "" + participant?.username,
-        type: "userNode",
-        data: {
-          username: participant.username,
-          draggable: isDraggable,
-          isDragging: false,
-        },
-        position: { x: xcoord, y: ycoord },
-        //   parentId: RF_JAIL_ID,
-        extent: "parent",
-      };
-
-      if (!isDraggable) object["draggable"] = false;
-
-      return object;
-    }) ?? [];
-
   const shareScreenObjects = Object.keys(objects)
     .map((objectKey) => ({ ...objects[objectKey] }))
     .filter((x) => x?.meta && x?.meta?.track?.source === "SCREEN_SHARE");
+
+  const init = useRef<boolean>(false);
+
+  useEffect(() => {
+    if (!rf.current) return;
+
+    rf.current.setNodes(
+      room?.participants?.map((participant) => {
+        const coords = participant?.coordinates?.split(",");
+
+        const rfUserId = "" + participant?.username;
+
+        let xcoord =
+          coords?.[0] ?? rf?.current?.getNode(rfUserId)?.position.x ?? 200;
+        let ycoord =
+          coords?.[1] ?? rf?.current?.getNode(rfUserId)?.position.y ?? 200;
+
+        if (typeof xcoord === "string") xcoord = +xcoord;
+        if (typeof ycoord === "string") ycoord = +ycoord;
+
+        const isDraggable = user?.username === participant.username;
+
+        let object: Node = {
+          id: "" + participant?.username,
+          type: "userNode",
+          data: {
+            username: participant.username,
+            draggable: isDraggable,
+            isDragging: false,
+          },
+          position: { x: xcoord, y: ycoord },
+          //   parentId: RF_JAIL_ID,
+          extent: "parent",
+        };
+
+        if (!isDraggable) object["draggable"] = false;
+
+        return object;
+      }) ?? []
+    );
+  }, [rf.current, room?.participants]);
 
   //Sharescreen Nodes
   const shareScreenNodes: Node[] = [
@@ -90,14 +85,8 @@ export default function WithReactFlowV2() {
           label: "Share screen node",
         },
         position: {
-          x:
-            objects?.[shareScreenId]?.x ??
-            rf?.current?.getNode(shareScreenId)?.position.x ??
-            200,
-          y:
-            objects?.[shareScreenId]?.y ??
-            rf?.current?.getNode(shareScreenId)?.position.y ??
-            200,
+          x: rf?.current?.getNode(shareScreenId)?.position.x ?? 200,
+          y: rf?.current?.getNode(shareScreenId)?.position.y ?? 200,
         },
         className: "bg-white shadow-md",
         draggable: isDraggable,
@@ -106,14 +95,8 @@ export default function WithReactFlowV2() {
     }),
   ];
 
-  const defaultNodes = useMemo(
-    () => [...shareScreenNodes, ...participantNodes],
-    [shareScreenNodes.length, participantNodes]
-  );
-
   const handleDragStopRfNodes = useCallback(
     (_: any, node: Node) => {
-      setIsDragging(false);
       switch (node.type) {
         case RoomRfNodeType.shareScreenNode:
           //emit socket
@@ -131,6 +114,7 @@ export default function WithReactFlowV2() {
         case RoomRfNodeType.userNode:
           if (!node?.data?.username) return;
           updateUserCoords((node.data as any)?.username, node.position);
+
           break;
       }
     },
@@ -155,6 +139,10 @@ export default function WithReactFlowV2() {
     console.log("updateShareScreenSize", data);
   });
 
+  const nodes = useMemo(() => {
+    return rf.current?.getNodes() ?? [];
+  }, []);
+
   return (
     <div className='w-full h-screen'>
       <ReactFlowV2
@@ -162,10 +150,11 @@ export default function WithReactFlowV2() {
           userNode: UserNode,
           shareScreenNode: ShareScreenNode,
         }}
-        defaultNode={defaultNodes ?? []}
-        onInit={(rfinstance) => (rf.current = rfinstance)}
+        defaultNode={nodes}
+        onInit={(rfinstance) => {
+          rf.current = rfinstance;
+        }}
         onNodeDragStop={handleDragStopRfNodes}
-        onNodeDragStart={() => setIsDragging(true)}
         translateExtent={[
           [-200, 0],
           [3800, 1700],
