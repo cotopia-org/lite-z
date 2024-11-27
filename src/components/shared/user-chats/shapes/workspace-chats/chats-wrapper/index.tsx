@@ -8,20 +8,20 @@ export default function ChatsWrapper() {
   const { workspace_id } = useRoomContext();
 
   //@ts-ignore
-  const { chats, loading, participants } = useChat2({ workspace_id });
+  const { chats, loading } = useChat2({ workspace_id });
 
-  const loadUserByUserId = useCallback(
-    (user_id: number) => {
-      const user = participants.find((x) => x.id === user_id);
-
-      return user;
-    },
-    [participants]
-  );
+  // const loadUserByUserId = useCallback(
+  //   (user_id: number) => {
+  //     const user = participants.find((x) => x.id === user_id);
+  //
+  //     return user;
+  //   },
+  //   [participants]
+  // );
 
   const chatSortedByLastMessage = useMemo(() => {
     return chats.sort(
-      (a, b) => b?.last_message?.nonce_id - a?.last_message?.nonce_id
+      (a, b) => b?.last_message?.created_at - a?.last_message?.created_at
     );
   }, [chats]);
 
