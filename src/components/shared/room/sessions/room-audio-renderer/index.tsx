@@ -129,3 +129,26 @@ export function doCirclesMeet(
 
   return { meet, distance, volumePercentage: percentage };
 }
+
+export function doCirclesMeetRaw(
+  radius: number,
+  area: number,
+  circle1: { x: number; y: number },
+  circle2: { x: number; y: number }
+) {
+  const radiusHearing = area - (radius + 4);
+
+  // Calculate the distance between the centers of the circles
+  const distance = Math.sqrt(
+    Math.pow(circle1.x - circle2.x, 2) + Math.pow(circle1.y - circle2.y, 2) // Fixed y-coordinate difference calculation
+  );
+
+  // Check if the distance is less than or equal to the sum of the radii
+  const meet = distance <= 2 * radius + radiusHearing;
+
+  const percentage = !meet
+    ? 0
+    : 100 - Math.min((distance / radiusHearing) * 100, 100);
+
+  return { meet, distance, volumePercentage: percentage };
+}

@@ -4,7 +4,7 @@ import { RoomEvent, Track } from "livekit-client";
 import UserSession from "@/routes/private-wrarpper/components/session";
 
 const UserNode = (props: any) => {
-  const { data, dragging } = props;
+  const { data, dragging, meet } = props;
 
   const tracks = useTracks(
     [
@@ -37,12 +37,14 @@ const UserNode = (props: any) => {
 
   return (
     <>
+      {JSON.stringify(meet)}
       <UserSession
         participant={participant}
         track={track}
         draggable={data?.draggable ?? false}
         isDragging={dragging}
         username={data?.username ?? ""}
+        meet={meet}
       />
     </>
   );

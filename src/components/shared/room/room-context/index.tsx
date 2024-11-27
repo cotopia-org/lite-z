@@ -327,25 +327,25 @@ export default function RoomContext({
     )
     .map((x) => x.user);
 
-  useSocket("updateCoordinates", (data: updateCoordinatesEvent) => {
-    setRoom((prev) => {
-      return prev
-        ? {
-            ...prev,
-            participants: prev.participants.map((participant) => {
-              if (participant.username === data.username) {
-                return {
-                  ...participant,
-                  coordinates: data.coordinates,
-                };
-              }
+  // useSocket("updateCoordinates", (data: updateCoordinatesEvent) => {
+  //   setRoom((prev) => {
+  //     return prev
+  //       ? {
+  //           ...prev,
+  //           participants: prev.participants.map((participant) => {
+  //             if (participant.username === data.username) {
+  //               return {
+  //                 ...participant,
+  //                 coordinates: data.coordinates,
+  //               };
+  //             }
 
-              return participant;
-            }),
-          }
-        : undefined;
-    });
-  });
+  //             return participant;
+  //           }),
+  //         }
+  //       : undefined;
+  //   });
+  // });
 
   return (
     <RoomCtx.Provider

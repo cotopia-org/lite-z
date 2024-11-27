@@ -30,33 +30,6 @@ export default function SampleRfV2() {
           userNode,
           screenShareNode,
         }}
-        defaultNode={[
-          {
-            id: "2",
-            type: "userNode",
-            data: {
-              label: "K",
-            },
-            position: { x: 200, y: 200 },
-          },
-          {
-            id: "3",
-            type: "userNode",
-            data: { label: "M" },
-            position: { x: 300, y: 300 },
-          },
-          {
-            id: "4",
-            type: "screenShareNode",
-            data: { label: "My Screen Share Card" },
-            position: { x: 300, y: 700 },
-            style: {
-              width: 300,
-              height: 200,
-            },
-            className: "shadow-md rounded-md bg-white",
-          },
-        ]}
         onInit={(rf) => (reactFlow.current = rf)}
       />
     </div>
