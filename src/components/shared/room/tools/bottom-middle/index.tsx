@@ -1,6 +1,5 @@
 import AddButtonTool from "./add-button";
 import BroadcastButtonTool from "./broadcast-button";
-import ChatButtonTool from "./chat-button";
 import EditButtonTool from "./edit-button";
 import ShareScreenButtonTool from "./share-screen-button";
 import VideoButtonTool from "./video-button";
@@ -13,7 +12,6 @@ export default function BottomMiddleTools() {
       <AddButtonTool />
       <EditButtonTool />
       <ShareScreenButtonTool />
-      <ChatButtonTool />
       <BroadcastButtonTool />
       <VideoButtonTool />
       <VoiceButtonTool />

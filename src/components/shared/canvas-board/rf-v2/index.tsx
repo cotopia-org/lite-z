@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useRef } from "react";
 import ReactFlowV2 from "../../react-flow/v2";
 import { useRoomContext } from "../../room/room-context";
 import { Edge, Node, ReactFlowInstance, XYPosition } from "@xyflow/react";
@@ -21,6 +21,8 @@ import JailNode from "./nodes/jail-node";
 import { getPositionFromStringCoordinates } from "@/lib/utils";
 import { UserMinimalType } from "@/types/user";
 import BgNode from "./nodes/bg-node";
+import { useTracks } from "@livekit/components-react";
+import { Track } from "livekit-client";
 
 enum RoomRfNodeType {
   shareScreenNode = "shareScreenNode",
@@ -38,6 +40,42 @@ export default function WithReactFlowV2() {
 
   //Init react flow
   const init = useRef<boolean>(false);
+
+  //Init livekit screenshare tracks
+  const initShareScreenTracks = useRef<boolean>(false);
+  const shareScreenTracks = useTracks([Track.Source.ScreenShare]);
+
+  useEffect(() => {
+    if (initShareScreenTracks.current === true) return;
+
+    for (let track of shareScreenTracks) {
+      const shareScreenNode = {
+        id: track.publication.track?.sid,
+        data: {
+          room_id: room?.id,
+          livekit: {
+            track: {
+              source: track.source,
+            },
+            participant: {
+              identity: track.participant.identity,
+            },
+          },
+        },
+        position: { x: 200, y: 200 },
+        parentId: VARZ.jailNodeId,
+        extent: "parent",
+        type: "shareScreenNode",
+        draggable: false,
+      } as Node;
+
+      console.log("shareScreenNode", shareScreenNode);
+
+      rf.current?.setNodes((prev) => {
+        return [...prev, shareScreenNode];
+      });
+    }
+  }, [rf.current, shareScreenTracks]);
 
   const participantsToRfNodes = useCallback(
     (participants: UserMinimalType[]) => {
@@ -66,7 +104,8 @@ export default function WithReactFlowV2() {
           const isMyNode = user?.username === participant.username;
 
           const isDraggable = !!isMyNode;
-          const isMeet = !!isMyNode;
+
+          let isMeet = !!isMyNode;
 
           let object: Node = {
             id: "" + participant?.username,
@@ -108,16 +147,42 @@ export default function WithReactFlowV2() {
       },
     ];
 
+    const myNode = nodes.find((x) => x.id === user?.username);
+
     finalNodes = [
       ...finalNodes,
-      ...nodes.map(
-        (x) =>
-          ({
-            ...x,
-            parentId: VARZ.jailNodeId,
-            extent: "parent",
-          } as Node)
-      ),
+      ...nodes.map((x) => {
+        const isMyNode = x.id === user?.username;
+
+        let isMeet = !!isMyNode;
+
+        if (!isMyNode) {
+          const myUserPosition = myNode?.position;
+
+          if (myUserPosition) {
+            const participantPosition = x.position;
+
+            const { meet: participantMeet } = doCirclesMeetRaw(
+              46,
+              VARZ.voiceAreaRadius,
+              myUserPosition,
+              participantPosition
+            );
+
+            isMeet = participantMeet;
+          }
+        }
+
+        return {
+          ...x,
+          data: {
+            ...x?.data,
+            meet: isMeet,
+          },
+          parentId: VARZ.jailNodeId,
+          extent: "parent",
+        } as Node;
+      }),
     ];
 
     if (bgNode) finalNodes = [...finalNodes, bgNode];
@@ -139,19 +204,13 @@ export default function WithReactFlowV2() {
     addNodesToRf(nodes, {
       id: "bg-node",
       position: { x: -200, y: -200 },
-      data: { background: room?.background },
+      data: {},
       type: "bgNode",
       draggable: false,
     });
 
     init.current = true;
-  }, [
-    rf.current,
-    room?.background,
-    room?.participants,
-    addNodesToRf,
-    participantsToRfNodes,
-  ]);
+  }, [rf.current, room?.participants, addNodesToRf, participantsToRfNodes]);
 
   useBus(
     __BUS.initRoomParticipantsOnRf,
@@ -168,7 +227,7 @@ export default function WithReactFlowV2() {
         draggable: false,
       });
     },
-    []
+    [participantsToRfNodes, addNodesToRf]
   );
 
   const handleDragStopRfNodes = useCallback(
@@ -195,7 +254,7 @@ export default function WithReactFlowV2() {
 
           const allNodes = rf.current?.getNodes() ?? [];
           for (let node of allNodes) {
-            const isMeet = handleCircleMeet(node.id, node.position);
+            handleCircleMeet(node.id, node.position);
           }
 
           break;

@@ -30,6 +30,8 @@ function ShareScreenNode({ data }: any) {
       data?.livekit?.participant?.identity === track.participant.identity
   );
 
+  console.log("data", data);
+
   const canResize = user?.username === targetTrack?.participant.identity;
 
   const rf = useReactFlow();
