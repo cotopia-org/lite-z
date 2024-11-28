@@ -66,11 +66,11 @@ const ParticipantRows = ({ participants }: Props) => {
                 roomId={room_id}
                 participants={[participant]}
               />
-              <div className='flex flex-col'>
+              <div className='w-full flex flex-col'>
 
-                <div className='flex items-center justify-between'>
+                <div className='w-full flex items-center justify-between'>
 
-                  <div className="flex flex-row items-center gap-x-2">
+                  <div className=" flex flex-row items-center gap-x-2">
                     <span className='font-semibold text-grayscale-paragraph'>
                       {participant.username}
                     </span>
