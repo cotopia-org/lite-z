@@ -4,13 +4,13 @@ import {
   VideoIcon,
 } from "@/components/icons";
 import { WorkspaceUserType } from "@/types/user";
-import { ReactNode, useEffect, useState } from "react";
+import { ReactNode } from "react";
 import ParticipantsWithPopover from "../participants/with-popover";
 import { useRoomContext } from "../room/room-context";
 import useAuth from "@/hooks/auth";
 import { cn } from "@/lib/utils";
 import { Mic, MicOff } from "lucide-react";
-import { useLocalParticipant, useParticipants } from "@livekit/components-react";
+import { useLocalParticipant } from "@livekit/components-react";
 import { Track } from "livekit-client";
 
 interface Props {
@@ -21,71 +21,38 @@ const ParticipantRows = ({ participants }: Props) => {
   const { room_id } = useRoomContext();
   const { user } = useAuth();
   const { localParticipant } = useLocalParticipant();
-  const remoteParticipants = useParticipants();
 
-  const [mutedStates, setMutedStates] = useState<Record<string, boolean>>({});
 
-  useEffect(() => {
-    if (!localParticipant) return;
-
-    const handleTrackMuted = (publication: any) => {
-      if (publication.source === Track.Source.Microphone) {
-        setMutedStates((prev) => ({
-          ...prev,
-          [localParticipant.identity]: publication.isMuted,
-        }));
-      }
-    };
-
-    localParticipant.on("trackMuted", handleTrackMuted);
-    localParticipant.on("trackUnmuted", handleTrackMuted);
-
-    return () => {
-      localParticipant.off("trackMuted", handleTrackMuted);
-      localParticipant.off("trackUnmuted", handleTrackMuted);
-    };
-  }, [localParticipant]);
-
-  useEffect(() => {
-    remoteParticipants.forEach((participant) => {
-      participant.on("trackMuted", (publication) => {
-        if (publication.source === Track.Source.Microphone) {
-          setMutedStates((prev) => ({
-            ...prev,
-            [participant.identity]: publication.isMuted,
-          }));
-        }
-      });
-
-      participant.on("trackUnmuted", (publication) => {
-        if (publication.source === Track.Source.Microphone) {
-          setMutedStates((prev) => ({
-            ...prev,
-            [participant.identity]: publication.isMuted,
-          }));
-        }
-      });
-    });
-  }, [remoteParticipants]);
+  const getParticipantMutedState = (participant: WorkspaceUserType) => {
+    if (participant.username === user?.username) {
+      const voiceTrack = localParticipant.getTrackPublication(
+        Track.Source.Microphone
+      );
+      return voiceTrack?.isMuted ?? true;
+    }
+    return !participant.has_mic; 
+  };
 
   if (participants.length === 0) return null;
 
   return (
     <div className="w-full flex gap-y-4 flex-col pl-6 pb-5">
       {participants.map((participant) => {
+
         const has_video = participant.has_video;
+        const has_mic = participant.has_mic;
         const has_screen_share = participant.has_screen_share;
 
         const accessibilities: ReactNode[] = [];
         if (has_video) accessibilities.push(<VideoIcon size={20} />);
-        if (participant.has_mic) accessibilities.push(<MicrophoneIcon size={20} />);
+        if (has_mic) accessibilities.push(<MicrophoneIcon size={20} />);
         if (has_screen_share) accessibilities.push(<MirrorScreenIcon size={20} />);
 
         const is_mine = participant.username === user?.username;
 
         const userActiveJob = participant.active_job?.title ?? "Idle";
 
-        const isMuted = mutedStates[participant.id] ?? true;
+        const isMuted = getParticipantMutedState(participant);
 
         return (
           <div
@@ -117,13 +84,7 @@ const ParticipantRows = ({ participants }: Props) => {
                     )}
                   </div>
 
-                  <span
-                    className={`mr-4 w-7 h-7 ${
-                      isMuted
-                        ? "bg-red-300/40 text-red-400"
-                        : "bg-green-300/40 text-green-400"
-                    } rounded-full p-2 flex items-center justify-center`}
-                  >
+                  <span className={`mr-4 w-7 h-7 ${isMuted ? "bg-red-300/40 text-red-400" : "bg-green-300/40 text-green-400"} rounded-full p-2 flex items-center justify-center`}>
                     {isMuted ? <MicOff size={24} /> : <Mic size={24} />}
                   </span>
                 </div>
