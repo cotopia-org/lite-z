@@ -11,6 +11,7 @@ import useAuth from "@/hooks/auth";
 import { cn } from "@/lib/utils";
 import { useLocalParticipant } from "@livekit/components-react";
 import { Track } from "livekit-client";
+import { Cast, Mic, MicOff, MonitorOff, Video, VideoOff } from "lucide-react";
 
 interface Props {
   participants: WorkspaceUserType[];
@@ -20,11 +21,18 @@ const ParticipantRows = ({ participants }: Props) => {
   const { room_id } = useRoomContext();
 
   const { localParticipant } = useLocalParticipant();
-  
+
   const voiceTrack = localParticipant.getTrackPublication(
     Track.Source.Microphone
   );
 
+  const cameraTrack = localParticipant.getTrackPublication(
+    Track.Source.Camera
+  );
+
+  const shareScreenTrack = localParticipant.getTrackPublication(
+    Track.Source.ScreenShare
+  );
   const { user } = useAuth();
 
   if (participants.length === 0) return null;
@@ -35,7 +43,6 @@ const ParticipantRows = ({ participants }: Props) => {
         let has_video = participant.has_video;
         let has_mic = participant.has_mic;
         let has_screen_share = participant.has_screen_share;
-        console.log(`MIC : [${has_mic}] , VOICE-TRACK : [${voiceTrack?.isMuted}]`)
 
         let accessibilities: ReactNode[] = [];
 
@@ -68,11 +75,13 @@ const ParticipantRows = ({ participants }: Props) => {
               />
               <div className='flex flex-col'>
 
-                <div className='flex flex-row items-center justify-between gap-x-2'>
-                  <div>
+                <div className='flex items-center justify-between'>
+
+                  <div className="flex flex-row items-center gap-x-2">
                     <span className='font-semibold text-grayscale-paragraph'>
                       {participant.username}
                     </span>
+
                     {is_mine && (
                       <div className='flex items-center justify-center p-1 py-[2px] rounded bg-primary-light'>
                         <span className='text-xs font-medium text-primary-label'>
@@ -80,6 +89,12 @@ const ParticipantRows = ({ participants }: Props) => {
                         </span>
                       </div>
                     )}
+                  </div>
+
+                  <div className="flex items-center gap-x-2">
+                    {voiceTrack?.isMuted ? (<Mic size={19}/>) : (<MicOff size={19}/>)}
+                    {cameraTrack?.isMuted ? (<Video size={19}/>) : (<VideoOff size={19}/>)}
+                    {shareScreenTrack?.isMuted ? (<Cast size={19}/>) : (<MonitorOff size={19}/>)}
                   </div>
 
                 </div>
