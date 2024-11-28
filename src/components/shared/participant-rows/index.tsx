@@ -45,8 +45,7 @@ const ParticipantRows = ({ participants }: Props) => {
         const accessibilities: ReactNode[] = [];
         if (has_video) accessibilities.push(<VideoIcon size={20} />);
         if (has_mic) accessibilities.push(<MicrophoneIcon size={20} />);
-        if (has_screen_share)
-          accessibilities.push(<MirrorScreenIcon size={20} />);
+        if (has_screen_share) accessibilities.push(<MirrorScreenIcon size={20} />);
 
         const is_mine = participant.username === user?.username;
 
@@ -84,7 +83,7 @@ const ParticipantRows = ({ participants }: Props) => {
                     )}
                   </div>
 
-                  <span className="mr-4 w-6 h-6 bg-red-300/40 rounded-full p-2 text-red-400 flex items-center justify-center">
+                  <span className={`mr-4 w-7 h-7 ${isMuted ? "bg-red-300/40 text-red-400" : "bg-green-300/40 text-green-400"} rounded-full p-2 flex items-center justify-center`}>
                     {isMuted ? <MicOff size={24} /> : <Mic size={24} />}
                   </span>
                 </div>
