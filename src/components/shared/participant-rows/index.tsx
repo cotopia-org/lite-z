@@ -9,8 +9,6 @@ import ParticipantsWithPopover from "../participants/with-popover";
 import { useRoomContext } from "../room/room-context";
 import useAuth from "@/hooks/auth";
 import { cn } from "@/lib/utils";
-import { useLocalParticipant } from "@livekit/components-react";
-import { Track } from "livekit-client";
 import { Mic, MicOff } from "lucide-react";
 
 interface Props {
@@ -19,12 +17,6 @@ interface Props {
 
 const ParticipantRows = ({ participants }: Props) => {
   const { room_id } = useRoomContext();
-
-  const { localParticipant } = useLocalParticipant();
-
-  const voiceTrack = localParticipant.getTrackPublication(
-    Track.Source.Microphone
-  );
 
   const { user } = useAuth();
 
@@ -84,9 +76,10 @@ const ParticipantRows = ({ participants }: Props) => {
                     )}
                   </div>
 
-                  <span className="mr-4">
-                    {!voiceTrack?.isMuted ? (<Mic size={19} />) : (<MicOff size={19} />)}
+                  <span className="mr-4 w-5 h-5 bg-red-300/40 rounded-full p-2 text-red-400">
+                    {participant.has_mic ? (<Mic size={19} />) : (<MicOff size={19} />)}
                   </span>
+
                 </div>
 
                 <span
