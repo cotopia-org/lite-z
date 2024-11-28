@@ -20,7 +20,7 @@ interface Props {
 const ParticipantRows = ({ participants }: Props) => {
   const { room_id } = useRoomContext();
   const { user } = useAuth();
-  const { localParticipant } = useLocalParticipant();
+  const { localParticipant} = useLocalParticipant();
 
 
   const getParticipantMutedState = (participant: WorkspaceUserType) => {
@@ -30,7 +30,7 @@ const ParticipantRows = ({ participants }: Props) => {
       );
       return voiceTrack?.isMuted ?? true;
     }
-    return !participant.has_mic; 
+    return !participant.has_mic;
   };
 
   if (participants.length === 0) return null;
