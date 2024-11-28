@@ -9,6 +9,8 @@ import ParticipantsWithPopover from "../participants/with-popover";
 import { useRoomContext } from "../room/room-context";
 import useAuth from "@/hooks/auth";
 import { cn } from "@/lib/utils";
+import { useLocalParticipant } from "@livekit/components-react";
+import { Track } from "livekit-client";
 
 interface Props {
   participants: WorkspaceUserType[];
@@ -16,6 +18,12 @@ interface Props {
 
 const ParticipantRows = ({ participants }: Props) => {
   const { room_id } = useRoomContext();
+
+  const { localParticipant } = useLocalParticipant();
+  
+  const voiceTrack = localParticipant.getTrackPublication(
+    Track.Source.Microphone
+  );
 
   const { user } = useAuth();
 
@@ -27,6 +35,7 @@ const ParticipantRows = ({ participants }: Props) => {
         let has_video = participant.has_video;
         let has_mic = participant.has_mic;
         let has_screen_share = participant.has_screen_share;
+        console.log(`MIC : [${has_mic}] , VOICE-TRACK : [${voiceTrack?.isMuted}]`)
 
         let accessibilities: ReactNode[] = [];
 
@@ -58,18 +67,23 @@ const ParticipantRows = ({ participants }: Props) => {
                 participants={[participant]}
               />
               <div className='flex flex-col'>
-                <div className='flex flex-row items-center gap-x-2'>
-                  <span className='font-semibold text-grayscale-paragraph'>
-                    {participant.username}
-                  </span>
-                  {is_mine && (
-                    <div className='flex items-center justify-center p-1 py-[2px] rounded bg-primary-light'>
-                      <span className='text-xs font-medium text-primary-label'>
-                        You
-                      </span>
-                    </div>
-                  )}
+
+                <div className='flex flex-row items-center justify-between gap-x-2'>
+                  <div>
+                    <span className='font-semibold text-grayscale-paragraph'>
+                      {participant.username}
+                    </span>
+                    {is_mine && (
+                      <div className='flex items-center justify-center p-1 py-[2px] rounded bg-primary-light'>
+                        <span className='text-xs font-medium text-primary-label'>
+                          You
+                        </span>
+                      </div>
+                    )}
+                  </div>
+
                 </div>
+
                 <span
                   className={cn(
                     userActiveJob === "Idle" ? "text-yellow-600" : "",
