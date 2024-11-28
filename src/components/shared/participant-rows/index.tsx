@@ -10,10 +10,7 @@ import { useRoomContext } from "../room/room-context";
 import useAuth from "@/hooks/auth";
 import { cn } from "@/lib/utils";
 import { Mic, MicOff } from "lucide-react";
-import CotopiaTooltip from "@/components/shared-ui/c-tooltip";
-import CotopiaIconButton from "@/components/shared-ui/c-icon-button";
 import { useLocalParticipant } from "@livekit/components-react";
-import { useRoomHolder } from "../room";
 import { Track } from "livekit-client";
 
 interface Props {
@@ -22,11 +19,9 @@ interface Props {
 
 const ParticipantRows = ({ participants }: Props) => {
   const { room_id } = useRoomContext();
-  const { enableAudioAccess, disableAudioAccess, stream_loading } =
-    useRoomHolder();
 
   const { localParticipant } = useLocalParticipant();
-  
+
   const voiceTrack = localParticipant.getTrackPublication(
     Track.Source.Microphone
   );
@@ -35,7 +30,6 @@ const ParticipantRows = ({ participants }: Props) => {
 
   if (participants.length === 0) return null;
 
-  const track = voiceTrack?.track;
   const isMuted = voiceTrack?.isMuted ?? true;
 
   return (
@@ -44,8 +38,6 @@ const ParticipantRows = ({ participants }: Props) => {
         let has_video = participant.has_video;
         let has_mic = participant.has_mic;
         let has_screen_share = participant.has_screen_share;
-
-        console.log(`FIRST : ${participant}   | | | | SECOND : ${has_mic}`);
 
         let accessibilities: ReactNode[] = [];
 
@@ -63,10 +55,6 @@ const ParticipantRows = ({ participants }: Props) => {
         const is_mine = participant.username === user?.username;
 
         const userActiveJob = participant.active_job?.title ?? "Idle";
-
-        let title = "Mic Off";
-
-        if (track?.isMuted) title = "Mic on";
 
         return (
           <div
@@ -98,18 +86,9 @@ const ParticipantRows = ({ participants }: Props) => {
                     )}
                   </div>
 
-                  <CotopiaTooltip title={title}>
-                    <CotopiaIconButton
-                      disabled={stream_loading}
-                      className='h-7 w-7 bg-red-500/40 text-red-500 flex items-center justify-center rounded-full p-2'
-                    >
-                      {isMuted ? <MicOff size={20} /> : <Mic size={20} />}
-                    </CotopiaIconButton>
-                  </CotopiaTooltip>
-
                   <span className="mr-4 w-6 h-6 bg-red-300/40 rounded-full p-2 text-red-400 flex items-center justify-center">
+                    {isMuted && is_mine ? <MicOff size={20} /> : <Mic size={20} />}
                   </span>
-
                 </div>
 
                 <span
