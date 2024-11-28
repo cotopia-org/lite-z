@@ -25,14 +25,7 @@ const ParticipantRows = ({ participants }: Props) => {
   const voiceTrack = localParticipant.getTrackPublication(
     Track.Source.Microphone
   );
-
-  const cameraTrack = localParticipant.getTrackPublication(
-    Track.Source.Camera
-  );
-
-  const shareScreenTrack = localParticipant.getTrackPublication(
-    Track.Source.ScreenShare
-  );
+  
   const { user } = useAuth();
 
   if (participants.length === 0) return null;
@@ -77,7 +70,7 @@ const ParticipantRows = ({ participants }: Props) => {
 
                 <div className='w-full flex items-center justify-between'>
 
-                  <div className="flex flex-row items-center gap-x-2">
+                  <div className="w-full flex flex-row items-center gap-x-2 mr-4">
                     <span className='font-semibold text-grayscale-paragraph'>
                       {participant.username}
                     </span>
@@ -91,12 +84,7 @@ const ParticipantRows = ({ participants }: Props) => {
                     )}
                   </div>
 
-                  <div className="flex items-center gap-x-2">
-                    {cameraTrack?.isMuted ? (<Video size={19}/>) : (<VideoOff size={19}/>)}
-                    {!voiceTrack?.isMuted ? (<Mic size={19}/>) : (<MicOff size={19}/>)}
-                    {shareScreenTrack?.isMuted ? (<Cast size={19}/>) : (<MonitorOff size={19}/>)}
-                  </div>
-
+                  {!voiceTrack?.isMuted ? (<Mic size={19} />) : (<MicOff size={19} />)}
                 </div>
 
                 <span
