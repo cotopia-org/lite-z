@@ -9,14 +9,12 @@ import { LeaderboardType } from "@/types/leaderboard";
 import useAuth from "@/hooks/auth";
 import { JobType } from "@/types/job";
 import { WorkspaceUserType } from "@/types/user";
-import CotopiaTooltip from "@/components/shared-ui/c-tooltip";
 
 type Props = {
   hasCount: boolean;
   userActiveJob: JobType | null | undefined;
   item: LeaderboardType;
 };
-
 
 function Timers({ hasCount, userActiveJob, item }: Props) {
   return <>
@@ -28,9 +26,7 @@ function Timers({ hasCount, userActiveJob, item }: Props) {
           short={true}
         >
           {(time) => (
-            <CotopiaTooltip title={time}>
               <strong className='text-xs w-[40px]'>{time}</strong>
-            </CotopiaTooltip>
           )}
         </Timer>
         <Timer
@@ -40,11 +36,9 @@ function Timers({ hasCount, userActiveJob, item }: Props) {
 
         >
           {(time) => (
-            <CotopiaTooltip title={time}>
               <strong className='text-xs w-[40px] text-yellow-600'>
                 {time}
               </strong>
-            </CotopiaTooltip>
           )}
         </Timer>
 

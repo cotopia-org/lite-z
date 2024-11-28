@@ -78,7 +78,7 @@ export default function JobButton() {
                 value: "paused",
               },
               {
-                title: "Paused",
+                title: "Completed",
                 content: (
                   <JobItems
                     hasAction

@@ -14,10 +14,13 @@ export default function VoiceButtonTool() {
   );
   const track = voiceTrack?.track;
   const isMuted = voiceTrack?.isMuted ?? true;
+
   const toggleMute = async () => {
+    console.log(`use Room Holer : ${enableAudioAccess}, ${disableAudioAccess} | | voice Track : ${voiceTrack} , ${voiceTrack?.isMuted} , ${voiceTrack?.audioTrack}`)
     if (!track) {
       return;
     }
+
     if (track.isMuted) {
       track.unmute();
       enableAudioAccess();
