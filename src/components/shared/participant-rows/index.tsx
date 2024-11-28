@@ -11,7 +11,7 @@ import useAuth from "@/hooks/auth";
 import { cn } from "@/lib/utils";
 import { useLocalParticipant } from "@livekit/components-react";
 import { Track } from "livekit-client";
-import { Cast, Mic, MicOff, MonitorOff, Video, VideoOff } from "lucide-react";
+import { Mic, MicOff } from "lucide-react";
 
 interface Props {
   participants: WorkspaceUserType[];
@@ -25,7 +25,7 @@ const ParticipantRows = ({ participants }: Props) => {
   const voiceTrack = localParticipant.getTrackPublication(
     Track.Source.Microphone
   );
-  
+
   const { user } = useAuth();
 
   if (participants.length === 0) return null;
@@ -59,18 +59,18 @@ const ParticipantRows = ({ participants }: Props) => {
             key={participant.id}
             className='flex items-center justify-between w-full'
           >
-            <div className='flex items-center gap-x-2'>
+            <div className='w-full flex items-center gap-x-2'>
               <ParticipantsWithPopover
                 avatarClss='border border-primary'
                 className='!pb-0'
                 roomId={room_id}
                 participants={[participant]}
               />
-              <div className='w-full flex flex-col'>
+              <div className='flex flex-col'>
 
-                <div className='w-full flex items-center justify-between'>
+                <div className='flex items-center justify-between'>
 
-                  <div className="w-full flex flex-row items-center gap-x-2 mr-4">
+                  <div className="flex flex-row items-center gap-x-2">
                     <span className='font-semibold text-grayscale-paragraph'>
                       {participant.username}
                     </span>
@@ -84,7 +84,9 @@ const ParticipantRows = ({ participants }: Props) => {
                     )}
                   </div>
 
-                  {!voiceTrack?.isMuted ? (<Mic size={19} />) : (<MicOff size={19} />)}
+                  <span className="mr-4">
+                    {!voiceTrack?.isMuted ? (<Mic size={19} />) : (<MicOff size={19} />)}
+                  </span>
                 </div>
 
                 <span
