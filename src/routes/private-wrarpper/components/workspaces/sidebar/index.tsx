@@ -39,7 +39,9 @@ export default function WorkspaceSidebar() {
 
     return (
         <div className='flex flex-col gap-y-4 bg-white h-[calc(100vh-80px)] pb-20 overflow-y-auto relative'>
-            <WorkspaceRoomsHolder workspaceUsers={workspaceUsers} workspace_id={workspace_id as string}/>
+            <div>
+                <WorkspaceRoomsHolder workspaceUsers={workspaceUsers} workspace_id={workspace_id as string}/>
+            </div>
             <div className='p-4 flex flex-col gap-y-6'>
                 <ScheduledUsers finalSchedules={finalSchedules}/>
                 <OfflineUsers allOfflineParticipants={allOfflineParticipants}/>
