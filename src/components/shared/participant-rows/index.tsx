@@ -10,7 +10,7 @@ import { useRoomContext } from "../room/room-context";
 import useAuth from "@/hooks/auth";
 import { cn } from "@/lib/utils";
 import { Mic, MicOff } from "lucide-react";
-import { useLocalParticipant } from "@livekit/components-react";
+import { useLocalParticipant, useTracks } from "@livekit/components-react";
 import { Track } from "livekit-client";
 
 interface Props {
@@ -20,8 +20,12 @@ interface Props {
 const ParticipantRows = ({ participants }: Props) => {
   const { room_id } = useRoomContext();
   const { user } = useAuth();
-  const { localParticipant} = useLocalParticipant();
+  const { localParticipant } = useLocalParticipant();
 
+  const tracks = useTracks([Track.Source.Microphone], {
+    updateOnlyOn: [],
+    onlySubscribed: true,
+  });
 
   const getParticipantMutedState = (participant: WorkspaceUserType) => {
     if (participant.username === user?.username) {
@@ -30,7 +34,11 @@ const ParticipantRows = ({ participants }: Props) => {
       );
       return voiceTrack?.isMuted ?? true;
     }
-    return !participant.has_mic;
+
+    const trackRef = tracks.find(
+      (track) => track.participant.identity === participant.username
+    );
+    return trackRef?.publication.isMuted ?? true;
   };
 
   if (participants.length === 0) return null;
@@ -38,7 +46,6 @@ const ParticipantRows = ({ participants }: Props) => {
   return (
     <div className="w-full flex gap-y-4 flex-col pl-6 pb-5">
       {participants.map((participant) => {
-
         const has_video = participant.has_video;
         const has_mic = participant.has_mic;
         const has_screen_share = participant.has_screen_share;
@@ -60,7 +67,6 @@ const ParticipantRows = ({ participants }: Props) => {
             className="flex items-center justify-between w-full"
           >
             <div className="w-full flex items-center gap-x-2">
-
               <ParticipantsWithPopover
                 avatarClss="border border-primary"
                 className="!pb-0"
@@ -69,7 +75,6 @@ const ParticipantRows = ({ participants }: Props) => {
               />
               <div className="w-full flex flex-col">
                 <div className="w-full flex items-center justify-between">
-
                   <div className="flex flex-row items-center gap-x-2">
                     <span className="font-semibold text-grayscale-paragraph">
                       {participant.username}
@@ -84,7 +89,13 @@ const ParticipantRows = ({ participants }: Props) => {
                     )}
                   </div>
 
-                  <span className={`mr-4 w-7 h-7 ${isMuted ? "bg-red-300/40 text-red-400" : "bg-green-300/40 text-green-400"} rounded-full p-2 flex items-center justify-center`}>
+                  <span
+                    className={`mr-4 w-7 h-7 ${
+                      isMuted
+                        ? "bg-red-300/40 text-red-400"
+                        : "bg-green-300/40 text-green-400"
+                    } rounded-full p-2 flex items-center justify-center`}
+                  >
                     {isMuted ? <MicOff size={24} /> : <Mic size={24} />}
                   </span>
                 </div>

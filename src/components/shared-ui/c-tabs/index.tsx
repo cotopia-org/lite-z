@@ -60,9 +60,10 @@ export default function CTabs({
               className='min-w-[48px] min-h-[48px] rounded-lg data-[state=active]:bg-primary data-[state=active]:text-white [&_svg_path]:data-[state=active]:stroke-white flex items-center gap-x-5'
             >
               {x.icon ? x.icon : x.title}
-              {x.length && (
+              {x.length !== undefined && (
                 <span className="text-sm font-medium text-gray-200">{`(${x.length})`}</span>
               )}
+
             </TabsTrigger>
           ))}
         </TabsList>
