@@ -25,13 +25,16 @@ export default function PayrollSideBar() {
                     <li key={link.title}>
                         <NavLink
                             className={({ isActive }) =>
-                                `p-3 rounded-md flex items-center gap-x-5 text-lg font-semibold transition-all duration-50 ease-in [&_svg_path]:hover:!stroke-white ${isActive ? 'bg-primary text-white border-l-4 border-black [&_svg_path]:hover:!stroke-white' : "border-l-4 border-black hover:bg-primary hover:text-white"}`
+                                `p-3 rounded-md flex items-center gap-x-5 text-lg font-semibold transition-all duration-50 ease-in 
+                              [&_svg_path]:stroke-black 
+                               ${isActive ? '[&_svg_path]:stroke-white bg-primary text-white border-l-4 border-black' : 'hover:bg-primary hover:text-white [&_svg_path]:hover:stroke-white'}`
                             }
                             to={link.href}
                         >
-                                {link.icon}
-                                {link.title}
+                            {link.icon}
+                            {link.title}
                         </NavLink>
+
                     </li>
                 ))}
             </ul>
