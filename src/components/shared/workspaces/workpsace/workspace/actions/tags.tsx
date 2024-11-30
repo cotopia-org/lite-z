@@ -4,7 +4,7 @@ import CotopiaButton from "@/components/shared-ui/c-button"
 import CDialog from "@/components/shared-ui/c-dialog"
 import useLoading from "@/hooks/use-loading"
 import {Tag} from "lucide-react";
-import Tags from "@/components/shared/workspaces/Tags";
+import Tags from "components/shared/workspaces/tags";
 import {WorkspaceType} from "@/types/workspace";
 
 
