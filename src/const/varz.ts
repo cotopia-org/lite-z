@@ -30,6 +30,7 @@ export const colors = {
   foreground: getCSSVariableValue("--foreground"),
   error: {
     default: getCSSVariableValue("--error"),
+    "surface-default": getCSSVariableValue("--error-surface-default"),
   },
   warning: {
     default: getCSSVariableValue("--warning"),
@@ -37,6 +38,7 @@ export const colors = {
   },
   success: {
     default: getCSSVariableValue("--success"),
+    "surface-default": getCSSVariableValue("--success-surface-default"),
   },
   // Add more as needed
 }
