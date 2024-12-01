@@ -3,28 +3,33 @@ import { useEffect, useRef, useState } from "react";
 import { useVirtualizer, Virtualizer } from "@tanstack/react-virtual";
 import { Chat2ItemType } from "@/types/chat2";
 import FetchingProgress from "./fetching-progress";
-import { UserMinimalType } from "@/types/user";
 import useBus from "use-bus";
 import UnSeenHandlers from "./un-seen-handlers";
 import useAuth from "@/hooks/auth";
 import { __BUS } from "@/const/bus";
+import { VList, VListHandle } from "virtua";
+import { useChat2 } from "@/hooks/chat/use-chat-2";
 
 type Props = {
-  items: Chat2ItemType[];
-  onFetchNewMessages?: () => Promise<void>;
+  chat_id: number;
   marginFetching?: number;
   onGetVirtualizer?: (vir: Virtualizer<HTMLDivElement, Element>) => void;
 };
 
 export default function Items({
-  items,
+  chat_id,
   marginFetching = 1000,
-  onFetchNewMessages,
   onGetVirtualizer,
 }: Props) {
+  const { chatObjects } = useChat2({ chat_id });
+
+  const items = chatObjects?.[chat_id]?.messages ?? [];
+  const loading = chatObjects?.[chat_id]?.loading ?? false;
+
+  const isInitialized = useRef(false);
+
   const { user: profile } = useAuth();
 
-  const isScrollToTop = useRef(true);
   const parentRef = useRef<HTMLDivElement>(null);
 
   const latestMessage = useRef<Chat2ItemType>();
@@ -41,18 +46,30 @@ export default function Items({
     measureElement: (el) => el.getBoundingClientRect().height,
   });
 
+  useEffect(() => {
+    const virtualItems = rowVirtualizer?.getVirtualItems();
+    const totalsize = rowVirtualizer?.getTotalSize();
+
+    if (virtualItems.length > 0 && totalsize > 0) {
+      isInitialized.current = true;
+    }
+  }, [rowVirtualizer]);
+
+  const scrollToEnd = () => {
+    if (items.length === 0) return;
+
+    // Scroll to the latest message when a new message is added
+    rowVirtualizer.scrollToIndex(items.length, {
+      align: "end",
+    });
+  };
+
   useBus(
     __BUS.scrollEndChatBox,
     () => {
-      if (items.length === 0) return;
-
-      // Scroll to the latest message when a new message is added
-      rowVirtualizer.scrollToIndex(items.length, {
-        align: "end",
-        behavior: "smooth",
-      });
+      scrollToEnd();
     },
-    [items.length, rowVirtualizer]
+    [scrollToEnd]
   );
 
   useBus(
@@ -91,48 +108,24 @@ export default function Items({
     if (onGetVirtualizer) onGetVirtualizer(rowVirtualizer);
   }, [onGetVirtualizer, rowVirtualizer]);
 
-  useEffect(() => {
-    if (isScrollToTop.current === false) return;
+  const handleScroll = () => {
+    if (!vlistRef.current) return;
 
-    if (items.length === 0) return;
+    if (loading) return;
 
-    rowVirtualizer.scrollToIndex(items.length, {
-      align: "end",
-    });
+    const scrollHeight = vlistRef.current?.scrollSize;
+    const scrollTop = vlistRef?.current?.scrollOffset;
 
-    isScrollToTop.current = false;
-  }, [items.length, rowVirtualizer]);
-
-  // Detect scroll position to fire the onFetchNewMessages event
-  useEffect(() => {
-    const handleScroll = async () => {
-      const scrollTop = parentRef.current?.scrollTop || 0;
-
-      // Trigger fetching if the user is within 1000px from the top and not already fetching
-      if (scrollTop <= marginFetching && !isFetching && onFetchNewMessages) {
-        setIsFetching(true); // Set fetching status
-        try {
-          latestMessage.current = items[items.length - 1];
-          await onFetchNewMessages(); // Fetch new messages
-        } finally {
-          setTimeout(() => {
-            setIsFetching(false);
-          }, 2000);
-        }
-      }
-    };
-
-    const scrollElement = parentRef.current;
-    if (scrollElement) {
-      scrollElement.addEventListener("scroll", handleScroll);
+    // Trigger fetching previous messages when scrolled to top
+    if (scrollTop - marginFetching <= 0) {
+      console.log("fetch previous");
     }
 
-    return () => {
-      if (scrollElement) {
-        scrollElement.removeEventListener("scroll", handleScroll);
-      }
-    };
-  }, [onFetchNewMessages, isFetching, marginFetching, rowVirtualizer]);
+    // Trigger fetching next messages when scrolled to bottom
+    if (scrollTop >= scrollHeight - 10) {
+      console.log("fetch next");
+    }
+  };
 
   useEffect(() => {
     if (!!!latestMessage.current) return;
@@ -150,6 +143,40 @@ export default function Items({
     setIsFetching(false);
   }, [items.length, rowVirtualizer]);
 
+  const vlistRef = useRef<VListHandle | null>(null);
+
+  const initScrollEnd = useRef(false);
+  useEffect(() => {
+    vlistRef.current?.scrollToIndex(items?.length - 1);
+
+    initScrollEnd.current = true;
+  }, [items]);
+
+  let content = (
+    <VList className='h-full' ref={vlistRef} onScroll={handleScroll}>
+      {messages.map((message, i) => (
+        <div key={i}>
+          <ChatItem
+            item={message}
+            key={message.nonce_id}
+            isMine={message?.user === profile?.id}
+          />
+        </div>
+      ))}
+    </VList>
+  );
+
+  if (messages.length === 0)
+    content = (
+      <div
+        className={
+          "flex text-center items-center justify-center m-auto h-full w-full"
+        }
+      >
+        <span>There's no messages yet 😢</span>
+      </div>
+    );
+
   return (
     <div className='flex-grow relative'>
       <div
@@ -158,36 +185,7 @@ export default function Items({
         style={{ contain: "strict", height: "100%" }}
       >
         {!!isFetching && <FetchingProgress />}
-        <div
-          style={{
-            height: `${rowVirtualizer.getTotalSize()}px`,
-            position: "relative",
-          }}
-        >
-          {rowVirtualizer.getVirtualItems().map((virtualRow) => {
-            const message = messages[virtualRow.index];
-            return (
-              <div
-                data-index={virtualRow.index}
-                key={message.id}
-                ref={rowVirtualizer.measureElement}
-                style={{
-                  position: "absolute",
-                  top: `${virtualRow.start}px`,
-                  left: 0,
-                  width: "100%",
-                }}
-                className='chat-item'
-              >
-                <ChatItem
-                  item={message}
-                  key={message.nonce_id}
-                  isMine={message?.user === profile?.id}
-                />
-              </div>
-            );
-          })}
-        </div>
+        {content}
       </div>
       <UnSeenHandlers items={items} />
     </div>

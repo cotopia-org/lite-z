@@ -10,7 +10,7 @@ import { useAppDispatch, useAppSelector } from "@/store";
 import { getChatMessages, getPinMessags } from "@/store/slices/chat-slice";
 
 type Props = {
-  chat_id?: number;
+  chat_id: number;
   onBack: () => void;
 };
 
@@ -21,10 +21,6 @@ export default function ChatInnerHolder({ chat_id, onBack }: Props) {
 
   const { chatObjects, send, currentChat } = useChat2({ chat_id });
 
-  const chatMessages = currentChat
-    ? [...(chatObjects?.[currentChat?.id]?.messages ?? [])]
-    : [];
-
   const reply =
     chatDetails?.chats?.[(chatDetails?.currentChat as ChatType)?.id]
       ?.replyMessage;
@@ -32,7 +28,6 @@ export default function ChatInnerHolder({ chat_id, onBack }: Props) {
   const handleSendMessage = useCallback(
     (text: string) => {
       if (!chatDetails?.currentChat?.id) return;
-
 
       send({ text, seen: true, reply });
     },
@@ -63,7 +58,7 @@ export default function ChatInnerHolder({ chat_id, onBack }: Props) {
         />
       </div>
       <Chat2
-        items={chatMessages}
+        chat_id={chat_id}
         addMessage={handleSendMessage}
         onGetVirtualizer={(vir) => (chatRef.current = vir)}
       />

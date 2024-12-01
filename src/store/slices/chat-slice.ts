@@ -1,4 +1,4 @@
-import { uniqueById } from "@/lib/utils";
+import { uniqueById, urlWithQueryParams } from "@/lib/utils";
 import axiosInstance from "@/services/axios";
 import { Chat2ItemType, ChatType } from "@/types/chat2";
 import { UserMinimalType } from "@/types/user";
@@ -49,12 +49,28 @@ export const getChats = createAsyncThunk(
 // Async thunk to fetch chat messages by page
 export const getChatMessages = createAsyncThunk(
   "chat/getChatMessages",
-  async ({ chat_id }: { chat_id: number }) => {
-    const res = await axiosInstance.get(`/chats/${chat_id}/messages`);
+  async ({ chat_id, page }: { chat_id: number; page?: number }) => {
+    let res;
+    let page_number = page;
+
+    if (page) {
+      res = await axiosInstance.get(
+        urlWithQueryParams(`/chats/${chat_id}/messages`, { page })
+      );
+    } else {
+      const lastPageRes = await axiosInstance.get(
+        `/chats/${chat_id}/getLastUnSeenMessagePage`
+      );
+      const pageNumber = lastPageRes.data.data?.page_number;
+      page_number = pageNumber;
+      res = await axiosInstance.get(
+        urlWithQueryParams(`/chats/${chat_id}/messages`, { page: pageNumber })
+      );
+    }
 
     const chats = res.data.data || [];
 
-    return [...[...chats]?.reverse()];
+    return { items: [...[...chats]?.reverse()], page_number: page_number ?? 1 };
   }
 );
 
@@ -304,12 +320,16 @@ const chatSlice = createSlice({
         getChatMessages.fulfilled,
         (
           state,
-          action: PayloadAction<Chat2ItemType[]> & {
+          action: PayloadAction<{
+            items: Chat2ItemType[];
+            page_number: number;
+          }> & {
             meta: { [key: string]: any };
           }
         ) => {
           const { chat_id } = action.meta.arg;
-          state.chats[chat_id].messages = [...action.payload].reverse();
+          state.chats[chat_id].messages = action.payload.items;
+          state.chats[chat_id].page = action.payload.page_number;
           state.loading = false;
         }
       )
