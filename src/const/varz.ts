@@ -3,10 +3,10 @@ export const getCSSVariableValue = (variable: string) => {
   if (typeof window !== "undefined") {
     return getComputedStyle(document.documentElement)
       .getPropertyValue(variable)
-      .trim();
+      .trim()
   }
-  return "";
-};
+  return ""
+}
 
 export const colors = {
   primary: {
@@ -39,7 +39,7 @@ export const colors = {
     default: getCSSVariableValue("--success"),
   },
   // Add more as needed
-};
+}
 
 export const VARZ = {
   apiBaseUrl: process.env.REACT_APP_PUBLIC_API_URL,
@@ -51,14 +51,18 @@ export const VARZ = {
   registerPage: `/auth/register`,
   forgetPasswordPage: `/auth/forget-password`,
   signOutApiPage: `/api/auth/sign-out`,
+  collisionMargin: 70,
   voiceAreaRadius: 200,
   defaultPositionOfUserX: 400,
+  jailWidth: 3640,
+  jailHeight: 1700,
   jailNodeId: "jail-node-custom",
   jailNodeType: "jailNode",
-  backgroundNodeType: "backgroundNode",
+  shareScreenNodeType: "shareScreenNode",
+  backgroundNodeType: "bgNode",
   defaultPerPage: 20,
   pagesLimitDiff: 6,
   defaultPositionOfUserY: 400,
   teleportMargin: 40,
   userTimeTrackerId: "user-timer-tracker",
-};
+}
