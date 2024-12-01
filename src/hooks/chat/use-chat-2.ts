@@ -196,6 +196,18 @@ export const useChat2 = (props?: {
     );
   };
 
+
+  const remove = (message: Chat2ItemType) => {
+    dispatch(pinMessage(message));
+
+    socket?.emit(
+        "pinMessage",
+        { chat_id: message.chat_id, nonce_id: message.nonce_id },
+        () => {}
+    );
+  };
+
+
   const unpin = (message: Chat2ItemType) => {
     dispatch(unpinMessage(message));
 
