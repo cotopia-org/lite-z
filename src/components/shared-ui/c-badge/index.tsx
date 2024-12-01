@@ -1,3 +1,4 @@
+import { cn, compactNumber } from "@/lib/utils";
 import { useEffect, useState } from "react";
 
 export type CBadgeProps = {
@@ -55,6 +56,8 @@ export default function CBadge({
       break;
   }
 
+  if (count && count > 99) clss = cn(clss, "!rounded-lg px-1 !w-auto");
+
   if (count !== undefined && count <= 0) return null;
 
   return (
@@ -64,7 +67,7 @@ export default function CBadge({
       } ${clss}`}
     >
       {!!prefix && prefix}
-      {!!!hideCount && count}
+      {!!!hideCount && compactNumber(count ?? 0)}
       {!!postfix && postfix}
     </div>
   );
