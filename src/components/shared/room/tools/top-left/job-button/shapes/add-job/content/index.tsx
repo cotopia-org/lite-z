@@ -4,20 +4,22 @@ import CotopiaInput from "@/components/shared-ui/c-input"
 import CotopiaTextarea from "@/components/shared-ui/c-textarea"
 import TitleEl from "@/components/shared/title-el"
 import useLoading from "@/hooks/use-loading"
-import axiosInstance from "@/services/axios"
+import axiosInstance, {FetchDataType} from "@/services/axios"
 import { JobType } from "@/types/job"
 import { useFormik } from "formik"
 import { Plus } from "lucide-react"
 import { toast } from "sonner"
 import * as Yup from "yup"
 import DeleteJobHandler from "../delete-job"
+import CSelect from "@/components/shared-ui/c-select";
+import {useApi} from "@/hooks/swr";
 
 interface Props {
   onClose: () => void
   defaultValue?: JobType
   onDelete?: () => void
   onCreated?: () => void
-  workspaceId?: string
+  workspaceId?: string,
 }
 
 const dropdownItems = [
@@ -34,6 +36,18 @@ const ManageJobContent = ({
   onDelete,
   onClose,
 }: Props) => {
+
+
+
+  const worksapce_id = workspaceId === undefined ? defaultValue?.workspace_id : workspaceId;
+
+  const { data:workspaceJobs} = useApi<FetchDataType<JobType[]>>('/workspaces/'+worksapce_id+'/jobs');
+  let allJobs = (workspaceJobs && workspaceJobs?.data) ?? [];
+
+
+
+
+
   const isEdit = defaultValue !== undefined
   const { isLoading, stopLoading, startLoading } = useLoading()
   const {
@@ -47,7 +61,8 @@ const ManageJobContent = ({
     title: string
     description: string
     status: string
-    estimate?: number
+    estimate?: number,
+    job_id?:number
   }>({
     enableReinitialize: true,
     initialValues: {
@@ -55,6 +70,7 @@ const ManageJobContent = ({
       description: defaultValue ? defaultValue.description : "",
       status: defaultValue ? defaultValue.status : "",
       estimate: defaultValue ? defaultValue.estimate : undefined,
+      job_id: defaultValue ? defaultValue.parent?.id : undefined,
     },
     validationSchema: Yup.object().shape({
       title: Yup.string().required("please enter job title"),
@@ -92,6 +108,18 @@ const ManageJobContent = ({
 
   return (
     <form onSubmit={handleSubmit} className="flex flex-col gap-y-5 px-4">
+      <TitleEl title="Parent">
+        <CSelect
+            items={allJobs.map((x) => ({
+              title: "- ".repeat(x.level) + x.title,
+              value: x.id+'',
+            }))}
+            defaultValue={values.job_id + ''}
+            onChange={(v)=>{
+              setFieldValue('job_id',+v)
+            }}
+        />
+      </TitleEl>
       <TitleEl title="Title">
         <CotopiaInput
           {...getFieldProps("title")}
