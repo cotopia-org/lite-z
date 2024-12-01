@@ -111,7 +111,7 @@ const ParticipantRows = ({ participants }: Props) => {
               </div>
             </div>
 
-            <div className="flex items-center gap-x-1">{accessibilities}</div>
+            {/* <div className="flex items-center gap-x-1">{accessibilities}</div> */}
           </div>
         );
       })}

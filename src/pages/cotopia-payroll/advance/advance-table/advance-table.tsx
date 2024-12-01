@@ -14,7 +14,7 @@ const advanceColDefs: ColDef<AdvanceRowData>[] = [
 ];
 
 export default function AdvanceRequest() {
-  const [advance, setAdvance] = useState<AdvanceRowData[] | null>(null);
+  const [advance, setAdvance] = useState<AdvanceRowData[]>([]);
   const userData = useAppSelector((store) => store.auth);
 
   useEffect(() => {
@@ -45,18 +45,9 @@ export default function AdvanceRequest() {
     }
 
     fetchAdvance();
-  }, [userData.accessToken]);
+  }, [userData.accessToken , userData.user?.id]);
 
   return (
-    <>
-      {advance ? (
-
         <PayrollTable<AdvanceRowData> rowData={advance} colData={advanceColDefs} />
-      ) : (
-        <div className="w-full h-screen flex items-center justify-center">
-          <h1 className="text-lg font-semibold text-gray-300">No have advance requests yet</h1>
-        </div>
-      )}
-    </>
   );
-}
+};

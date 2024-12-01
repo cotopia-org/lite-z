@@ -31,9 +31,8 @@ const employeesColDefs: ColDef<EmployeesRowData>[] = [
   { headerName: "User Contract", field: "user_contract" },
 ];
 
-
 export default function Employees() {
-  const [employees, setEmployees] = useState<EmployeesRowData[] | null>(null);
+  const [employees, setEmployees] = useState<EmployeesRowData[]>([]);
   const userData = useAppSelector((store) => store.auth);
 
   useEffect(() => {
@@ -72,15 +71,7 @@ export default function Employees() {
   }, [userData.accessToken]);
 
   return (
-    <>
-      {employees ? (
-        <PayrollTable<EmployeesRowData> rowData={employees} colData={employeesColDefs} />
-      ) : (
-        <div className="w-full h-screen flex items-center justify-center">
-          <h1 className="text-lg font-semibold text-gray-300">No employees yet</h1>
-        </div>
-      )}
-    </>
+    <PayrollTable<EmployeesRowData> rowData={employees} colData={employeesColDefs} />
   );
 }
 

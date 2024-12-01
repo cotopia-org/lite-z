@@ -15,7 +15,7 @@ const paymentsColDefs: ColDef<PaymentsRowData>[] = [
 ];
 
 export default function Payments() {
-  const [payments, setPayments] = useState<PaymentsRowData[] | null>(null);
+  const [payments, setPayments] = useState<PaymentsRowData[]>([]);
   const userData = useAppSelector((store) => store.auth);
 
   useEffect(() => {
@@ -45,20 +45,12 @@ export default function Payments() {
       } catch (error) {
         console.error("Error fetching payment data:", error);
       }
-    }
+    } 
 
     fetchPayments();
-  }, [userData.accessToken]);
+  }, [userData.accessToken , userData.user?.id]);
 
   return (
-    <>
-      {payments ? (
         <PayrollTable<PaymentsRowData> rowData={payments} colData={paymentsColDefs} />
-      ) : (
-        <div className="w-full h-screen flex items-center justify-center">
-          <h1 className="text-lg font-semibold text-gray-300">No payments yet</h1>
-        </div>
-      )}
-    </>
   );
 }
