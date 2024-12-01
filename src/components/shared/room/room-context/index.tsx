@@ -1,58 +1,66 @@
-import { useApi } from "@/hooks/swr";
-import useLoading from "@/hooks/use-loading";
-import useQueryParams from "@/hooks/use-query-params";
-import useSetting from "@/hooks/use-setting";
-import { playSoundEffect } from "@/lib/sound-effects";
-import { useSocket } from "@/routes/private-wrarpper";
-import axiosInstance, { FetchDataType } from "@/services/axios";
-import { ScheduleType } from "@/types/calendar";
-import { JobType } from "@/types/job";
-import { LeaderboardType } from "@/types/leaderboard";
-import { WorkspaceRoomJoinType, WorkspaceRoomType } from "@/types/room";
-import { UserMinimalType, WorkspaceUserType } from "@/types/user";
+import { useApi } from "@/hooks/swr"
+import useLoading from "@/hooks/use-loading"
+import useQueryParams from "@/hooks/use-query-params"
+import useSetting from "@/hooks/use-setting"
+import { playSoundEffect } from "@/lib/sound-effects"
+import { useSocket } from "@/routes/private-wrarpper"
+import axiosInstance, { FetchDataType } from "@/services/axios"
+import { ScheduleType } from "@/types/calendar"
+import { JobType } from "@/types/job"
+import { LeaderboardType } from "@/types/leaderboard"
+import { WorkspaceRoomJoinType, WorkspaceRoomType } from "@/types/room"
+import {
+  LivekitTrackPublishedType,
+  updateCoordinatesEvent,
+} from "@/types/socket"
+import { UserMinimalType, WorkspaceUserType } from "@/types/user"
 import {
   createContext,
   ReactNode,
   useContext,
   useEffect,
   useState,
-} from "react";
-import { useNavigate } from "react-router-dom";
+} from "react"
+import { useNavigate } from "react-router-dom"
 
-type LeftJoinType = { room_id: number; user: UserMinimalType };
+type LeftJoinType = { room_id: number; user: UserMinimalType }
 
 type Props = {
-  children: ReactNode;
-  room_id: number;
-  workspace_id?: string;
-};
+  children: ReactNode
+  room_id: number
+  workspace_id?: string
+}
+
+const DEFAULT_OBJECT_POSITION = { x: 200, y: 200 }
 
 const RoomCtx = createContext<{
-  room_id: number;
-  room?: WorkspaceRoomType;
-  workspace_id?: string;
-  livekit_token?: string;
-  openSidebar: (node: ReactNode) => void;
+  room_id: number
+  updateParticipants: (participants: UserMinimalType[]) => void
+  room?: WorkspaceRoomType
+  workspace_id?: string
+  livekit_token?: string
+  openSidebar: (node: ReactNode) => void
   updateUserCoords: (
     username: string,
     position: { x: number; y: number }
-  ) => void;
-  closeSidebar: () => void;
-  sidebar?: ReactNode;
-  videoState: boolean;
-  audioState: boolean;
-  changePermissionState: (key: "video" | "audio", newValue: boolean) => void;
-  joinRoom: () => void;
-  leaderboard: LeaderboardType[];
-  scheduled: ScheduleType[];
-  workspaceUsers: WorkspaceUserType[];
-  workspaceJobs: JobType[];
-  workingUsers: WorkspaceUserType[];
-  onlineUsers: UserMinimalType[];
-  usersHaveJobs: UserMinimalType[];
-  usersHaveInProgressJobs: UserMinimalType[];
+  ) => void
+  closeSidebar: () => void
+  sidebar?: ReactNode
+  videoState: boolean
+  audioState: boolean
+  changePermissionState: (key: "video" | "audio", newValue: boolean) => void
+  joinRoom: () => void
+  leaderboard: LeaderboardType[]
+  scheduled: ScheduleType[]
+  workspaceUsers: WorkspaceUserType[]
+  workspaceJobs: JobType[]
+  workingUsers: WorkspaceUserType[]
+  onlineUsers: UserMinimalType[]
+  usersHaveJobs: UserMinimalType[]
+  usersHaveInProgressJobs: UserMinimalType[]
 }>({
   room: undefined,
+  updateParticipants: (participants: UserMinimalType[]) => {},
   livekit_token: undefined,
   room_id: 1,
   workspace_id: undefined,
@@ -72,176 +80,187 @@ const RoomCtx = createContext<{
   onlineUsers: [],
   usersHaveJobs: [],
   usersHaveInProgressJobs: [],
-});
+})
 
-export const useRoomContext = () => useContext(RoomCtx);
+export const useRoomContext = () => useContext(RoomCtx)
 
 export default function RoomContext({
   children,
   room_id,
   workspace_id,
 }: Props) {
-  const [room, setRoom] = useState<WorkspaceRoomType>();
-  const { startLoading, stopLoading, isLoading } = useLoading();
+  const [room, setRoom] = useState<WorkspaceRoomType>()
+  const { startLoading, stopLoading, isLoading } = useLoading()
 
   const fetchRoom = (roomId: string | number) => {
-    startLoading();
+    startLoading()
     axiosInstance
       .get<FetchDataType<WorkspaceRoomType>>(`/rooms/${roomId}`)
       .then(async (res) => {
-        setRoom(res?.data?.data);
-        stopLoading();
+        setRoom(res?.data?.data)
+        stopLoading()
       })
       .catch((err) => {
-        stopLoading();
-      });
-  };
+        stopLoading()
+      })
+  }
 
   useEffect(() => {
-    fetchRoom(room_id);
-  }, [room_id]);
+    fetchRoom(room_id)
+  }, [room_id])
 
   useSocket("roomUpdated", (data) => {
-    setRoom(data);
-  });
+    setRoom(data)
+  })
 
   //Update room object when background changed
   useSocket("roomBackgroundChanged", (data: WorkspaceRoomType) => {
     setRoom((prev) => ({
       ...((prev ?? {}) as WorkspaceRoomType),
       background: data.background,
-    }));
-  });
+    }))
+  })
 
-  const settings = useSetting();
+  const settings = useSetting()
 
-  const { query } = useQueryParams();
-  const livekit_token = query?.token ?? undefined;
+  const { query } = useQueryParams()
+  const livekit_token = query?.token ?? undefined
 
-  const socket = useSocket();
+  const socket = useSocket()
 
-  const router = useNavigate();
+  const router = useNavigate()
 
   const handleJoinRoom = async () => {
     axiosInstance
       .get<FetchDataType<WorkspaceRoomJoinType>>(`/rooms/${room_id}/join`)
       .then((res) => {
-        const livekitToken = res.data.data.token; //Getting livekit token from joinObject
+        const livekitToken = res.data.data.token //Getting livekit token from joinObject
 
         if (livekitToken) {
-          if (settings.sounds.userJoinLeft) playSoundEffect("joined");
+          if (settings.sounds.userJoinLeft) playSoundEffect("joined")
           router(
             `/workspaces/${workspace_id}/rooms/${room_id}?token=${livekitToken}`
-          );
-          return;
+          )
+          return
         }
-      });
-  };
+
+        console.log("res", res.data)
+      })
+  }
 
   const [permissionState, setPermissionState] = useState({
     audio: true,
     video: true,
-  });
+  })
 
   const changePermissionState = (key: "video" | "audio", newValue: boolean) => {
-    setPermissionState((prev) => ({ ...prev, [key]: newValue }));
-  };
+    setPermissionState((prev) => ({ ...prev, [key]: newValue }))
+  }
 
   const updateUserCoords = (
     username: string,
     position: { x: number; y: number }
   ) => {
-    if (!socket) return;
+    if (!socket) return
 
-    if (room === undefined) return;
+    if (room === undefined) return
 
-    const participants = room?.participants ?? [];
+    const participants = room?.participants ?? []
 
     const participant_index = participants.findIndex(
       (x: any) => x.username === username
-    );
+    )
+    console.log(participant_index, "POSITION")
 
-    if (participant_index === -1) return setRoom(room);
+    if (participant_index === -1) return setRoom(room)
 
     participants[participant_index] = {
       ...participants[participant_index],
       coordinates: `${position.x},${position.y}`,
-    };
+    }
 
-    setRoom({ ...room, participants });
-  };
+    setRoom({ ...room, participants })
 
-  const [sidebar, setSidebar] = useState<ReactNode>(<></>);
-  const openSidebar = (sidebar: ReactNode) => setSidebar(sidebar);
-  const closeSidebar = () => setSidebar(undefined);
+    const sendingObject = {
+      room_id: room?.id,
+      coordinates: `${position.x},${position.y}`,
+      username: participants[participant_index].username,
+    }
+
+    socket?.emit("updateCoordinates", sendingObject)
+  }
+
+  const [sidebar, setSidebar] = useState<ReactNode>(<></>)
+  const openSidebar = (sidebar: ReactNode) => setSidebar(sidebar)
+  const closeSidebar = () => setSidebar(undefined)
 
   const { data: leaderboardData } = useApi(
     `/workspaces/${workspace_id}/leaderboard`
-  );
+  )
   const leaderboardUsers: LeaderboardType[] =
-    leaderboardData !== undefined ? leaderboardData.data : [];
+    leaderboardData !== undefined ? leaderboardData.data : []
 
   const { data: schedulesData } = useApi(
     `/workspaces/${workspace_id}/schedules`
-  );
+  )
   const schedulesItems: ScheduleType[] =
-    schedulesData !== undefined ? schedulesData?.data : [];
+    schedulesData !== undefined ? schedulesData?.data : []
 
   const { data: workspaceUsersData, mutate: mutateWorkspaceUsers } = useApi(
     `/workspaces/${workspace_id}/users`
-  );
+  )
   const workspaceUsers: WorkspaceUserType[] =
-    workspaceUsersData !== undefined ? workspaceUsersData?.data : [];
+    workspaceUsersData !== undefined ? workspaceUsersData?.data : []
 
   useSocket(
     "userLeftFromRoom",
     (data: LeftJoinType) => {
-      mutateWorkspaceUsers();
+      mutateWorkspaceUsers()
 
-      if (room === undefined) return;
+      if (room === undefined) return
 
-      if (room_id !== data.room_id) return;
+      if (room_id !== data.room_id) return
 
-      const participants = room?.participants ?? [];
+      const participants = room?.participants ?? []
 
-      const newParticipants = participants.filter((x) => x.id !== data.user.id);
+      const newParticipants = participants.filter((x) => x.id !== data.user.id)
 
-      room.participants = newParticipants;
+      room.participants = newParticipants
 
-      setRoom(room);
+      setRoom(room)
     },
     [room, mutateWorkspaceUsers]
-  );
+  )
 
   useSocket(
     "userJoinedToRoom",
     (data: LeftJoinType) => {
-      mutateWorkspaceUsers();
+      mutateWorkspaceUsers()
 
-      if (room === undefined) return;
+      if (room === undefined) return
 
-      if (room_id !== data.room_id) return;
+      if (room_id !== data.room_id) return
 
-      const participants = room?.participants ?? [];
+      const participants = room?.participants ?? []
 
-      room.participants = [...participants, data.user];
+      room.participants = [...participants, data.user]
 
-      setRoom(room);
+      setRoom(room)
     },
     [room, mutateWorkspaceUsers]
-  );
+  )
 
   const workpaceJobItems: JobType[] = workspaceUsers
     .filter((x) => x.active_job !== undefined)
-    .map((x) => x.active_job as JobType);
+    .map((x) => x.active_job as JobType)
 
-  const usersHaveJobs: UserMinimalType[] = [];
+  const usersHaveJobs: UserMinimalType[] = []
 
-  const usersHaveInProgressJobs: UserMinimalType[] = [];
+  const usersHaveInProgressJobs: UserMinimalType[] = []
 
   const workingUsers = workspaceUsers.filter(
     (x) => x.active_job !== null && x.status === "online"
-  );
+  )
 
   const onlineUsers = leaderboardUsers
     .filter(
@@ -250,12 +269,17 @@ export default function RoomContext({
         x.user.status === "online" &&
         x.user.workspace_id === +(workspace_id as string)
     )
-    .map((x) => x.user);
+    .map((x) => x.user)
+
+  const updateParticipants = (participants: UserMinimalType[]) => {
+    setRoom((prev) => ({ ...(prev as WorkspaceRoomType), participants }))
+  }
 
   return (
     <RoomCtx.Provider
       value={{
         room,
+        updateParticipants,
         room_id: +room_id,
         workspace_id,
         sidebar,
@@ -279,5 +303,5 @@ export default function RoomContext({
     >
       {children}
     </RoomCtx.Provider>
-  );
+  )
 }

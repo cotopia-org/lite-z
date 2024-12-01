@@ -1,18 +1,18 @@
 import FullLoading from "@/components/shared/full-loading";
-import JobItems from "@/components/shared/job-items";
 import { useApi } from "@/hooks/swr";
 import { JobType } from "@/types/job";
+import JobTable from "@/components/shared/room/tools/top-left/job-button/shapes/job-table";
 
 type Props = {
-  userId: number;
+  userId: number | null;
 };
-export default function UserJobList({ userId }: Props) {
+export default function   UserJobList({ userId }: Props) {
   const { data, isLoading } = useApi(`/users/${userId}/jobs`);
   const jobs: JobType[] = data !== undefined ? data?.data : [];
 
-  let content = <JobItems items={jobs} />;
+  let content = <JobTable items={jobs} loading={isLoading} />;
 
   if (isLoading || data === undefined) content = <FullLoading />;
 
-  return <div>{content}</div>;
+  return <div className={'w-full min-w-full'}>{content}</div>;
 }

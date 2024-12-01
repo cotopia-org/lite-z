@@ -9,18 +9,8 @@ import { __BUS } from "@/const/bus";
 
 export default function ShareScreenButtonTool() {
   const room = useRoomContext();
-  const [isScreenSharing, setIsScreenSharing] = useState(false);
 
-  const checkIfScreenSharing = useCallback(() => {
-    if (!room) return false;
-    const tracks = room.localParticipant.videoTrackPublications;
-    for (let [_, track] of tracks.entries()) {
-      if (track.source === "screen_share") {
-        return true; // Screen share is active
-      }
-    }
-    return false; // No screen share track
-  }, [room]);
+  const [isScreenSharing, setIsScreenSharing] = useState(false);
 
   const stopScreenShare = useCallback(async () => {
     try {
@@ -29,38 +19,35 @@ export default function ShareScreenButtonTool() {
     } catch (err) {
       console.error("Error stopping screen share:", err);
     }
-  }, [room]);
+  }, []);
 
-  const toggleScreenShare = useCallback(async () => {
-    if (!room) return;
-
-    if (isScreenSharing) {
-      return stopScreenShare();
-    }
-
+  const startScreenShare = useCallback(async () => {
     try {
-      await room.localParticipant.setScreenShareEnabled(true);
-      setIsScreenSharing(true); // Update state when screen sharing starts
+      const track = await room.localParticipant.setScreenShareEnabled(true);
+      track?.videoTrack?.on("ended", async () => {
+        setIsScreenSharing(false);
+        stopScreenShare();
+      });
+      setIsScreenSharing(true); // Update state when screen sharing stops
     } catch (err) {
       console.error("Error starting screen share:", err);
     }
-  }, [room, isScreenSharing, stopScreenShare]);
+  }, [stopScreenShare]);
 
   useBus(__BUS.stopMyScreenSharing, () => {
     stopScreenShare();
   });
 
-  // Monitor changes in the room context to update the screen sharing status
-  useEffect(() => {
-    const screenSharingActive = checkIfScreenSharing();
-    setIsScreenSharing(screenSharingActive);
-  }, [room, checkIfScreenSharing]);
-
   return (
     <CotopiaTooltip
       title={isScreenSharing ? `Stop screen sharing` : `Share screen`}
     >
-      <CotopiaIconButton className='text-black' onClick={toggleScreenShare}>
+      <CotopiaIconButton
+        className='text-black'
+        onClick={() =>
+          isScreenSharing ? stopScreenShare() : startScreenShare()
+        }
+      >
         {isScreenSharing ? <X size={20} /> : <ScreenShare size={20} />}
       </CotopiaIconButton>
     </CotopiaTooltip>

@@ -24,7 +24,7 @@ export default function JobButton() {
   let jobItems = (data && data?.data) ?? [];
   let job_label = "Create job";
   const active_job = jobItems.find((j) => j.status === "in_progress");
-  if (active_job) job_label = active_job.title;
+  if (active_job) job_label = active_job.title.length > 20 ? active_job.title.slice(0, 20) + '... ':active_job.title;
   if (!active_job && jobItems.length > 0) job_label = "Start job";
 
   return (
@@ -42,34 +42,47 @@ export default function JobButton() {
       {(triggerPosition, open, close) => {
         let content = (
           <CTabs
-            defaultValue='active'
+            defaultValue='in_progress'
             items={[
               {
-                title: "Active",
+                title: "In Progress",
                 content: (
                   <JobItems
                     hasAction
                     items={jobItems.filter((x) =>
-                      ["in_progress", "started"].includes(x.status)
+                      ["in_progress"].includes(x.status)
                     )}
                     onMutate={mutate}
                   />
                 ),
-                value: "active",
+                value: "in_progress",
               },
               {
-                title: "Completed",
+                title: "Paused",
                 content: (
                   <JobItems
                     hasAction
                     items={jobItems.filter((x) =>
-                      ["completed", "paused"].includes(x.status)
+                      [ "paused"].includes(x.status)
                     )}
                     onMutate={mutate}
                   />
                 ),
-                value: "completed",
+                value: "paused",
               },
+                {
+                    title: "Completed",
+                    content: (
+                        <JobItems
+                            hasAction
+                            items={jobItems.filter((x) =>
+                                ["completed"].includes(x.status)
+                            )}
+                            onMutate={mutate}
+                        />
+                    ),
+                    value: "completed",
+                },
             ]}
           />
         );

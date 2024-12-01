@@ -1,37 +1,38 @@
-import { useLocalParticipant } from "@livekit/components-react"
-import { Track } from "livekit-client"
-import { useEffect } from "react"
-import { useRoomHolder } from "../.."
+import { useLocalParticipant } from "@livekit/components-react";
+import { Track } from "livekit-client";
+import { useEffect } from "react";
+import { useRoomHolder } from "../..";
 
 export default function VideoInit() {
-  const { mediaPermissions } = useRoomHolder()
+  const { mediaPermissions } = useRoomHolder();
 
-  const participant = useLocalParticipant()
+  const participant = useLocalParticipant();
 
-  const localParticipant = participant.localParticipant
-  let voiceTrack = undefined
+  const localParticipant = participant?.localParticipant;
+  let voiceTrack = undefined;
 
   if (
     localParticipant &&
     typeof localParticipant?.getTrackPublication !== "undefined"
   ) {
-    voiceTrack = localParticipant?.getTrackPublication(Track.Source.Camera)
+    //@ts-nocheck
+    voiceTrack = localParticipant?.getTrackPublication(Track.Source.Camera);
   }
 
-  const track = voiceTrack?.track
+  const track = voiceTrack?.track;
 
   useEffect(() => {
     if (!track) {
-      return
+      return;
     }
 
     if (mediaPermissions?.video === true) {
-      track.unmute()
+      track.unmute();
     } else {
-      track.mute()
-      track.stop()
+      track.mute();
+      track.stop();
     }
-  }, [mediaPermissions?.video, track])
+  }, [mediaPermissions?.video, track]);
 
-  return null
+  return null;
 }

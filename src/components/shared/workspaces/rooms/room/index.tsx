@@ -10,6 +10,9 @@ import { useAppDispatch } from "@/store";
 import { setToken } from "@/store/slices/livekit-slice";
 import RoomItem from "./room-item";
 import ParticipantRows from "@/components/shared/participant-rows";
+import { dispatch as busDispatch } from "use-bus";
+import { __BUS } from "@/const/bus";
+import { useRoomContext } from "@/components/shared/room/room-context";
 
 type Props = {
   room: WorkspaceRoomShortType;
@@ -29,6 +32,8 @@ export default function WorkspaceRoom({
   const dispatch = useAppDispatch();
 
   const navigate = useNavigate();
+
+  const { updateParticipants } = useRoomContext();
 
   const { startLoading, stopLoading } = useLoading();
 
@@ -56,6 +61,18 @@ export default function WorkspaceRoom({
           stopLoading();
 
           if (sounds.userJoinLeft) playSoundEffect("joined");
+
+          //Update participants of room context
+          updateParticipants(res.data.data.participants ?? []);
+
+          //Dispatch rf canvas to inform new participants
+          busDispatch({
+            type: __BUS.initRoomParticipantsOnRf,
+            participants: res.data.data.participants ?? [],
+            background: (res?.data?.data as any)?.background ?? undefined,
+          });
+
+          busDispatch(__BUS.stopMyScreenSharing);
         })
         .catch((err) => {
           stopLoading();

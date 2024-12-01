@@ -49,7 +49,9 @@ const ContextItemWrapper = ({
 
   const clickItemHandler = () => {
     if (!!item.onClick) return item.onClick();
-    if (!!item.linkEl) return item.linkEl(itemRef.current as ReactNode);
+    if (!!item.linkEl && itemRef?.current)
+      //@ts-ignore
+      return item.linkEl(itemRef.current as ReactNode);
   };
   return (
     <ContextMenuItem onSelect={clickItemHandler} ref={itemRef} className={clss}>

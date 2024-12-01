@@ -155,3 +155,14 @@ input[type="number"]::-webkit-outer-spin-button {
 *::-webkit-scrollbar {
   display: none; /* Safari and Chrome */
 }
+
+.react-flow__attribution.bottom {
+  display: none;
+}
+
+.react-flow__node-shareScreenNode {
+  z-index: 99999 !important;
+}
+.react-flow__node-userNode {
+  z-index: 100000 !important;
+}

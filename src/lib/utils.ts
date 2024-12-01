@@ -35,10 +35,9 @@ export const getTimeFormat = (
     .toString()
     .padStart(2, "0");
 
-  if (hasHours)
-    return `${formattedHours}:${formattedMinutes}:${formattedSeconds}`;
+  if (hasHours) return `${formattedHours}h ${formattedMinutes}m`;
 
-  return `${formattedMinutes}:${formattedSeconds}`;
+  return `${formattedMinutes}m`;
 };
 
 export function persianToEnglishNumbers(inputStr: string): string {
@@ -115,7 +114,10 @@ export const timeStringToMoment = (time: string) => {
   return momentDate;
 };
 
-export function convertMinutesToHHMMSS(minutes: number): string {
+export function convertMinutesToHHMMSS(
+  minutes: number,
+  short: boolean
+): string {
   const hours = Math.floor(minutes / 60);
   const mins = Math.floor(minutes % 60);
   const secs = Math.floor((minutes * 60) % 60);
@@ -123,7 +125,9 @@ export function convertMinutesToHHMMSS(minutes: number): string {
   const formattedHours = String(hours).padStart(2, "0");
   const formattedMinutes = String(mins).padStart(2, "0");
   const formattedSeconds = String(secs).padStart(2, "0");
-
+  if (short) {
+    return `${formattedHours} h`;
+  }
   return `${formattedHours}:${formattedMinutes}:${formattedSeconds}`;
 }
 
@@ -236,7 +240,7 @@ export const getTwelveClockFormat = (time: string) => {
 export function extractMentions(
   message: string
 ): { start_position: number; user: string }[] {
-  const mentionRegex = /@(\w+)/g;
+  const mentionRegex = /@(\S+)/g; // Fixed when a DOT was in the username.
   const mentions: { start_position: number; user: string }[] = [];
   let match: RegExpExecArray | null;
 
@@ -248,4 +252,19 @@ export function extractMentions(
   }
 
   return mentions;
+}
+
+export function getPositionFromStringCoordinates(coords: string) {
+  if (!coords) return null;
+
+  const splittedCoords = coords.split(",");
+
+  if (splittedCoords.length !== 2) return null;
+
+  const x = splittedCoords[0];
+  const y = splittedCoords[1];
+
+  if (isNaN(+x) || isNaN(+y)) return null;
+
+  return { x: +x, y: +y };
 }

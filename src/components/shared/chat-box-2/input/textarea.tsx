@@ -41,15 +41,27 @@ const MultilineTextarea: React.FC<Props> = ({
     setText(value);
     onChange(value);
 
-    if (selectionStart !== null && selectionStart > 0) {
-      const cursorPosition = selectionStart - 1; // character before the cursor
-      if (value[cursorPosition] === "@") {
-        dispatch(__BUS.showChatMention);
-      } else {
-        dispatch(__BUS.hideChatMention);
-      }
-    } else {
+    // if (selectionStart !== null && selectionStart > 0) {
+    //   const cursorPosition = selectionStart - 1; // character before the cursor
+    //   if (value[cursorPosition] === "@") {
+    //     dispatch(__BUS.showChatMention);
+    //   } else {
+    //     dispatch(__BUS.hideChatMention);
+    //   }
+    // } else {
+    //   dispatch(__BUS.hideChatMention);
+    // }
+
+
+
+    const mentionPattern = /@[\w.]*$/; // I think this is a better approach
+    if (mentionPattern.test(value)){
+      dispatch(__BUS.showChatMention);
+
+    }else{
+
       dispatch(__BUS.hideChatMention);
+
     }
   };
 
