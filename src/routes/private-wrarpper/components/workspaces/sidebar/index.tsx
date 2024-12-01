@@ -24,18 +24,22 @@ export default function WorkspaceSidebar() {
     ?.filter((x) => x.user.status === "online" && x.user.room_id !== null)
     .map((x) => x.user.id);
 
+  const finalSchedulesIds = finalSchedules.map((x) => x.user.id);
+
   const allOfflineParticipants = workspaceUsers
     .filter((x) => !onlines.includes(x.id))
-    .filter((x) => !finalSchedules.map((x) => x.id).includes(x.id))
+    .filter((x) => !finalSchedulesIds.includes(x.id))
     .filter((x) => x.last_login !== null)
     .sort((a, b) => moment(b.last_login).unix() - moment(a.last_login).unix());
 
   return (
     <div className='flex flex-col gap-y-4 bg-white h-[calc(100vh-80px)] pb-20 overflow-y-auto relative'>
-      <WorkspaceRoomsHolder
-        workspaceUsers={workspaceUsers}
-        workspace_id={workspace_id as string}
-      />
+      <div>
+        <WorkspaceRoomsHolder
+          workspaceUsers={workspaceUsers}
+          workspace_id={workspace_id as string}
+        />
+      </div>
       <div className='p-4 flex flex-col gap-y-6'>
         <ScheduledUsers finalSchedules={finalSchedules} />
         <OfflineUsers allOfflineParticipants={allOfflineParticipants} />
