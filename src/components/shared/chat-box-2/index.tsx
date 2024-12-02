@@ -3,6 +3,8 @@ import Items from "./items";
 import ChatInput from "./input";
 import { Virtualizer } from "@tanstack/react-virtual";
 import PinMessages from "./pins";
+import { useChat2 } from "@/hooks/chat/use-chat-2";
+import { cn } from "@/lib/utils";
 
 type Props = {
   chat_id: number;
@@ -11,15 +13,18 @@ type Props = {
 };
 
 const Chat2: React.FC<Props> = ({ chat_id, addMessage, onGetVirtualizer }) => {
+  const { currentChatPins } = useChat2();
+
   let content = (
-    <div className='flex flex-col h-full bg-black/[.04] relative'>
+    <div
+      className={cn(
+        "flex flex-col h-full bg-black/[.04] relative",
+        currentChatPins ? "pt-16" : ""
+      )}
+    >
       <PinMessages />
       {/* Chat message list */}
-      <Items
-        chat_id={chat_id}
-        marginFetching={300}
-        onGetVirtualizer={onGetVirtualizer}
-      />
+      <Items chat_id={chat_id} onGetVirtualizer={onGetVirtualizer} />
       {/* Chat input */}
     </div>
   );

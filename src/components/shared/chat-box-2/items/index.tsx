@@ -9,6 +9,10 @@ import useAuth from "@/hooks/auth";
 import { __BUS } from "@/const/bus";
 import { VList, VListHandle } from "virtua";
 import { useChat2 } from "@/hooks/chat/use-chat-2";
+import FullLoading from "../../full-loading";
+import { useAppDispatch } from "@/store";
+import { getNextMessages, getPrevMessages } from "@/store/slices/chat-slice";
+import { thunkResHandler } from "@/utils/utils";
 
 type Props = {
   chat_id: number;
@@ -21,10 +25,16 @@ export default function Items({
   marginFetching = 1000,
   onGetVirtualizer,
 }: Props) {
+  const dispatch = useAppDispatch();
+
   const { chatObjects } = useChat2({ chat_id });
 
   const items = chatObjects?.[chat_id]?.messages ?? [];
   const loading = chatObjects?.[chat_id]?.loading ?? false;
+  const chatPageLoading = chatObjects?.[chat_id]?.fetchPageLoading ?? false;
+  const chatPage = chatObjects?.[chat_id]?.page ?? 1;
+  const firstPage = chatObjects?.[chat_id]?.firstPage ?? true;
+  const lastPage = chatObjects?.[chat_id]?.lastPage ?? false;
 
   const isInitialized = useRef(false);
 
@@ -111,20 +121,30 @@ export default function Items({
   const handleScroll = () => {
     if (!vlistRef.current) return;
 
-    if (loading) return;
+    if (chatPageLoading) return;
 
     const scrollHeight = vlistRef.current?.scrollSize;
     const scrollTop = vlistRef?.current?.scrollOffset;
 
     // Trigger fetching previous messages when scrolled to top
-    if (scrollTop - marginFetching <= 0) {
-      console.log("fetch previous");
+    if (scrollTop - marginFetching <= 0 && !lastPage) {
+      const prevPage = chatPage + 1;
+      thunkResHandler(
+        dispatch(getPrevMessages({ chat_id, page: prevPage })),
+        "chat/getPrevMessages",
+        (res) => {
+          const newItems = res?.payload?.items ?? [];
+
+          vlistRef.current?.scrollToIndex(newItems.length);
+        },
+        () => {}
+      );
     }
 
     // Trigger fetching next messages when scrolled to bottom
-    if (scrollTop >= scrollHeight - 10) {
-      console.log("fetch next");
-    }
+    // if (scrollTop + marginFetching >= scrollHeight - 10 && chatPage > 1) {
+    //   dispatch(getNextMessages({ chat_id, page: chatPage - 1 }));
+    // }
   };
 
   useEffect(() => {
@@ -145,25 +165,31 @@ export default function Items({
 
   const vlistRef = useRef<VListHandle | null>(null);
 
-  const initScrollEnd = useRef(false);
+  // const initScrollEnd = useRef(false);
   useEffect(() => {
-    vlistRef.current?.scrollToIndex(items?.length - 1);
+    // if (items.length === 0) return;
+    // if (initScrollEnd.current === true) return;
 
-    initScrollEnd.current = true;
+    vlistRef.current?.scrollToIndex(items.length - 1);
+
+    // initScrollEnd.current = true;
   }, [items]);
 
   let content = (
-    <VList className='h-full' ref={vlistRef} onScroll={handleScroll}>
-      {messages.map((message, i) => (
-        <div key={i}>
-          <ChatItem
-            item={message}
-            key={message.nonce_id}
-            isMine={message?.user === profile?.id}
-          />
-        </div>
-      ))}
-    </VList>
+    <>
+      {!!isFetching && <FetchingProgress />}
+      <VList className='h-full' ref={vlistRef} onScroll={handleScroll}>
+        {messages.map((message, i) => (
+          <div key={i}>
+            <ChatItem
+              item={message}
+              key={message.nonce_id}
+              isMine={message?.user === profile?.id}
+            />
+          </div>
+        ))}
+      </VList>
+    </>
   );
 
   if (messages.length === 0)
@@ -177,6 +203,8 @@ export default function Items({
       </div>
     );
 
+  if (loading) content = <FullLoading className='py-8' />;
+
   return (
     <div className='flex-grow relative'>
       <div
@@ -184,7 +212,6 @@ export default function Items({
         className='relative flex-grow overflow-y-auto mb-4 space-y-2'
         style={{ contain: "strict", height: "100%" }}
       >
-        {!!isFetching && <FetchingProgress />}
         {content}
       </div>
       <UnSeenHandlers items={items} />

@@ -7,7 +7,14 @@ import { useChat2 } from "@/hooks/chat/use-chat-2";
 import { Virtualizer } from "@tanstack/react-virtual";
 import FullLoading from "@/components/shared/full-loading";
 import { useAppDispatch, useAppSelector } from "@/store";
-import { getChatMessages, getPinMessags } from "@/store/slices/chat-slice";
+import {
+  getChatMessages,
+  getNextMessages,
+  getPinMessags,
+  getPrevMessages,
+} from "@/store/slices/chat-slice";
+import { thunkResHandler } from "@/utils/utils";
+import ChatHeading from "./heading";
 
 type Props = {
   chat_id: number;
@@ -38,7 +45,7 @@ export default function ChatInnerHolder({ chat_id, onBack }: Props) {
 
   useEffect(() => {
     if (currentChat?.id) {
-      dispatch(getChatMessages({ chat_id: currentChat?.id }));
+      dispatch(getChatMessages({ chat_id: currentChat?.id, page: 1 }));
       dispatch(getPinMessags({ chat_id: currentChat?.id }));
     }
   }, [currentChat?.id]);
@@ -51,12 +58,11 @@ export default function ChatInnerHolder({ chat_id, onBack }: Props) {
 
   return (
     <div className='flex flex-col w-full h-[calc(100vh-72px)] overflow-hidden'>
-      <div className='flex flex-row items-center gap-x-2 py-2 px-4'>
-        <BackHolder onClick={onBack} />
-        <ChatDetails
-          title={chatObjects?.[currentChat?.id]?.object?.title ?? ""}
-        />
-      </div>
+      <ChatHeading
+        title={chatObjects?.[currentChat?.id]?.object?.title ?? ""}
+        onBack={onBack}
+        loading={chatObjects?.[currentChat?.id]?.fetchPageLoading ?? false}
+      />
       <Chat2
         chat_id={chat_id}
         addMessage={handleSendMessage}
