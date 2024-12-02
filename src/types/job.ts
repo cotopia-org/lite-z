@@ -13,4 +13,7 @@ export type JobType = {
   workspace_id: number;
   members: UserMinimalType[];
   total_hours: number;
+  parent?: JobType;
+  job_id: number;
+  level: number;
 };

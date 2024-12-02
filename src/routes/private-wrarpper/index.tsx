@@ -81,6 +81,10 @@ export default function PrivateRoutes() {
     socket.on("disconnect", () => {
       setSocketState(undefined);
       toast.error("Socket disconnected");
+      dispatch({
+        type: __BUS.stopWorkTimer,
+        id: VARZ.userTimeTrackerId,
+      });
     });
 
     // Clean up the socket connection on unmount

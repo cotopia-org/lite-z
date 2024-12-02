@@ -3,6 +3,8 @@ import { ReplyIcon } from "lucide-react";
 import { useChatItem } from "../..";
 import { useAppDispatch } from "@/store";
 import { setReplyMessage } from "@/store/slices/chat-slice";
+import { dispatch as busDispatch } from "use-bus";
+import { __BUS } from "@/const/bus";
 
 export default function Reply() {
   const { item } = useChatItem();
@@ -10,6 +12,7 @@ export default function Reply() {
 
   const handleSelectReplyMessage = () => {
     dispatch(setReplyMessage(item));
+    busDispatch(__BUS.chatInputFocus);
   };
 
   return (

@@ -199,10 +199,12 @@ export default function WithReactFlowV2() {
     if (init.current === true) return
 
     //Convert participants to rf nodes Node[]
-    // let nodes = participantsToRfNodes(room?.participants ?? [])
-
-    //Convert participants to rf nodes Node[]
     let nodes = participantsToRfNodes(room?.participants ?? [])
+
+    for (let node of nodes) {
+      handleCircleMeet(node.id, node.position)
+    }
+
     //Add Node[] to react flow canvas
     addNodesToRf(nodes, {
       id: "bg-node",
@@ -270,11 +272,14 @@ export default function WithReactFlowV2() {
 
   const handleCircleMeet = (
     targetUserName: string,
-    targetPosition: XYPosition
+    targetPosition: XYPosition,
+    node?: Node
   ) => {
-    const targetUserNode = rf?.current?.getNode(targetUserName)
+    let targetUserNode = rf?.current?.getNode(targetUserName)
 
-    if (targetUserNode === undefined) return
+    if (targetUserNode === undefined && node === undefined) return
+
+    if (node) targetUserNode = node
 
     const position = targetPosition
 
@@ -386,10 +391,6 @@ export default function WithReactFlowV2() {
     (data: UserLeftJoinType) => {
       if (data.room_id === room?.id) {
         rf.current?.setNodes((prev) => {
-          console.log(
-            "nodes",
-            prev.filter((n) => n.id !== data.user.username)
-          )
           return prev.filter((n) => n.id !== data.user.username)
         })
       }
@@ -414,23 +415,24 @@ export default function WithReactFlowV2() {
 
       const meet = handleCircleMeet(data.user.username, currentPositionCoords)
 
-      rf.current?.setNodes((prev) => [
-        ...prev,
-        {
-          id: data.user.username,
-          type: "userNode",
-          data: {
-            username: data.user.username,
-            draggable: isMe,
-            isDragging: false,
-            meet,
-          },
-          position: { x: currentPositionCoords.x, y: currentPositionCoords.y },
-          extent: "parent",
-          deletable: false,
+      const nNode: Node = {
+        id: data.user.username,
+        type: "userNode",
+        data: {
+          username: data.user.username,
           draggable: isMe,
+          isDragging: false,
+          meet,
         },
-      ])
+        position: { x: currentPositionCoords.x, y: currentPositionCoords.y },
+        extent: "parent",
+        deletable: false,
+        draggable: isMe,
+      }
+
+      rf.current?.setNodes((prev) => [...prev, nNode])
+
+      handleCircleMeet(nNode.id, nNode.position, nNode)
     },
     [user?.username]
   )

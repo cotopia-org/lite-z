@@ -1,4 +1,4 @@
-import { uniqueById } from "@/lib/utils";
+import { uniqueById, urlWithQueryParams } from "@/lib/utils";
 import axiosInstance from "@/services/axios";
 import { Chat2ItemType, ChatType } from "@/types/chat2";
 import { UserMinimalType } from "@/types/user";
@@ -10,7 +10,10 @@ type ChatState = {
       object: ChatType;
       messages: Chat2ItemType[];
       loading: boolean;
+      fetchPageLoading: boolean;
       page: number;
+      lastPage?: boolean;
+      firstPage?: boolean;
       replyMessage?: Chat2ItemType;
       pin?: {
         items: Chat2ItemType[];
@@ -49,12 +52,58 @@ export const getChats = createAsyncThunk(
 // Async thunk to fetch chat messages by page
 export const getChatMessages = createAsyncThunk(
   "chat/getChatMessages",
-  async ({ chat_id }: { chat_id: number }) => {
-    const res = await axiosInstance.get(`/chats/${chat_id}/messages`);
+  async ({ chat_id, page }: { chat_id: number; page?: number }) => {
+    let res;
+    let page_number = page;
+
+    if (page) {
+      res = await axiosInstance.get(
+        urlWithQueryParams(`/chats/${chat_id}/messages`, { page })
+      );
+    } else {
+      const lastPageRes = await axiosInstance.get(
+        `/chats/${chat_id}/getLastUnSeenMessagePage`
+      );
+      const pageNumber = lastPageRes.data.data?.page_number;
+      page_number = pageNumber;
+      res = await axiosInstance.get(
+        urlWithQueryParams(`/chats/${chat_id}/messages`, { page: pageNumber })
+      );
+    }
 
     const chats = res.data.data || [];
 
-    return [...[...chats]?.reverse()];
+    return { items: chats, page_number: page_number ?? 1 };
+  }
+);
+
+export const getPrevMessages = createAsyncThunk(
+  "chat/getPrevMessages",
+  async ({ chat_id, page }: { chat_id: number; page?: number }) => {
+    let res;
+    let page_number = page;
+    res = await axiosInstance.get(
+      urlWithQueryParams(`/chats/${chat_id}/messages`, { page })
+    );
+
+    const chats = res.data.data || [];
+
+    return { items: chats, page_number: page_number ?? 1 };
+  }
+);
+
+export const getNextMessages = createAsyncThunk(
+  "chat/getNextMessages",
+  async ({ chat_id, page }: { chat_id: number; page?: number }) => {
+    let res;
+    let page_number = page;
+    res = await axiosInstance.get(
+      urlWithQueryParams(`/chats/${chat_id}/messages`, { page })
+    );
+
+    const chats = res.data.data || [];
+
+    return { items: [...[...chats]?.reverse()], page_number: page_number ?? 1 };
   }
 );
 
@@ -97,6 +146,7 @@ const chatSlice = createSlice({
         messages: [],
         object: chat,
         page: 1,
+        fetchPageLoading: false,
       };
     },
     setCurrentChat: (state, action: PayloadAction<ChatType>) => {
@@ -282,6 +332,7 @@ const chatSlice = createSlice({
                 messages: [],
                 object: chat,
                 page: 1,
+                fetchPageLoading: false,
               };
             }
             allParticipants = [...allParticipants, ...chat.participants];
@@ -304,18 +355,98 @@ const chatSlice = createSlice({
         getChatMessages.fulfilled,
         (
           state,
-          action: PayloadAction<Chat2ItemType[]> & {
+          action: PayloadAction<{
+            items: Chat2ItemType[];
+            page_number: number;
+          }> & {
             meta: { [key: string]: any };
           }
         ) => {
           const { chat_id } = action.meta.arg;
-          state.chats[chat_id].messages = [...action.payload].reverse();
+          const chatItems = action.payload.items;
+
+          state.chats[chat_id].messages = chatItems;
+          state.chats[chat_id].page = action.payload.page_number;
+          state.chats[chat_id].lastPage = false;
+          state.chats[chat_id].firstPage = action.payload.page_number === 1;
+
           state.loading = false;
         }
       )
       .addCase(getChatMessages.rejected, (state, action) => {
         state.error = action.error.message || "Failed to fetch messages";
         state.loading = false;
+      })
+      .addCase(getPrevMessages.pending, (state, action) => {
+        const { chat_id } = action.meta.arg;
+        state.chats[chat_id].fetchPageLoading = true;
+      })
+      .addCase(
+        getPrevMessages.fulfilled,
+        (
+          state,
+          action: PayloadAction<{
+            items: Chat2ItemType[];
+            page_number: number;
+          }> & {
+            meta: { [key: string]: any };
+          }
+        ) => {
+          const { chat_id, page } = action.meta.arg;
+          const chatItems = action.payload.items;
+
+          state.chats[chat_id].messages = [
+            ...state.chats[chat_id].messages,
+            ...chatItems,
+          ];
+
+          if (chatItems.length === 0) {
+            state.chats[chat_id].lastPage = true;
+            state.chats[chat_id].page = page;
+          } else {
+            state.chats[chat_id].page = action.payload.page_number;
+          }
+          state.chats[chat_id].fetchPageLoading = false;
+        }
+      )
+      .addCase(getPrevMessages.rejected, (state, action) => {
+        state.error = action.error.message || "Failed to fetch messages";
+        const { chat_id } = action.meta.arg;
+        state.chats[chat_id].fetchPageLoading = false;
+      })
+      .addCase(getNextMessages.pending, (state, action) => {
+        const { chat_id } = action.meta.arg;
+        state.chats[chat_id].fetchPageLoading = true;
+      })
+      .addCase(
+        getNextMessages.fulfilled,
+        (
+          state,
+          action: PayloadAction<{
+            items: Chat2ItemType[];
+            page_number: number;
+          }> & {
+            meta: { [key: string]: any };
+          }
+        ) => {
+          const { chat_id } = action.meta.arg;
+          const chatItems = action.payload.items;
+
+          state.chats[chat_id].messages = [
+            ...state.chats[chat_id].messages,
+            ...chatItems,
+          ];
+          state.chats[chat_id].page = action.payload.page_number;
+
+          if (chatItems.length === 0) state.chats[chat_id].lastPage = true;
+
+          state.chats[chat_id].fetchPageLoading = false;
+        }
+      )
+      .addCase(getNextMessages.rejected, (state, action) => {
+        const { chat_id } = action.meta.arg;
+        state.error = action.error.message || "Failed to fetch messages";
+        state.chats[chat_id].fetchPageLoading = true;
       })
       .addCase(getPinMessags.pending, (state, action) => {
         state.loading = true;
@@ -333,6 +464,7 @@ const chatSlice = createSlice({
           state.loading = false;
         }
       )
+
       .addCase(getPinMessags.rejected, (state, action) => {
         state.loading = false;
       })

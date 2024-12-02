@@ -36,7 +36,7 @@ const MultilineTextarea: React.FC<Props> = ({
   };
 
   const handleInputChange = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
-    const { value, selectionStart } = event.target;
+    const { value } = event.target;
 
     setText(value);
     onChange(value);
@@ -52,21 +52,18 @@ const MultilineTextarea: React.FC<Props> = ({
     //   dispatch(__BUS.hideChatMention);
     // }
 
-
-
     const mentionPattern = /@[\w.]*$/; // I think this is a better approach
-    if (mentionPattern.test(value)){
+    if (mentionPattern.test(value)) {
       dispatch(__BUS.showChatMention);
-
-    }else{
-
+    } else {
       dispatch(__BUS.hideChatMention);
-
     }
   };
 
   useBus(__BUS.chatInputFocus, () => {
-    textareaRef.current?.focus();
+    setTimeout(() => {
+      textareaRef.current?.focus();
+    }, 100);
   });
 
   return (
