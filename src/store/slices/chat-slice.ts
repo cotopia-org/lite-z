@@ -268,6 +268,20 @@ const chatSlice = createSlice({
           items: [...(chatPin?.items ?? []), action.payload],
         };
     },
+    deleteMessage: (state, action: PayloadAction<Chat2ItemType>) => {
+      const chat_id = action.payload.chat_id;
+
+      if (chat_id)
+        state.chats[chat_id].messages = state.chats[chat_id].messages.map(
+          (m) => {
+            if (m.nonce_id === action.payload.nonce_id) {
+              m.text = "This message has been deleted";
+            }
+
+            return m;
+          }
+        );
+    },
     unpinMessage: (state, action: PayloadAction<Chat2ItemType>) => {
       const chat_id = action.payload.chat_id;
 
@@ -509,6 +523,7 @@ export const {
   clearReplyMessage,
   bulkPinMessages,
   pinMessage,
+  deleteMessage,
   unpinMessage,
   surfPinMessages,
   addMentionedMessages,

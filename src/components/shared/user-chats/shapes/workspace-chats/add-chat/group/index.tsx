@@ -2,8 +2,9 @@ import CotopiaIconButton from "@/components/shared-ui/c-icon-button";
 import CotopiaTooltip from "@/components/shared-ui/c-tooltip";
 import ModalBox from "@/components/shared/modal-box";
 import { MessageSquare } from "lucide-react";
+import AddGroupForm from "./form";
 
-export default function AddChannel() {
+export default function AddGroup() {
   return (
     <ModalBox
       trigger={(open) => (
@@ -14,7 +15,7 @@ export default function AddChannel() {
         </CotopiaTooltip>
       )}
     >
-      {(open) => <>xx</>}
+      {(open, close) => <AddGroupForm onCreated={close} />}
     </ModalBox>
   );
 }
