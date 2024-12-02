@@ -1,14 +1,8 @@
-import { useRoomContext } from "@/components/shared/room/room-context";
-import { useApi } from "@/hooks/swr";
-import JobItem from "./job-item";
+
 import FullLoading from "@/components/shared/full-loading";
-import AddJobHandler from "../add-job";
-import { urlWithQueryParams } from "@/lib/utils";
-import { FetchDataType } from "@/services/axios";
-import JobItems from "@/components/shared/job-items";
+
 import {JobType} from "@/types/job";
 import JobStatus from "@/components/shared/room/tools/top-left/job-button/shapes/job-table/job-item/job-status";
-import JobEstimate from "@/components/shared/room/tools/top-left/job-button/shapes/job-table/job-item/estimate";
 
 interface Props {
   items:JobType[],

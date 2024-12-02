@@ -5,7 +5,6 @@ import JobStatus from "./job-status";
 import JobActions from "./job-actions";
 import JobDate from "./job-date";
 import JobEstimate from "./estimate";
-import JobParent from "@/components/shared/room/tools/top-left/job-button/shapes/job-table/job-item/parent";
 
 interface Props {
   item: JobType;

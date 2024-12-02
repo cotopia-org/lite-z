@@ -1,4 +1,5 @@
 import { UserMinimalType } from "./user";
+import {TagType} from "@/types/tag";
 
 export type JobStatusType = "in_progress" | "paused" | "completed" | "started";
 
@@ -14,6 +15,7 @@ export type JobType = {
   members: UserMinimalType[];
   total_hours: number;
   parent?: JobType;
+  tag?: TagType;
   job_id: number;
   level: number;
 };

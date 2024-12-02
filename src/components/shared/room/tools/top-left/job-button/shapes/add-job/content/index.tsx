@@ -13,6 +13,7 @@ import * as Yup from "yup"
 import DeleteJobHandler from "../delete-job"
 import CSelect from "@/components/shared-ui/c-select";
 import {useApi} from "@/hooks/swr";
+import {TagType} from "@/types/tag";
 
 interface Props {
   onClose: () => void
@@ -45,6 +46,8 @@ const ManageJobContent = ({
   let allJobs = (workspaceJobs && workspaceJobs?.data) ?? [];
 
 
+  const { data:tags} = useApi<FetchDataType<TagType[]>>('/workspaces/'+worksapce_id+'/tags');
+  let allTags = (tags && tags?.data) ?? [];
 
 
 
@@ -62,7 +65,8 @@ const ManageJobContent = ({
     description: string
     status: string
     estimate?: number,
-    job_id?:number
+    job_id?:number,
+    tag_id?:number,
   }>({
     enableReinitialize: true,
     initialValues: {
@@ -71,6 +75,7 @@ const ManageJobContent = ({
       status: defaultValue ? defaultValue.status : "",
       estimate: defaultValue ? defaultValue.estimate : undefined,
       job_id: defaultValue ? defaultValue.parent?.id : undefined,
+      tag_id: defaultValue ? defaultValue.tag?.id : undefined,
     },
     validationSchema: Yup.object().shape({
       title: Yup.string().required("please enter job title"),
@@ -157,6 +162,24 @@ const ManageJobContent = ({
           className="resize-none"
         />
       </TitleEl>
+
+
+      <TitleEl title="Tag">
+        <CSelect
+            items={allTags.map((x) => ({
+              title: x.title,
+              value: x.id+'',
+            }))}
+            multiple
+            defaultValue={values.tag_id + ''}
+            onChange={(v)=>{
+              setFieldValue('tag_id',+v)
+            }}
+        />
+      </TitleEl>
+
+
+
       <div className="flex flex-row justify-between w-full gap-x-8">
         {isEdit && (
           <DeleteJobHandler jobId={defaultValue.id} onDelete={onDelete} />

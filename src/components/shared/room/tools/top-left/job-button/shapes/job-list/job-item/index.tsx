@@ -5,7 +5,8 @@ import JobStatus from "./job-status";
 import JobActions from "./job-actions";
 import JobDate from "./job-date";
 import JobEstimate from "./estimate";
-import JobParent from "@/components/shared/room/tools/top-left/job-button/shapes/job-table/job-item/parent";
+import JobParent from "./parent";
+import JobTag from "./tag";
 
 interface Props {
   item: JobType;
@@ -40,7 +41,8 @@ const JobItem = ({ item, mutate, hasAction = false }: Props) => {
         <JobStatus status={item.status} />
         <JobDate date={item.created_at} />
         <JobEstimate job={item} />
-          <JobParent job={item} />
+          {item.parent && <JobParent job={item} />}
+        <JobTag job={item} />
 
       </div>
     </div>

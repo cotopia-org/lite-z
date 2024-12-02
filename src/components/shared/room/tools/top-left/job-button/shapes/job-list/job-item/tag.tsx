@@ -5,7 +5,7 @@ import { JobType } from "@/types/job";
 type Props = {
   job: JobType;
 };
-export default function JobParent({ job }: Props) {
+export default function JobTag({ job }: Props) {
   if (!job.estimate) return null;
 
   const jobEstimateSeconds = (job.estimate ?? 0) * 60 * 60;
@@ -18,7 +18,7 @@ export default function JobParent({ job }: Props) {
       label={
         <div className='flex flex-row items-center gap-x-1'>
 
-          <span>{job.parent?.title}</span>
+          <span>{'Backend'}</span>
         </div>
       }
       variant='default'
