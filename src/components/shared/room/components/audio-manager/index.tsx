@@ -2,73 +2,54 @@ import { useParticipants } from "@livekit/components-react";
 import { useRoomContext } from "../../room-context";
 import { UserMinimalType } from "@/types/user";
 import { useSocket } from "@/routes/private-wrarpper";
-import useBus from "use-bus";
 import { __BUS } from "@/const/bus";
-import { useReactFlow } from "@xyflow/react";
+import { Node, useReactFlow, XYPosition } from "@xyflow/react";
+import { useState } from "react";
+import { updateCoordinatesEvent } from "@/types/socket";
+import useAuth from "@/hooks/auth";
+import { getPositionFromStringCoordinates } from "@/lib/utils";
+import { VARZ } from "@/const/varz";
 
-const DEFAULT_TILE_POSITION = [0, 0];
 const BOUNDRY_RADIUS = 50;
-const BOUNDRY_CENTER_X = 500;
-const BOUNDRY_CENTER_Y = 500;
 
 //@ts-ignore
 const LiveKitAudioManager = () => {
   const participants = useParticipants();
 
   const rf = useReactFlow();
+  const [nodes, setNodes] = useState<Node[]>([]);
 
   const { room } = useRoomContext();
-  const users = room?.participants ?? [];
+
+  const { user } = useAuth();
 
   const checkBoundaries = () => {
-    for (let i = 0; i < users.length; i++) {
-      for (let j = i + 1; j < users.length; j++) {
-        if (isOverlap(users[i], users[j])) {
-          const volume1 = 100;
-          const volume2 = 100;
+    if (!user) return;
 
-          setVolume("" + users[i].username, volume1);
-          setVolume("" + users[j].username, volume2);
-        } else {
-          setVolume("" + users[i].username, 0);
-          setVolume("" + users[j].username, 0);
+    const myUserNode = rf.getNode(user?.username);
+
+    if (myUserNode === undefined) return;
+
+    for (let participant of participants) {
+      const participantNode = rf.getNode(participant.identity);
+      if (participantNode !== undefined) {
+        if (isOverlap(myUserNode.position, participantNode.position)) {
+          setVolume(participant.identity, 100);
         }
+      } else {
+        setVolume(participant.identity, 0);
       }
     }
   };
 
-  const isOverlap = (
-    user1: UserMinimalType,
-    user2: UserMinimalType
-  ): boolean => {
-    const user1Coordinates = rf?.getNode(user1.username)?.position;
-    const user2Coordinates = rf?.getNode(user2.username)?.position;
-
-    if (!user1Coordinates || !user2Coordinates) return false;
-
+  const isOverlap = (position1: XYPosition, position2: XYPosition): boolean => {
     const distance = Math.sqrt(
-      Math.pow(user1Coordinates.x - user2Coordinates.x, 2) +
-        Math.pow(user1Coordinates?.y - user2Coordinates?.y, 2)
+      Math.pow(position1.x - position2.x, 2) +
+        Math.pow(position1?.y - position2?.y, 2)
     );
 
-    return distance < 2 * BOUNDRY_RADIUS; //Because we have 2 users
+    return distance < VARZ.voiceAreaRadius;
   };
-
-  // const calculateVolume = (user: UserMinimalType): number => {
-  //   const userNode = rf.getNode(user?.username);
-
-  //   if (!userNode) return 0;
-
-  //   const userCoordinates = userNode?.position;
-
-  //   const distanceFromCenter = Math.sqrt(
-  //     Math.pow(userCoordinates.x - BOUNDRY_CENTER_X, 2) +
-  //       Math.pow(userCoordinates.y - BOUNDRY_CENTER_Y, 2)
-  //   );
-  //   const maxDistance = BOUNDRY_RADIUS;
-  //   const volume = distanceFromCenter / maxDistance; // Normalize volume between 0 and 1
-  //   return Math.min(Math.max(volume, 0), 1); // Ensure volume is between 0 and 1
-  // };
 
   const setVolume = (userName: string, volume: number) => {
     if (room) {
@@ -80,7 +61,7 @@ const LiveKitAudioManager = () => {
     }
   };
 
-  useSocket("updateCoordinates", (data: any) => {
+  useSocket("updateCoordinates", (data: updateCoordinatesEvent) => {
     checkBoundaries();
   });
 
