@@ -76,7 +76,7 @@ const ParticipantRows = ({ participants }: Props) => {
                     "capitalize text-xs"
                   )}
                 >
-                  {userActiveJob}
+                  {userActiveJob.length > 25 ? userActiveJob.slice(0, 25) + '... ':userActiveJob}
                 </span>
               </div>
             </div>

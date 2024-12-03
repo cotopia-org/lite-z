@@ -27,7 +27,7 @@ export default function CSelect({
   return (
     <div className={`flex flex-col gap-y-1 w-full ${className}`}>
       {!!label && <strong className="text-sm">{label}</strong>}
-      <Select onValueChange={onChange} value={defaultValue}>
+      <Select  onValueChange={onChange} value={defaultValue}>
         <SelectTrigger className="w-full">
           <SelectValue placeholder={"Select"} />
         </SelectTrigger>
