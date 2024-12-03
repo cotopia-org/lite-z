@@ -1,27 +1,28 @@
 import StatusBox from "@/components/shared/status-box";
-import { cn, getTimeFormat } from "@/lib/utils";
-import { JobType } from "@/types/job";
+import {cn, getTimeFormat} from "@/lib/utils";
+import {JobType} from "@/types/job";
 
 type Props = {
-  job: JobType;
+    job: JobType;
 };
-export default function JobTag({ job }: Props) {
-  if (!job.estimate) return null;
+export default function JobTag({job}: Props) {
 
-  const jobEstimateSeconds = (job.estimate ?? 0) * 60 * 60;
-  const jobWorkedSeconds = (job.total_hours ?? 0) * 60;
 
-  const workedMoreThanEstimate = jobWorkedSeconds > jobEstimateSeconds;
+    console.log(job)
+    return (
+        <div className={'flex flex-row gap-x-2'}>
+            {job.tags.map(tag => {
+                return <StatusBox
+                    label={
+                        <div className='flex flex-row items-center gap-x-1'>
 
-  return (
-    <StatusBox
-      label={
-        <div className='flex flex-row items-center gap-x-1'>
+                            <span>{tag.title}</span>
+                        </div>
+                    }
+                    variant='default'
+                />
+            })}
 
-          <span>{'Backend'}</span>
         </div>
-      }
-      variant='default'
-    />
-  );
+    );
 }
