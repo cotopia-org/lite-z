@@ -1,6 +1,4 @@
 import UploadAvatar from "@/components/shared/user-actions-avatar-button/settings/additional-information/upload-avatar";
-import PayrollUserInformationHeader from "../header"
-import PayrollUserAvatar from "./user-avatar";
 import PayrollUserDetails from "./user-details";
 
 export default function PayrollPersonalProfile() {

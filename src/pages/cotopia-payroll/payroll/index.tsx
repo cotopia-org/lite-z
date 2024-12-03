@@ -38,7 +38,6 @@ export default function PayrollPage({ onClose }: Props) {
       content = (
         <div className='flex gap-3 flex-1 p-3'>
           <PayrollPersonalProfile />
-          <PayrollUserContract />
         </div>
       );
       break;
