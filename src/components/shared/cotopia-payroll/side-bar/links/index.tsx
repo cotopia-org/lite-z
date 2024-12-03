@@ -1,5 +1,3 @@
-import { NavLink } from "react-router-dom";
-import { PayrollSideBarType } from "@/types/payroll-sidebar";
 import { useAppSelector } from "@/store";
 import { Coins, Grid, User, Wallet, X } from "lucide-react";
 import CotopiaButton from "@/components/shared-ui/c-button";
@@ -31,7 +29,7 @@ export default function PayrollSideBarLink() {
   ];
 
   return (
-    <ul className='p-3 mt-4 flex flex-col gap-y-2'>
+    <ul className='p-3 mt-4 flex flex-col gap-y-8'>
       {links
         .filter((link) => link.visible !== false)
         .map((link) => (
