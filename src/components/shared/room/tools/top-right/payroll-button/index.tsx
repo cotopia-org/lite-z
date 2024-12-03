@@ -7,6 +7,8 @@ import PreviousPayments from "./previous-payments";
 import CTabs from "@/components/shared-ui/c-tabs";
 import { MoneyRecive } from "@/components/icons";
 import UserContract from "./user-contract";
+import CFullDialog from "@/components/shared-ui/c-dialog/full-dialog";
+import PayrollPage from "@/pages/cotopia-payroll/payroll";
 
 export default function PayrollButton() {
   const currentURL = typeof window !== "undefined" ? window.location.href : "";
@@ -33,21 +35,30 @@ export default function PayrollButton() {
                 title: "Details",
                 content: (
                   <>
-                    <div className="w-full my-4 flex items-center justify-between px-2">
-                      <h3 className="text-lg font-semibold">Expected Payment</h3>
+                    <div className='w-full my-4 flex items-center justify-between px-2'>
+                      <h3 className='text-lg font-semibold'>
+                        Expected Payment
+                      </h3>
                       <ExpectedPayments />
                     </div>
                     <hr />
                     <PreviousPayments />
 
-                    <div className="w-full flex justify-end">
-                      <CotopiaButton
-                        className="bg-primary text-white rounded-xl mt-3"
+                    <div className='w-full flex justify-end'>
+                      <CFullDialog
+                        trigger={(open) => (
+                          <CotopiaButton
+                            onClick={open}
+                            className='bg-primary text-white rounded-xl mt-3'
+                          >
+                            More
+                          </CotopiaButton>
+                        )}
                       >
-                        <a href={`${url}/payroll`} target="_blank" rel="noopener noreferrer" className="flex items-center justify-center gap-x-5">
-                          More
-                        </a>
-                      </CotopiaButton>
+                        {(close) => {
+                          return <PayrollPage onClose={close} />;
+                        }}
+                      </CFullDialog>
                     </div>
                   </>
                 ),
@@ -55,15 +66,12 @@ export default function PayrollButton() {
               },
               {
                 title: "Contract",
-                content: (
-                  <UserContract />
-                ),
+                content: <UserContract />,
                 value: "contract",
               },
             ]}
           />
         );
-
 
         return (
           <PopupBoxChild
