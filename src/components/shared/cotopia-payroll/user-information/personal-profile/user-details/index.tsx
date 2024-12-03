@@ -71,13 +71,6 @@ export default function PayrollUserDetails() {
             />
 
             <CotopiaInput
-                {...getFieldProps("user-name")}
-                label='Your username'
-                value={user?.username}
-                disabled
-            />
-
-            <CotopiaInput
                 {...getFieldProps("id")}
                 label='Your id'
                 value={user?.id}

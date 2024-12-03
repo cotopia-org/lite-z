@@ -13,22 +13,22 @@ type Props = {
 
 export type PayrollPage =
   | "user-profile"
-  | "dashboard"
-  | "employees"
+  | "user-contract"
+  | "all-payment"
   | "payments"
   | "advance";
 
-const PayrollContext = createContext<{
+const PayrollContejxt = createContext<{
   onClose: () => void;
   page: PayrollPage;
   changePage: (page: PayrollPage) => void;
 }>({
-  onClose: () => {},
+  onClose: () => { },
   page: "user-profile",
-  changePage: (page) => {},
+  changePage: (page) => { },
 });
 
-export const usePayroll = () => useContext(PayrollContext);
+export const usePayroll = () => useContext(PayrollContejxt);
 
 export default function PayrollPage({ onClose }: Props) {
   const [active, setActive] = useState<PayrollPage>("user-profile");
@@ -44,22 +44,23 @@ export default function PayrollPage({ onClose }: Props) {
     case "advance":
       content = <PayrollAdvance />;
       break;
-    case "dashboard":
+    case "all-payment":
       content = <PayrollDashboard />;
       break;
-    case "employees":
-      content = <PayrollEmployees />;
+    case "user-contract":
+      content = <PayrollUserContract />;
       break;
     case "payments":
       content = <PayrollPayments />;
       break;
+
   }
 
   return (
-    <PayrollContext.Provider
+    <PayrollContejxt.Provider
       value={{ onClose, page: active, changePage: setActive }}
     >
       <PayrollWrapper>{content}</PayrollWrapper>
-    </PayrollContext.Provider>
+    </PayrollContejxt.Provider>
   );
 }

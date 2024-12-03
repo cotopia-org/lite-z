@@ -8,7 +8,6 @@ export default function PayrollPersonalProfile() {
                 <UploadAvatar showLabel={false}/>
                 <PayrollUserDetails />
             </div>
-
         </div>
     )
 }

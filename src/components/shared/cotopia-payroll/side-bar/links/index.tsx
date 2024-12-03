@@ -18,12 +18,12 @@ export default function PayrollSideBarLink() {
   }[] = [
     { title: "User Profile", page: "user-profile", icon: <User /> },
     {
-      title: "Employees",
-      page: "employees",
+      title: "User contract",
+      page: "user-contract",
       icon: <User />,
       visible: user?.id === 6,
     },
-    { title: "Dashboard", page: "dashboard", icon: <Grid /> },
+    { title: "Dashboard", page: "all-payment", icon: <Grid /> },
     { title: "Payments", page: "payments", icon: <Coins /> },
     { title: "Advance", page: "advance", icon: <Wallet /> },
   ];

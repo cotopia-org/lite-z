@@ -7,7 +7,7 @@ interface Props {
 
 export default function PayrollWrapper({ children }: Props) {
   return (
-    <main className='relative flex bg-slate-50 gap-x-2'>
+    <main className='w-full min-h-screen flex bg-slate-50 gap-x-2'>
       <PayrollSideBar />
 
       {children}
