@@ -37,7 +37,7 @@ export default function PayrollContractDetails() {
             ) : userContract ? (
                 <ul className="grid grid-cols-12 gap-4 w-full">
                     {contractDetails.map((contractDetail, index) => (
-                        <li key={contractDetail.key} className={`w-full text-base shadow-md p-3 rounded-md border border-border font-semibold flex items-center justify-between ${index === contractDetails.length - 1 ? "col-span-12" : "col-span-6"}`}>{contractDetail.key}<span className="text-sm font-medium">{contractDetail.value}</span></li>
+                        <li key={contractDetail.key} className={`w-full text-base shadow-md p-3 rounded-md border border-border font-semibold flex items-center justify-between bg-gray-50 ${index === contractDetails.length - 1 ? "col-span-12" : "col-span-6"}`}>{contractDetail.key}<span className="text-sm font-medium">{contractDetail.value}</span></li>
                     ))}
                 </ul>
             ) : (

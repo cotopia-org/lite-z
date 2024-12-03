@@ -6,7 +6,7 @@ export default function PayrollSideBarHeader() {
 
     return (
         <div className="w-full p-3 flex items-center gap-x-2 border-b border-border">
-            <UserAvatar src={user?.avatar?.url} title={user?.username!} />
+            <UserAvatar src={user?.avatar?.url} title={user?.username!} className="w-9 h-9"/>
             <h1 className="text-base font-semibold">{user?.username}</h1>
         </div>
     )

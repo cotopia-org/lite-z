@@ -3,7 +3,11 @@ import useAuth from "@/hooks/auth";
 import axiosInstance from "@/services/axios";
 import { AttachmentFileType } from "@/types/file";
 
-export default function UploadAvatar() {
+interface Props {
+  showLabel? : boolean;
+}
+
+export default function UploadAvatar({showLabel = true} : Props) {
   const { user } = useAuth();
 
   const handleUpdateAvatar = (file: AttachmentFileType) => {
@@ -28,7 +32,7 @@ export default function UploadAvatar() {
         defaultMedia={user?.avatar ?? undefined}
         onUpload={handleUpdateAvatar}
         onDelete={handleDeleteAvatar}
-        label='Avatar'
+        label={showLabel ? 'Avatar' : ''}
       />
     </div>
   );
