@@ -1,64 +1,18 @@
 // Canvas.tsx
-import React, { useEffect, useState } from "react";
-import UserSessions from "../room/sessions";
-import {
-  TrackRefContext,
-  TrackReferenceOrPlaceholder,
-  useTracks,
-} from "@livekit/components-react";
-import { RoomEvent, Track } from "livekit-client";
-import WithReactFlowV2 from "./rf-v2";
+import React from "react"
+import WithReactFlowV2 from "./rf-v2"
+import { CanvasAudioRenderer } from "./canvas-audio-rendrer"
+import { TracksContextProvider } from "../room/sessions/context"
 
 const Canvas: React.FC = () => {
-  const [init, setInit] = useState(false);
-
-  const [track, setTrack] = useState<TrackReferenceOrPlaceholder>();
-
-  const tracks = useTracks(
-    [
-      { source: Track.Source.Camera, withPlaceholder: true },
-      { source: Track.Source.ScreenShare, withPlaceholder: false },
-    ],
-    {
-      updateOnlyOn: [
-        RoomEvent.ActiveSpeakersChanged,
-        RoomEvent.Reconnected,
-        RoomEvent.Reconnecting,
-        RoomEvent.MediaDevicesChanged,
-        RoomEvent.LocalTrackPublished,
-        RoomEvent.TrackUnsubscribed,
-      ],
-      onlySubscribed: true,
-    }
-  );
-
-  useEffect(() => {
-    if (tracks.length === 0) return;
-
-    if (init === true) return;
-    setTrack(tracks?.[0]);
-
-    setInit(true);
-
-    const t = setTimeout(() => {
-      setTrack(undefined);
-    }, 1000);
-
-    return () => clearTimeout(t);
-  }, [tracks, init]);
-
-  // if (init === false) return <FullLoading />;
-
   return (
-    <div id='canvas-board' className='w-full h-[1080px] relative'>
-      <TrackRefContext.Provider value={track}>
-        <UserSessions>
-          <WithReactFlowV2 />
-          {/* <ReactFlowHandler tracks={tracks} /> */}
-        </UserSessions>
-      </TrackRefContext.Provider>
+    <div id="canvas-board" className="w-full h-[1080px] relative">
+      <TracksContextProvider>
+        <WithReactFlowV2 />
+        <CanvasAudioRenderer />
+      </TracksContextProvider>
     </div>
-  );
-};
+  )
+}
 
-export default Canvas;
+export default Canvas

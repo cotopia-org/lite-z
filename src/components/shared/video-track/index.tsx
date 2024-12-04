@@ -1,21 +1,21 @@
-import { RemoteTrackPublication } from "livekit-client";
-import * as React from "react";
+import { RemoteTrackPublication } from "livekit-client"
+import * as React from "react"
 import type {
   ParticipantClickEvent,
   TrackReference,
-} from "@livekit/components-core";
-import * as useHooks from "usehooks-ts";
-import { useEnsureTrackRef } from "@livekit/components-react";
-import { useMediaTrackBySourceOrName } from "../room/sessions/room-audio-renderer/use-media-track-by-source-or-name";
+} from "@livekit/components-core"
+import * as useHooks from "usehooks-ts"
+import { useEnsureTrackRef } from "@livekit/components-react"
+import { useMediaTrackBySourceOrName } from "../canvas-board/canvas-audio-rendrer/use-media-track-by-source-or-name"
 
 /** @public */
 export interface VideoTrackProps
   extends React.VideoHTMLAttributes<HTMLVideoElement> {
   /** The track reference of the track to render. */
-  trackRef?: TrackReference;
-  onTrackClick?: (evt: ParticipantClickEvent) => void;
-  onSubscriptionStatusChanged?: (subscribed: boolean) => void;
-  manageSubscription?: boolean;
+  trackRef?: TrackReference
+  onTrackClick?: (evt: ParticipantClickEvent) => void
+  onSubscriptionStatusChanged?: (subscribed: boolean) => void
+  manageSubscription?: boolean
 }
 
 /**
@@ -43,19 +43,19 @@ export const VideoTrack: (
     }: VideoTrackProps,
     ref
   ) {
-    const trackReference = useEnsureTrackRef(trackRef);
+    const trackReference = useEnsureTrackRef(trackRef)
 
-    const mediaEl = React.useRef<HTMLVideoElement>(null);
-    React.useImperativeHandle(ref, () => mediaEl.current as HTMLVideoElement);
+    const mediaEl = React.useRef<HTMLVideoElement>(null)
+    React.useImperativeHandle(ref, () => mediaEl.current as HTMLVideoElement)
 
     const intersectionEntry = useHooks.useIntersectionObserver({
       root: mediaEl.current,
-    });
+    })
 
     const [debouncedIntersectionEntry] = useHooks.useDebounceValue(
       intersectionEntry,
       3000
-    );
+    )
 
     React.useEffect(() => {
       if (
@@ -64,9 +64,9 @@ export const VideoTrack: (
         debouncedIntersectionEntry?.isIntersecting === false &&
         intersectionEntry?.isIntersecting === false
       ) {
-        trackReference.publication.setSubscribed(false);
+        trackReference.publication.setSubscribed(false)
       }
-    }, [debouncedIntersectionEntry, trackReference, manageSubscription]);
+    }, [debouncedIntersectionEntry, trackReference, manageSubscription])
 
     React.useEffect(() => {
       if (
@@ -74,9 +74,9 @@ export const VideoTrack: (
         trackReference.publication instanceof RemoteTrackPublication &&
         intersectionEntry?.isIntersecting === true
       ) {
-        trackReference.publication.setSubscribed(true);
+        trackReference.publication.setSubscribed(true)
       }
-    }, [intersectionEntry, trackReference, manageSubscription]);
+    }, [intersectionEntry, trackReference, manageSubscription])
 
     const {
       elementProps,
@@ -85,18 +85,18 @@ export const VideoTrack: (
     } = useMediaTrackBySourceOrName(trackReference, {
       element: mediaEl,
       props,
-    });
+    })
 
     React.useEffect(() => {
-      onSubscriptionStatusChanged?.(!!isSubscribed);
-    }, [isSubscribed, onSubscriptionStatusChanged]);
+      onSubscriptionStatusChanged?.(!!isSubscribed)
+    }, [isSubscribed, onSubscriptionStatusChanged])
 
     const clickHandler = (
       evt: React.MouseEvent<HTMLVideoElement, MouseEvent>
     ) => {
-      onClick?.(evt);
-      onTrackClick?.({ participant: trackReference?.participant, track: pub });
-    };
+      onClick?.(evt)
+      onTrackClick?.({ participant: trackReference?.participant, track: pub })
+    }
 
     return (
       <>
@@ -107,6 +107,6 @@ export const VideoTrack: (
           onClick={clickHandler}
         ></video>
       </>
-    );
+    )
   }
-);
+)

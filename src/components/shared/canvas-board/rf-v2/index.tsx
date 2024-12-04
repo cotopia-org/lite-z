@@ -15,7 +15,6 @@ import {
   UserLeftJoinType,
 } from "@/types/socket"
 import UserNode from "./nodes/user"
-import { doCirclesMeetRaw } from "../../room/sessions/room-audio-renderer"
 import { VARZ } from "@/const/varz"
 import JailNode from "./nodes/jail-node"
 import { getPositionFromStringCoordinates } from "@/lib/utils"
@@ -24,6 +23,7 @@ import BgNode from "./nodes/bg-node"
 import { useTracks } from "@livekit/components-react"
 import { Track } from "livekit-client"
 import { checkNodesCollision } from "@/utils/utils"
+import { doCirclesMeetRaw } from "../canvas-audio-rendrer"
 
 enum RoomRfNodeType {
   shareScreenNode = "shareScreenNode",
