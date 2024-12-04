@@ -2,6 +2,7 @@ import PayrollTable from "@/components/shared/cotopia-payroll/p-table";
 import UserAvatar from "@/components/shared/user-avatar";
 import { useAppSelector } from "@/store";
 import { EmployeesRowData } from "@/types/payroll-table";
+import { fetchEmployeesData } from "@/utils/payroll";
 import { ColDef } from "ag-grid-community";
 import axios from "axios";
 import { useEffect, useState } from "react";
@@ -38,16 +39,7 @@ export default function Employees() {
   useEffect(() => {
     async function fetchEmployees() {
       try {
-        const response = await axios.get(
-          `${process.env.REACT_APP_PUBLIC_API_URL}/workspaces/1/users`,
-          {
-            headers: {
-              Authorization: `Bearer ${userData.accessToken}`,
-            },
-          }
-        );
-
-        const data = response.data.data;
+        const data = await fetchEmployeesData(userData.accessToken!)
 
         const normalizedData = data.map((employee: any) => ({
           id: employee.id?.toString(),
