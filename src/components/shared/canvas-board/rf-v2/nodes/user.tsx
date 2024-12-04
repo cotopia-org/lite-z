@@ -1,29 +1,13 @@
 import { useMemo } from "react"
-import { useParticipants, useTracks } from "@livekit/components-react"
-import { RoomEvent, Track } from "livekit-client"
+import { useParticipants } from "@livekit/components-react"
 import UserSession from "@/components/shared/room/sessions/user-session"
 import DraggableCircle from "@/routes/private-wrarpper/components/session/draggable-circle"
+import { useAllTrackContext } from "@/components/shared/room/sessions/context/tracks-provider"
 
 const UserNode = (props: any) => {
   const { data, dragging } = props
 
-  const tracks = useTracks(
-    [
-      { source: Track.Source.Camera, withPlaceholder: true },
-      { source: Track.Source.ScreenShare, withPlaceholder: false },
-    ],
-    {
-      updateOnlyOn: [
-        RoomEvent.ActiveSpeakersChanged,
-        RoomEvent.Reconnected,
-        RoomEvent.Reconnecting,
-        RoomEvent.MediaDevicesChanged,
-        RoomEvent.LocalTrackPublished,
-        RoomEvent.TrackUnsubscribed,
-      ],
-      onlySubscribed: true,
-    }
-  )
+  const { tracks } = useAllTrackContext()
   const participants = useParticipants()
 
   const participant = useMemo(() => {

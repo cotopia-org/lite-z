@@ -4,6 +4,7 @@ import { ReactNode, createContext, useContext, useMemo } from "react"
 import { ParticipantContextIfNeeded, TrackRefContextIfNeeded } from "./wrapper"
 import { useMaybeTrackRefContext } from "@livekit/components-react"
 import { TrackReferenceType } from "@/types/track-reference"
+import { useAllTrackContext } from "./context/tracks-provider"
 
 type Props = {
   participant?: Participant
@@ -18,15 +19,24 @@ const UserSessionContext = createContext<{ track?: TrackReferenceType }>({
 export const useUserSessionCtx = () => useContext(UserSessionContext)
 
 const UserSession = ({ track, participant, children }: Props) => {
+  const { tracks } = useAllTrackContext()
+
+  const initTrack = tracks?.[0]
   const trackRef = track
 
   const maybeTrackRef = useMaybeTrackRefContext()
 
   const trackReference: TrackReferenceType = useMemo(() => {
     let latestTrack = {
-      participant: trackRef?.participant ?? maybeTrackRef?.participant,
-      source: trackRef?.source ?? maybeTrackRef?.source,
-      publication: trackRef?.publication ?? maybeTrackRef?.publication,
+      participant:
+        trackRef?.participant ??
+        maybeTrackRef?.participant ??
+        initTrack?.participant,
+      source: trackRef?.source ?? maybeTrackRef?.source ?? initTrack?.source,
+      publication:
+        trackRef?.publication ??
+        maybeTrackRef?.publication ??
+        initTrack?.publication,
     }
 
     return latestTrack

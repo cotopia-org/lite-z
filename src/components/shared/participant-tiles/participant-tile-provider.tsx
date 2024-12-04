@@ -3,7 +3,6 @@ import {
   TrackReferenceOrPlaceholder,
   isTrackReference,
   useConnectionQualityIndicator,
-  useEnsureTrackRef,
   useParticipantTile,
 } from "@livekit/components-react"
 import {
@@ -22,6 +21,7 @@ import { useRoomContext } from "../room/room-context"
 import { getUserFullname } from "@/lib/utils"
 import { ConnectionQuality, Track } from "livekit-client"
 import { UserMinimalType } from "@/types/user"
+import { useUserSessionCtx } from "../room/sessions/user-session"
 
 const UserParticipantTileContext = createContext<{
   ref: ForwardedRef<HTMLDivElement>
@@ -61,7 +61,9 @@ const ParticipantTileProvider = forwardRef<
   }: ParticipantTileProps & { username: string },
   ref
 ) {
-  const trackReference = useEnsureTrackRef(trackRef)
+  const { track } = useUserSessionCtx()
+
+  const trackReference = track as TrackReferenceOrPlaceholder
 
   const participantObj = useParticipantTile({
     htmlProps,
@@ -83,26 +85,33 @@ const ParticipantTileProvider = forwardRef<
   const isSpeaking = trackReference?.participant?.isSpeaking
 
   const elementProps = participantObj?.elementProps ?? {}
+  // const elementProps = {}
 
-  const { quality } = useConnectionQualityIndicator({
-    participant: trackReference.participant,
-  })
+  let participant_identity = trackReference?.participant?.identity
+  let track_participant = trackReference?.participant
 
-  let finalQuality = quality
+  let finalQuality: any = ConnectionQuality.Poor
+
+  if (track_participant) {
+    // eslint-disable-next-line react-hooks/rules-of-hooks
+    finalQuality = useConnectionQualityIndicator({
+      participant: trackReference.participant,
+    }).quality
+  }
 
   let quality_title: string = "unknown!"
 
   if (
     finalQuality === ConnectionQuality.Lost ||
     finalQuality === ConnectionQuality.Poor
-  )
+  ) {
     quality_title = "Poor connection!"
+  }
 
-  if (targetUser?.username !== trackReference?.participant?.identity) {
+  if (targetUser?.username !== participant_identity) {
     finalQuality = ConnectionQuality.Lost
   }
-  if (trackReference.participant?.identity === undefined)
-    finalQuality = ConnectionQuality.Lost
+  if (participant_identity === undefined) finalQuality = ConnectionQuality.Lost
 
   let trackType: "audio" | "video" = "audio"
 
@@ -119,7 +128,7 @@ const ParticipantTileProvider = forwardRef<
 
   return (
     <TrackRefContextIfNeeded trackRef={trackReference as TrackReferenceType}>
-      <ParticipantContextIfNeeded participant={trackReference.participant}>
+      <ParticipantContextIfNeeded participant={track_participant}>
         <UserParticipantTileContext.Provider
           value={{
             ref,

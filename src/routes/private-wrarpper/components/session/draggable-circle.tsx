@@ -19,7 +19,6 @@ function DraggableCircle({ defaultIsDragging, meet, username }: Props) {
 
   const trackRef = useEnsureTrackRef(track as TrackReferenceOrPlaceholder)
 
-  if (!trackRef?.participant) return null
   return (
     <SessionWrapper>
       <RfUserParticipant
