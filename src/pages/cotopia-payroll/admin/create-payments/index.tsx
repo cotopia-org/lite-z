@@ -1,37 +1,18 @@
-import CotopiaButton from "@/components/shared-ui/c-button";
-import CotopiaInput from "@/components/shared-ui/c-input";
-import UserAvatar from "@/components/shared/user-avatar";
-import { useAppSelector } from "@/store";
-import { UserContractType } from "@/types/contract";
-import { EmployeesRowData } from "@/types/payroll-table";
-import axios from "axios";
-import { useFormik } from "formik";
 import { useEffect, useState, useMemo, useCallback } from "react";
-import { toast } from "sonner";
+import { useFormik } from "formik";
 import * as Yup from "yup";
-
-const fetchEmployeesData = async (token: string) => {
-    const { data } = await axios.get(`${process.env.REACT_APP_PUBLIC_API_URL}/workspaces/1/users`, {
-        headers: { Authorization: `Bearer ${token}` },
-    });
-    return data.data.map((employee: any) => ({
-        id: employee.id?.toString(),
-        name: employee.name || "No name",
-        username: employee.username,
-        avatar: employee.avatar,
-    }));
-};
-
-const fetchUserContract = async (userId: string, token: string) => {
-    const { data } = await axios.get(`${process.env.REACT_APP_PUBLIC_API_URL}/contracts`, {
-        headers: { Authorization: `Bearer ${token}` },
-    });
-    return data.data.find((contract: UserContractType) => contract.user_id === parseInt(userId));
-};
+import { toast } from "sonner";
+import axios from "axios";
+import CotopiaButton from "@/components/shared-ui/c-button";
+import { useAppSelector } from "@/store";
+import { fetchEmployeesData, fetchUserContract } from "@/utils/payroll";
+import EmployeeSelection from "./components/employee-selection";
+import PaymentDetails from "./components/payment-details";
+import UserAvatarSection from "./components/user-avatar-section";
 
 const PayrollCreatePayments = () => {
-    const [employees, setEmployees] = useState<EmployeesRowData[]>([]);
-    const [selectedEmployee, setSelectedEmployee] = useState<EmployeesRowData | null>(null);
+    const [employees, setEmployees] = useState<any[]>([]);
+    const [selectedEmployee, setSelectedEmployee] = useState<any | null>(null);
     const [contractAmount, setContractAmount] = useState<number | null>(null);
     const [contractId, setContractId] = useState<number | null>(null);
     const [userError, setUserError] = useState<string | null>(null);
@@ -48,7 +29,9 @@ const PayrollCreatePayments = () => {
                 console.error("Error fetching employees:", error);
             }
         };
-        loadEmployees();
+        if (userData.accessToken) {
+            loadEmployees();
+        }
     }, [userData.accessToken]);
 
     const handleUserIdChange = useCallback(async (id: string) => {
@@ -74,9 +57,7 @@ const PayrollCreatePayments = () => {
 
     const validationSchema = Yup.object({
         type: Yup.string().required("Payment type is required"),
-        userId: Yup.string()
-            .required("User ID is required")
-            .matches(/^\d+$/, "User ID must be a number"),
+        userId: Yup.string().required("User ID is required").matches(/^\d+$/, "User ID must be a number"),
         hours: Yup.number().required("Hours is required").min(1, "Hours must be at least 1"),
         bonus: Yup.number().min(0, "Bonus cannot be negative"),
     });
@@ -128,68 +109,23 @@ const PayrollCreatePayments = () => {
 
     return (
         <form onSubmit={formik.handleSubmit} className="w-full h-screen p-4 flex flex-col gap-y-8 items-center justify-center">
+
             <div className="w-full grid grid-cols-2 gap-x-4 gap-y-4">
-               
-                <CotopiaInput
-                    {...formik.getFieldProps("type")}
-                    placeholder="Enter the type"
-                    label="Payment type"
-                    hasError={formik.touched.type && !!formik.errors.type}
-                    helperText={formik.touched.type && formik.errors.type}
+                <EmployeeSelection
+                    employees={employees}
+                    onUserIdChange={handleUserIdChange}
+                    userError={userError}
+                    contractError={contractError}
                 />
 
-                <CotopiaInput
-                    value={contractAmount || ""}
-                    placeholder="Calculated amount"
-                    label="Amount"
-                    type="number"
-                    disabled
+                <PaymentDetails
+                    formik={formik}
+                    contractAmount={contractAmount}
+                    calculatedTotalAmount={calculatedTotalAmount}
                 />
-
-                <CotopiaInput
-                    {...formik.getFieldProps("hours")}
-                    placeholder="Enter the hours"
-                    label="Hours"
-                    type="number"
-                    hasError={formik.touched.hours && !!formik.errors.hours}
-                    helperText={formik.touched.hours && formik.errors.hours}
-                />
-
-                <CotopiaInput
-                    value={calculatedTotalAmount || ""}
-                    placeholder="Total amount"
-                    label="Total amount"
-                    type="number"
-                    disabled
-                />
-
-                <CotopiaInput
-                    {...formik.getFieldProps("bonus")}
-                    placeholder="Enter the bonus"
-                    label="Bonus"
-                    type="number"
-                    hasError={formik.touched.bonus && !!formik.errors.bonus}
-                    helperText={formik.touched.bonus && formik.errors.bonus}
-                />
-
-                <CotopiaInput
-                    {...formik.getFieldProps("userId")}
-                    placeholder="Enter the user ID"
-                    label="User ID"
-                    onChange={(e) => {
-                        formik.getFieldProps("userId").onChange(e);
-                        handleUserIdChange(e.target.value);
-                    }}
-                    hasError={!!(formik.touched.userId && (formik.errors.userId || userError || contractError))}
-                    helperText={formik.touched.userId && formik.errors.userId || userError || contractError || ""}
-                />
-                {selectedEmployee && (
-                    <div className="flex items-center gap-x-4 col-span-2">
-                        <UserAvatar src={selectedEmployee.avatar?.url} title={selectedEmployee.username} />
-                        <span>{selectedEmployee.name}</span>
-                    </div>
-                )}
             </div>
+
+            <UserAvatarSection selectedEmployee={selectedEmployee} />
 
             <CotopiaButton
                 loading={formik.isSubmitting}
