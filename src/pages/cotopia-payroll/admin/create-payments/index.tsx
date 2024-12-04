@@ -10,7 +10,7 @@ import EmployeeSelection from "./components/employee-selection";
 import PaymentDetails from "./components/payment-details";
 import UserAvatarSection from "./components/user-avatar-section";
 
-const PayrollCreatePayments = () => {
+function PayrollCreatePayments() {
     const [employees, setEmployees] = useState<any[]>([]);
     const [selectedEmployee, setSelectedEmployee] = useState<any | null>(null);
     const [contractAmount, setContractAmount] = useState<number | null>(null);

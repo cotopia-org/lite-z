@@ -18,7 +18,7 @@ export default function useUserContract() {
       setIsLoading(true);
       try {
         const response = await axios.get(
-          `https://lite-api.cotopia.social/api/contracts`,
+          `${process.env.REACT_APP_PUBLIC_API_URL}/contracts`,
           {
             headers: {
               Authorization: `Bearer ${userData.accessToken}`,
