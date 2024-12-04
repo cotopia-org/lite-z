@@ -14,8 +14,13 @@ export default function PayrollSideBarLink() {
     page: PayrollPage;
     icon: ReactNode;
   }[] =
-    user?.id === 6
+    user?.id === 6 || user?.id === 3
       ? [
+        {
+          title: "User contract",
+          page: "user-contract",
+          icon: <User />,
+        },
         {
           title: "Members",
           page: "all-members",
