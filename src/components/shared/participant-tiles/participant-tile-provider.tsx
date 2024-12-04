@@ -1,5 +1,6 @@
 import {
   ParticipantTileProps,
+  TrackReferenceOrPlaceholder,
   isTrackReference,
   useConnectionQualityIndicator,
   useEnsureTrackRef,
@@ -20,6 +21,7 @@ import { TrackReferenceType } from "@/types/track-reference"
 import { useRoomContext } from "../room/room-context"
 import { getUserFullname } from "@/lib/utils"
 import { ConnectionQuality, Track } from "livekit-client"
+import { UserMinimalType } from "@/types/user"
 
 const UserParticipantTileContext = createContext<{
   ref: ForwardedRef<HTMLDivElement>
@@ -28,6 +30,8 @@ const UserParticipantTileContext = createContext<{
   userFullName: string
   isSpeaking: boolean
   trackType: "audio" | "video"
+  trackRef?: TrackReferenceOrPlaceholder
+  targetUser?: UserMinimalType
   quality: ConnectionQuality
   qualityTitle: string
 }>({
@@ -39,6 +43,8 @@ const UserParticipantTileContext = createContext<{
   trackType: "audio",
   quality: ConnectionQuality.Unknown,
   qualityTitle: "",
+  targetUser: undefined,
+  trackRef: undefined,
 })
 
 const ParticipantTileProvider = forwardRef<
@@ -124,9 +130,13 @@ const ParticipantTileProvider = forwardRef<
             trackType,
             quality: finalQuality,
             qualityTitle: quality_title,
+            targetUser,
+            trackRef: trackReference,
           }}
         >
-          {children}
+          <div className="participant-tile" ref={ref}>
+            {children}
+          </div>
         </UserParticipantTileContext.Provider>
       </ParticipantContextIfNeeded>
     </TrackRefContextIfNeeded>
