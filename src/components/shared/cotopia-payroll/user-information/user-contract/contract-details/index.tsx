@@ -21,7 +21,7 @@ export default function PayrollContractDetails() {
         { key: "User role", value: userContract?.role },
         { key: "Amount", value: userContract?.amount },
         { key: "Contractor Status", value: userContract?.contractor_status },
-        { key: "Auto Renewal", value: userContract?.auto_renewal },
+        { key: "Auto Renewal", value: userContract?.auto_renewal ? "yes" : "no" },
         { key: "Payment method", value: userContract?.payment_method },
         { key: "Contract id", value: userContract?.id },
         { key: "Payment address", value: userContract?.payment_address },

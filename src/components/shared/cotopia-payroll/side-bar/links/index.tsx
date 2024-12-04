@@ -1,4 +1,3 @@
-import { useAppSelector } from "@/store";
 import { Coins, Grid, User, Wallet, X } from "lucide-react";
 import CotopiaButton from "@/components/shared-ui/c-button";
 import { PayrollPage, usePayroll } from "@/pages/cotopia-payroll/payroll";
@@ -8,20 +7,16 @@ import { cn } from "@/lib/utils";
 export default function PayrollSideBarLink() {
   const { onClose, changePage, page } = usePayroll();
 
-  const user = useAppSelector((store) => store.auth.user);
-
   const links: {
     title: string;
     page: PayrollPage;
     icon: ReactNode;
-    visible?: boolean;
   }[] = [
     { title: "User Profile", page: "user-profile", icon: <User /> },
     {
       title: "User contract",
       page: "user-contract",
       icon: <User />,
-      visible: user?.id === 6,
     },
     { title: "Dashboard", page: "all-payment", icon: <Grid /> },
     { title: "Payments", page: "payments", icon: <Coins /> },
@@ -31,7 +26,6 @@ export default function PayrollSideBarLink() {
   return (
     <ul className='p-3 mt-4 flex flex-col gap-y-8'>
       {links
-        .filter((link) => link.visible !== false)
         .map((link) => (
           <li key={link.title}>
             <CotopiaButton

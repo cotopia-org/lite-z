@@ -127,8 +127,6 @@ export default function TimeTrackingDetails({ leaderboard, workspaceUsers, setSe
   );
 
 
-
-
   return (
     <ScrollArea className='h-72 flex flex-col gap-y-4 w-full'>
       {content}

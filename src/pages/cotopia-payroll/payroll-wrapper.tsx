@@ -8,10 +8,10 @@ interface Props {
 
 export default function PayrollWrapper({ children }: Props) {
   return (
-    <main className='w-full min-h-screen flex bg-slate-50 gap-x-2'>
-      <ScrollArea className='h-72 flex flex-col gap-y-4 w-full'>
-        <PayrollSideBar />
+    <main className='w-full min-h-screen flex gap-x-2'>
+      <PayrollSideBar />
 
+      <ScrollArea className='h-screen flex flex-col gap-y-4 w-full'>
         {children}
       </ScrollArea>
     </main>
