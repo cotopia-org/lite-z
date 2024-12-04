@@ -1,7 +1,6 @@
 import CTabs from "@/components/shared-ui/c-tabs";
 import AccountLogout from "@/components/shared/account-logout";
-import { Cog, Timer } from "lucide-react";
-import TitleSwitch from "@/components/shared/title-switch";
+import { Timer } from "lucide-react";
 import MonthCountdown from "../../counter";
 
 export default function PayrollUserSettings() {
@@ -12,14 +11,6 @@ export default function PayrollUserSettings() {
                 dividerBetweenContentAndTabs
                 defaultValue={"global-settings"}
                 items={[
-                    {
-                        icon: <Cog />,
-                        content: (<TitleSwitch
-                            title='Dark mode'
-                        // checked={}
-                        />),
-                        value: "global-settings",
-                    },
                     {
                         icon: <Timer />,
                         content: <MonthCountdown />,
