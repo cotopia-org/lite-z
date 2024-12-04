@@ -8,7 +8,7 @@ import CTabs from "@/components/shared-ui/c-tabs";
 import { MoneyRecive } from "@/components/icons";
 import UserContract from "./user-contract";
 import CFullDialog from "@/components/shared-ui/c-dialog/full-dialog";
-import PayrollPage from "@/pages/cotopia-payroll/payroll";
+import PayrollPage from "@/pages/cotopia-payroll/user/payroll";
 
 export default function PayrollButton() {
   const currentURL = typeof window !== "undefined" ? window.location.href : "";

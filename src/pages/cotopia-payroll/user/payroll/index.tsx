@@ -1,17 +1,23 @@
-import PayrollWrapper from "../payroll-wrapper";
+import PayrollWrapper from "../../payroll-wrapper";
 import PayrollUserContract from "@/components/shared/cotopia-payroll/user-information/user-contract";
 import { createContext, useContext, useState } from "react";
-import PayrollDashboard from "../dashboard";
+import PayrollDashboard from "../../common/users-payments";
 import PayrollPayments from "../payments";
+import Employees from "../../admin/employees/employees-table/employees-table";
+import PayrollCreateContract from "../../admin/create-contract";
+import PayrollCreatePayments from "../../admin/create-payments";
 
 type Props = {
   onClose: () => void;
 };
 
 export type PayrollPage =
+  | "all-members"
   | "user-contract"
   | "all-payment"
   | "payments"
+  | "create-contract"
+  | "create-payments"
 
 const PayrollContejxt = createContext<{
   onClose: () => void;
@@ -32,13 +38,21 @@ export default function PayrollPage({ onClose }: Props) {
     case "user-contract":
       content = <PayrollUserContract />;
       break;
+    case "create-contract":
+      content = <PayrollCreateContract />;
+      break;
+    case "create-payments":
+      content = <PayrollCreatePayments />;
+      break;
+    case "all-members":
+      content = <Employees />;
+      break;
     case "all-payment":
       content = <PayrollDashboard />;
       break;
     case "payments":
       content = <PayrollPayments />;
       break;
-
   }
 
   return (
