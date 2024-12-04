@@ -29,6 +29,7 @@ export default function PayrollUserDetails() {
                 axiosInstance
                     .put(`/users/update`, {
                         name: values.name,
+                        email: values.email,
                     })
                     .then((res) => {
                         actions.setSubmitting(false);

@@ -11,7 +11,7 @@ export default function PayrollWrapper({ children }: Props) {
     <main className='w-full min-h-screen flex gap-x-2'>
       <PayrollSideBar />
 
-      <ScrollArea className='h-screen flex flex-col gap-y-4 w-full'>
+      <ScrollArea className='h-screen flex flex-col gap-y-4 w-full py-3'>
         {children}
       </ScrollArea>
     </main>

@@ -18,7 +18,7 @@ export default function PayrollSideBarLink() {
       page: "user-contract",
       icon: <User />,
     },
-    { title: "Dashboard", page: "all-payment", icon: <Grid /> },
+    { title: "All Payments", page: "all-payment", icon: <Grid /> },
     { title: "Payments", page: "payments", icon: <Coins /> },
     { title: "Advance", page: "advance", icon: <Wallet /> },
   ];

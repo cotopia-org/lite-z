@@ -21,17 +21,6 @@ const RegisterPage = lazy(() => import("@/pages/auth/register"));
 // NotFound Page
 const NotFoundPage = lazy(() => import("@/pages/not-found"));
 
-// Payroll Pages
-const PayrollPage = lazy(() => import("@/pages/cotopia-payroll/payroll"));
-const PayrollDashboard = lazy(
-  () => import("@/pages/cotopia-payroll/dashboard")
-);
-const PayrollEmployees = lazy(
-  () => import("@/pages/cotopia-payroll/employees")
-);
-const PayrollPayments = lazy(() => import("@/pages/cotopia-payroll/payments"));
-const PayrollAdvance = lazy(() => import("@/pages/cotopia-payroll/advance"));
-
 const router = createBrowserRouter([
   {
     element: <PrivateRoutes />,
@@ -40,26 +29,6 @@ const router = createBrowserRouter([
       {
         path: "/",
         element: <Navigate to={paths.dashboard} />,
-      },
-      // {
-      //   path: "payroll",
-      //   element: <PayrollPage />,
-      // },
-      {
-        path: "payroll-employees",
-        element: <PayrollEmployees />,
-      },
-      {
-        path: "payroll-dashboard",
-        element: <PayrollDashboard />,
-      },
-      {
-        path: "payroll-payments",
-        element: <PayrollPayments />,
-      },
-      {
-        path: "payroll-advance",
-        element: <PayrollAdvance />,
       },
       {
         path: paths.dashboard,

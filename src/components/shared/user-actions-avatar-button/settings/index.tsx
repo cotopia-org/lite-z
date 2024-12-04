@@ -1,9 +1,8 @@
 import CTabs from "@/components/shared-ui/c-tabs";
-import { Cog, UserCog, Wallet } from "lucide-react";
+import { Cog, UserCog } from "lucide-react";
 import AdditionalInformation from "./additional-information";
 import GlobalSettings from "./global";
 import AccountLogout from "@/components/shared/account-logout";
-import PaymentsSettings from "./payment-setting";
 
 export default function UserSettings() {
   return (
@@ -22,11 +21,6 @@ export default function UserSettings() {
             icon: <Cog />,
             content: <GlobalSettings />,
             value: "global-settings",
-          },
-          {
-            icon: <Wallet />,
-            content: <PaymentsSettings />,
-            value: "payment-settings",
           },
         ]}
       />
