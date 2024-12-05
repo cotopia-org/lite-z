@@ -8,6 +8,7 @@ import CanvasBoard from "../../canvas-board"
 import { useAppSelector } from "@/store"
 import { useRoomContext } from "@livekit/components-react"
 import { VARZ } from "@/const/varz"
+import GridRoomView from "../grid-room-view"
 
 export default function RoomInner() {
   const { disconnect, connect } = useRoomContext()
@@ -30,9 +31,7 @@ export default function RoomInner() {
       <InitRoom />
       <div id="main-room-holder" className={mainRoomHolderClss}>
         <div className="w-full h-full relative">
-          <div className="w-full h-full bg-black text-white text-right">
-            grid view
-          </div>
+          <GridRoomView />
           {/* <CanvasBoard /> */}
         </div>
         {!!sidebar && (

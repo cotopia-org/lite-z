@@ -13,6 +13,7 @@ const TracksContextProvider = ({ children }: { children: ReactNode }) => {
     [
       { source: Track.Source.Camera, withPlaceholder: true },
       { source: Track.Source.Microphone, withPlaceholder: false },
+      { source: Track.Source.ScreenShare, withPlaceholder: false },
     ],
     {
       updateOnlyOn: [
@@ -27,10 +28,10 @@ const TracksContextProvider = ({ children }: { children: ReactNode }) => {
     }
   )
 
-  const finalTracks = useExcludeShareScreenTrack(tracks)
+  // const finalTracks = useExcludeShareScreenTrack(tracks)
 
   return (
-    <AllTracksContext.Provider value={{ tracks: finalTracks }}>
+    <AllTracksContext.Provider value={{ tracks }}>
       {children}
     </AllTracksContext.Provider>
   )
