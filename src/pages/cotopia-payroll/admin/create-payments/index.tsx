@@ -10,7 +10,7 @@ import { useCreatePayment } from "@/hooks/use-create-payments";
 import UserIdSelector from "../components/userId-input";
 
 export default function PayrollCreatePayments() {
-    const createPayment = useCreatePayment();
+    const { createPayment, loading } = useCreatePayment();
     const [state, dispatch] = useReducer(payrollReducer, PayrollInitialState);
     const userData = useAppSelector((store) => store.auth);
 
@@ -122,12 +122,12 @@ export default function PayrollCreatePayments() {
 
             <CotopiaButton
                 type="submit"
-                disabled={!isValid || !state.userContract}
+                disabled={!isValid || !state.userContract || loading}
                 className="w-full"
             >
                 {!state.userContract
                     ? "Please create a contract first before submitting payments."
-                    : "Create a new payment"}
+                    : loading ? "Creating..." : "Create a new payment"}
             </CotopiaButton>
         </form>
     );

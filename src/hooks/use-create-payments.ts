@@ -1,6 +1,7 @@
 import axios from "axios";
 import { toast } from "sonner";
 import useAuth from "./auth";
+import { useState } from "react";
 
 interface CreatePaymentProps {
   status: string;
@@ -15,9 +16,11 @@ interface CreatePaymentProps {
 
 export function useCreatePayment() {
   const { accessToken } = useAuth();
+  const [loading, setLoading] = useState(false);
 
   const createPayment = async (paymentData: CreatePaymentProps) => {
     try {
+      setLoading(true);
       await axios.post(
         `${process.env.REACT_APP_PUBLIC_API_URL}/payments`,
         paymentData,
@@ -31,8 +34,10 @@ export function useCreatePayment() {
     } catch (error) {
       console.error("Error creating payments:", error);
       toast.error("There was an error creating the payments!");
+    } finally {
+      setLoading(false); 
     }
   };
 
-  return createPayment;
+  return { createPayment, loading };
 }
