@@ -2,7 +2,7 @@ import { useAppSelector } from "@/store";
 import PayrollSectionTitle from "../sections-title";
 import { useApi } from "@/hooks/swr";
 import { JobType } from "@/types/job";
-import useUserContract from "@/hooks/contract";
+import useUserContract from "@/hooks/use-user-contract";
 
 function formatMinutesToHours(minutes: number): string {
     const hours = Math.floor(+minutes / 60);

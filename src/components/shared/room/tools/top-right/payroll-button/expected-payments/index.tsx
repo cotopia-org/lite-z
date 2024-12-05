@@ -2,7 +2,7 @@ import { useRoomContext } from "../../../../room-context";
 import useAuth from "@/hooks/auth";
 import { useApi } from "@/hooks/swr";
 import { LeaderboardType } from "@/types/leaderboard";
-import useUserContract from "@/hooks/contract";
+import useUserContract from "@/hooks/use-user-contract";
 import { useEffect, useState } from "react";
 
 export default function ExpectedPayments() {

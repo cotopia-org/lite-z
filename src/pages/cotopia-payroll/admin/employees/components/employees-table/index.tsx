@@ -4,8 +4,8 @@ import { useAppSelector } from "@/store";
 import { EmployeesRowData } from "@/types/payroll-table";
 import { fetchEmployeesData } from "@/utils/payroll";
 import { ColDef } from "ag-grid-community";
-import axios from "axios";
 import { useEffect, useState } from "react";
+import MembersContract from "../user-contract";
 
 
 function Avatar({ avatarUrl, userName }: { avatarUrl: string, userName: string }) {
@@ -29,7 +29,10 @@ const employeesColDefs: ColDef<EmployeesRowData>[] = [
   { headerName: "Status", field: "status" },
   { headerName: "Last Login", field: "last_login" },
   { headerName: "Active Job", field: "active_job.title" },
-  { headerName: "User Contract", field: "user_contract" },
+  {
+    headerName: "User Contract", field: "user_contract", cellRenderer: (params: { data: EmployeesRowData }) => <MembersContract userId={Number(params.data.id)} />, flex: 1,
+    minWidth: 220,
+  },
 ];
 
 export default function Employees() {

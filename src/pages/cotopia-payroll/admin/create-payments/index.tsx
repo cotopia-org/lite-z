@@ -1,142 +1,134 @@
-import { useEffect, useState, useMemo, useCallback } from "react";
-import { useFormik } from "formik";
-import * as Yup from "yup";
-import { toast } from "sonner";
-import axios from "axios";
 import CotopiaButton from "@/components/shared-ui/c-button";
 import { useAppSelector } from "@/store";
+import { useFormik } from "formik";
+import { useEffect, useReducer, useCallback } from "react";
+import { initialValuePayments, validationSchemaPayments } from "@/utils/payroll-forms-settings";
 import { fetchEmployeesData, fetchUserContract } from "@/utils/payroll";
-import EmployeeSelection from "./components/employee-selection";
-import PaymentDetails from "./components/payment-details";
-import UserAvatarSection from "./components/user-avatar-section";
+import PaymentsInputs from "./components/payments-inputs";
+import { PayrollInitialState, payrollReducer } from "./state";
+import { useCreatePayment } from "@/hooks/use-create-payments";
+import UserIdSelector from "../components/userId-input";
 
-function PayrollCreatePayments() {
-    const [employees, setEmployees] = useState<any[]>([]);
-    const [selectedEmployee, setSelectedEmployee] = useState<any | null>(null);
-    const [contractAmount, setContractAmount] = useState<number | null>(null);
-    const [contractId, setContractId] = useState<number | null>(null);
-    const [userError, setUserError] = useState<string | null>(null);
-    const [contractError, setContractError] = useState<string | null>(null);
-
+export default function PayrollCreatePayments() {
+    const createPayment = useCreatePayment();
+    const [state, dispatch] = useReducer(payrollReducer, PayrollInitialState);
     const userData = useAppSelector((store) => store.auth);
 
     useEffect(() => {
-        const loadEmployees = async () => {
+        async function fetchEmployees() {
             try {
-                const employeesData = await fetchEmployeesData(userData.accessToken!);
-                setEmployees(employeesData);
+                const data = await fetchEmployeesData(userData.accessToken!);
+
+                const normalizedData = data.map((employee: any) => ({
+                    id: employee.id?.toString(),
+                    name: employee.name || "no name",
+                    username: employee.username,
+                    avatar: employee.avatar || { url: "" },
+                }));
+
+                dispatch({ type: "SET_EMPLOYEES", payload: normalizedData });
             } catch (error) {
-                console.error("Error fetching employees:", error);
+                console.error("Error fetching employees data:", error);
             }
-        };
+        }
+
         if (userData.accessToken) {
-            loadEmployees();
+            fetchEmployees();
         }
     }, [userData.accessToken]);
 
-    const handleUserIdChange = useCallback(async (id: string) => {
-        const employee = employees.find((emp) => emp.id === id);
-        if (!employee) {
-            setUserError("User ID not found");
-            setSelectedEmployee(null);
-        } else {
-            setUserError(null);
-            setSelectedEmployee(employee);
-            const contract = await fetchUserContract(id, userData.accessToken!);
-            if (contract) {
-                setContractAmount(contract.amount);
-                setContractId(contract.id);
-                setContractError(null);
-            } else {
-                setContractAmount(null);
-                setContractError("No contract found for this user.");
-                toast.error("No contract found for this user.");
-            }
-        }
-    }, [employees, userData.accessToken]);
+    const getUserContract = useCallback(
+        async (id: number) => {
+            try {
+                const contract = await fetchUserContract(+id, userData.accessToken!);
 
-    const validationSchema = Yup.object({
-        type: Yup.string().required("Payment type is required"),
-        userId: Yup.string().required("User ID is required").matches(/^\d+$/, "User ID must be a number"),
-        hours: Yup.number().required("Hours is required").min(1, "Hours must be at least 1"),
-        bonus: Yup.number().min(0, "Bonus cannot be negative"),
-    });
+                if (contract) {
+                    dispatch({ type: "SET_CONTRACT_ID_ERROR", payload: null });
+                    dispatch({ type: "SET_USER_CONTRACT", payload: contract });
+                } else {
+                    dispatch({ type: "SET_CONTRACT_ID_ERROR", payload: "User does not have a contract." });
+                    dispatch({ type: "SET_USER_CONTRACT", payload: null });
+                }
+            } catch (error) {
+                console.error("Error fetching user contract:", error);
+                dispatch({ type: "SET_USER_CONTRACT", payload: null });
+            }
+        },
+        [userData.accessToken]
+    );
+
+    const handleUserIdChange = useCallback(
+        async (id: string) => {
+            const employee = state.employees.find((emp) => emp.id === id);
+            if (!employee) {
+                dispatch({ type: "SET_USER_ID_ERROR", payload: "User ID not found" });
+                dispatch({ type: "SET_SELECTED_EMPLOYEE", payload: null });
+                dispatch({ type: "SET_USER_CONTRACT", payload: null });
+            } else {
+                dispatch({ type: "SET_USER_ID_ERROR", payload: null });
+                dispatch({ type: "SET_SELECTED_EMPLOYEE", payload: employee });
+                getUserContract(+id);
+            }
+        },
+        [state.employees, getUserContract]
+    );
 
     const formik = useFormik({
         enableReinitialize: true,
-        initialValues: {
-            userId: "",
-            type: "",
-            hours: "",
-            totalAmount: "",
-            bonus: "",
-        },
-        validationSchema,
-        onSubmit: async (values) => {
-            try {
-                await axios.post(`${process.env.REACT_APP_PUBLIC_API_URL}/payments`, {
-                    status: 0,
-                    amount: Number(values.totalAmount),
-                    bonus: Number(values.bonus),
-                    round: 0,
-                    total_hours: Number(values.hours),
-                    user_id: values.userId,
-                    contract_id: contractId,
+        initialValues: initialValuePayments,
+        validationSchema: validationSchemaPayments,
+        onSubmit: (values) => {
+            if (state.userContract?.id) {
+                createPayment({
+                    status: "paid",
+                    amount: +values.total_amount,
+                    bonus: +values.bonus,
+                    round: +values.round,
+                    total_hours: +values.total_hours,
+                    user_id: +values.user_id,
+                    contract_id: state.userContract.id,
                     type: values.type,
-                }, {
-                    headers: { Authorization: `Bearer ${userData.accessToken}` },
                 });
-                toast.success("Payment created successfully!");
-                setSelectedEmployee(null);
-                formik.resetForm();
-            } catch (error) {
-                toast.error("Failed to create the payment.");
-                console.error("Error creating payment:", error);
             }
         },
     });
 
-    const calculatedTotalAmount = useMemo(() => {
-        if (formik.values.hours && contractAmount !== null) {
-            return (Number(formik.values.hours) * contractAmount) + (Number(formik.values.bonus) || 0);
-        }
-        return 0;
-    }, [formik.values.hours, formik.values.bonus, contractAmount]);
-
-    useEffect(() => {
-        formik.setFieldValue("totalAmount", calculatedTotalAmount);
-    }, [calculatedTotalAmount, formik]);
+    const { touched, errors, getFieldProps, handleSubmit, isValid, values } = formik;
 
     return (
-        <form onSubmit={formik.handleSubmit} className="w-full h-screen p-4 flex flex-col gap-y-8 items-center justify-center">
+        <form onSubmit={handleSubmit} className="w-full p-4 flex flex-col gap-y-8 items-center">
 
             <div className="w-full grid grid-cols-2 gap-x-4 gap-y-4">
-                <EmployeeSelection
-                    employees={employees}
-                    onUserIdChange={handleUserIdChange}
-                    userError={userError}
-                    contractError={contractError}
+                <PaymentsInputs
+                    errors={errors}
+                    touched={touched}
+                    getFieldProps={getFieldProps}
+                    userContract={state.userContract}
+                    values={values}
                 />
 
-                <PaymentDetails
-                    formik={formik}
-                    contractAmount={contractAmount}
-                    calculatedTotalAmount={calculatedTotalAmount}
+                <UserIdSelector
+                    employees={state.employees}
+                    selectedEmployee={state.selectedEmployee}
+                    userIdError={state.userIdError}
+                    contractIdError={state.contractIdError}
+                    handleUserIdChange={handleUserIdChange}
+                    touched={touched.user_id}
+                    error={errors.user_id}
+                    value={values.user_id}
+                    setFieldValue={formik.setFieldValue}
                 />
             </div>
 
-            <UserAvatarSection selectedEmployee={selectedEmployee} />
-
             <CotopiaButton
-                loading={formik.isSubmitting}
                 type="submit"
-                disabled={!formik.isValid || formik.isSubmitting || !!userError || !!contractError}
+                disabled={!isValid || !state.userContract}
                 className="w-full"
             >
-                {contractError ? "No contract found, please create one first" : "Create a new payment"}
+                {!state.userContract
+                    ? "Please create a contract first before submitting payments."
+                    : "Create a new payment"}
             </CotopiaButton>
         </form>
     );
-};
-
-export default PayrollCreatePayments;
+}

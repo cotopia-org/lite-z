@@ -1,5 +1,5 @@
 import UserAvatar from "@/components/shared/user-avatar";
-import useUserContract from "@/hooks/contract";
+import useUserContract from "@/hooks/use-user-contract";
 import { useAppSelector } from "@/store";
 
 export default function UserContract() {

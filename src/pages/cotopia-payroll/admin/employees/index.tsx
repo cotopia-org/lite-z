@@ -1,5 +1,5 @@
-import Employees from "./employees-table/employees-table";
 import { useAppSelector } from "@/store";
+import Employees from "./components/employees-table";
 
 export default function PayrollEmployees() {
   const user = useAppSelector((store) => store.auth.user);

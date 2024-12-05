@@ -3,9 +3,9 @@ import PayrollUserContract from "@/components/shared/cotopia-payroll/user-inform
 import { createContext, useContext, useState } from "react";
 import PayrollDashboard from "../../common/users-payments";
 import PayrollPayments from "../payments";
-import Employees from "../../admin/employees/employees-table/employees-table";
 import PayrollCreateContract from "../../admin/create-contract";
 import PayrollCreatePayments from "../../admin/create-payments";
+import Employees from "../../admin/employees/components/employees-table";
 
 type Props = {
   onClose: () => void;

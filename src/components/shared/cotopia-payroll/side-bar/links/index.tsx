@@ -1,4 +1,4 @@
-import { Coins, Grid, User, X } from "lucide-react";
+import { CircleDollarSign, Coins, Grid, HandCoins, User, UserRoundPen, Users, X } from "lucide-react";
 import CotopiaButton from "@/components/shared-ui/c-button";
 import { PayrollPage, usePayroll } from "@/pages/cotopia-payroll/user/payroll";
 import { ReactNode } from "react";
@@ -24,22 +24,27 @@ export default function PayrollSideBarLink() {
         {
           title: "Members",
           page: "all-members",
-          icon: <User />,
+          icon: <Users />,
         },
         {
           title: "Users Payments",
           page: "all-payment",
-          icon: <Grid />,
+          icon: <CircleDollarSign />,
         },
         {
           title: "Create Contract",
           page: "create-contract",
-          icon: <Grid />,
+          icon: <UserRoundPen />,
         },
         {
           title: "Create Payments",
           page: "create-payments",
-          icon: <User />,
+          icon: <HandCoins />,
+        },
+        {
+          title: "Payments",
+          page: "payments",
+          icon: <Coins />,
         },
       ]
 

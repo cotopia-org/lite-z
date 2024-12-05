@@ -1,4 +1,4 @@
-import useUserContract from "@/hooks/contract";
+import useUserContract from "@/hooks/use-user-contract";
 import PayrollSectionTitle from "../sections-title";
 
 export default function PayrollContractDetails() {

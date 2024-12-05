@@ -1,7 +1,8 @@
 import CTabs from "@/components/shared-ui/c-tabs";
 import AccountLogout from "@/components/shared/account-logout";
-import { Timer } from "lucide-react";
+import { Cog, Timer } from "lucide-react";
 import MonthCountdown from "../../counter";
+import EditPaymentAddress from "../../edit-payment-address";
 
 export default function PayrollUserSettings() {
     return (
@@ -11,6 +12,11 @@ export default function PayrollUserSettings() {
                 dividerBetweenContentAndTabs
                 defaultValue={"global-settings"}
                 items={[
+                    {
+                        icon: <Cog />,
+                        content: <EditPaymentAddress />,
+                        value: "global-settings",
+                    },
                     {
                         icon: <Timer />,
                         content: <MonthCountdown />,
