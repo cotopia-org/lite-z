@@ -80,7 +80,7 @@ export default function PayrollCreatePayments() {
         onSubmit: (values) => {
             if (state.userContract?.id) {
                 createPayment({
-                    status: "paid",
+                    status: +values.status ? "Paid" : "Not paid",
                     amount: +values.total_amount,
                     bonus: +values.bonus,
                     round: +values.round,
