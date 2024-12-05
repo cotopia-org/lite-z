@@ -17,9 +17,6 @@ export const validationSchemaPayments = Yup.object().shape({
   total_hours: Yup.number()
     .required("Total hours are required.")
     .typeError("Total hours must be a valid number."),
-  user_id: Yup.number()
-    .required("User ID is required.")
-    .typeError("User ID must be a valid number."),
 });
 
 // Initial Values payments
@@ -159,8 +156,4 @@ export const validationSchemaContract = Yup.object().shape({
       [0, 1],
       "Contractor sign status must be either 0 (unsigned) or 1 (signed)."
     ),
-  user_id: Yup.number()
-    .required("User ID is required.")
-    .typeError("User ID must be a valid number.")
-    .positive("User ID must be a positive number."),
 });

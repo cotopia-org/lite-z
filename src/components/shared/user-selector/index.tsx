@@ -10,19 +10,21 @@ type Props = {
   onPick?: (item: UserMinimalType) => void;
   afterTitle?: ReactNode;
   defaultSelectedId?: number;
+  label?: boolean;
 };
 
 export default function UserSelector({
   onPick,
   afterTitle,
   defaultSelectedId,
+  label,
 }: Props) {
-  const [selected, setSelected] = useState<UserMinimalType>();
-  useEffect(() => {
-    if (defaultSelectedId === undefined) setSelected(undefined);
-  }, [defaultSelectedId]);
-
+  const [selected, setSelected] = useState<UserMinimalType | null>(null);
   const [search, setSearch] = useState("");
+
+  useEffect(() => {
+    if (defaultSelectedId === undefined) setSelected(null);
+  }, [defaultSelectedId]);
 
   const { data, isLoading } = useApi<FetchDataType<UserMinimalType[]>>(
     `/users/search`,
@@ -36,10 +38,10 @@ export default function UserSelector({
     }
   );
 
-  const items = data !== undefined ? data?.data : [];
+  const items = data?.data || [];
 
   const handlePick = (item: UserMinimalType) => {
-    setSearch("");
+    setSearch(""); 
     setSelected(item);
     if (onPick) onPick(item);
   };
@@ -57,24 +59,32 @@ export default function UserSelector({
 
   if (items.length === 0 && data !== undefined)
     content = (
-      <strong className='p-4 shadow-md rounded-lg text-sm'>{`Could not find a Cotopia account ${
-        search ? `matching "${search}"` : ""
-      }`}</strong>
+      <strong className="p-4 shadow-md rounded-lg text-sm">{`Could not find a Cotopia account ${search ? `matching "${search}"` : ""
+        }`}</strong>
     );
 
   if (isLoading) content = <FullLoading />;
 
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setSearch(e.target.value);
+    if (selected) setSelected(null); 
+  };
+
   return (
-    <div className='flex flex-col gap-y-4'>
-      <p className='text-black/60'>Search by username, full name, or email</p>
-      {!!afterTitle && afterTitle}
-      {selected === undefined && (
-        <CotopiaInput
-          placeholder='Find people'
-          onChange={(e) => setSearch(e.target.value)}
-          value={search}
-        />
+    <div className="flex flex-col gap-y-4">
+      {label && (
+        <p className="text-black/60">Search by username, full name, or email</p>
       )}
+
+      {!!afterTitle && afterTitle}
+
+      <CotopiaInput
+        label={!label ? "Select User" : ""}
+        placeholder={selected ? "Selected user" : "Find people"}
+        value={selected ? selected.name : search}
+        onChange={handleChange}
+      />
+
       {content}
     </div>
   );

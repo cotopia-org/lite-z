@@ -4,11 +4,16 @@ import { toast } from "sonner";
 import { useAppSelector } from "@/store";
 import { FormikValues } from "formik";
 
+interface Props {
+  values : FormikValues,
+  userId : number,
+}
+
 const useCreateContract = () => {
   const [loading, setLoading] = useState(false);
   const userData = useAppSelector((store) => store.auth);
 
-  const createContract = async (values: FormikValues) => {
+  const createContract = async ({values , userId} : Props) => {
     setLoading(true);
 
     try {
@@ -35,7 +40,7 @@ const useCreateContract = () => {
           role: values.role,
           user_sign_status: +values.user_sign_status,
           contractor_sign_status: +values.contractor_sign_status,
-          user_id: +values.user_id,
+          user_id: userId,
         },
         {
           headers: {

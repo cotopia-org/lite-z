@@ -1,7 +1,7 @@
 import CotopiaInput from "@/components/shared-ui/c-input";
 import { PayrollCreateContract } from "@/types/payroll-create-contract";
 
-export default function PayrollContractInputs({ errors, touched, getFieldProps }: PayrollCreateContract) {
+export default function PayrollContractInputs({ errors, touched, getFieldProps , selectedUser}: PayrollCreateContract) {
     return (
         <>
             <CotopiaInput
@@ -173,6 +173,17 @@ export default function PayrollContractInputs({ errors, touched, getFieldProps }
                 type="number"
                 hasError={!!touched.contractor_sign_status && !!errors.contractor_sign_status}
                 helperText={touched.contractor_sign_status && typeof errors.contractor_sign_status === "string" ? errors.contractor_sign_status : ""}
+            />
+
+            <CotopiaInput
+                {...getFieldProps("user_id")}
+                placeholder="Enter the user id"
+                label="User id"
+                type="number"
+                value={selectedUser?.id || ""}
+                disabled
+                hasError={!!touched.user_id && !!errors.user_id}
+                helperText={touched.user_id && typeof errors.user_id === "number" ? errors.user_id : ""}
             />
 
         </>

@@ -1,18 +1,19 @@
 import CotopiaButton from "@/components/shared-ui/c-button";
 import { useAppSelector } from "@/store";
 import { useFormik } from "formik";
-import { useEffect, useCallback, useReducer } from "react";
+import { useEffect, useCallback, useReducer, useState } from "react";
 import { initialValueContract, validationSchemaContract } from "@/utils/payroll-forms-settings";
 import PayrollContractInputs from "./components/contract-inputs";
-import UserIdSelector from "../components/userId-input";
 import { fetchEmployeesData, fetchUserContract } from "@/utils/payroll";
 import { PayrollInitialState, payrollReducer } from "../create-payments/state";
 import useCreateContract from "@/hooks/use-create-contract";
+import UserSelector from "@/components/shared/user-selector";
+import { UserMinimalType } from "@/types/user";
 
 export default function PayrollCreateContract() {
     const [state, dispatch] = useReducer(payrollReducer, PayrollInitialState);
     const userData = useAppSelector((store) => store.auth);
-
+    const [selectedUser, setSelectedUser] = useState<UserMinimalType | null>(null);
     const { createContract, loading } = useCreateContract();
 
     useEffect(() => {
@@ -80,36 +81,33 @@ export default function PayrollCreateContract() {
         initialValues: initialValueContract,
         validationSchema: validationSchemaContract,
         onSubmit: (values) => {
-            createContract(values);
+            createContract({ values, userId: +selectedUser?.id! });
         },
     });
 
-    const { touched, errors, getFieldProps, handleSubmit, isValid, values } = formik;
+    const { touched, errors, getFieldProps, handleSubmit, isValid } = formik;
 
     return (
         <form onSubmit={handleSubmit} className="w-full p-4 flex flex-col gap-y-8 items-center">
             <div className="w-full grid grid-cols-2 gap-x-4 gap-y-4">
-                <PayrollContractInputs errors={errors} getFieldProps={getFieldProps} touched={touched} />
+                <PayrollContractInputs errors={errors} getFieldProps={getFieldProps} touched={touched} selectedUser={selectedUser!}
+                />
 
-                <UserIdSelector
-                    employees={state.employees}
-                    selectedEmployee={state.selectedEmployee}
-                    userIdError={state.userIdError}
-                    contractIdError={state.contractIdError}
-                    handleUserIdChange={handleUserIdChange}
-                    touched={touched.user_id}
-                    error={errors.user_id}
-                    value={values.user_id}
-                    setFieldValue={formik.setFieldValue}
+                <UserSelector
+                    label={false}
+                    onPick={(user) => {
+                        setSelectedUser(user);
+                        handleUserIdChange(user.id.toString());
+                    }}
                 />
             </div>
 
             <CotopiaButton
                 type="submit"
-                disabled={!isValid || loading} 
+                disabled={!isValid || loading}
                 className="w-full"
             >
-                {loading ? "Creating..." : "Create a new contract"} 
+                {loading ? "Creating..." : "Create a new contract"}
             </CotopiaButton>
         </form>
     );

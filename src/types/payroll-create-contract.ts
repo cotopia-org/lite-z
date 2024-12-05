@@ -1,3 +1,4 @@
+import { UserMinimalType } from './user';
 import { UserContractType } from "@/types/contract";
 import {
   FieldConfig,
@@ -15,4 +16,5 @@ export interface PayrollCreateContract {
   touched: FormikTouched<FormikValues>;
   userContract?: UserContractType | null;
   values?: FormikValues;
+  selectedUser? : UserMinimalType;
 }
