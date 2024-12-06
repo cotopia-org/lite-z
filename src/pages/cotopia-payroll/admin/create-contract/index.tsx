@@ -93,13 +93,19 @@ export default function PayrollCreateContract() {
                 <PayrollContractInputs errors={errors} getFieldProps={getFieldProps} touched={touched} selectedUser={selectedUser!}
                 />
 
-                <UserSelector
-                    label={false}
-                    onPick={(user) => {
-                        setSelectedUser(user);
-                        handleUserIdChange(user.id.toString());
-                    }}
-                />
+
+                <div className="flex flex-1 flex-col gap-y-2">
+                    <UserSelector
+                        label={false}
+                        onPick={(user) => {
+                            setSelectedUser(user);
+                            handleUserIdChange(user.id.toString());
+                        }}
+                    />
+                    {state.contractIdError && (
+                        <p className="font-medium text-sm text-gray-600">{state.contractIdError}</p>
+                    )}
+                </div>
             </div>
 
             <CotopiaButton
