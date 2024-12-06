@@ -47,9 +47,9 @@ const JobItem = ({
             </CotopiaTooltip>
           </span>
 
-          <span className={"text-xs text-slate-400"}>
+          <small className={"text-xs text-slate-400"}>
             {moment(item.created_at).fromNow()}
-          </span>
+          </small>
         </div>
         {!!hasAction && (
           <div className="flex flex-row gap-x-3 items-center">
