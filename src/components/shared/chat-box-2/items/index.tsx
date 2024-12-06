@@ -13,6 +13,8 @@ import FullLoading from "../../full-loading";
 import { useAppDispatch } from "@/store";
 import { getNextMessages, getPrevMessages } from "@/store/slices/chat-slice";
 import { thunkResHandler } from "@/utils/utils";
+import moment from "moment";
+import ChatDate from "./date";
 
 type Props = {
   chat_id: number;
@@ -179,15 +181,28 @@ export default function Items({
     <>
       {!!isFetching && <FetchingProgress />}
       <VList className='h-full' ref={vlistRef} onScroll={handleScroll}>
-        {messages.map((message, i) => (
-          <div key={i}>
-            <ChatItem
-              item={message}
-              key={message.nonce_id}
-              isMine={message?.user === profile?.id}
-            />
-          </div>
-        ))}
+        {messages.map((message, i) => {
+          const messageDate = moment(
+            message?.created_at ? message?.created_at * 1000 : message?.nonce_id
+          ).format("dddd, MMMM D, YYYY");
+          const messagePrevDate = moment(
+            messages[i - 1]?.created_at
+              ? messages[i - 1]?.created_at * 1000
+              : messages[i - 1]?.nonce_id
+          ).format("dddd, MMMM D, YYYY");
+          const showDateHeader = messageDate !== messagePrevDate;
+
+          return (
+            <div key={i}>
+              {!!showDateHeader && <ChatDate date={messageDate} />}
+              <ChatItem
+                item={message}
+                key={message.nonce_id}
+                isMine={message?.user === profile?.id}
+              />
+            </div>
+          );
+        })}
       </VList>
     </>
   );
