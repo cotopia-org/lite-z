@@ -1,4 +1,3 @@
-import { ReactNode } from "react";
 import { JobType } from "./job";
 import { AttachmentFileType } from "./file";
 
@@ -12,6 +11,18 @@ export interface AdvanceRowData {
 
 export interface PaymentsRowData {
   id: string;
+  date: string;
+  totalHours: number;
+  bonus: number;
+  round: number;
+  amount: number;
+  status: string;
+}
+
+export interface UsersPaymentsRowData {
+  id: string;
+  username: string;
+  totalHours: number;
   date: string;
   bonus: number;
   round: number;
@@ -27,7 +38,7 @@ export interface EmployeesRowData {
   active_job: JobType;
   email: string;
   last_login: string;
-  avatar : AttachmentFileType;
+  avatar: AttachmentFileType;
   user_contract: string;
 }
 

@@ -1,22 +1,23 @@
 import PayrollTable from "@/components/shared/cotopia-payroll/p-table";
 import { useAppSelector } from "@/store";
-import { PaymentsRowData, paymentType } from "@/types/payroll-table";
+import { UsersPaymentsRowData, paymentType } from "@/types/payroll-table";
 import { ColDef } from "ag-grid-community";
 import axios from "axios";
 import { useEffect, useState } from "react";
 
-const paymentsColDefs: ColDef<PaymentsRowData>[] = [
+const usersPaymentsColDefs: ColDef<UsersPaymentsRowData>[] = [
   { headerName: "ID", field: "id", checkboxSelection: true },
-  { headerName: "Date", field: "date" },
+  { headerName: "Username", field: "username" },
   { headerName: "Total hours", field: "totalHours" },
+  { headerName: "Date", field: "date" },
   { headerName: "Bonus", field: "bonus" },
   { headerName: "Round", field: "round" },
   { headerName: "Amount", field: "amount" },
   { headerName: "Status", field: "status" },
 ];
 
-export default function Payments() {
-  const [payments, setPayments] = useState<PaymentsRowData[]>([]);
+export default function UserPayments() {
+  const [payments, setPayments] = useState<UsersPaymentsRowData[]>([]);
   const userData = useAppSelector((store) => store.auth);
 
   useEffect(() => {
@@ -32,27 +33,27 @@ export default function Payments() {
 
         const filteredData = data
           .filter((item: paymentType) => item.type !== "advance")
-          .filter((item : paymentType) => item.user_id === userData.user?.id)
           .map((item: paymentType) => ({
             id: item.id.toString(),
-            date: new Date(item.created_at).toLocaleDateString(),
+            username: "no name",
             totalHours: item.total_hours,
+            date: new Date(item.created_at).toLocaleDateString(),
             amount: item.amount,
             status: +item.status ? "Paid" : "Not yet",
-            bonus: item.bonus || 0, 
-            round: item.round || 0, 
+            bonus: item.bonus || 0,
+            round: item.round || 0,
           }));
 
         setPayments(filteredData);
       } catch (error) {
         console.error("Error fetching payment data:", error);
       }
-    } 
+    }
 
     fetchPayments();
-  }, [userData.accessToken , userData.user?.id]);
+  }, [userData.accessToken, userData.user?.id]);
 
   return (
-        <PayrollTable<PaymentsRowData> rowData={payments} colData={paymentsColDefs} />
+    <PayrollTable<UsersPaymentsRowData> rowData={payments} colData={usersPaymentsColDefs} />
   );
 }

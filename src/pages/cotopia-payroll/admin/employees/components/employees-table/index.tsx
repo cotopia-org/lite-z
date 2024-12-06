@@ -6,13 +6,7 @@ import { fetchEmployeesData } from "@/utils/payroll";
 import { ColDef } from "ag-grid-community";
 import { useEffect, useState } from "react";
 import MembersContract from "../user-contract";
-
-
-function Avatar({ avatarUrl, userName }: { avatarUrl: string, userName: string }) {
-  return (
-    <UserAvatar src={avatarUrl} title={userName} />
-  );
-}
+import { TableAvatar } from "@/pages/cotopia-payroll/admin/employees/components/table-avatar";
 
 const employeesColDefs: ColDef<EmployeesRowData>[] = [
   { headerName: "ID", field: "id", checkboxSelection: true },
@@ -22,7 +16,7 @@ const employeesColDefs: ColDef<EmployeesRowData>[] = [
   {
     headerName: "User Avatar",
     field: "avatar",
-    cellRenderer: (params: any) => <Avatar avatarUrl={params.value?.url} userName={params.data?.username} />,
+    cellRenderer: (params: any) => <TableAvatar avatarUrl={params.value?.url} userName={params.data?.username} />,
     flex: 1,
     minWidth: 120,
   },

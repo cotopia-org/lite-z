@@ -12,7 +12,7 @@ export default function PayrollTable<T>({ rowData, colData }: Props<T>) {
     return (
         <div
             className="ag-theme-quartz-dark p-4"
-            style={{ height: 650, width: '100%' }}
+            style={{ height: '100%', width: '100%' }}
         >
             <AgGridReact
                 rowData={rowData}
@@ -20,6 +20,7 @@ export default function PayrollTable<T>({ rowData, colData }: Props<T>) {
                 rowSelection="single"
                 paginationPageSize={10}
                 pagination={true}
+                suppressHorizontalScroll={false}
             />
         </div>
     );
