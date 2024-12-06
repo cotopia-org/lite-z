@@ -1,5 +1,4 @@
 import PayrollTable from "@/components/shared/cotopia-payroll/p-table";
-import UserAvatar from "@/components/shared/user-avatar";
 import { useAppSelector } from "@/store";
 import { EmployeesRowData } from "@/types/payroll-table";
 import { fetchEmployeesData } from "@/utils/payroll";
