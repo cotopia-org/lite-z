@@ -22,6 +22,7 @@ export interface PaymentsRowData {
 export interface UsersPaymentsRowData {
   id: string;
   username: string;
+  avatar: AttachmentFileType;
   totalHours: number;
   date: string;
   bonus: number;

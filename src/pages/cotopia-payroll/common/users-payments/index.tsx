@@ -1,7 +1,7 @@
-import UserPayments from "./user-payments-table/payment-table";
+import UsersPayments from "./user-payments-table/payment-table";
 
 export default function PayrollDashboard() {
   return (
-    <UserPayments />
+    <UsersPayments />
   );
 }
