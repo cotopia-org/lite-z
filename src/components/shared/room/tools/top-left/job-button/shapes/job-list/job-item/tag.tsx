@@ -8,9 +8,9 @@ type Props = {
 export default function JobTag({job}: Props) {
 
 
-    console.log(job)
     return (
-        <div className={'flex flex-row gap-x-2'}>
+        <div className={'flex flex-row gap-x-2 border rounded-full items-center p-2'}>
+            <strong className={'text-xs'}>Tags</strong>
             {job.tags.map(tag => {
                 return <StatusBox
                     label={

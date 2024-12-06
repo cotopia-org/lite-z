@@ -30,10 +30,12 @@ export default function JobButton() {
 
 
     let jobItems = (data && data?.data) ?? [];
+    let suggestItems = (suggestionsJobs && suggestionsJobs?.data) ?? [];
     let job_label = "Create job";
     const active_job = jobItems.find((j) => j.status === "in_progress");
     if (active_job) job_label = active_job.title.length > 20 ? active_job.title.slice(0, 20) + '... ' : active_job.title;
     if (!active_job && jobItems.length > 0) job_label = "Start job";
+
 
     return (
         <PopupBox
@@ -43,6 +45,9 @@ export default function JobButton() {
                     startIcon={<BriefcaseIcon size={20}/>}
                     open={open}
                 >
+
+                    {suggestItems.length > 0 &&
+                        <div className='absolute top-2 right-2 w-2 h-2 bg-red-600 rounded-full'></div>}
                     {job_label}
                 </ToolButton>
             )}
@@ -92,15 +97,18 @@ export default function JobButton() {
                                 value: "completed",
                             },
                             {
-                                title: "Suggestions",
+                                title: 'Suggested',
                                 content: (
                                     <JobItems
                                         hasAction
-                                        items={suggestionsJobs}
+                                        items={suggestItems}
                                         onMutate={mutate}
+                                        suggested={true}
                                     />
                                 ),
                                 value: "suggestions",
+                                badge: suggestItems.length > 0
+
                             },
                         ]}
                     />
