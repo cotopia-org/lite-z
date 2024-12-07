@@ -5,8 +5,8 @@ import {
 
 import SessionWrapper from "./wrapper"
 
-import { useUserSessionCtx } from "@/components/shared/room/sessions/user-session"
 import RfUserParticipant from "@/components/shared/participant-tiles/rf-user-participant"
+import { useUserSessionCtx } from "@/components/shared/room/sessions/wrapper/user-session"
 
 type Props = {
   defaultIsDragging: boolean

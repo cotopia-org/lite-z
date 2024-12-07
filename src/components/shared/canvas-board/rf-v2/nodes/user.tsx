@@ -1,8 +1,8 @@
 import { useMemo } from "react"
 import { useParticipants } from "@livekit/components-react"
-import UserSession from "@/components/shared/room/sessions/user-session"
 import DraggableCircle from "@/routes/private-wrarpper/components/session/draggable-circle"
 import { useAllTrackContext } from "@/components/shared/room/sessions/context/tracks-provider"
+import UserSession from "@/components/shared/room/sessions/wrapper/user-session"
 
 const UserNode = (props: any) => {
   const { data, dragging } = props

@@ -1,7 +1,6 @@
 import { useEffect, useRef, useState } from "react"
 import { useRoomContext } from "../room-context"
 import { TracksContextProvider } from "../sessions/context"
-import MeetingRoom from "./meeting-room"
 
 import MeetingWrapper from "./wrapper"
 import { UserMinimalType } from "@/types/user"
@@ -11,12 +10,19 @@ import { useAllTrackContext } from "../sessions/context/tracks-provider"
 import { isScreenShareExist } from "@/lib/utils"
 import { useSocket } from "@/routes/private-wrarpper"
 import { LivekitTrackPublishedType } from "@/types/socket"
+import MeetingRoom from "./meeting-room"
+import { RoomAudioRenderer } from "@livekit/components-react"
 
 interface Props {}
 
-type MeetingNodeType = {
+export enum MeetingTileType {
+  "UserTile" = "user",
+  "ShareScreenTile" = "share-screen",
+}
+
+export type MeetingNodeType = {
   id: string | number
-  type: "user" | "share-screen"
+  type: MeetingTileType
   participant: UserMinimalType
 }
 
@@ -46,7 +52,7 @@ const GridRoomView = (props: Props) => {
         ...crt,
         {
           id: shareScreenTrack?.publication?.track?.sid as string,
-          type: "share-screen",
+          type: MeetingTileType.ShareScreenTile,
           participant: targetParticipant,
         },
       ]
@@ -59,7 +65,11 @@ const GridRoomView = (props: Props) => {
     if (initRef.current === true) return
     if (initParticipants.length === 0) return
     setNodes(
-      initParticipants.map((p) => ({ id: p.id, type: "user", participant: p }))
+      initParticipants.map((p) => ({
+        id: p.id,
+        type: MeetingTileType.UserTile,
+        participant: p,
+      }))
     )
     initRef.current = true
   }, [room?.participants])
@@ -70,7 +80,11 @@ const GridRoomView = (props: Props) => {
       //update participants when somebody join into the room
       const participants: UserMinimalType[] = data?.participants || []
       setNodes(
-        participants.map((p) => ({ id: p.id, type: "user", participant: p }))
+        participants.map((p) => ({
+          id: p.id,
+          type: MeetingTileType.UserTile,
+          participant: p,
+        }))
       )
     },
     [nodes]
@@ -90,7 +104,7 @@ const GridRoomView = (props: Props) => {
                 ...crt,
                 {
                   id: data.track.sid,
-                  type: "share-screen",
+                  type: MeetingTileType.ShareScreenTile,
                   participant: target_user as UserMinimalType,
                 },
               ])
@@ -113,7 +127,8 @@ const GridRoomView = (props: Props) => {
     <TracksContextProvider>
       <div id="room-view" className="w-full h-full bg-black text-white">
         <MeetingWrapper>
-          <MeetingRoom />
+          <MeetingRoom nodes={nodes} />
+          <RoomAudioRenderer />
         </MeetingWrapper>
       </div>
     </TracksContextProvider>

@@ -1,10 +1,11 @@
 import { TrackReferenceOrPlaceholder } from "@livekit/components-core"
 import { Participant } from "livekit-client"
 import { ReactNode, createContext, useContext, useMemo } from "react"
-import { ParticipantContextIfNeeded, TrackRefContextIfNeeded } from "./wrapper"
 import { useMaybeTrackRefContext } from "@livekit/components-react"
 import { TrackReferenceType } from "@/types/track-reference"
-import { useAllTrackContext } from "./context/tracks-provider"
+import { useAllTrackContext } from "../context/tracks-provider"
+import TrackRefContextIfNeeded from "./track-ref-context-if-needed"
+import ParticipantContextIfNeeded from "./participant-context-if-needed"
 
 type Props = {
   participant?: Participant
