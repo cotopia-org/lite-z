@@ -1,5 +1,5 @@
 import { __BUS } from "@/const/bus";
-import { cn, convertMinutesToHHMMSS } from "@/lib/utils";
+import { convertMinutesToHHMMSS } from "@/lib/utils";
 import { ReactNode, useEffect, useState } from "react";
 import useBus from "use-bus";
 
@@ -16,10 +16,8 @@ export default function Timer({
   children,
   id,
   stop = false,
-  short = false,
+    short=false
 }: Props) {
-  const [status, setStatus] = useState<"normal" | "stopped">("normal");
-
   let timer: NodeJS.Timeout;
 
   const [seconds, setSeconds] = useState<number>(initialSeconds);
@@ -48,7 +46,6 @@ export default function Timer({
     __BUS.stopWorkTimer,
     (evt) => {
       if (evt.id === id) stopTimer();
-      setStatus("stopped");
     },
     [id]
   );
@@ -57,14 +54,9 @@ export default function Timer({
     __BUS.startWorkTimer,
     (evt) => {
       if (evt.id === id) startTimer();
-      setStatus("normal");
     },
     [id]
   );
 
-  return (
-    <span className={cn(status === "stopped" ? "text-red-600" : "")}>
-      {children(convertMinutesToHHMMSS((seconds ?? 0) / 60, short))}
-    </span>
-  );
+  return <>{children(convertMinutesToHHMMSS((seconds ?? 0) / 60,short))}</>;
 }

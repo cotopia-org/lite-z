@@ -39,9 +39,6 @@ function ShareScreenNode({ data }: any) {
   const myUser = rf.getNode(user.username);
   const targetUser = rf.getNode(data?.livekit?.participant?.identity);
 
-  console.log("myUser", myUser);
-  console.log("targetUser", targetUser);
-
   const currentPositionCoords = myUser?.position;
 
   if (currentPositionCoords === undefined) return null;

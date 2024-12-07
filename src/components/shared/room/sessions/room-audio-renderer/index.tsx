@@ -6,7 +6,6 @@ import { useRoomContext } from "../../room-context";
 import useAuth from "@/hooks/auth";
 import { VARZ } from "@/const/varz";
 import { UserMinimalType, WorkspaceUserType } from "@/types/user";
-import { useReactFlow } from "@xyflow/react";
 
 /** @public */
 export interface RoomAudioRendererProps {
@@ -35,9 +34,14 @@ export interface RoomAudioRendererProps {
  */
 
 export function RoomAudioRenderer() {
-  const rf = useReactFlow();
-
   const { user } = useAuth();
+
+  const { room } = useRoomContext();
+  const allParticipants = room?.participants ?? [];
+
+  const updatedMyUser = allParticipants?.find(
+    (x) => x?.username === user?.username
+  );
 
   const tracks = useTracks(
     [
@@ -57,27 +61,17 @@ export function RoomAudioRenderer() {
   return (
     <div style={{ display: "none" }}>
       {tracks.map((trackRef) => {
-        if (!user) return;
-
-        const myUserNode = rf.getNode(user?.username);
-
-        if (myUserNode === undefined) return;
-
-        const trackOwner = rf.getNode(trackRef?.participant?.identity);
-
-        if (trackOwner === undefined) return;
-
-        const { meet } = doCirclesMeetRaw(
-          46,
-          VARZ.voiceAreaRadius,
-          myUserNode.position,
-          trackOwner.position
+        const trackOwner = allParticipants?.find(
+          (x) => x.username === trackRef?.participant?.identity
         );
 
-        let volume = 0;
-        let isMuted = !meet;
+        const { meet, volumePercentage } = doCirclesMeet(
+          updatedMyUser,
+          trackOwner
+        );
 
-        if (meet) volume = 1;
+        let volume = 1;
+        let isMuted = !meet;
 
         return (
           <AudioTrack

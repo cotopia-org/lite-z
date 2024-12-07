@@ -268,21 +268,3 @@ export function getPositionFromStringCoordinates(coords: string) {
 
   return { x: +x, y: +y };
 }
-
-export function compactNumber(value: number, decimals: number = 1): string {
-  if (value === null || value === undefined || isNaN(value)) {
-    throw new Error("Invalid number input");
-  }
-
-  const suffixes = ["", "K", "M", "B", "T", "P"];
-  const factor = 1000;
-
-  let index = 0;
-
-  while (Math.abs(value) >= factor && index < suffixes.length - 1) {
-    value /= factor;
-    index++;
-  }
-
-  return `${value.toFixed(decimals).replace(/\.0+$/, "")}${suffixes[index]}`;
-}

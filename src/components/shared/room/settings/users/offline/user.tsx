@@ -13,10 +13,10 @@ export default function User({ user }: Props) {
           <div className={'flex flex-col'}>
               <span>{user.name}</span>
               <span className='text-xs text-black/70'>
-                 <div className='flex flex-row items-center gap-x-1'>
+              <div className='flex flex-row items-center gap-x-1'>
                      <span className='text-xs'>{moment(user.last_login).fromNow()}</span>
-                 </div>
-              </span>
+              </div>
+        </span>
           </div>
       </div>
   );

@@ -39,9 +39,6 @@ const JobItem = ({ item, mutate, hasAction = false }: Props) => {
         <JobStatus status={item.status} />
         <JobDate date={item.created_at} />
         <JobEstimate job={item} />
-
-
-
       </div>
     </div>
   );

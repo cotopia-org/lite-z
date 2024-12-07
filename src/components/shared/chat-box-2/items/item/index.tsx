@@ -86,7 +86,7 @@ export default function ChatItem({ item, isMine }: Props) {
         >
           <RightClickActions item={item} />
         </CotopiaContextMenu>
-        <DeletePrompt item={item} />
+        <DeletePrompt />
       </ChatItemContext.Provider>
     </>
   );

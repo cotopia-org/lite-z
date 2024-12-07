@@ -20,6 +20,8 @@ export default function Pin() {
     }
   };
 
+  console.log("currentChatPinsIncludes", currentChatPinsIncludes);
+
   return (
     <ContextMenuItem
       className='py-2 px-4 cursor-pointer !text-white rounded-none gap-x-2'

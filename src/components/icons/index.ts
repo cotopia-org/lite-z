@@ -16,7 +16,6 @@ export { default as MoreHorizontalIcon } from "./more-horiz"
 export { default as TrashIcon } from "./trash"
 export { default as MicrophoneIcon } from "./microphone"
 export { default as VideoIcon } from "./video"
-export { default as VideoOffIcon } from "./video-off"
 export { default as MirrorScreenIcon } from "./mirror-screen"
 export { default as PauseCircleIcon } from "./pause-circle"
 export { default as TickCircleIcon } from "./tick-circle"
@@ -24,8 +23,12 @@ export { default as PlayCircleIcon } from "./play-circle"
 export { default as GpsIcon } from "./gps"
 export { default as EditIcon } from "./edit"
 export { default as TickIcon } from "./tick"
-export { default as MicIcon } from "./mic"
-export { default as MicOffIcon } from "./mic-off"
+export { default as ProfileIcon } from "./profile"
+export { default as MoneyRecive } from "./money-recive"
+export { default as WalletMinus } from "./wallet-minus"
+
+
+
 
 export const defaultColor = colors.black
 

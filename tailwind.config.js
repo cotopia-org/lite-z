@@ -72,11 +72,9 @@ module.exports = {
         },
         success: {
           DEFAULT: "var(--success)",
-          "surface-default": "var(--success-surface-default)",
         },
         error: {
           DEFAULT: "var(--error)",
-          "surface-default": "var(--error-surface-default)",
         },
       },
       borderRadius: {

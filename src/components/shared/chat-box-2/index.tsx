@@ -1,33 +1,48 @@
-import React from "react";
+import React, { RefObject } from "react";
 import Items from "./items";
 import ChatInput from "./input";
+import { Chat2ItemType } from "@/types/chat2";
+import { UserMinimalType } from "@/types/user";
 import { Virtualizer } from "@tanstack/react-virtual";
 import PinMessages from "./pins";
-import { useChat2 } from "@/hooks/chat/use-chat-2";
-import { cn } from "@/lib/utils";
 
 type Props = {
-  chat_id: number;
+  items: Chat2ItemType[];
   addMessage?: (text: string) => void;
+  onFetchNewMessages?: () => Promise<void>;
   onGetVirtualizer?: (vir: Virtualizer<HTMLDivElement, Element>) => void;
 };
 
-const Chat2: React.FC<Props> = ({ chat_id, addMessage, onGetVirtualizer }) => {
-  const { currentChatPins } = useChat2();
-
+const Chat2: React.FC<Props> = ({
+  items = [],
+  addMessage,
+  onFetchNewMessages,
+  onGetVirtualizer,
+}) => {
   let content = (
-    <div
-      className={cn(
-        "flex flex-col h-full bg-black/[.04] relative",
-        currentChatPins ? "pt-16" : ""
-      )}
-    >
+    <div className='flex flex-col h-full bg-black/[.04] relative'>
       <PinMessages />
       {/* Chat message list */}
-      <Items chat_id={chat_id} onGetVirtualizer={onGetVirtualizer} />
+      <Items
+        items={items}
+        onFetchNewMessages={onFetchNewMessages}
+        marginFetching={300}
+        onGetVirtualizer={onGetVirtualizer}
+      />
       {/* Chat input */}
     </div>
   );
+
+  if (items.length === 0)
+    content = (
+      <div
+        className={
+          "flex text-center items-center justify-center m-auto h-full w-full"
+        }
+      >
+        <span>There's no messages yet 😢</span>
+      </div>
+    );
 
   return (
     <>

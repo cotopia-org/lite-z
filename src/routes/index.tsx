@@ -7,18 +7,18 @@ import ErrorElement from "@/components/shared/error-boundry";
 //@ts-ignore
 import PrivateRoutes from "./private-wrarpper";
 
-//Home page
+// Home page
 const HomePage = lazy(() => import("@/pages/home"));
 
-//Workspace page
+// Workspace page
 const WorkspacePage = lazy(() => import("@/pages/workspace"));
 const WorkspaceRoomPage = lazy(() => import("@/pages/workspace/rooms/room"));
 
-//Auth pages
+// Auth pages
 const LoginPage = lazy(() => import("@/pages/auth/login"));
 const RegisterPage = lazy(() => import("@/pages/auth/register"));
 
-//NotFound Page
+// NotFound Page
 const NotFoundPage = lazy(() => import("@/pages/not-found"));
 
 const router = createBrowserRouter([
