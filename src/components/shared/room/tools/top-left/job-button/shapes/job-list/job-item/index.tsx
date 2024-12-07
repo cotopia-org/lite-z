@@ -105,7 +105,7 @@ const JobItem = ({
           )}
           <div>{item.parent && <JobParent job={item} />}</div>
         </div>
-        {item.tags.length > 0 && (
+        {item.mentions.length > 0 && (
           <div className={"w-fit"}>
             <JobTag job={item} />
           </div>

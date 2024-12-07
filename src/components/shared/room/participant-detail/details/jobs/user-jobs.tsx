@@ -5,14 +5,15 @@ import JobTable from "@/components/shared/room/tools/top-left/job-button/shapes/
 
 type Props = {
   userId: number | null;
+  period?: string;
 };
-export default function   UserJobList({ userId }: Props) {
-  const { data, isLoading } = useApi(`/users/${userId}/jobs`);
+export default function UserJobList({ userId, period = "all_time" }: Props) {
+  const { data, isLoading } = useApi(`/users/${userId}/jobs?period=${period}`);
   const jobs: JobType[] = data !== undefined ? data?.data : [];
 
   let content = <JobTable items={jobs} loading={isLoading} />;
 
   if (isLoading || data === undefined) content = <FullLoading />;
 
-  return <div className={'w-full min-w-full'}>{content}</div>;
+  return <div className={"w-full min-w-full"}>{content}</div>;
 }

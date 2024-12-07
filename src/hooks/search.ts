@@ -11,15 +11,26 @@ const useSearch = () => {
   const [q, setQ] = useState<string>("");
   const [result, setResult] = useState<SearchType[]>([]);
   const [selected, setSelected] = useState<SearchType[]>([]);
+  const [loading, setLoading] = useState<boolean>(false);
 
   const handleSearch = async () => {
+    setLoading(true);
     const data = await axiosInstance.get("/search?q=" + q);
 
     setResult(data.data.data);
+    setLoading(false);
   };
 
   const handleRemoveSelect = (item: SearchType) => {
-    setSelected(selected.filter((s) => s.id !== item.id));
+    setSelected(
+      selected.filter((s) => {
+        if (s.type === item.type) {
+          return item.id !== s.id;
+        } else {
+          return s;
+        }
+      }),
+    );
   };
 
   const handleAddSelect = (item: SearchType) => {
@@ -41,6 +52,7 @@ const useSearch = () => {
     handleRemoveSelect,
     selected,
     handleAddSelect,
+    loading,
   };
 };
 export default useSearch;

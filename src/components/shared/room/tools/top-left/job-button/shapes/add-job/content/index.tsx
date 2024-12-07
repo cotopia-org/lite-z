@@ -13,10 +13,8 @@ import * as Yup from "yup";
 import DeleteJobHandler from "../delete-job";
 import CSelect from "@/components/shared-ui/c-select";
 import { useApi } from "@/hooks/swr";
-import { TagType } from "@/types/tag";
-import StatusBox from "@/components/shared/status-box";
 import Search from "@/components/shared/search";
-import useSearch from "@/hooks/search";
+import { MentionType } from "@/types/mention";
 
 interface Props {
   onClose: () => void;
@@ -48,11 +46,6 @@ const ManageJobContent = ({
   );
   let allJobs = (workspaceJobs && workspaceJobs?.data) ?? [];
 
-  const { data: tags } = useApi<FetchDataType<TagType[]>>(
-    "/workspaces/" + worksapce_id + "/tags",
-  );
-  let allTags = (tags && tags?.data) ?? [];
-
   const isEdit = defaultValue !== undefined;
   const { isLoading, stopLoading, startLoading } = useLoading();
   const {
@@ -62,13 +55,14 @@ const ManageJobContent = ({
     values,
     setFieldValue,
     touched,
+    isValid,
   } = useFormik<{
     title: string;
     description: string;
     status: string;
     estimate?: number;
     job_id?: number;
-    tags: number[];
+    mentions: MentionType[];
   }>({
     enableReinitialize: true,
     initialValues: {
@@ -77,7 +71,7 @@ const ManageJobContent = ({
       status: defaultValue ? defaultValue.status : "",
       estimate: defaultValue ? defaultValue.estimate : undefined,
       job_id: defaultValue ? defaultValue.parent?.id : undefined,
-      tags: defaultValue ? defaultValue.tags.map((tag) => tag.id) : [],
+      mentions: defaultValue ? defaultValue.mentions : [],
     },
     validationSchema: Yup.object().shape({
       title: Yup.string().required("please enter job title"),
@@ -86,11 +80,12 @@ const ManageJobContent = ({
       const { ...rest } = values;
 
       try {
-        let payload: { [key: string]: string | number | undefined | number[] } =
-          {
-            ...rest,
-            workspace_id: workspaceId,
-          };
+        let payload: {
+          [key: string]: string | number | undefined | number[] | MentionType[];
+        } = {
+          ...rest,
+          workspace_id: workspaceId,
+        };
 
         if (!isEdit) payload["status"] = "in_progress";
         startLoading();
@@ -112,19 +107,16 @@ const ManageJobContent = ({
     },
   });
 
-  const isSubmitDisabled = !values.title;
-
-  const { q, setQ, result, selected, handleAddSelect, handleRemoveSelect } =
-    useSearch();
-
   return (
     <form onSubmit={handleSubmit} className="flex flex-col gap-y-5 px-4">
       <TitleEl title="Parent">
         <CSelect
-          items={allJobs.map((x) => ({
-            title: "- ".repeat(x.level) + x.title,
-            value: x.id + "",
-          }))}
+          items={allJobs
+            .filter((x) => !x.old)
+            .map((x) => ({
+              title: "- ".repeat(x.level) + x.title,
+              value: x.id + "",
+            }))}
           defaultValue={values.job_id + ""}
           onChange={(v) => {
             setFieldValue("job_id", +v);
@@ -169,14 +161,12 @@ const ManageJobContent = ({
         />
       </TitleEl>
 
-      <TitleEl title="Mentions">
+      <TitleEl title="Open to">
         <Search
-          q={q}
-          setQ={setQ}
-          selected={selected}
-          handleRemoveSelect={handleRemoveSelect}
-          handleAddSelect={handleAddSelect}
-          result={result}
+          defaultSelected={values.mentions}
+          onChange={(items) => {
+            setFieldValue("mentions", items);
+          }}
         />
       </TitleEl>
 
@@ -197,7 +187,7 @@ const ManageJobContent = ({
             className="min-w-[138px]"
             startIcon={<Plus size={16} />}
             loading={isLoading}
-            disabled={isSubmitDisabled}
+            disabled={!isValid}
           >
             {`${isEdit ? "Update" : "Create"} Job`}
           </CotopiaButton>
