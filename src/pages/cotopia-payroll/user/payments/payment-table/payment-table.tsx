@@ -7,7 +7,6 @@ import { useEffect, useState } from "react";
 
 const paymentsColDefs: ColDef<PaymentsRowData>[] = [
   { headerName: "ID", field: "id", checkboxSelection: true },
-  { headerName: "Date", field: "date" },
   { headerName: "Total hours", field: "totalHours" },
   { headerName: "Bonus", field: "bonus" },
   { headerName: "Round", field: "round" },
@@ -30,14 +29,14 @@ export default function Payments() {
 
         const data = response.data.data;
 
+        console.log(data)
+
         const filteredData = data
-          .filter((item: paymentType) => item.type !== "advance")
-          .filter((item : paymentType) => item.user_id === userData.user?.id)
+          .filter((item : paymentType) => item.user.id === userData.user?.id)
           .map((item: paymentType) => ({
             id: item.id.toString(),
-            date: new Date(item.created_at).toLocaleDateString(),
-            totalHours: item.total_hours,
-            amount: item.amount,
+            totalHours: item.total_hours.sum_hours,
+            amount: +item.amount.toFixed(2),
             status: +item.status ? "Paid" : "Not yet",
             bonus: item.bonus || 0, 
             round: item.round || 0, 

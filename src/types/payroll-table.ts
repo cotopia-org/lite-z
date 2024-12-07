@@ -11,7 +11,6 @@ export interface AdvanceRowData {
 
 export interface PaymentsRowData {
   id: string;
-  date: string;
   totalHours: number;
   bonus: number;
   round: number;
@@ -24,7 +23,6 @@ export interface UsersPaymentsRowData {
   username: string;
   avatar: AttachmentFileType;
   totalHours: number;
-  date: string;
   bonus: number;
   round: number;
   amount: number;
@@ -46,9 +44,20 @@ export interface EmployeesRowData {
 export interface paymentType extends AdvanceRowData {
   bonus: number;
   round: number;
-  total_hours: number;
   type: string;
-  user_id: number;
   contract_id: number;
   created_at: string;
+  total_hours: {
+    sum_minutes: number;
+    idle_minutes: number;
+    working_minutes: number;
+    sum_hours: string;
+  };
+  user: {
+    id: number;
+    avatar: AttachmentFileType;
+    name: string;
+    username: string;
+    status: string;
+  };
 }
