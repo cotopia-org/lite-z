@@ -1,4 +1,3 @@
-import { useChat } from "@/hooks/chat/use-chat";
 import { UserMinimalType } from "@/types/user";
 import DirectChatBox from ".";
 import ChatUserInput from "@/components/shared/chat-box/user-input";
@@ -10,8 +9,6 @@ interface Props {
 }
 
 const LocalDirectEnv = ({ user, onBack, onAdd }: Props) => {
-  const { sendToDirect } = useChat();
-
   const addMessageHandler = async (val: string) => {
     // if (!user?.id) return;
     // try {

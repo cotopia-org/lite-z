@@ -1,5 +1,5 @@
 import { convertMinutesToHHMMSS } from "@/lib/utils";
-import React, { useEffect } from "react";
+import React from "react";
 import Timer from "../timer";
 import UserAvatar from "@/components/shared/user-avatar";
 import { ScrollArea } from "@/components/ui/scroll-area";
@@ -17,60 +17,54 @@ type Props = {
 };
 
 function Timers({ hasCount, userActiveJob, item }: Props) {
-  return <>
-    {hasCount ? (
-      <div className={'flex flex-row gap-x-2 items-start justify-between'}>
-        <Timer
-          initialSeconds={item.working_minutes * 60}
-          stop={userActiveJob === null}
-          short={true}
-        >
-          {(time) => (
-              <strong className='text-xs w-[40px]'>{time}</strong>
-          )}
-        </Timer>
-        <Timer
-          initialSeconds={item.idle_minutes * 60}
-          stop={userActiveJob !== null}
-          short={true}
-
-        >
-          {(time) => (
+  return (
+    <>
+      {hasCount ? (
+        <div className={"flex flex-row gap-x-2 items-start justify-between"}>
+          <Timer
+            initialSeconds={item.working_minutes * 60}
+            stop={userActiveJob === null}
+            short={true}
+          >
+            {(time) => <strong className='text-xs w-[40px]'>{time}</strong>}
+          </Timer>
+          <Timer
+            initialSeconds={item.idle_minutes * 60}
+            stop={userActiveJob !== null}
+            short={true}
+          >
+            {(time) => (
               <strong className='text-xs w-[40px] text-yellow-600'>
                 {time}
               </strong>
-          )}
-        </Timer>
-
-      </div>
-    ) : (
-      <div className={'flex flex-row gap-x-2 items-start justify-between'}>
-        <span className='text-xs opacity-85 w-[40px]'>
-          {convertMinutesToHHMMSS(item.working_minutes, true)}
-        </span>
-        <span className='text-xs opacity-85 w-[40px] text-yellow-600'>
-          {convertMinutesToHHMMSS(item.idle_minutes, true)}
-        </span>
-
-      </div>
-    )}</>
+            )}
+          </Timer>
+        </div>
+      ) : (
+        <div className={"flex flex-row gap-x-2 items-start justify-between"}>
+          <span className='text-xs opacity-85 w-[40px]'>
+            {convertMinutesToHHMMSS(item.working_minutes, true)}
+          </span>
+          <span className='text-xs opacity-85 w-[40px] text-yellow-600'>
+            {convertMinutesToHHMMSS(item.idle_minutes, true)}
+          </span>
+        </div>
+      )}
+    </>
+  );
 }
 
-
-
-
-
-
 type TimeTrackingDetailProps = {
-  leaderboard: LeaderboardType[],
-  workspaceUsers: WorkspaceUserType[],
-  setSelectedUser: Function
-
+  leaderboard: LeaderboardType[];
+  workspaceUsers: WorkspaceUserType[];
+  setSelectedUser: Function;
 };
 
-
-export default function TimeTrackingDetails({ leaderboard, workspaceUsers, setSelectedUser }: TimeTrackingDetailProps) {
-
+export default function TimeTrackingDetails({
+  leaderboard,
+  workspaceUsers,
+  setSelectedUser,
+}: TimeTrackingDetailProps) {
   const { user } = useAuth();
 
   let content = (
@@ -97,18 +91,16 @@ export default function TimeTrackingDetails({ leaderboard, workspaceUsers, setSe
           )?.active_job;
 
           return (
-            <div onClick={() => {
-              setSelectedUser(item.user)
-
-            }}>
-
+            <div
+              onClick={() => {
+                setSelectedUser(item.user);
+              }}
+            >
               <BlurFade
                 inView
                 className={clss}
                 key={key}
                 delay={0.05 + key * 0.05}
-
-
               >
                 <div className='flex flex-row items-center gap-x-2'>
                   <Rank rank={key + 1} />
@@ -116,16 +108,18 @@ export default function TimeTrackingDetails({ leaderboard, workspaceUsers, setSe
                   <span className='text-xs'>{item.user?.name ?? "-"}</span>
                 </div>
                 <div className='flex flex-col   w-[80px] justify-between'>
-                  <Timers hasCount={hasCount} userActiveJob={userActiveJob} item={item} />
+                  <Timers
+                    hasCount={hasCount}
+                    userActiveJob={userActiveJob}
+                    item={item}
+                  />
                 </div>
               </BlurFade>
             </div>
-
           );
         })}
     </>
   );
-
 
   return (
     <ScrollArea className='h-72 flex flex-col gap-y-4 w-full'>

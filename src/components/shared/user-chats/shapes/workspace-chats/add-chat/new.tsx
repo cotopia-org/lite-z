@@ -3,11 +3,11 @@ import PopupBox from "@/components/shared/popup-box";
 import { cn } from "@/lib/utils";
 import { Plus } from "lucide-react";
 import AddDirect from "./direct";
-import AddChannel from "./channel";
 import { useState } from "react";
 import useBus from "use-bus";
 import { __BUS } from "@/const/bus";
 import { useChat2 } from "@/hooks/chat/use-chat-2";
+import AddGroup from "./group";
 
 export default function AddChatNew() {
   const { currentChat } = useChat2();
@@ -49,7 +49,7 @@ export default function AddChatNew() {
         {(style) => (
           <div className='flex flex-col gap-y-4 mb-[64px]' style={style}>
             <AddDirect />
-            <AddChannel />
+            <AddGroup />
           </div>
         )}
       </PopupBox>

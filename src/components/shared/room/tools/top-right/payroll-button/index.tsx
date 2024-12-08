@@ -5,10 +5,10 @@ import ToolButton from "../../tool-button";
 import ExpectedPayments from "./expected-payments";
 import PreviousPayments from "./previous-payments";
 import CTabs from "@/components/shared-ui/c-tabs";
-import { MoneyRecive } from "@/components/icons";
 import UserContract from "./user-contract";
 import CFullDialog from "@/components/shared-ui/c-dialog/full-dialog";
 import PayrollPage from "@/pages/cotopia-payroll/user/payroll";
+import { Coins } from "lucide-react";
 
 const box_width = 506;
 
@@ -19,11 +19,7 @@ export default function PayrollButton() {
   return (
     <PopupBox
       trigger={(open, isOpen) => (
-        <ToolButton
-          isOpen={isOpen}
-          startIcon={<MoneyRecive size={20} />}
-          open={open}
-        >
+        <ToolButton isOpen={isOpen} startIcon={<Coins size={20} />} open={open}>
           <ExpectedPayments />
         </ToolButton>
       )}

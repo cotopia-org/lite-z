@@ -8,8 +8,8 @@ import TimeTrackingButtonTool from "./time-tracking";
 export default function TopRightTools() {
   return (
     <div className='flex flex-row items-center gap-x-2'>
-      <PayrollButton/>
       <TimeTrackingButtonTool />
+      <PayrollButton />
       {/* <InviteButtonTool /> */}
       {/* <MeetButtonTool /> */}
       {/* <UserActionsGroup /> */}

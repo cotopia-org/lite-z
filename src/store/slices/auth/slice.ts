@@ -43,20 +43,6 @@ export const loginThunk = createAsyncThunk<
   }
 });
 
-// Async thunk for login
-export const getProfile = createAsyncThunk<
-  { data: LoginResponse },
-  undefined,
-  { rejectValue: string }
->("auth/login/get-profile", async (undefined, { rejectWithValue }) => {
-  try {
-    const response = await axiosInstance.get("/users/me");
-    return response.data;
-  } catch (error) {
-    return rejectWithValue("Something wen't wrong");
-  }
-});
-
 // Async thunk for update information
 // export const updateProfileThunk = createAsyncThunk<
 //   any,
@@ -117,25 +103,6 @@ const authSlice = createSlice({
         }
       )
       .addCase(loginThunk.rejected, (state, action) => {
-        state.isLoading = false;
-        state.error = action.payload || "Failed to login";
-        toast.error(action.payload || "Failed to login");
-      });
-    builder
-      // Get profile actions
-      .addCase(getProfile.pending, (state) => {
-        state.isLoading = true;
-        state.error = null;
-      })
-      .addCase(
-        getProfile.fulfilled,
-        (state, action: PayloadAction<{ data: UserType }>) => {
-          const data = action.payload.data;
-          state.user = data;
-          state.isLoading = false;
-        }
-      )
-      .addCase(getProfile.rejected, (state, action) => {
         state.isLoading = false;
         state.error = action.payload || "Failed to login";
         toast.error(action.payload || "Failed to login");

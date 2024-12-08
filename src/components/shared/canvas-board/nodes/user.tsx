@@ -1,4 +1,4 @@
-import { useMemo } from "react";
+import { memo, useMemo } from "react";
 import { useParticipants, useTracks } from "@livekit/components-react";
 import { RoomEvent, Track } from "livekit-client";
 import UserSession from "@/routes/private-wrarpper/components/session";
@@ -31,9 +31,7 @@ const UserNode = (props: any) => {
 
   const track = useMemo(() => {
     if (!data?.username) return undefined;
-
     if (tracks.length === 0) return undefined;
-
     return tracks.find((x) => x.participant.identity === data.username);
   }, [tracks, data.username]);
 
@@ -52,4 +50,4 @@ const UserNode = (props: any) => {
   );
 };
 
-export default UserNode;
+export default memo(UserNode);
