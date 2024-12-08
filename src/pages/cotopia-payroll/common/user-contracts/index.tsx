@@ -43,7 +43,10 @@ export default function UserContracts({ items, loading }: Props) {
             if (user === undefined) return null;
 
             return (
-              <ParticipantsWithPopover participants={[user]} className='pb-0' />
+              <ParticipantsWithPopover
+                participants={[user]}
+                className='!pb-0'
+              />
             );
           },
         },
