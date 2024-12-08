@@ -1,10 +1,9 @@
-import { useRoomContext } from "@/components/shared/room/room-context";
 import useAuth from "@/hooks/auth";
-import { useMemo } from "react";
 
 type Props = {
   amount: number;
 };
+
 export default function ExpectedPayments({ amount }: Props) {
   const { user } = useAuth();
 
