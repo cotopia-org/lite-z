@@ -1,5 +1,6 @@
 import { mergePropsMain } from "@/components/shared/room/sessions/room-audio-renderer/use-media-track-by-source-or-name/merge-props";
 import { ScheduleType } from "@/types/calendar";
+import { UserType } from "@/types/user";
 import { TrackReferenceOrPlaceholder } from "@livekit/components-core";
 import { clsx, type ClassValue } from "clsx";
 import { Track } from "livekit-client";
@@ -267,4 +268,18 @@ export function getPositionFromStringCoordinates(coords: string) {
   if (isNaN(+x) || isNaN(+y)) return null;
 
   return { x: +x, y: +y };
+}
+
+export function isUserAdmin(user: UserType | null, workspace_id?: number) {
+  if (workspace_id === undefined) return false;
+
+  if (user === null) return false;
+
+  if (user.workspaces.length === 0) return false;
+
+  const userInTargetWorkspace = user.workspaces.find(
+    (x) => x.id === workspace_id
+  );
+
+  return userInTargetWorkspace?.role === "super-admin";
 }

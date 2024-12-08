@@ -8,6 +8,8 @@ import { toast } from "sonner";
 import { routeResolver } from "@/lib/utils";
 import { dispatch } from "use-bus";
 import { __BUS } from "@/const/bus";
+import { getProfile } from "@/store/slices/auth/slice";
+import { useAppDispatch } from "@/store";
 
 export const useSocket = (
   event?: string,
@@ -37,7 +39,7 @@ const ProfileContext = createContext<{
 export const useProfile = () => useContext(ProfileContext);
 
 export default function PrivateRoutes() {
-  // const dispatch = useAppDispatch();
+  const reduxDispatch = useAppDispatch();
   // useEffect(() => {
   //   dispatch(getProfileThunk());
   // }, []);
@@ -58,6 +60,8 @@ export default function PrivateRoutes() {
 
   useEffect(() => {
     if (!accessToken) return;
+
+    reduxDispatch(getProfile());
 
     // Create a socket connection
     const socket = io(VARZ.socketUrl, {

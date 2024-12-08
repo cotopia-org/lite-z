@@ -41,7 +41,7 @@ export default function UserSelector({
   const items = data?.data || [];
 
   const handlePick = (item: UserMinimalType) => {
-    setSearch(""); 
+    setSearch("");
     setSelected(item);
     if (onPick) onPick(item);
   };
@@ -59,21 +59,22 @@ export default function UserSelector({
 
   if (items.length === 0 && data !== undefined)
     content = (
-      <strong className="p-4 shadow-md rounded-lg text-sm">{`Could not find a Cotopia account ${search ? `matching "${search}"` : ""
-        }`}</strong>
+      <strong className='p-4 shadow-md rounded-lg text-sm'>{`Could not find a Cotopia account ${
+        search ? `matching "${search}"` : ""
+      }`}</strong>
     );
 
   if (isLoading) content = <FullLoading />;
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setSearch(e.target.value);
-    if (selected) setSelected(null); 
+    if (selected) setSelected(null);
   };
 
   return (
-    <div className="flex flex-col gap-y-4">
+    <div className='flex flex-col gap-y-4'>
       {label && (
-        <p className="text-black/60">Search by username, full name, or email</p>
+        <p className='text-black/60'>Search by username, full name, or email</p>
       )}
 
       {!!afterTitle && afterTitle}

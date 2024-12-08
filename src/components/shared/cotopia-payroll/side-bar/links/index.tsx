@@ -1,23 +1,40 @@
-import { CircleDollarSign, Coins, Grid, HandCoins, User, UserRoundPen, Users, X } from "lucide-react";
+import {
+  CircleDollarSign,
+  Coins,
+  Grid,
+  HandCoins,
+  User,
+  UserRoundPen,
+  Users,
+  X,
+} from "lucide-react";
 import CotopiaButton from "@/components/shared-ui/c-button";
 import { PayrollPage, usePayroll } from "@/pages/cotopia-payroll/user/payroll";
 import { ReactNode } from "react";
-import { cn } from "@/lib/utils";
+import { cn, isUserAdmin } from "@/lib/utils";
 import useAuth from "@/hooks/auth";
+import { useRoomContext } from "@/components/shared/room/room-context";
 
 export default function PayrollSideBarLink() {
   const { onClose, changePage, page } = usePayroll();
   const { user } = useAuth();
+  const { workspace_id } = useRoomContext();
+
+  const isAdmin = isUserAdmin(user, workspace_id ? +workspace_id : undefined);
 
   const links: {
     title: string;
     page: PayrollPage;
     icon: ReactNode;
-  }[] =
-    user?.id === 6 || user?.id === 3
-      ? [
+  }[] = isAdmin
+    ? [
         {
-          title: "User contract",
+          title: "All contracts",
+          page: "all-user-contract",
+          icon: <User />,
+        },
+        {
+          title: "My contracts",
           page: "user-contract",
           icon: <User />,
         },
@@ -42,15 +59,19 @@ export default function PayrollSideBarLink() {
           icon: <HandCoins />,
         },
         {
-          title: "Payments",
+          title: "All Payments",
+          page: "all-payments",
+          icon: <Coins />,
+        },
+        {
+          title: "My Payments",
           page: "payments",
           icon: <Coins />,
         },
       ]
-
-      : [
+    : [
         {
-          title: "User contract",
+          title: "My contracts",
           page: "user-contract",
           icon: <User />,
         },
@@ -60,14 +81,14 @@ export default function PayrollSideBarLink() {
           icon: <Grid />,
         },
         {
-          title: "Payments",
+          title: "My Payments",
           page: "payments",
           icon: <Coins />,
         },
       ];
 
   return (
-    <ul className="p-3 mt-4 flex flex-col gap-y-8">
+    <ul className='p-3 mt-4 flex flex-col gap-y-2'>
       {links.map((link) => (
         <li key={link.title}>
           <CotopiaButton
@@ -75,9 +96,7 @@ export default function PayrollSideBarLink() {
             onClick={() => changePage(link.page)}
             className={cn(
               "w-full justify-start text-lg",
-              link.page === page
-                ? "bg-primary text-white"
-                : "hover:bg-black/5"
+              link.page === page ? "bg-primary text-white" : "hover:bg-black/5"
             )}
             variant={"ghost"}
           >
@@ -89,7 +108,7 @@ export default function PayrollSideBarLink() {
         <CotopiaButton
           startIcon={<X />}
           onClick={onClose}
-          className="w-full justify-start text-lg hover:bg-primary hover:text-white"
+          className='w-full justify-start text-lg hover:bg-primary hover:text-white'
           variant={"ghost"}
         >
           Close
@@ -98,4 +117,3 @@ export default function PayrollSideBarLink() {
     </ul>
   );
 }
-

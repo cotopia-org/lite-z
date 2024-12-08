@@ -39,17 +39,17 @@ export const initialValueContract = {
   currency: "USDT",
   end_at: "",
   auto_renewal: 1,
-  renewal_count: 0,
-  renew_time_period_type: "",
-  renew_time_period: 0,
-  renew_notice: 0,
-  user_status: "",
-  contractor_status: "",
-  min_hours: 0,
-  max_hours: 0,
+  renewal_count: 1,
+  renew_time_period_type: "month",
+  renew_time_period: 1,
+  renew_notice: 10,
+  user_status: "will-renew",
+  contractor_status: "will-renew",
+  min_hours: 50,
+  max_hours: 200,
   payment_method: "trc20",
   payment_address: "",
-  payment_period: "",
+  payment_period: "monthly",
   role: "",
   user_sign_status: 0,
   contractor_sign_status: 0,
@@ -58,14 +58,14 @@ export const initialValueContract = {
 
 // Validation Schema Payments
 export const validationSchemaContract = Yup.object().shape({
-  type: Yup.string()
-    .required("Contract type is required.")
-    .matches(
-      /^[a-zA-Z0-9_\-]+$/,
-      "Contract type must only contain letters, numbers, underscores (_), and dashes (-)."
-    )
-    .min(3, "Contract type must be at least 3 characters long.")
-    .max(50, "Contract type cannot exceed 50 characters."),
+  // type: Yup.string()
+  //   .required("Contract type is required.")
+  //   .matches(
+  //     /^[a-zA-Z0-9_\-]+$/,
+  //     "Contract type must only contain letters, numbers, underscores (_), and dashes (-)."
+  //   )
+  //   .min(3, "Contract type must be at least 3 characters long.")
+  //   .max(50, "Contract type cannot exceed 50 characters."),
   amount: Yup.number()
     .required("Amount is required.")
     .typeError("Amount must be a valid number.")
@@ -88,12 +88,12 @@ export const validationSchemaContract = Yup.object().shape({
     .typeError("Renewal count must be a valid number.")
     .min(0, "Renewal count cannot be negative.")
     .max(12, "Renewal count cannot exceed 12."),
-  renew_time_period_type: Yup.string()
-    .required("Renew time period type is required.")
-    .oneOf(
-      ["days", "weeks", "months"],
-      "Renew time period type must be days, weeks, or months."
-    ),
+  // renew_time_period_type: Yup.string()
+  //   .required("Renew time period type is required.")
+  //   .oneOf(
+  //     ["days", "weeks", "months"],
+  //     "Renew time period type must be days, weeks, or months."
+  //   ),
   renew_time_period: Yup.number()
     .required("Renew time period is required.")
     .typeError("Renew time period must be a valid number.")
@@ -104,18 +104,18 @@ export const validationSchemaContract = Yup.object().shape({
     .typeError("Renew notice must be a valid number.")
     .min(0, "Renew notice cannot be negative.")
     .max(30, "Renew notice cannot exceed 30 days."),
-  user_status: Yup.string()
-    .required("User status is required.")
-    .oneOf(
-      ["active", "inactive", "pending"],
-      "User status must be active, inactive, or pending."
-    ),
-  contractor_status: Yup.string()
-    .required("Contractor status is required.")
-    .oneOf(
-      ["active", "inactive", "pending"],
-      "Contractor status must be active, inactive, or pending."
-    ),
+  // user_status: Yup.string()
+  //   .required("User status is required.")
+  //   .oneOf(
+  //     ["active", "inactive", "pending"],
+  //     "User status must be active, inactive, or pending."
+  //   ),
+  // contractor_status: Yup.string()
+  //   .required("Contractor status is required.")
+  //   .oneOf(
+  //     ["active", "inactive", "pending"],
+  //     "Contractor status must be active, inactive, or pending."
+  //   ),
   min_hours: Yup.number()
     .required("Minimum hours are required.")
     .typeError("Minimum hours must be a valid number."),

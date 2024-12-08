@@ -10,6 +10,8 @@ import UserContract from "./user-contract";
 import CFullDialog from "@/components/shared-ui/c-dialog/full-dialog";
 import PayrollPage from "@/pages/cotopia-payroll/user/payroll";
 
+const box_width = 506;
+
 export default function PayrollButton() {
   const currentURL = typeof window !== "undefined" ? window.location.href : "";
   const url = currentURL ? new URL(currentURL).origin : "";
@@ -73,14 +75,16 @@ export default function PayrollButton() {
           />
         );
 
+        console.log("triggerPosition", triggerPosition);
+
         return (
           <PopupBoxChild
             onClose={close}
             title='Payroll'
-            width={506}
+            width={box_width}
             zIndex={triggerPosition.zIndex}
             top={triggerPosition.top}
-            left={300}
+            left={triggerPosition.left - (box_width - triggerPosition.width)}
           >
             <div className='flex w-full flex-col gap-y-6 items-end'>
               {content}

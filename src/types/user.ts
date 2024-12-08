@@ -7,6 +7,11 @@ export type UserType = {
   bio: null | string;
   coordinates: null | string;
   email: string;
+  workspaces: {
+    id: number;
+    role: string;
+    title: string;
+  }[];
   id: number;
   name: string;
   room_id: null | number;
@@ -56,6 +61,7 @@ export type WorkspaceUserType = {
   verified: boolean;
   room_id: number | null;
   schedule_hours_in_week?: {
-    hours:string,minutes:number
+    hours: string;
+    minutes: number;
   };
 };

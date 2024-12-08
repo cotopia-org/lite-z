@@ -1,11 +1,13 @@
 import PayrollWrapper from "../../payroll-wrapper";
-import PayrollUserContract from "@/components/shared/cotopia-payroll/user-information/user-contract";
 import { createContext, useContext, useState } from "react";
 import PayrollDashboard from "../../common/users-payments";
-import PayrollPayments from "../payments";
+import PayrollPayments from "../../user/payments";
 import PayrollCreateContract from "../../admin/create-contract";
 import PayrollCreatePayments from "../../admin/create-payments";
 import Employees from "../../admin/employees/components/employees-table";
+import PayrollAllPayments from "../../admin/all-payments";
+import AllUserContracts from "../../admin/all-user-contracts";
+import MyContracts from "../user-contracts";
 
 type Props = {
   onClose: () => void;
@@ -13,20 +15,22 @@ type Props = {
 
 export type PayrollPage =
   | "all-members"
+  | "all-user-contract"
   | "user-contract"
   | "all-payment"
   | "payments"
+  | "all-payments"
   | "create-contract"
-  | "create-payments"
+  | "create-payments";
 
 const PayrollContejxt = createContext<{
   onClose: () => void;
   page: PayrollPage;
   changePage: (page: PayrollPage) => void;
 }>({
-  onClose: () => { },
+  onClose: () => {},
   page: "user-contract",
-  changePage: (page) => { },
+  changePage: (page) => {},
 });
 
 export const usePayroll = () => useContext(PayrollContejxt);
@@ -35,8 +39,11 @@ export default function PayrollPage({ onClose }: Props) {
   const [active, setActive] = useState<PayrollPage>("user-contract");
   let content = null;
   switch (active) {
+    case "all-user-contract":
+      content = <AllUserContracts />;
+      break;
     case "user-contract":
-      content = <PayrollUserContract />;
+      content = <MyContracts />;
       break;
     case "create-contract":
       content = <PayrollCreateContract />;
@@ -49,6 +56,9 @@ export default function PayrollPage({ onClose }: Props) {
       break;
     case "all-payment":
       content = <PayrollDashboard />;
+      break;
+    case "all-payments":
+      content = <PayrollAllPayments />;
       break;
     case "payments":
       content = <PayrollPayments />;
