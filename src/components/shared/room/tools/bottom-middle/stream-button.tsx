@@ -1,15 +1,15 @@
-import CotopiaIconButton from "@/components/shared-ui/c-icon-button"
-import CotopiaTooltip from "@/components/shared-ui/c-tooltip"
-import { ButtonProps } from "@/components/ui/button"
-import { cn } from "@/lib/utils"
-import { ReactNode } from "react"
+import CotopiaIconButton from "@/components/shared-ui/c-icon-button";
+import CotopiaTooltip from "@/components/shared-ui/c-tooltip";
+import { ButtonProps } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
+import { ReactNode } from "react";
 
 type Props = {
-  tooltipTitle: string
-  loading: boolean
-  children: ReactNode
-  className?: string
-} & ButtonProps
+  tooltipTitle: string;
+  loading: boolean;
+  children: ReactNode;
+  className?: string;
+} & ButtonProps;
 
 const StreamButton = ({
   onClick,
@@ -30,7 +30,7 @@ const StreamButton = ({
         {children}
       </CotopiaIconButton>
     </CotopiaTooltip>
-  )
-}
+  );
+};
 
-export default StreamButton
+export default StreamButton;

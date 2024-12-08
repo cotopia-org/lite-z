@@ -21,13 +21,14 @@ export default function JobButton() {
     { isPaused: () => workspace_id === undefined }
   );
 
-
-
-
   let jobItems = (data && data?.data) ?? [];
   let job_label = "Create job";
   const active_job = jobItems.find((j) => j.status === "in_progress");
-  if (active_job) job_label = active_job.title.length > 20 ? active_job.title.slice(0, 20) + '... ':active_job.title;
+  if (active_job)
+    job_label =
+      active_job.title.length > 20
+        ? active_job.title.slice(0, 20) + "... "
+        : active_job.title;
   if (!active_job && jobItems.length > 0) job_label = "Start job";
 
   return (
@@ -66,26 +67,26 @@ export default function JobButton() {
                   <JobItems
                     hasAction
                     items={jobItems.filter((x) =>
-                      [ "paused"].includes(x.status)
+                      ["paused"].includes(x.status)
                     )}
                     onMutate={mutate}
                   />
                 ),
                 value: "paused",
               },
-                {
-                    title: "Completed",
-                    content: (
-                        <JobItems
-                            hasAction
-                            items={jobItems.filter((x) =>
-                                ["completed"].includes(x.status)
-                            )}
-                            onMutate={mutate}
-                        />
-                    ),
-                    value: "completed",
-                },
+              {
+                title: "Completed",
+                content: (
+                  <JobItems
+                    hasAction
+                    items={jobItems.filter((x) =>
+                      ["completed"].includes(x.status)
+                    )}
+                    onMutate={mutate}
+                  />
+                ),
+                value: "completed",
+              },
             ]}
           />
         );
