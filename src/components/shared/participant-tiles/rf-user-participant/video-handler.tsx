@@ -5,13 +5,13 @@ import {
   useFeatureContext,
   useMaybeLayoutContext,
 } from "@livekit/components-react"
-import { useParticipantTileCtx } from "../../participant-tile-provider"
 import { useCallback } from "react"
 import isTrackReferencePinned from "@/components/shared/room/sessions/wrapper/is-track-ref-pinned"
+import { useParticipantTileCtx } from "../participant-tile-provider"
 
 interface Props {}
 
-const RfVideoHandler = (props: Props) => {
+const VideoTrackHandler = (props: Props) => {
   const { trackRef } = useParticipantTileCtx()
 
   const trackReference = trackRef as TrackReferenceOrPlaceholder
@@ -45,4 +45,4 @@ const RfVideoHandler = (props: Props) => {
   )
 }
 
-export default RfVideoHandler
+export default VideoTrackHandler

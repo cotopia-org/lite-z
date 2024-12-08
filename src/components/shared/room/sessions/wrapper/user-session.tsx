@@ -35,9 +35,7 @@ const UserSession = ({ track, participant, children }: Props) => {
         initTrack?.participant,
       source: trackRef?.source ?? maybeTrackRef?.source ?? initTrack?.source,
       publication:
-        trackRef?.publication ??
-        maybeTrackRef?.publication ??
-        initTrack?.publication,
+        trackRef?.publication ?? maybeTrackRef?.publication ?? undefined,
     }
 
     return latestTrack

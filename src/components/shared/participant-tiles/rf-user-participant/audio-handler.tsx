@@ -4,12 +4,12 @@ import {
   useMaybeLayoutContext,
 } from "@livekit/components-react"
 import React from "react"
-import { useParticipantTileCtx } from "../../participant-tile-provider"
 import isTrackReferencePinned from "@/components/shared/room/sessions/wrapper/is-track-ref-pinned"
+import { useParticipantTileCtx } from "../participant-tile-provider"
 
 interface Props {}
 
-const RfAudioHandler = (props: Props) => {
+const AudioTrackHandler = (props: Props) => {
   const { trackRef } = useParticipantTileCtx()
 
   const trackReference = trackRef as TrackReferenceOrPlaceholder
@@ -40,4 +40,4 @@ const RfAudioHandler = (props: Props) => {
   )
 }
 
-export default RfAudioHandler
+export default AudioTrackHandler

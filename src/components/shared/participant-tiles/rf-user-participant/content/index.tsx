@@ -1,8 +1,8 @@
 import CotopiaAvatar from "@/components/shared-ui/c-avatar"
 import { useParticipantTileCtx } from "../../participant-tile-provider"
-import RfAudioHandler from "./audio-handler"
-import RfVideoHandler from "./video-handler"
 import RfUserTileActions from "../actions"
+import AudioTrackHandler from "../audio-handler"
+import VideoTrackHandler from "../video-handler"
 
 interface Props {
   meet: boolean
@@ -37,10 +37,10 @@ const RfUserTileContent = ({ meet }: Props) => {
   }
 
   if (trackType === "audio") {
-    trackContent = <RfAudioHandler />
+    trackContent = <AudioTrackHandler />
   }
   if (trackType === "video") {
-    trackContent = <RfVideoHandler />
+    trackContent = <VideoTrackHandler />
   }
 
   return (

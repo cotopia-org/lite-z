@@ -9,7 +9,7 @@ import { __BUS } from "@/const/bus"
 import { useAllTrackContext } from "../sessions/context/tracks-provider"
 import { isScreenShareExist } from "@/lib/utils"
 import { useSocket } from "@/routes/private-wrarpper"
-import { LivekitTrackPublishedType } from "@/types/socket"
+import { LivekitTrackPublishedType, UserLeftJoinType } from "@/types/socket"
 import MeetingRoom from "./meeting-room"
 import { RoomAudioRenderer } from "@livekit/components-react"
 
@@ -77,6 +77,7 @@ const GridRoomView = (props: Props) => {
   useBus(
     __BUS.initRoomParticipantsOnRf,
     (data: any) => {
+      console.log(data, "JOIN DATA")
       //update participants when somebody join into the room
       const participants: UserMinimalType[] = data?.participants || []
       setNodes(
@@ -121,6 +122,39 @@ const GridRoomView = (props: Props) => {
       }
     },
     [nodes]
+  )
+
+  useSocket(
+    "userLeftFromRoom",
+    (data: UserLeftJoinType) => {
+      if (data.room_id === room?.id) {
+        setNodes((prev) => {
+          return prev.filter(
+            (n) => n.participant.username !== data.user.username
+          )
+        })
+      }
+    },
+    [room?.id]
+  )
+
+  useSocket(
+    "userJoinedToRoom",
+    (data: UserLeftJoinType) => {
+      if (data.room_id === room?.id) {
+        setNodes((prev) => {
+          return [
+            ...prev,
+            {
+              id: data.user.id,
+              type: MeetingTileType.UserTile,
+              participant: data.user,
+            },
+          ]
+        })
+      }
+    },
+    [room?.id]
   )
 
   return (

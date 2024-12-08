@@ -86,6 +86,7 @@ module.exports = {
       },
       boxShadow: {
         "app-bar": "0 2px 4px rgba(0, 0, 0, 0.16)",
+        light: "-1px 2px 6px 0px  rgba(255, 255, 255, 0.5)",
       },
       dropShadow: {
         light: "0 4px 6px rgba(255, 255, 255, 0.5)",

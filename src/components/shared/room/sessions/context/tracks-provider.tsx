@@ -1,4 +1,3 @@
-import { useExcludeShareScreenTrack } from "@/hooks/livekit"
 import { TrackReferenceOrPlaceholder } from "@livekit/components-core"
 import { useTracks } from "@livekit/components-react"
 import { RoomEvent, Track } from "livekit-client"
@@ -27,8 +26,6 @@ const TracksContextProvider = ({ children }: { children: ReactNode }) => {
       onlySubscribed: true,
     }
   )
-
-  // const finalTracks = useExcludeShareScreenTrack(tracks)
 
   return (
     <AllTracksContext.Provider value={{ tracks }}>
