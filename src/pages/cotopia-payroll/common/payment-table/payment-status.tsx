@@ -28,6 +28,9 @@ export default function PaymentStatus({ payment }: Props) {
         status: value ? PaymentStatusEnum.Paid : PaymentStatusEnum.Pending,
       })
       .then((res) => {
+        setStatus(
+          value === true ? PaymentStatusEnum.Paid : PaymentStatusEnum.Pending
+        );
         stopLoading();
       })
       .catch((err) => {

@@ -12,9 +12,16 @@ import { PayrollInitialState, payrollReducer } from "./state";
 import { useCreatePayment } from "@/hooks/use-create-payments";
 import UserSelector from "@/components/shared/user-selector";
 import { UserMinimalType } from "@/types/user";
+import { PaymentType } from "@/types/payment";
+import { ChevronLeft } from "lucide-react";
 
-export default function PayrollCreatePayments() {
-  const { createPayment, loading } = useCreatePayment();
+type Props = {
+  defaultValue?: PaymentType;
+  onBack?: () => void;
+};
+
+export default function PayrollCreatePayments({ defaultValue, onBack }: Props) {
+  const { updatePayment, createPayment, loading } = useCreatePayment();
   const [state, dispatch] = useReducer(payrollReducer, PayrollInitialState);
   const userData = useAppSelector((store) => store.auth);
   const [selectedUser, setSelectedUser] = useState<UserMinimalType | null>(
@@ -85,11 +92,27 @@ export default function PayrollCreatePayments() {
 
   const formik = useFormik({
     enableReinitialize: true,
-    initialValues: initialValuePayments,
+    initialValues: defaultValue
+      ? {
+          type: defaultValue?.type,
+          status: defaultValue?.status,
+          bonus: defaultValue?.bonus,
+          round: defaultValue?.round,
+          total_amount: defaultValue
+            ? (defaultValue?.amount ?? 0) *
+              (+defaultValue?.total_hours?.sum_hours + defaultValue?.bonus)
+            : 0,
+          total_hours: defaultValue?.total_hours?.sum_minutes
+            ? defaultValue.total_hours.sum_minutes / 60
+            : 0,
+          contract_id: defaultValue?.contract_id,
+          user_id: defaultValue?.user?.id,
+        }
+      : initialValuePayments,
     validationSchema: validationSchemaPayments,
     onSubmit: (values) => {
       if (state.userContract?.id) {
-        createPayment({
+        const finalPayload = {
           status: +values.status ? "Paid" : "Not paid",
           amount: +values.total_amount,
           bonus: +values.bonus,
@@ -98,9 +121,13 @@ export default function PayrollCreatePayments() {
           user_id: selectedUser?.id!,
           contract_id: state.userContract.id,
           type: values.type,
-        });
+        };
 
-        console.log(values);
+        if (defaultValue !== undefined) {
+          updatePayment(defaultValue.id, finalPayload);
+        } else {
+          createPayment(finalPayload);
+        }
       }
     },
   });
@@ -131,26 +158,36 @@ export default function PayrollCreatePayments() {
           selectedUser={selectedUser!}
         />
 
-        <UserSelector
-          label={false}
-          onPick={(user) => {
-            setSelectedUser(user);
-            handleUserIdChange(user.id.toString());
-          }}
-        />
+        {!!!defaultValue && (
+          <UserSelector
+            label={false}
+            onPick={(user) => {
+              setSelectedUser(user);
+              handleUserIdChange(user.id.toString());
+            }}
+            disabled
+          />
+        )}
       </div>
 
       <CotopiaButton
         type='submit'
-        disabled={!isValid || !state.userContract || loading}
+        disabled={!isValid || loading}
         className='w-full'
+        loading={loading}
       >
-        {!state.userContract
-          ? "Please create a contract first before submitting payments."
-          : loading
-          ? "Creating..."
-          : "Create a new payment"}
+        {defaultValue ? "Update" : "Create a new payment"}
       </CotopiaButton>
+
+      {!!onBack && (
+        <CotopiaButton
+          variant={"link"}
+          startIcon={<ChevronLeft />}
+          onClick={onBack}
+        >
+          Close Payment
+        </CotopiaButton>
+      )}
     </form>
   );
 }

@@ -11,6 +11,7 @@ type Props = {
   afterTitle?: ReactNode;
   defaultSelectedId?: number;
   label?: boolean;
+  disabled?: boolean;
 };
 
 export default function UserSelector({
@@ -18,6 +19,7 @@ export default function UserSelector({
   afterTitle,
   defaultSelectedId,
   label,
+  disabled,
 }: Props) {
   const [selected, setSelected] = useState<UserMinimalType | null>(null);
   const [search, setSearch] = useState("");
@@ -84,6 +86,7 @@ export default function UserSelector({
         placeholder={selected ? "Selected user" : "Find people"}
         value={selected ? selected.name : search}
         onChange={handleChange}
+        disabled={disabled}
       />
 
       {content}

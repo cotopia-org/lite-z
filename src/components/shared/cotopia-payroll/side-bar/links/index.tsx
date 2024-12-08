@@ -38,11 +38,11 @@ export default function PayrollSideBarLink() {
           page: "user-contract",
           icon: <User />,
         },
-        {
-          title: "Members",
-          page: "all-members",
-          icon: <Users />,
-        },
+        // {
+        //   title: "Members",
+        //   page: "all-members",
+        //   icon: <Users />,
+        // },
         {
           title: "Users Payments",
           page: "all-payment",

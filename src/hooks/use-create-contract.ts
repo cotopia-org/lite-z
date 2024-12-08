@@ -25,7 +25,7 @@ const useCreateContract = () => {
         type: values.type,
         amount: +values.amount,
         currency: values.currency,
-        start_at: new Date().toISOString(),
+        start_at: new Date(values.start_at).toISOString(),
         end_at: new Date(values.end_at).toISOString(),
         auto_renewal: values.auto_renewal,
         renewal_count: values.renewal_count,

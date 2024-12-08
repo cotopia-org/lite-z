@@ -8,9 +8,6 @@ export const validationSchemaPayments = Yup.object().shape({
       /^[a-zA-Z0-9_\-]+$/,
       "Payment type must be a valid text and can only contain letters, numbers, underscores (_), and dashes (-)."
     ),
-  status: Yup.number()
-    .required("Payment status is required.")
-    .oneOf([0, 1], "Payment status must be either 0 (unpaid) or 1 (paid)."),
   bonus: Yup.number()
     .required("Payment bonus is required.")
     .typeError("Payment bonus must be a valid number."),
@@ -21,8 +18,8 @@ export const validationSchemaPayments = Yup.object().shape({
 
 // Initial Values payments
 export const initialValuePayments = {
-  type: "",
-  status: 0,
+  type: "advance",
+  status: "pending",
   bonus: 0,
   round: 0,
   total_amount: 0,
@@ -34,8 +31,8 @@ export const initialValuePayments = {
 
 // Initial Values payments
 export const initialValueContract = {
-  type: "",
-  amount: 0,
+  type: "per_hour",
+  amount: 1,
   currency: "USDT",
   end_at: "",
   auto_renewal: 1,
@@ -128,22 +125,12 @@ export const validationSchemaContract = Yup.object().shape({
       ["trc20", "erc20", "paypal"],
       "Payment method must be trc20, erc20, or paypal."
     ),
-  payment_address: Yup.string()
-    .required("Payment address is required.")
-    .matches(
-      /^0x[a-fA-F0-9]{40}$|^[a-zA-Z0-9_\-@.]+$/,
-      "Payment address must be a valid address or email for the chosen payment method."
-    ),
   payment_period: Yup.string()
     .required("Payment period is required.")
     .oneOf(
       ["weekly", "bi-weekly", "monthly"],
       "Payment period must be weekly, bi-weekly, or monthly."
     ),
-  role: Yup.string()
-    .required("Role is required.")
-    .min(3, "Role must be at least 3 characters long.")
-    .max(50, "Role cannot exceed 50 characters."),
   user_sign_status: Yup.number()
     .required("User sign status is required.")
     .oneOf(

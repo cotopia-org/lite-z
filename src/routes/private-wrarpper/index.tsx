@@ -8,6 +8,8 @@ import { toast } from "sonner";
 import { routeResolver } from "@/lib/utils";
 import { dispatch } from "use-bus";
 import { __BUS } from "@/const/bus";
+import { useAppDispatch } from "@/store";
+import { getProfileThunk } from "@/store/slices/auth/slice";
 
 export const useSocket = (
   event?: string,
@@ -37,10 +39,10 @@ const ProfileContext = createContext<{
 export const useProfile = () => useContext(ProfileContext);
 
 export default function PrivateRoutes() {
-  // const dispatch = useAppDispatch();
-  // useEffect(() => {
-  //   dispatch(getProfileThunk());
-  // }, []);
+  const reduxDispatch = useAppDispatch();
+  useEffect(() => {
+    reduxDispatch(getProfileThunk());
+  }, []);
 
   const [initState, setInitState] = useState(false);
 

@@ -1,3 +1,5 @@
+import { PaymentType } from "./payment";
+
 export interface UserContractType {
   amount: number;
   auto_renewal: number;
@@ -23,4 +25,5 @@ export interface UserContractType {
   user_id: number;
   user_sign_status: number;
   user_status: string;
+  last_payment: PaymentType;
 }

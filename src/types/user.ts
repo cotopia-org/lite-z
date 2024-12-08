@@ -1,3 +1,4 @@
+import { UserContractType } from "./contract";
 import { AttachmentFileType } from "./file";
 import { JobType } from "./job";
 
@@ -24,6 +25,8 @@ export type UserType = {
   video_size: null | string;
   video_status: null | string;
   voice_status: null | string;
+  active_contract?: UserContractType;
+  active_job?: JobType;
 };
 
 export type UserMinimalTypeScheduleType = {
@@ -48,6 +51,7 @@ export type UserMinimalType = {
 
 export type WorkspaceUserType = {
   active_job: JobType | null;
+  active_contract?: UserContractType;
   avatar: AttachmentFileType;
   coordinates: string;
   id: number;

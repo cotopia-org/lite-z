@@ -32,13 +32,19 @@ export default function UserContracts({ items, loading }: Props) {
       items={items}
       tableHeadItems={[
         {
-          title: "Id",
-          render: (item: UserContractType) => item.id,
+          title: "Username",
+          render: (item: UserContractType) => {
+            const user = workspaceUsers.find((a) => a.id === item.user_id);
+
+            if (user === undefined) return item.user_id;
+
+            return user.username;
+          },
         },
         {
           title: "User",
           render: (item: UserContractType) => {
-            const user = workspaceUsers.find((a) => a.id === item.id);
+            const user = workspaceUsers.find((a) => a.id === item.user_id);
 
             if (user === undefined) return null;
 
@@ -57,18 +63,6 @@ export default function UserContracts({ items, loading }: Props) {
         {
           title: "Amount",
           render: (item: UserContractType) => item.amount,
-        },
-        {
-          title: "Min hours",
-          render: (item: UserContractType) => item.min_hours,
-        },
-        {
-          title: "Max hours",
-          render: (item: UserContractType) => item.max_hours,
-        },
-        {
-          title: "Payment Method",
-          render: (item: UserContractType) => item.payment_method,
         },
         {
           title: "Starts At",
