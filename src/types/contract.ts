@@ -9,6 +9,7 @@ export interface UserContractType {
   currency: string;
   end_at: string;
   id: number;
+  text?: string;
   max_hours: number;
   min_hours: number;
   payment_address: string;

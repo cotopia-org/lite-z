@@ -5,12 +5,13 @@ import { ChevronLeft } from "lucide-react";
 import SignContract from "./sign";
 import { useEffect, useState } from "react";
 import HintAddressContract from "@/components/shared/room/tools/top-right/payroll-button/hint-address-contract";
+import Markdown from "markdown-to-jsx";
 
 type Props = {
   contract: UserContractType;
   isLoading?: boolean;
   onBack: () => void;
-  onUpdate: (contract: UserContractType) => void;
+  onUpdate?: (contract: UserContractType) => void;
 };
 
 export default function PayrollContractDetails({
@@ -57,8 +58,12 @@ export default function PayrollContractDetails({
           Loading contract details...
         </p>
       ) : contract ? (
-        <ul className='grid grid-cols-12 gap-4 w-full'>
-          {contractDetails.map((contractDetail, index) => (
+        <>
+          <Markdown className='[&_h1]:text-xl [&_h1]:mb-4 [&_h1]:font-bold [&_ol]:ml-4 [&_li]:mb-4 [&_li]:list-decimal'>{`${
+            contract.text ?? ""
+          }`}</Markdown>
+          {/* <ul className='grid grid-cols-12 gap-4 w-full'> */}
+          {/* {contractDetails.map((contractDetail, index) => (
             <li
               key={contractDetail.key}
               className={`w-full text-base shadow-md p-3 rounded-md border border-border font-semibold flex items-center justify-between bg-gray-50 ${
@@ -72,8 +77,9 @@ export default function PayrollContractDetails({
                 {contractDetail.value}
               </span>
             </li>
-          ))}
-        </ul>
+          ))} */}
+          {/* </ul> */}
+        </>
       ) : (
         <p className='text-gray-400 text-xl font-semibold text-center'>
           You don't have any contract yet.
@@ -81,7 +87,10 @@ export default function PayrollContractDetails({
       )}
       <HintAddressContract
         contract={localContract}
-        onUpdate={setLocalContract}
+        onUpdate={(contract) => {
+          if (onUpdate) onUpdate(contract);
+          setLocalContract(contract);
+        }}
       />
       <SignContract contract={localContract} onUpdate={setLocalContract} />
       <CotopiaButton

@@ -20,7 +20,7 @@ export default function ContractDetails({ contract }: Props) {
           More
         </CotopiaButton>
       )}
-      dialogContentCss='w-[800px] max-w-full'
+      dialogContentCss='w-[800px] max-w-full max-h-screen md:max-h-[calc(100vh-64px)] overflow-y-auto'
     >
       {(close) => <PayrollContractDetails contract={contract} onBack={close} />}
     </CDialog>
