@@ -4,17 +4,20 @@ import CotopiaButton from "@/components/shared-ui/c-button";
 import { ChevronLeft } from "lucide-react";
 import SignContract from "./sign";
 import { useEffect, useState } from "react";
+import HintAddressContract from "@/components/shared/room/tools/top-right/payroll-button/hint-address-contract";
 
 type Props = {
   contract: UserContractType;
   isLoading?: boolean;
   onBack: () => void;
+  onUpdate: (contract: UserContractType) => void;
 };
 
 export default function PayrollContractDetails({
   contract,
   isLoading = false,
   onBack,
+  onUpdate,
 }: Props) {
   const [localContract, setLocalContract] = useState(contract);
   useEffect(() => {
@@ -76,6 +79,10 @@ export default function PayrollContractDetails({
           You don't have any contract yet.
         </p>
       )}
+      <HintAddressContract
+        contract={localContract}
+        onUpdate={setLocalContract}
+      />
       <SignContract contract={localContract} onUpdate={setLocalContract} />
       <CotopiaButton
         variant={"link"}

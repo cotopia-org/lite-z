@@ -6,8 +6,9 @@ import { ArrowRight } from "lucide-react";
 
 type Props = {
   contract: UserContractType;
+  onUpdate?: (contract: UserContractType) => void;
 };
-export default function InsertButton({ contract }: Props) {
+export default function InsertButton({ contract, onUpdate }: Props) {
   return (
     <CDialog
       trigger={(open) => (
@@ -16,7 +17,15 @@ export default function InsertButton({ contract }: Props) {
         </CotopiaButton>
       )}
     >
-      {(close) => <InsertButtonForm contract={contract} onSave={close} />}
+      {(close) => (
+        <InsertButtonForm
+          contract={contract}
+          onSave={(contract) => {
+            if (onUpdate) onUpdate(contract);
+            close();
+          }}
+        />
+      )}
     </CDialog>
   );
 }

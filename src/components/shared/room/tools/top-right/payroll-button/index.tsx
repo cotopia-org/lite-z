@@ -62,7 +62,11 @@ export default function PayrollButton() {
                       title: "Contract",
                       content: (
                         <div className='py-3'>
-                          <HintAddressContract />
+                          {!!myUser?.active_contract && (
+                            <HintAddressContract
+                              contract={myUser?.active_contract}
+                            />
+                          )}
                           <div className='flex flex-col w-full my-4'>
                             <strong className='px-4'>My Active Contract</strong>
                             <CotopiaTable

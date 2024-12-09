@@ -10,14 +10,13 @@ import * as Yup from "yup";
 
 type Props = {
   contract: UserContractType;
-  onSave: () => void;
+  onSave: (contract: UserContractType) => void;
 };
 
 export default function InsertButtonForm({ contract, onSave }: Props) {
   const dispatch = useAppDispatch();
 
   const {
-    values,
     isSubmitting,
     touched,
     errors,
@@ -42,7 +41,7 @@ export default function InsertButtonForm({ contract, onSave }: Props) {
             "Your payment address has been saved to your contract."
           );
           dispatch(getProfileThunk());
-          if (onSave) onSave();
+          if (onSave) onSave(res.data.data);
         })
         .catch((err) => {
           actions.setSubmitting(false);
