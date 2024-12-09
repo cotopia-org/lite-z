@@ -2,6 +2,8 @@ import { UserContractType } from "@/types/contract";
 import PayrollSectionTitle from "../sections-title";
 import CotopiaButton from "@/components/shared-ui/c-button";
 import { ChevronLeft } from "lucide-react";
+import SignContract from "./sign";
+import { useEffect, useState } from "react";
 
 type Props = {
   contract: UserContractType;
@@ -14,6 +16,11 @@ export default function PayrollContractDetails({
   isLoading = false,
   onBack,
 }: Props) {
+  const [localContract, setLocalContract] = useState(contract);
+  useEffect(() => {
+    if (contract !== undefined) setLocalContract(contract);
+  }, [contract]);
+
   function formattedDate(contractDate: string) {
     const date = new Date(contractDate);
     return `${date.getFullYear()}-${(date.getMonth() + 1)
@@ -22,21 +29,21 @@ export default function PayrollContractDetails({
   }
 
   const contractDetails = [
-    { key: "Contract Type", value: contract?.type },
-    { key: "Currency", value: contract?.currency },
-    { key: "Start at", value: formattedDate(contract?.start_at!) },
-    { key: "End at", value: formattedDate(contract?.end_at!) },
-    { key: "Created at", value: formattedDate(contract?.created_at!) },
-    { key: "Updated at", value: formattedDate(contract?.updated_at!) },
-    { key: "Min hours", value: contract?.min_hours },
-    { key: "Max hours", value: contract?.max_hours },
-    { key: "User role", value: contract?.role },
-    { key: "Amount", value: contract?.amount },
-    { key: "Contractor Status", value: contract?.contractor_status },
-    { key: "Auto Renewal", value: contract?.auto_renewal ? "yes" : "no" },
-    { key: "Payment method", value: contract?.payment_method },
-    { key: "Contract id", value: contract?.id },
-    { key: "Payment address", value: contract?.payment_address },
+    { key: "Contract Type", value: localContract?.type },
+    { key: "Currency", value: localContract?.currency },
+    { key: "Start at", value: formattedDate(localContract?.start_at!) },
+    { key: "End at", value: formattedDate(localContract?.end_at!) },
+    { key: "Created at", value: formattedDate(localContract?.created_at!) },
+    { key: "Updated at", value: formattedDate(localContract?.updated_at!) },
+    { key: "Min hours", value: localContract?.min_hours },
+    { key: "Max hours", value: localContract?.max_hours },
+    { key: "User role", value: localContract?.role },
+    { key: "Amount", value: localContract?.amount },
+    { key: "Contractor Status", value: localContract?.contractor_status },
+    { key: "Auto Renewal", value: localContract?.auto_renewal ? "yes" : "no" },
+    { key: "Payment method", value: localContract?.payment_method },
+    { key: "Contract id", value: localContract?.id },
+    { key: "Payment address", value: localContract?.payment_address },
   ];
 
   return (
@@ -69,6 +76,7 @@ export default function PayrollContractDetails({
           You don't have any contract yet.
         </p>
       )}
+      <SignContract contract={localContract} onUpdate={setLocalContract} />
       <CotopiaButton
         variant={"link"}
         startIcon={<ChevronLeft />}

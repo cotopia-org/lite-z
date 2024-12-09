@@ -42,7 +42,7 @@ export default function UserPayments({ endpoint, status }: Props) {
         // },
         {
           title: "Amount",
-          render: (item: PaymentType) => item.amount,
+          render: (item: PaymentType) => item.amount.toFixed(1),
         },
         {
           title: "Status",
