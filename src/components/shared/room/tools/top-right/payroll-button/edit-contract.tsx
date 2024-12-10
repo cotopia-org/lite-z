@@ -15,8 +15,8 @@ export default function EditContract({ contract }: Props) {
   const { workspace_id } = useRoomContext();
 
   const { user } = useAuth();
-  //@ts-ignore
   const userIsAdmin = isUserAdmin(
+    //@ts-ignore
     user?.id as number,
     +(workspace_id as string)
   );
