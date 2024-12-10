@@ -1,31 +1,31 @@
-import { PauseCircleIcon } from "@/components/icons"
-import CotopiaIconButton from "@/components/shared-ui/c-icon-button"
-import { colors } from "@/const/varz"
-import useLoading from "@/hooks/use-loading"
-import axiosInstance from "@/services/axios"
-import { JobType } from "@/types/job"
-import { toast } from "sonner"
+import { PauseCircleIcon } from "@/components/icons";
+import CotopiaIconButton from "@/components/shared-ui/c-icon-button";
+import { colors } from "@/const/varz";
+import useLoading from "@/hooks/use-loading";
+import axiosInstance from "@/services/axios";
+import { JobType } from "@/types/job";
+import { toast } from "sonner";
 
 type Props = {
-  job: JobType
-  onPause?: () => void
-}
+  job: JobType;
+  onPause?: () => void;
+};
 export default function PauseJob({ job, onPause }: Props) {
-  const { startLoading, stopLoading, isLoading } = useLoading()
+  const { startLoading, stopLoading, isLoading } = useLoading();
 
   const handlePaused = () => {
-    startLoading()
+    startLoading();
     axiosInstance
-      .put(`/jobs/${job.id}`, { status: "paused" })
+      .get(`/jobs/${job.id}/updateStatus?status=paused`)
       .then((res) => {
-        toast.success("Job has been stopped")
-        stopLoading()
-        if (onPause) onPause()
+        toast.success("Job has been stopped");
+        stopLoading();
+        if (onPause) onPause();
       })
       .catch(() => {
-        stopLoading()
-      })
-  }
+        stopLoading();
+      });
+  };
 
   return (
     <CotopiaIconButton
@@ -35,5 +35,5 @@ export default function PauseJob({ job, onPause }: Props) {
     >
       <PauseCircleIcon color={colors.warning.default} size={16} />
     </CotopiaIconButton>
-  )
+  );
 }

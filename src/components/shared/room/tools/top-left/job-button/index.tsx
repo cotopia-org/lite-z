@@ -11,17 +11,27 @@ import { JobType, JobStatusType } from "@/types/job";
 import { FetchDataType } from "@/services/axios";
 import JobItems from "@/components/shared/job-items";
 import CTabs from "@/components/shared-ui/c-tabs";
+import useAuth from "@/hooks/auth";
 
 export default function JobButton() {
   const { workspace_id } = useRoomContext();
 
+  const { user } = useAuth();
+
   const { data, isLoading, mutate } = useApi<FetchDataType<JobType[]>>(
     urlWithQueryParams(`/users/me/jobs`, { workspace_id }),
     undefined,
-    { isPaused: () => workspace_id === undefined }
+    { isPaused: () => workspace_id === undefined },
+  );
+
+  const { data: suggestionsJobs } = useApi<FetchDataType<JobType[]>>(
+    "/users/mentionedJobs",
+    undefined,
+    { isPaused: () => workspace_id === undefined },
   );
 
   let jobItems = (data && data?.data) ?? [];
+  let suggestItems = (suggestionsJobs && suggestionsJobs?.data) ?? [];
   let job_label = "Create job";
   const active_job = jobItems.find((j) => j.status === "in_progress");
   if (active_job)
@@ -31,6 +41,9 @@ export default function JobButton() {
         : active_job.title;
   if (!active_job && jobItems.length > 0) job_label = "Start job";
 
+  const getUser = (item: JobType) => {
+    return item.members.find((u) => u.id === user?.id);
+  };
   return (
     <PopupBox
       trigger={(open, isOpen) => (
@@ -39,6 +52,9 @@ export default function JobButton() {
           startIcon={<BriefcaseIcon size={20} />}
           open={open}
         >
+          {suggestItems.length > 0 && (
+            <div className="absolute top-2 right-2 w-2 h-2 bg-red-600 rounded-full"></div>
+          )}
           {job_label}
         </ToolButton>
       )}
@@ -46,15 +62,16 @@ export default function JobButton() {
       {(triggerPosition, open, close) => {
         let content = (
           <CTabs
-            defaultValue='in_progress'
+            defaultValue="in_progress"
             items={[
               {
                 title: "In Progress",
                 content: (
                   <JobItems
+                    user={user}
                     hasAction
                     items={jobItems.filter((x) =>
-                      ["in_progress"].includes(x.status)
+                      ["in_progress"].includes(getUser(x)?.status + ""),
                     )}
                     onMutate={mutate}
                   />
@@ -65,9 +82,10 @@ export default function JobButton() {
                 title: "Paused",
                 content: (
                   <JobItems
+                    user={user}
                     hasAction
                     items={jobItems.filter((x) =>
-                      ["paused"].includes(x.status)
+                      ["paused"].includes(getUser(x)?.status + ""),
                     )}
                     onMutate={mutate}
                   />
@@ -78,14 +96,29 @@ export default function JobButton() {
                 title: "Completed",
                 content: (
                   <JobItems
+                    user={user}
                     hasAction
                     items={jobItems.filter((x) =>
-                      ["completed"].includes(x.status)
+                      ["completed"].includes(getUser(x)?.status + ""),
                     )}
                     onMutate={mutate}
                   />
                 ),
                 value: "completed",
+              },
+              {
+                title: "Suggested",
+                content: (
+                  <JobItems
+                    user={user}
+                    hasAction
+                    items={suggestItems}
+                    onMutate={mutate}
+                    suggested={true}
+                  />
+                ),
+                value: "suggestions",
+                badge: suggestItems.length > 0,
               },
             ]}
           />
@@ -96,13 +129,13 @@ export default function JobButton() {
         return (
           <PopupBoxChild
             onClose={close}
-            title='Jobs'
+            title="Jobs"
             width={506}
             zIndex={triggerPosition.zIndex}
             top={triggerPosition.top}
             left={triggerPosition.left}
           >
-            <div className='flex w-full flex-col gap-y-6 items-end'>
+            <div className="flex w-full flex-col gap-y-6 items-end">
               {content}
               <AddJobHandler workspaceId={workspace_id} onCreated={mutate} />
             </div>

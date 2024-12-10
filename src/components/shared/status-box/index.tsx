@@ -8,7 +8,7 @@ export type StatusBoxVariant =
   | "default";
 
 type Props = {
-  variant: StatusBoxVariant;
+  variant?: StatusBoxVariant;
   label: ReactNode;
   alpha?: string;
 };

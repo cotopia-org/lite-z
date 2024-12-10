@@ -41,7 +41,7 @@ export default function TimeTrackingButtonTool() {
   const [selectedUser, setSelectedUser] = useState<UserType | null>(null);
 
   const { data: leaderboardData } = useApi(
-    `/workspaces/${workspace_id}/leaderboard`
+    `/workspaces/${workspace_id}/leaderboard`,
   );
 
   const leaderboard: LeaderboardType[] = leaderboardData?.data ?? [];
@@ -49,7 +49,7 @@ export default function TimeTrackingButtonTool() {
   let header = <>Leaderboard</>;
   let content = (
     <>
-      <div className='flex flex-col items-end w-full'>
+      <div className="flex flex-col items-end w-full">
         <div className={"flex flex-row gap-x-2  mb-4"}>
           <span className={"text-xs w-[40px]"}>Jobs</span>
           <span className={"text-xs w-[40px] text-yellow-600"}>Idle</span>
@@ -64,14 +64,14 @@ export default function TimeTrackingButtonTool() {
   );
 
   if (selectedUser !== null) {
-    content = <UserJobList userId={selectedUser.id} />;
+    content = <UserJobList userId={selectedUser.id} period={"this_month"} />;
     const userAvatar = workspaceUsers.find(
-      (x) => x.id === selectedUser.id
+      (x) => x.id === selectedUser.id,
     )?.avatar;
     header = (
-      <div className='flex flex-row items-center gap-x-2'>
+      <div className="flex flex-row items-center gap-x-2">
         <UserAvatar title={selectedUser.name} src={userAvatar?.url} />
-        <span className='text-xs'>{selectedUser.name ?? "-"}</span>
+        <span className="text-xs">{selectedUser.name ?? "-"}</span>
       </div>
     );
   }
@@ -101,9 +101,9 @@ export default function TimeTrackingButtonTool() {
                   onClick={() => {
                     setSelectedUser(null);
                   }}
-                  className='w-5 h-5 opacity-80 hover:opacity-100'
+                  className="w-5 h-5 opacity-80 hover:opacity-100"
                 >
-                  <ArrowLeft className='text-grayscale-subtitle w-4 h-4' />
+                  <ArrowLeft className="text-grayscale-subtitle w-4 h-4" />
                 </CotopiaIconButton>
               )
             }
