@@ -17,7 +17,7 @@ interface Props {}
 
 export enum MeetingTileType {
   "UserTile" = "user",
-  "ShareScreenTile" = "share-screen",
+  "ShareScreenTile" = "screen_share",
 }
 
 export type MeetingNodeType = {

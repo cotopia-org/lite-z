@@ -33,8 +33,8 @@ const UserTile = ({ className = "" }: Props) => {
   return (
     <div
       className={cn(
-        `bg-white/25 relative w-full h-full flex flex-col overflow-hidden
-         p-4 items-center justify-center rounded-2xl`,
+        `user-tile bg-white/25 relative w-full h-full flex flex-col overflow-hidden
+         p-3 items-center justify-center rounded-2xl`,
         video_clss,
         className
       )}
@@ -43,7 +43,7 @@ const UserTile = ({ className = "" }: Props) => {
         {trackContent}
       </div>
       <MicButton
-        className="absolute left-5 bottom-5 w-6 h-6"
+        className="mic-action absolute left-3 bottom-3 w-6 h-6"
         micSize={16}
         trackRef={{
           participant: trackReference?.participant,

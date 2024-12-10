@@ -259,10 +259,10 @@ export default function WithReactFlowV2() {
             (n) => n.data.username === node.data.username
           ) as Node
           const targetUserName = (droped_node.data as any)?.username
-          updateUserCoords(targetUserName, droped_node.position)
+          updateUserCoords(targetUserName, droped_node?.position)
 
           for (let n of allNodes) {
-            handleCircleMeet(n.id, n.position)
+            handleCircleMeet(n.id, n?.position)
           }
           break
       }
@@ -432,13 +432,14 @@ export default function WithReactFlowV2() {
 
       rf.current?.setNodes((prev) => [...prev, nNode])
 
-      handleCircleMeet(nNode.id, nNode.position, nNode)
+      handleCircleMeet(nNode.id, nNode?.position, nNode)
     },
     [user?.username]
   )
 
   const dragNodeHandler = useCallback(
     (e: any, draggingNode: Node) => {
+      if (draggingNode.type === VARZ.shareScreenNodeType) return
       let my_node = draggingNode
       if (!user) return
       //get all nodes from react flow
@@ -495,8 +496,8 @@ export default function WithReactFlowV2() {
               {
                 ...my_node,
                 position: {
-                  x: flatted_nodes[flatted_nodes.length - 2].position.x,
-                  y: flatted_nodes[flatted_nodes.length - 2].position.y,
+                  x: flatted_nodes[flatted_nodes.length - 2]?.position.x,
+                  y: flatted_nodes[flatted_nodes.length - 2]?.position.y,
                 },
               },
               target_node,

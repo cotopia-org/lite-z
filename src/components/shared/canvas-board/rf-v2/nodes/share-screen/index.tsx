@@ -21,12 +21,18 @@ function ShareScreenNode({ data }: any) {
 
   const alltracks = useTracks()
 
-  const targetTrack = alltracks.find(
-    (track) =>
+  console.log(alltracks, "ALLTRACKS")
+
+  const targetTrack = alltracks.find((track) => {
+    console.log(track, data?.livekit?.track?.source, "inner track")
+    return (
       track.source?.toLowerCase() ===
         data?.livekit?.track?.source?.toLowerCase() &&
       data?.livekit?.participant?.identity === track.participant.identity
-  )
+    )
+  })
+
+  console.log(targetTrack, "TRACK")
 
   const canResize = user?.username === targetTrack?.participant.identity
 
@@ -68,7 +74,6 @@ function ShareScreenNode({ data }: any) {
           identity={data?.livekit?.participant?.identity}
           onFullScreen={() => setIsFullScreen((prev) => !prev)}
         />
-
         {!!targetTrack && <VideoTrack trackRef={targetTrack} />}
       </div>
       {canResize && (
