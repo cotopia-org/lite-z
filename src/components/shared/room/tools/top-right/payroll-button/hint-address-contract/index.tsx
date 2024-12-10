@@ -25,6 +25,8 @@ export default function HintAddressContract({ contract, onUpdate }: Props) {
 
   if (!localContract) return null;
 
+  if (localContract?.payment_address) return null;
+
   if (localContract?.user_id !== user?.id) {
     if (userIsAdmin)
       return (
@@ -38,8 +40,6 @@ export default function HintAddressContract({ contract, onUpdate }: Props) {
       );
     return null;
   }
-
-  if (localContract?.payment_address) return null;
 
   return (
     <Alert variant='destructive'>

@@ -22,33 +22,35 @@ export default function PayrollContractDetails({
 }: Props) {
   const [localContract, setLocalContract] = useState(contract);
   useEffect(() => {
-    if (contract !== undefined) setLocalContract(contract);
+    setLocalContract(contract);
   }, [contract]);
 
-  function formattedDate(contractDate: string) {
-    const date = new Date(contractDate);
-    return `${date.getFullYear()}-${(date.getMonth() + 1)
-      .toString()
-      .padStart(2, "0")}-${date.getDate().toString().padStart(2, "0")}`;
-  }
+  console.log("localContract", localContract);
 
-  const contractDetails = [
-    { key: "Contract Type", value: localContract?.type },
-    { key: "Currency", value: localContract?.currency },
-    { key: "Start at", value: formattedDate(localContract?.start_at!) },
-    { key: "End at", value: formattedDate(localContract?.end_at!) },
-    { key: "Created at", value: formattedDate(localContract?.created_at!) },
-    { key: "Updated at", value: formattedDate(localContract?.updated_at!) },
-    { key: "Min hours", value: localContract?.min_hours },
-    { key: "Max hours", value: localContract?.max_hours },
-    { key: "User role", value: localContract?.role },
-    { key: "Amount", value: localContract?.amount },
-    { key: "Contractor Status", value: localContract?.contractor_status },
-    { key: "Auto Renewal", value: localContract?.auto_renewal ? "yes" : "no" },
-    { key: "Payment method", value: localContract?.payment_method },
-    { key: "Contract id", value: localContract?.id },
-    { key: "Payment address", value: localContract?.payment_address },
-  ];
+  // function formattedDate(contractDate: string) {
+  //   const date = new Date(contractDate);
+  //   return `${date.getFullYear()}-${(date.getMonth() + 1)
+  //     .toString()
+  //     .padStart(2, "0")}-${date.getDate().toString().padStart(2, "0")}`;
+  // }
+
+  // const contractDetails = [
+  //   { key: "Contract Type", value: localContract?.type },
+  //   { key: "Currency", value: localContract?.currency },
+  //   { key: "Start at", value: formattedDate(localContract?.start_at!) },
+  //   { key: "End at", value: formattedDate(localContract?.end_at!) },
+  //   { key: "Created at", value: formattedDate(localContract?.created_at!) },
+  //   { key: "Updated at", value: formattedDate(localContract?.updated_at!) },
+  //   { key: "Min hours", value: localContract?.min_hours },
+  //   { key: "Max hours", value: localContract?.max_hours },
+  //   { key: "User role", value: localContract?.role },
+  //   { key: "Amount", value: localContract?.amount },
+  //   { key: "Contractor Status", value: localContract?.contractor_status },
+  //   { key: "Auto Renewal", value: localContract?.auto_renewal ? "yes" : "no" },
+  //   { key: "Payment method", value: localContract?.payment_method },
+  //   { key: "Contract id", value: localContract?.id },
+  //   { key: "Payment address", value: localContract?.payment_address },
+  // ];
 
   return (
     <div className='flex flex-col gap-y-4'>
