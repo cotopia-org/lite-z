@@ -20,6 +20,11 @@ import CotopiaTooltip from "@/components/shared-ui/c-tooltip";
 import CotopiaIconButton from "@/components/shared-ui/c-icon-button";
 import { PlayCircleIcon } from "@/components/icons";
 import { colors } from "@/const/varz";
+import useLoading from "@/hooks/use-loading";
+import axiosInstance from "@/services/axios";
+import { toast } from "sonner";
+import useAuth from "@/hooks/auth";
+import { useProfile } from "@/routes/private-wrarpper";
 
 interface Props {
   item: JobType;
@@ -34,6 +39,33 @@ const JobItem = ({
   hasAction = false,
   suggested = false,
 }: Props) => {
+  const { startLoading, stopLoading, isLoading } = useLoading();
+
+  const handleAcceptJob = (jobId: number) => {
+    startLoading();
+    axiosInstance
+      .get(`/jobs/${jobId}/accept`)
+      .then((res) => {
+        toast.success("Job has been accepted and started");
+        stopLoading();
+      })
+      .catch(() => {
+        stopLoading();
+      });
+  };
+  const handleDismissJob = (jobId: number) => {
+    startLoading();
+    axiosInstance
+      .get(`/jobs/${jobId}/dismiss`)
+      .then((res) => {
+        toast.success("Job has been dismissed");
+        stopLoading();
+      })
+      .catch(() => {
+        stopLoading();
+      });
+  };
+
   return (
     <div className="flex flex-col gap-y-4 items-start w-full py-4 px-6 border border-grayscale-border rounded-2xl shadow-app-bar">
       <div className="flex w-full justify-between flex-row items-center gap-x-2">
@@ -68,7 +100,7 @@ const JobItem = ({
           <div className="flex flex-row gap-x-3 items-center">
             <CotopiaIconButton
               onClick={() => {
-                console.log("Accepted");
+                handleAcceptJob(item.id);
               }}
               disabled={false}
               className="text-black/60 hover:text-black w-5 h-5"
@@ -77,7 +109,7 @@ const JobItem = ({
             </CotopiaIconButton>
             <CotopiaIconButton
               onClick={() => {
-                console.log("Rejected");
+                handleDismissJob(item.id);
               }}
               disabled={false}
               className="text-black/60 hover:text-black w-5 h-5"

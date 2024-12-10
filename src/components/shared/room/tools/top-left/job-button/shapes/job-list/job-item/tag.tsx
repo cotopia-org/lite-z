@@ -10,7 +10,7 @@ export default function JobTag({ job }: Props) {
     <div
       className={"flex flex-wrap gap-1 border rounded-full items-center p-2"}
     >
-      <strong className={"text-xs"}>Mentions</strong>
+      <strong className={"text-xs"}>Open to</strong>
       {job.mentions.map((mention) => {
         return (
           <StatusBox

@@ -1,31 +1,31 @@
-import { colors } from "@/const/varz"
-import { TickCircleIcon } from "@/components/icons"
-import CotopiaIconButton from "@/components/shared-ui/c-icon-button"
-import useLoading from "@/hooks/use-loading"
-import axiosInstance from "@/services/axios"
-import { JobType } from "@/types/job"
-import { toast } from "sonner"
+import { colors } from "@/const/varz";
+import { TickCircleIcon } from "@/components/icons";
+import CotopiaIconButton from "@/components/shared-ui/c-icon-button";
+import useLoading from "@/hooks/use-loading";
+import axiosInstance from "@/services/axios";
+import { JobType } from "@/types/job";
+import { toast } from "sonner";
 
 type Props = {
-  job: JobType
-  onDone?: () => void
-}
+  job: JobType;
+  onDone?: () => void;
+};
 export default function DoneJob({ job, onDone }: Props) {
-  const { startLoading, stopLoading, isLoading } = useLoading()
+  const { startLoading, stopLoading, isLoading } = useLoading();
 
   const handleDone = () => {
-    startLoading()
+    startLoading();
     axiosInstance
-      .put(`/jobs/${job.id}`, { status: "completed" })
+      .get(`/jobs/${job.id}/updateStatus?status=completed`)
       .then((res) => {
-        toast.success("Job has been completed")
-        if (onDone) onDone()
-        stopLoading()
+        toast.success("Job has been completed");
+        if (onDone) onDone();
+        stopLoading();
       })
       .catch(() => {
-        stopLoading()
-      })
-  }
+        stopLoading();
+      });
+  };
 
   return (
     <CotopiaIconButton
@@ -35,5 +35,5 @@ export default function DoneJob({ job, onDone }: Props) {
     >
       <TickCircleIcon color={colors.success.default} size={16} />
     </CotopiaIconButton>
-  )
+  );
 }
