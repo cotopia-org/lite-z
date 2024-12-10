@@ -11,7 +11,7 @@ export default function UserPayments({ endpoint, status }: Props) {
 
   return (
     <CotopiaTable
-      items={payments.filter((a) => a.status === status)}
+      items={payments.slice(0, 5)}
       tableHeadItems={[
         // { title: "Id", render: (item: PaymentType) => item.id },
         // {

@@ -15,7 +15,6 @@ import moment from "moment";
 import UserPayments from "@/components/shared/cotopia-payroll/payments";
 import { useMemo } from "react";
 import NotFound from "@/components/shared/layouts/not-found";
-import HintAddressContract from "./hint-address-contract";
 import ContractDetails from "./contract-details";
 
 const box_width = 506;
@@ -62,11 +61,6 @@ export default function PayrollButton() {
                       title: "Contract",
                       content: (
                         <div className='py-3'>
-                          {!!myUser?.active_contract && (
-                            <HintAddressContract
-                              contract={myUser?.active_contract}
-                            />
-                          )}
                           <div className='flex flex-col w-full my-4'>
                             <strong className='px-4'>My Active Contract</strong>
                             <CotopiaTable
@@ -128,12 +122,7 @@ export default function PayrollButton() {
                     {
                       title: "Payments",
                       value: "payments",
-                      content: (
-                        <UserPayments
-                          endpoint='/users/me/payments'
-                          status='pending'
-                        />
-                      ),
+                      content: <UserPayments endpoint='/users/me/payments' />,
                     },
                   ]}
                 />
