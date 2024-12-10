@@ -23,14 +23,14 @@ import { colors } from "@/const/varz";
 import useLoading from "@/hooks/use-loading";
 import axiosInstance from "@/services/axios";
 import { toast } from "sonner";
-import useAuth from "@/hooks/auth";
-import { useProfile } from "@/routes/private-wrarpper";
+import { UserType } from "@/types/user";
 
 interface Props {
   item: JobType;
   mutate?: () => void;
   hasAction?: boolean;
   suggested?: boolean;
+  user?: UserType | null;
 }
 
 const JobItem = ({
@@ -38,6 +38,7 @@ const JobItem = ({
   mutate,
   hasAction = false,
   suggested = false,
+  user,
 }: Props) => {
   const { startLoading, stopLoading, isLoading } = useLoading();
 
@@ -66,6 +67,10 @@ const JobItem = ({
       });
   };
 
+  const getUser = (item: JobType) => {
+    return item.members.find((u) => u.id === user?.id);
+  };
+
   return (
     <div className="flex flex-col gap-y-4 items-start w-full py-4 px-6 border border-grayscale-border rounded-2xl shadow-app-bar">
       <div className="flex w-full justify-between flex-row items-center gap-x-2">
@@ -87,12 +92,16 @@ const JobItem = ({
           <div className="flex flex-row gap-x-3 items-center">
             <JobActions
               job={item}
+              status={getUser(item)?.status}
               onPause={mutate}
               onStart={mutate}
               onDelete={mutate}
               onDone={mutate}
             />
-            <EditJobButton job={item} fetchAgain={mutate} />
+
+            {getUser(item)?.role === "owner" && (
+              <EditJobButton job={item} fetchAgain={mutate} />
+            )}
           </div>
         )}
 

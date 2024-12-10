@@ -11,9 +11,12 @@ import { JobType, JobStatusType } from "@/types/job";
 import { FetchDataType } from "@/services/axios";
 import JobItems from "@/components/shared/job-items";
 import CTabs from "@/components/shared-ui/c-tabs";
+import useAuth from "@/hooks/auth";
 
 export default function JobButton() {
   const { workspace_id } = useRoomContext();
+
+  const { user } = useAuth();
 
   const { data, isLoading, mutate } = useApi<FetchDataType<JobType[]>>(
     urlWithQueryParams(`/users/me/jobs`, { workspace_id }),
@@ -38,6 +41,9 @@ export default function JobButton() {
         : active_job.title;
   if (!active_job && jobItems.length > 0) job_label = "Start job";
 
+  const getUser = (item: JobType) => {
+    return item.members.find((u) => u.id === user?.id);
+  };
   return (
     <PopupBox
       trigger={(open, isOpen) => (
@@ -62,9 +68,10 @@ export default function JobButton() {
                 title: "In Progress",
                 content: (
                   <JobItems
+                    user={user}
                     hasAction
                     items={jobItems.filter((x) =>
-                      ["in_progress"].includes(x.status),
+                      ["in_progress"].includes(getUser(x)?.status + ""),
                     )}
                     onMutate={mutate}
                   />
@@ -75,9 +82,10 @@ export default function JobButton() {
                 title: "Paused",
                 content: (
                   <JobItems
+                    user={user}
                     hasAction
                     items={jobItems.filter((x) =>
-                      ["paused"].includes(x.status),
+                      ["paused"].includes(getUser(x)?.status + ""),
                     )}
                     onMutate={mutate}
                   />
@@ -88,9 +96,10 @@ export default function JobButton() {
                 title: "Completed",
                 content: (
                   <JobItems
+                    user={user}
                     hasAction
                     items={jobItems.filter((x) =>
-                      ["completed"].includes(x.status),
+                      ["completed"].includes(getUser(x)?.status + ""),
                     )}
                     onMutate={mutate}
                   />
@@ -101,6 +110,7 @@ export default function JobButton() {
                 title: "Suggested",
                 content: (
                   <JobItems
+                    user={user}
                     hasAction
                     items={suggestItems}
                     onMutate={mutate}

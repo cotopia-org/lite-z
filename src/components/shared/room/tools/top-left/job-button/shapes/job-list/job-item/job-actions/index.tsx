@@ -10,6 +10,7 @@ type Props = {
   onStart?: () => void;
   onPause?: () => void;
   onDone?: () => void;
+  status?: string;
 };
 export default function JobActions({
   job,
@@ -17,11 +18,12 @@ export default function JobActions({
   onDelete,
   onStart,
   onDone,
+  status,
 }: Props) {
   return (
     <div className="flex flex-row gap-x-3 items-center">
-      {job.status === "paused" && <PlayJob onStart={onStart} job={job} />}
-      {job.status === "in_progress" && <PauseJob onPause={onPause} job={job} />}
+      {status === "paused" && <PlayJob onStart={onStart} job={job} />}
+      {status === "in_progress" && <PauseJob onPause={onPause} job={job} />}
       {/*<DeleteJob job={job} onDelete={onDelete} />*/}
       <DoneJob job={job} onDone={onDone} />
     </div>

@@ -8,6 +8,8 @@ export type UserJobType = {
   id: number;
   total_minutes: number;
   role: string;
+  created_at: string;
+  status: JobStatusType;
 };
 export type JobType = {
   created_at: string;
