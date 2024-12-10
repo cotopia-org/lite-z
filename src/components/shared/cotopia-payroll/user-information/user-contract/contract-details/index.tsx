@@ -6,6 +6,7 @@ import SignContract from "./sign";
 import { useEffect, useState } from "react";
 import HintAddressContract from "@/components/shared/room/tools/top-right/payroll-button/hint-address-contract";
 import Markdown from "markdown-to-jsx";
+import TitleEl from "@/components/shared/title-el";
 
 type Props = {
   contract: UserContractType;
@@ -86,6 +87,11 @@ export default function PayrollContractDetails({
         <p className='text-gray-400 text-xl font-semibold text-center'>
           You don't have any contract yet.
         </p>
+      )}
+      {!!localContract.payment_address && (
+        <TitleEl title='Payment address'>
+          {localContract.payment_address}
+        </TitleEl>
       )}
       <HintAddressContract
         contract={localContract}
