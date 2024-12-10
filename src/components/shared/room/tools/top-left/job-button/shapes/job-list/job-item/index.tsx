@@ -49,6 +49,9 @@ const JobItem = ({
       .then((res) => {
         toast.success("Job has been accepted and started");
         stopLoading();
+        if (mutate) {
+          mutate();
+        }
       })
       .catch(() => {
         stopLoading();
@@ -61,6 +64,9 @@ const JobItem = ({
       .then((res) => {
         toast.success("Job has been dismissed");
         stopLoading();
+        if (mutate) {
+          mutate();
+        }
       })
       .catch(() => {
         stopLoading();
