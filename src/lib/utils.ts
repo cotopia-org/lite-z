@@ -293,9 +293,9 @@ export function isUserAdmin(user: UserType | null, workspace_id?: number) {
 
   if (user === null) return false;
 
-  if (user.workspaces.length === 0) return false;
+  if (user?.workspaces?.length === 0) return false;
 
-  const userInTargetWorkspace = user.workspaces.find(
+  const userInTargetWorkspace = user?.workspaces?.find(
     (x) => x.id === workspace_id
   );
 
