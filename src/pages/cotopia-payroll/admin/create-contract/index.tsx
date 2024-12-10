@@ -128,6 +128,8 @@ export default function PayrollCreateContract({
     isValid,
   } = formik;
 
+  console.log("errors", errors);
+
   return (
     <form
       onSubmit={handleSubmit}

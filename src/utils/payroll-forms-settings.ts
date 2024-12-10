@@ -63,20 +63,16 @@ export const validationSchemaContract = Yup.object().shape({
   //   )
   //   .min(3, "Contract type must be at least 3 characters long.")
   //   .max(50, "Contract type cannot exceed 50 characters."),
-  amount: Yup.number()
-    .required("Amount is required.")
-    .typeError("Amount must be a valid number.")
-    .positive("Amount must be greater than zero.")
-    .max(1000000, "Amount cannot exceed 1,000,000."),
+  amount: Yup.number().required("Amount is required."),
   currency: Yup.string()
     .required("Currency is required.")
     .oneOf(
       ["USDT", "USD", "EUR"],
       "Currency must be one of the following: USDT, USD, EUR."
     ),
-  end_at: Yup.date()
-    .required("End date is required.")
-    .min(new Date(), "End date must be in the future."),
+  // end_at: Yup.date()
+  //   .required("End date is required.")
+  //   .min(new Date(), "End date must be in the future."),
   auto_renewal: Yup.number()
     .required("Auto-renewal status is required.")
     .oneOf([0, 1], "Auto-renewal must be either 0 (disabled) or 1 (enabled)."),
