@@ -8,6 +8,7 @@ import { usePayroll } from "@/pages/cotopia-payroll/user/payroll";
 interface Props {
   values: FormikValues;
   userId: number;
+  contractId?: number;
 }
 
 const useCreateContract = () => {
@@ -57,7 +58,47 @@ const useCreateContract = () => {
     }
   };
 
-  return { createContract, loading };
+  const updateContract = async ({ values, userId, contractId }: Props) => {
+    setLoading(true);
+
+    try {
+      const response = await axiosInstance.put(`/contracts/${contractId}`, {
+        type: values.type,
+        amount: +values.amount,
+        currency: values.currency,
+        start_at: new Date(values.start_at).toISOString(),
+        end_at: new Date(values.end_at).toISOString(),
+        auto_renewal: values.auto_renewal,
+        renewal_count: values.renewal_count,
+        renew_time_period_type: values.renew_time_period_type,
+        renew_time_period: +values.renew_time_period,
+        renew_notice: +values.renew_notice,
+        user_status: values.user_status,
+        contractor_status: values.contractor_status,
+        min_hours: +values.min_hours,
+        max_hours: +values.max_hours,
+        payment_method: values.payment_method,
+        payment_address: values.payment_address,
+        payment_period: values.payment_period,
+        role: values.role,
+        user_sign_status: +values.user_sign_status,
+        contractor_sign_status: +values.contractor_sign_status,
+        user_id: userId,
+        workspace_id,
+      });
+
+      toast.success("Contract edited successfully!");
+
+      changePage("all-members");
+    } catch (error) {
+      console.error("Error editing payments:", error);
+      toast.error("There was an error editing the Contract!");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return { createContract, updateContract, loading };
 };
 
 export default useCreateContract;

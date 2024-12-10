@@ -12,14 +12,26 @@ import { PayrollInitialState, payrollReducer } from "../create-payments/state";
 import useCreateContract from "@/hooks/use-create-contract";
 import UserSelector from "@/components/shared/user-selector";
 import { UserMinimalType } from "@/types/user";
+import { UserContractType } from "@/types/contract";
+import CotopiaIconButton from "@/components/shared-ui/c-icon-button";
+import { X } from "lucide-react";
+import moment from "moment";
 
-export default function PayrollCreateContract() {
+type Props = {
+  defaultContract?: UserContractType;
+  onBack?: () => void;
+};
+
+export default function PayrollCreateContract({
+  defaultContract,
+  onBack,
+}: Props) {
   const [state, dispatch] = useReducer(payrollReducer, PayrollInitialState);
   const userData = useAppSelector((store) => store.auth);
   const [selectedUser, setSelectedUser] = useState<UserMinimalType | null>(
     null
   );
-  const { createContract, loading } = useCreateContract();
+  const { createContract, updateContract, loading } = useCreateContract();
 
   useEffect(() => {
     const fetchEmployees = async () => {
@@ -85,10 +97,24 @@ export default function PayrollCreateContract() {
 
   const formik = useFormik({
     enableReinitialize: true,
-    initialValues: initialValueContract,
+    initialValues: defaultContract
+      ? {
+          ...defaultContract,
+          end_at: moment(defaultContract.end_at).format("YYYY-MM-DD"),
+          start_at: moment(defaultContract.start_at).format("YYYY-MM-DD"),
+        }
+      : initialValueContract,
     validationSchema: validationSchemaContract,
     onSubmit: (values) => {
-      createContract({ values, userId: +selectedUser?.id! });
+      if (defaultContract) {
+        updateContract({
+          values,
+          userId: defaultContract?.user_id,
+          contractId: defaultContract.id,
+        });
+      } else {
+        createContract({ values, userId: +selectedUser?.id! });
+      }
     },
   });
 
@@ -107,15 +133,24 @@ export default function PayrollCreateContract() {
       onSubmit={handleSubmit}
       className='w-full p-4 flex flex-col gap-y-8 items-center'
     >
+      {onBack && (
+        <div className='flex flex-row items-center justify-between w-full border-b pb-4'>
+          <strong className='text-xl'>Edit Contract</strong>
+          <CotopiaIconButton className='text-black' onClick={onBack}>
+            <X />
+          </CotopiaIconButton>
+        </div>
+      )}
       <div className='w-full grid grid-cols-2 gap-x-4 gap-y-4'>
-        <UserSelector
-          label={false}
-          onPick={(user) => {
-            setSelectedUser(user);
-            handleUserIdChange(user.id.toString());
-          }}
-        />
-
+        {!!!defaultContract && (
+          <UserSelector
+            label={false}
+            onPick={(user) => {
+              setSelectedUser(user);
+              handleUserIdChange(user.id.toString());
+            }}
+          />
+        )}
         <PayrollContractInputs
           errors={errors}
           getFieldProps={getFieldProps}
@@ -138,8 +173,9 @@ export default function PayrollCreateContract() {
         type='submit'
         disabled={!isValid || loading}
         className='w-full'
+        loading={loading}
       >
-        {loading ? "Creating..." : "Create a new contract"}
+        {defaultContract ? "Edit contract" : "Create a new contract"}
       </CotopiaButton>
     </form>
   );

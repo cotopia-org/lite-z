@@ -16,6 +16,7 @@ import UserPayments from "@/components/shared/cotopia-payroll/payments";
 import { useMemo } from "react";
 import NotFound from "@/components/shared/layouts/not-found";
 import ContractDetails from "./contract-details";
+import EditContract from "./edit-contract";
 
 const box_width = 506;
 
@@ -27,7 +28,7 @@ export default function PayrollButton() {
 
   const totalPendingPaymentsAmount = useMemo(() => {
     return payments
-      .filter((a) => a.status === "pending")
+      .filter((a) => a.status === "ongoing")
       .reduce((prev, crt) => crt.amount + prev, 0);
   }, [payments]);
 
@@ -110,7 +111,10 @@ export default function PayrollButton() {
                                 {
                                   title: "",
                                   render: (item: UserContractType) => (
-                                    <ContractDetails contract={item} />
+                                    <div className='flex flex-row items-center gap-x-1'>
+                                      <EditContract contract={item} />
+                                      <ContractDetails contract={item} />
+                                    </div>
                                   ),
                                 },
                               ]}
