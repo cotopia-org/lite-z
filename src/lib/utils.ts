@@ -7,6 +7,7 @@ import { clsx, type ClassValue } from "clsx";
 import { Track } from "livekit-client";
 import moment from "moment";
 import { twMerge } from "tailwind-merge";
+
 const querystring = require("querystring");
 
 export const getQueryParams = (obj: object) => querystring.stringify(obj);
@@ -24,7 +25,7 @@ export function urlWithQueryParams(url: string, object: any) {
 
 export const getTimeFormat = (
   seconds: number,
-  hasHours: boolean = false
+  hasHours: boolean = false,
 ): string => {
   const hours = Math.floor(seconds / 3600);
   const minutes = Math.floor((seconds % 3600) / 60);
@@ -53,6 +54,7 @@ export function persianToEnglishNumbers(inputStr: string): string {
 
   return inputStr.replace(/[۰-۹]/g, (match) => translationMap[match]);
 }
+
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
@@ -118,7 +120,7 @@ export const timeStringToMoment = (time: string) => {
 
 export function convertMinutesToHHMMSS(
   minutes: number,
-  short: boolean
+  short: boolean,
 ): string {
   const hours = Math.floor(minutes / 60);
   const mins = Math.floor(minutes % 60);
@@ -184,14 +186,14 @@ export const isScreenShareExist = (tracks: TrackReferenceOrPlaceholder[]) => {
 
 export function isProp<
   U extends HTMLElement,
-  T extends React.HTMLAttributes<U>
+  T extends React.HTMLAttributes<U>,
 >(prop: T | undefined): prop is T {
   return prop !== undefined;
 }
 
 export function mergeProps<
   U extends HTMLElement,
-  T extends Array<React.HTMLAttributes<U> | undefined>
+  T extends Array<React.HTMLAttributes<U> | undefined>,
 >(...props: T) {
   return mergePropsMain(...(props.filter(isProp) as any));
 }
@@ -210,7 +212,9 @@ export const getFocusedMessage = ({
   changingClass: string[];
 }): { focusHandler: () => void | undefined } => {
   if (message === undefined || targetIndex < 0)
-    return { focusHandler: () => {} };
+    return {
+      focusHandler: () => {},
+    };
 
   const findFocusedMessage = () => {
     const nodes = message.childNodes as NodeListOf<HTMLDivElement>;
@@ -240,7 +244,7 @@ export const getTwelveClockFormat = (time: string) => {
 };
 
 export function extractMentions(
-  message: string
+  message: string,
 ): { start_position: number; user: string }[] {
   const mentionRegex = /@(\S+)/g; // Fixed when a DOT was in the username.
   const mentions: { start_position: number; user: string }[] = [];
@@ -289,7 +293,10 @@ export function compactNumber(value: number, decimals: number = 1): string {
   return `${value.toFixed(decimals).replace(/\.0+$/, "")}${suffixes[index]}`;
 }
 
-export function isUserAdmin(user: UserType | WorkspaceUserType | null, workspace_id?: number) {
+export function isUserAdmin(
+  user: UserType | WorkspaceUserType | null,
+  workspace_id?: number,
+) {
   if (workspace_id === undefined) return false;
 
   if (user === null) return false;
@@ -297,20 +304,22 @@ export function isUserAdmin(user: UserType | WorkspaceUserType | null, workspace
   if (user?.workspaces?.length === 0) return false;
 
   const userInTargetWorkspace = user?.workspaces?.find(
-    (x) => x.id === workspace_id
+    (x) => x.id === workspace_id,
   );
 
-  return userInTargetWorkspace?.role === "super-admin";
+  return (
+    userInTargetWorkspace?.role === "super-admin" ||
+    userInTargetWorkspace?.role === "owner"
+  );
 }
 
 export function getContractStatus(contract: UserContractType) {
+  if (contract.user_sign_status === 1 && contract.contractor_sign_status === 1)
+    return "Signed";
 
-  if ( contract.user_sign_status === 1 && contract.contractor_sign_status === 1) return 'Signed'
+  if (contract.user_sign_status === 0) return "Awaiting user signing";
 
-  if ( contract.user_sign_status === 0 ) return 'Awaiting user signing'
+  if (contract.contractor_sign_status === 0) return "Awaiting admin signing";
 
-  if ( contract.contractor_sign_status === 0 ) return 'Awaiting admin signing'
-
-  return 'UnSigned'
-
+  return "UnSigned";
 }
