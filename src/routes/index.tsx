@@ -9,6 +9,7 @@ import PrivateRoutes from "./private-wrarpper";
 
 //Home page
 const HomePage = lazy(() => import("@/pages/home"));
+const Acts = lazy(() => import("@/pages/acts"));
 
 //Workspace page
 const WorkspacePage = lazy(() => import("@/pages/workspace"));
@@ -35,6 +36,10 @@ const router = createBrowserRouter([
         element: <HomePage />,
       },
       {
+        path: "acts/",
+        element: <Acts />,
+      },
+      {
         path: paths.workspaces.index,
         children: [
           {
@@ -48,7 +53,7 @@ const router = createBrowserRouter([
           paths.workspaces.index,
           paths.workspaces.view,
           paths.workspaces.rooms.index,
-          paths.workspaces.rooms.view
+          paths.workspaces.rooms.view,
         ),
         element: <WorkspaceRoomPage />,
       },
