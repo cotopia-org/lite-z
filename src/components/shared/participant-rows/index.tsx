@@ -8,14 +8,16 @@ import { ReactNode } from "react";
 import ParticipantsWithPopover from "../participants/with-popover";
 import { useRoomContext } from "../room/room-context";
 import useAuth from "@/hooks/auth";
-import { cn } from "@/lib/utils";
+import { cn, isUserAdmin } from "@/lib/utils";
+import ParticipantBadge from "./participant-badges";
+import { Crown, Shield } from "lucide-react";
 
 interface Props {
   participants: WorkspaceUserType[];
 }
 
 const ParticipantRows = ({ participants }: Props) => {
-  const { room_id } = useRoomContext();
+  const { room_id , workspace_id, workspaceUsers} = useRoomContext();
 
   const { user } = useAuth();
 
@@ -45,6 +47,8 @@ const ParticipantRows = ({ participants }: Props) => {
 
         const userActiveJob = participant.active_job?.title ?? "Idle";
 
+        const findWorkspace = participant?.workspaces?.find(a => a.id == +(workspace_id as string))
+
         return (
           <div
             key={participant.id}
@@ -56,6 +60,19 @@ const ParticipantRows = ({ participants }: Props) => {
                 className='!pb-0'
                 roomId={room_id}
                 participants={[participant]}
+                render={(item, content) => {
+
+                  const user = workspaceUsers.find(a => a.id === item.id)
+
+                  const admin = user ? isUserAdmin(user, +(workspace_id as string)) : false
+
+                  const isOwner = findWorkspace ? findWorkspace?.role === 'owner' : false
+
+                  return <div className="relative">
+                    {!!isOwner && <div className="absolute top-[-4px] right-[-4px] z-10 bg-muted rounded-full text-primary"><Crown size={16} /></div>}
+                    {!!admin && <div className="absolute top-[-4px] right-[-4px] z-10  bg-muted rounded-full text-primary"><Shield size={16} /></div>}
+                    {content}</div>
+                }}
               />
               <div className='flex flex-col'>
                 <div className='flex flex-row items-center gap-x-2'>
@@ -63,11 +80,7 @@ const ParticipantRows = ({ participants }: Props) => {
                     {participant.username}
                   </span>
                   {is_mine && (
-                    <div className='flex items-center justify-center p-1 py-[2px] rounded bg-primary-light'>
-                      <span className='text-xs font-medium text-primary-label'>
-                        You
-                      </span>
-                    </div>
+                    <ParticipantBadge title="You" />
                   )}
                 </div>
                 <span

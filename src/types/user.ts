@@ -69,4 +69,9 @@ export type WorkspaceUserType = {
     hours: string;
     minutes: number;
   };
+  workspaces: {
+    id: number;
+    role: string;
+    title: string;
+  }[];
 };

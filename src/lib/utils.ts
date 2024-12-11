@@ -1,6 +1,7 @@
 import { mergePropsMain } from "@/components/shared/room/sessions/room-audio-renderer/use-media-track-by-source-or-name/merge-props";
 import { ScheduleType } from "@/types/calendar";
-import { UserType } from "@/types/user";
+import { UserContractType } from "@/types/contract";
+import { UserType, WorkspaceUserType } from "@/types/user";
 import { TrackReferenceOrPlaceholder } from "@livekit/components-core";
 import { clsx, type ClassValue } from "clsx";
 import { Track } from "livekit-client";
@@ -288,7 +289,7 @@ export function compactNumber(value: number, decimals: number = 1): string {
   return `${value.toFixed(decimals).replace(/\.0+$/, "")}${suffixes[index]}`;
 }
 
-export function isUserAdmin(user: UserType | null, workspace_id?: number) {
+export function isUserAdmin(user: UserType | WorkspaceUserType | null, workspace_id?: number) {
   if (workspace_id === undefined) return false;
 
   if (user === null) return false;
@@ -300,4 +301,16 @@ export function isUserAdmin(user: UserType | null, workspace_id?: number) {
   );
 
   return userInTargetWorkspace?.role === "super-admin";
+}
+
+export function getContractStatus(contract: UserContractType) {
+
+  if ( contract.user_sign_status === 1 && contract.contractor_sign_status === 1) return 'Signed'
+
+  if ( contract.user_sign_status === 0 ) return 'Awaiting user signing'
+
+  if ( contract.contractor_sign_status === 0 ) return 'Awaiting admin signing'
+
+  return 'UnSigned'
+
 }

@@ -29,25 +29,26 @@ export default function PayrollSideBarLink() {
   }[] = isAdmin
     ? [
         {
-          title: "All contracts",
+          title: "All Contracts",
           page: "all-user-contract",
           icon: <User />,
         },
         {
-          title: "My contracts",
-          page: "user-contract",
-          icon: <User />,
+          title: "All Payments",
+          page: "all-payments",
+          icon: <Coins />,
         },
+       
         // {
         //   title: "Members",
         //   page: "all-members",
         //   icon: <Users />,
         // },
-        {
-          title: "Users Payments",
-          page: "all-payment",
-          icon: <CircleDollarSign />,
-        },
+        // {
+        //   title: "Users Payments",
+        //   page: "all-payment",
+        //   icon: <CircleDollarSign />,
+        // },
         {
           title: "Create Contract",
           page: "create-contract",
@@ -58,10 +59,11 @@ export default function PayrollSideBarLink() {
           page: "create-payments",
           icon: <HandCoins />,
         },
+        
         {
-          title: "All Payments",
-          page: "all-payments",
-          icon: <Coins />,
+          title: "My contracts",
+          page: "user-contract",
+          icon: <User />,
         },
         {
           title: "My Payments",

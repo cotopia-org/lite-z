@@ -1,3 +1,5 @@
+import { UserContractType } from "./contract";
+
 export type PaymentType = {
   amount: number;
   bonus: number;
@@ -18,4 +20,5 @@ export type PaymentType = {
     status: string;
     username: string;
   };
+  contract: UserContractType
 };
