@@ -1,22 +1,23 @@
 import StatusBox from "@/components/shared/status-box";
 import { cn, getTimeFormat } from "@/lib/utils";
-import { JobType } from "@/types/job";
+import { JobType, UserJobType } from "@/types/job";
 
 type Props = {
   job: JobType;
+  getUser: (value: JobType) => UserJobType | undefined;
 };
-export default function JobEstimate({ job }: Props) {
+export default function JobEstimate({ job, getUser }: Props) {
   if (!job.estimate) return null;
 
   const jobEstimateSeconds = (job.estimate ?? 0) * 60 * 60;
-  const jobWorkedSeconds = (job.total_hours ?? 0) * 60;
+  const jobWorkedSeconds = (getUser(job)?.total_minutes ?? 0) * 60;
 
   const workedMoreThanEstimate = jobWorkedSeconds > jobEstimateSeconds;
 
   return (
     <StatusBox
       label={
-        <div className='flex flex-row items-center gap-x-1'>
+        <div className="flex flex-row items-center gap-x-1">
           <span
             className={cn(workedMoreThanEstimate ? "text-yellow-600" : "")}
           >{` ${getTimeFormat(jobWorkedSeconds, true)}`}</span>
@@ -24,7 +25,7 @@ export default function JobEstimate({ job }: Props) {
           <span>{`${getTimeFormat(jobEstimateSeconds, true)}`}</span>
         </div>
       }
-      variant='info'
+      variant="info"
     />
   );
 }

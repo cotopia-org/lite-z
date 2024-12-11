@@ -24,11 +24,11 @@ export default function JobButton() {
     { isPaused: () => workspace_id === undefined },
   );
 
-  const { data: suggestionsJobs } = useApi<FetchDataType<JobType[]>>(
-    "/users/mentionedJobs",
-    undefined,
-    { isPaused: () => workspace_id === undefined },
-  );
+  const { data: suggestionsJobs, mutate: mutateSuggest } = useApi<
+    FetchDataType<JobType[]>
+  >("/users/mentionedJobs", undefined, {
+    isPaused: () => workspace_id === undefined,
+  });
 
   let jobItems = (data && data?.data) ?? [];
   let suggestItems = (suggestionsJobs && suggestionsJobs?.data) ?? [];
@@ -113,7 +113,7 @@ export default function JobButton() {
                     user={user}
                     hasAction
                     items={suggestItems}
-                    onMutate={mutate}
+                    onMutate={mutateSuggest}
                     suggested={true}
                   />
                 ),

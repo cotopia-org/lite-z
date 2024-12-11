@@ -3,27 +3,21 @@ import EditJobButton from "./edit";
 import { limitChar } from "@/lib/utils";
 import JobStatus from "./job-status";
 import JobActions from "./job-actions";
-import JobDate from "./job-date";
 import JobEstimate from "./estimate";
 import JobParent from "./parent";
 import JobTag from "./tag";
-import CotopiaButton from "@/components/shared-ui/c-button";
-import {
-  Plus,
-  SendHorizonal,
-  UserCheck,
-  UserRoundCheck,
-  UserRoundX,
-} from "lucide-react";
+import { UserRoundCheck, UserRoundX } from "lucide-react";
 import moment from "moment/moment";
 import CotopiaTooltip from "@/components/shared-ui/c-tooltip";
 import CotopiaIconButton from "@/components/shared-ui/c-icon-button";
-import { PlayCircleIcon } from "@/components/icons";
 import { colors } from "@/const/varz";
 import useLoading from "@/hooks/use-loading";
 import axiosInstance from "@/services/axios";
 import { toast } from "sonner";
 import { UserType } from "@/types/user";
+import { __BUS } from "@/const/bus";
+import { useChat2 } from "@/hooks/chat/use-chat-2";
+import { dispatch } from "use-bus";
 
 interface Props {
   item: JobType;
@@ -75,6 +69,17 @@ const JobItem = ({
 
   const getUser = (item: JobType) => {
     return item.members.find((u) => u.id === user?.id);
+  };
+
+  const { chats } = useChat2();
+  const chat = chats[0];
+
+  const handleOpenChat = () => {
+    console.log("Open CHat");
+    dispatch({
+      type: __BUS.selectChat,
+      chat,
+    });
   };
 
   return (
@@ -143,10 +148,10 @@ const JobItem = ({
           {!suggested && (
             <>
               <div>
-                <JobStatus status={item.status} />
+                <JobStatus status={getUser(item)?.status} />
               </div>
               <div>
-                <JobEstimate job={item} />
+                <JobEstimate job={item} getUser={getUser} />
               </div>
             </>
           )}
@@ -157,6 +162,15 @@ const JobItem = ({
             <JobTag job={item} />
           </div>
         )}
+
+        <div
+          onClick={() => {
+            handleOpenChat();
+          }}
+          className={"rounded border p-1"}
+        >
+          Go to chat
+        </div>
       </div>
     </div>
   );
