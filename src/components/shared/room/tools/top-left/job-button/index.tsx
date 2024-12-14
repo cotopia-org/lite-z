@@ -1,49 +1,49 @@
-import PopupBox from "@/components/shared/popup-box";
-import PopupBoxChild from "@/components/shared/popup-box/child";
-import ToolButton from "../../tool-button";
-import { BriefcaseIcon } from "@/components/icons";
-import { useRoomContext } from "../../../room-context";
-import { useApi } from "@/hooks/swr";
-import { urlWithQueryParams } from "@/lib/utils";
-import FullLoading from "@/components/shared/full-loading";
-import AddJobHandler from "./shapes/add-job";
-import { JobType, JobStatusType } from "@/types/job";
-import { FetchDataType } from "@/services/axios";
-import JobItems from "@/components/shared/job-items";
-import CTabs from "@/components/shared-ui/c-tabs";
-import useAuth from "@/hooks/auth";
+import PopupBox from "@/components/shared/popup-box"
+import PopupBoxChild from "@/components/shared/popup-box/child"
+import ToolButton from "../../tool-button"
+import { BriefcaseIcon } from "@/components/icons"
+import { useRoomContext } from "../../../room-context"
+import { useApi } from "@/hooks/swr"
+import { urlWithQueryParams } from "@/lib/utils"
+import FullLoading from "@/components/shared/full-loading"
+import AddJobHandler from "./shapes/add-job"
+import { JobType, JobStatusType } from "@/types/job"
+import { FetchDataType } from "@/services/axios"
+import JobItems from "@/components/shared/job-items"
+import CTabs from "@/components/shared-ui/c-tabs"
+import useAuth from "@/hooks/auth"
 
 export default function JobButton() {
-  const { workspace_id } = useRoomContext();
+  const { workspace_id } = useRoomContext()
 
-  const { user } = useAuth();
+  const { user } = useAuth()
 
   const { data, isLoading, mutate } = useApi<FetchDataType<JobType[]>>(
     urlWithQueryParams(`/users/me/jobs`, { workspace_id }),
     undefined,
-    { isPaused: () => workspace_id === undefined },
-  );
+    { isPaused: () => workspace_id === undefined }
+  )
 
   const { data: suggestionsJobs } = useApi<FetchDataType<JobType[]>>(
     "/users/mentionedJobs",
     undefined,
-    { isPaused: () => workspace_id === undefined },
-  );
+    { isPaused: () => workspace_id === undefined }
+  )
 
-  let jobItems = (data && data?.data) ?? [];
-  let suggestItems = (suggestionsJobs && suggestionsJobs?.data) ?? [];
-  let job_label = "Create job";
-  const active_job = jobItems.find((j) => j.status === "in_progress");
+  let jobItems = (data && data?.data) ?? []
+  let suggestItems = (suggestionsJobs && suggestionsJobs?.data) ?? []
+  let job_label = "Create job"
+  const active_job = jobItems.find((j) => j.status === "in_progress")
   if (active_job)
     job_label =
       active_job.title.length > 20
         ? active_job.title.slice(0, 20) + "... "
-        : active_job.title;
-  if (!active_job && jobItems.length > 0) job_label = "Start job";
+        : active_job.title
+  if (!active_job && jobItems.length > 0) job_label = "Start job"
 
   const getUser = (item: JobType) => {
-    return item.members.find((u) => u.id === user?.id);
-  };
+    return item.members.find((u) => u.id === user?.id)
+  }
   return (
     <PopupBox
       trigger={(open, isOpen) => (
@@ -71,7 +71,7 @@ export default function JobButton() {
                     user={user}
                     hasAction
                     items={jobItems.filter((x) =>
-                      ["in_progress"].includes(getUser(x)?.status + ""),
+                      ["in_progress"].includes(getUser(x)?.status + "")
                     )}
                     onMutate={mutate}
                   />
@@ -85,7 +85,7 @@ export default function JobButton() {
                     user={user}
                     hasAction
                     items={jobItems.filter((x) =>
-                      ["paused"].includes(getUser(x)?.status + ""),
+                      ["paused"].includes(getUser(x)?.status + "")
                     )}
                     onMutate={mutate}
                   />
@@ -99,7 +99,7 @@ export default function JobButton() {
                     user={user}
                     hasAction
                     items={jobItems.filter((x) =>
-                      ["completed"].includes(getUser(x)?.status + ""),
+                      ["completed"].includes(getUser(x)?.status + "")
                     )}
                     onMutate={mutate}
                   />
@@ -118,13 +118,13 @@ export default function JobButton() {
                   />
                 ),
                 value: "suggestions",
-                badge: suggestItems.length > 0,
+                // badge: suggestItems.length > 0,
               },
             ]}
           />
-        );
+        )
 
-        if (isLoading || data === undefined) content = <FullLoading />;
+        if (isLoading || data === undefined) content = <FullLoading />
 
         return (
           <PopupBoxChild
@@ -140,8 +140,8 @@ export default function JobButton() {
               <AddJobHandler workspaceId={workspace_id} onCreated={mutate} />
             </div>
           </PopupBoxChild>
-        );
+        )
       }}
     </PopupBox>
-  );
+  )
 }

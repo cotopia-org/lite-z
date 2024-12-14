@@ -1,41 +1,41 @@
-import { useEffect, useState } from "react";
-import CTabs from "@/components/shared-ui/c-tabs";
-import UserChat from "./chat";
-import WorkspaceSidebar from "@/routes/private-wrarpper/components/workspaces/sidebar";
-import { SoundIcon } from "@/components/icons";
-import { colors } from "@/const/varz";
-import { useRoomContext } from "../room-context";
-import { useAppDispatch } from "@/store";
-import { getChats } from "@/store/slices/chat-slice";
-import ChatIcon from "./chat-icon";
-import UserActionsAvatarButton from "../../user-actions-avatar-button";
-import ChatEvents from "./chat-events";
+import { useEffect, useState } from "react"
+import CTabs from "@/components/shared-ui/c-tabs"
+import UserChat from "./chat"
+import WorkspaceSidebar from "@/routes/private-wrarpper/components/workspaces/sidebar"
+import { SoundIcon } from "@/components/icons"
+import { colors } from "@/const/varz"
+import { useRoomContext } from "../room-context"
+import { useAppDispatch } from "@/store"
+import { getChats } from "@/store/slices/chat-slice"
+import ChatIcon from "./chat-icon"
+import UserActionsAvatarButton from "../../user-actions-avatar-button"
+import ChatEvents from "./chat-events"
 
 export default function RoomSettings() {
-  const { workspace_id } = useRoomContext();
+  const { workspace_id } = useRoomContext()
 
-  const dispatch = useAppDispatch();
+  const dispatch = useAppDispatch()
 
   useEffect(() => {
-    if (!workspace_id) return;
+    if (!workspace_id) return
 
-    dispatch(getChats({ workspace_id: +workspace_id }));
-  }, [workspace_id]);
+    dispatch(getChats({ workspace_id: +workspace_id }))
+  }, [workspace_id])
 
-  const [value, setValue] = useState("rooms");
+  const [value, setValue] = useState("rooms")
 
   return (
-    <div className='flex flex-col gap-y-4'>
+    <div className="flex flex-col gap-y-4">
       <ChatEvents />
       <CTabs
         title={
           <div>
-            <UserActionsAvatarButton size='large' />
+            <UserActionsAvatarButton size="large" />
           </div>
         }
         defaultValue={value}
         onChangeTab={setValue}
-        className=' [&_.tab-holder]:p-6 [&_.tab-holder]:py-4 [&_.tab-holder]:shadow-app-bar'
+        className=" [&>.tab-holder]:p-6 [&>.tab-holder]:py-4 [&>.tab-holder]:shadow-app-bar"
         items={[
           {
             icon: <SoundIcon color={colors.grayscale.grayscaleCaption} />,
@@ -57,5 +57,5 @@ export default function RoomSettings() {
         ]}
       />
     </div>
-  );
+  )
 }
