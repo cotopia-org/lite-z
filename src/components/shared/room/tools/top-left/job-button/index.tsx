@@ -157,7 +157,7 @@ export default function JobButton() {
                   )}
                 >
                   {(close) => {
-                    return <Dashboard onClose={close} />;
+                    return <Dashboard onClose={close} defaultPage={"jobs"} />;
                   }}
                 </CFullDialog>
                 <AddJobHandler workspaceId={workspace_id} onCreated={mutate} />

@@ -7,10 +7,12 @@ import { useApi } from "@/hooks/swr";
 import { PaymentType } from "@/types/payment";
 import { ChevronRight } from "lucide-react";
 import { useMemo, useState } from "react";
-import { getContractStatus } from "@/lib/utils";
+import { getContractStatus, urlWithQueryParams } from "@/lib/utils";
 import TitleEl from "@/components/shared/title-el";
 import { JobType } from "@/types/job";
 import CotopiaDropdown from "@/components/shared-ui/c-dropdown";
+import CPagination from "@/components/shared-ui/c-pagination";
+import Job from "@/pages/dashboard/jobs/single";
 
 type Props = {
   isAll?: boolean;
@@ -18,13 +20,20 @@ type Props = {
 
 export default function Jobs({ isAll = true }: Props) {
   const [selectStatus, setSelectStatus] = useState<string>();
+  const [selectedJob, setSelectedJob] = useState<JobType>();
 
   const { workspaceUsers, workspace_id } = useRoomContext();
 
-  const { data, mutate } = useApi(`/workspaces/${workspace_id}/jobs`);
+  const [page, setPage] = useState(1);
+
+  const { data, mutate } = useApi(
+    `/workspaces/${workspace_id}/jobs?page=${page}`,
+  );
   const jobs: JobType[] = data !== undefined ? data?.data : [];
 
-  let finalJobs = jobs.sort((a, b) => b.id - a.id);
+  const jobsMeta = data !== undefined ? data?.meta : [];
+
+  let finalJobs = jobs;
 
   if (selectStatus)
     finalJobs = finalJobs.filter((a) => a.status === selectStatus);
@@ -54,10 +63,34 @@ export default function Jobs({ isAll = true }: Props) {
       {
         title: "Title",
         render: (item: JobType) => {
-          return <>{item.title}</>;
+          return (
+            <CotopiaButton
+              variant={"link"}
+              onClick={() => setSelectedJob(item)}
+            >
+              {item.title}
+            </CotopiaButton>
+          );
         },
       },
 
+      {
+        title: "Parent",
+        render: (item: JobType) => {
+          if (!item.parent) {
+            return "No Parent";
+          }
+
+          return (
+            <CotopiaButton
+              variant={"link"}
+              onClick={() => setSelectedJob(item.parent)}
+            >
+              {item.parent.title}
+            </CotopiaButton>
+          );
+        },
+      },
       {
         title: "Total Hours",
         render: (item: JobType) =>
@@ -91,13 +124,14 @@ export default function Jobs({ isAll = true }: Props) {
     return items;
   }, [isAll]);
 
-  // if (selectedPayment)
-  //   return (
-  //     <PayrollCreatePayments
-  //       onBack={() => setSelectedPayment(undefined)}
-  //       defaultValue={selectedPayment}
-  //     />
-  //   );
+  if (selectedJob)
+    return (
+      <Job
+        onBack={() => setSelectedJob(undefined)}
+        job={selectedJob}
+        setSelectedJob={setSelectedJob}
+      />
+    );
 
   return (
     <>
@@ -118,7 +152,14 @@ export default function Jobs({ isAll = true }: Props) {
           }
         />
       </div>
+
       <CotopiaTable items={finalJobs} tableHeadItems={tableHeadItems} />
+      <CPagination
+        totalItems={jobsMeta.total}
+        currentPage={page}
+        onPageChange={setPage}
+        perPage={10}
+      />
     </>
   );
 }

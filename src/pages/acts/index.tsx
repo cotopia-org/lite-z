@@ -27,16 +27,6 @@ type ActType = {
   data: string;
 };
 export default function Acts() {
-  // return (window.location.href = "https://lite-api.cotopia.social/logs");
-
-  document.cookie =
-    "tester1=testSalam; path=/; domain=.cotopia.social; Secure; SameSite=None";
-
-  // Log the cookie
-  console.log(document.cookie);
-
-  // Redirect to the Laravel backend
-  window.location.href = "https://vdi.cotopia.social";
   const now = new Date();
   const firstDateOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
 
