@@ -29,6 +29,7 @@ export default function LivekitRefactored({ children }: Props) {
             maxBitrate: 10_000_000,
             maxFramerate: 30,
           },
+          videoCodec: 'av1',
           dtx: true,
         },
       }}
