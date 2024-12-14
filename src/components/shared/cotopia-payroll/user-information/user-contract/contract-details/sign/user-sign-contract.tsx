@@ -16,10 +16,9 @@ type Props = {
   contract: UserContractType;
   onUpdate: (contract: UserContractType) => void;
 };
-export default function AdminSignContract({ contract, onUpdate }: Props) {
+export default function UsreSign({ contract, onUpdate }: Props) {
   const dispatch = useAppDispatch();
 
-  const { workspace_id } = useRoomContext();
   const { user } = useAuth();
   const [isSigned, setIsSigned] = useState<number>(0);
   useEffect(() => {
@@ -29,11 +28,6 @@ export default function AdminSignContract({ contract, onUpdate }: Props) {
   const { startLoading, stopLoading, isLoading } = useLoading();
   const signContractToggle = () => {
     const newStatus = isSigned === 1 ? 0 : 1;
-
-    if (contract.contractor_sign_status === 1 && newStatus === 0)
-      return toast.error(
-        "You can not revoke your sign after contractor signing."
-      );
 
     startLoading();
     axiosInstance
@@ -51,21 +45,19 @@ export default function AdminSignContract({ contract, onUpdate }: Props) {
       });
   };
 
-  if (workspace_id === undefined) return null;
+  let buttonText = isSigned ? "Revoke as User" : "Sign as User";
 
-  const userIsAdmin = isUserAdmin(user, +workspace_id);
+  const belongToMe = user?.id === contract.user_id;
 
-  let buttonText = isSigned ? "Revoke as admin" : "Sign as admin";
-
-  if (!userIsAdmin)
-    buttonText = isSigned ? "Admin signed" : "Awaiting adming signing";
+  if (!belongToMe)
+    buttonText = isSigned ? "User signed" : "Awaiting user signing";
 
   return (
     <CotopiaButton
       onClick={signContractToggle}
       loading={isLoading}
       startIcon={<Shield />}
-      disabled={!userIsAdmin}
+      disabled={!belongToMe}
     >
       {buttonText}
     </CotopiaButton>
