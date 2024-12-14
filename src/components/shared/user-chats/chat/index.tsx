@@ -3,7 +3,6 @@ import { createContext, useContext } from "react";
 import ChatPreview from "./preview";
 import { useSlides } from "../../slide-pusher";
 import ChatInnerHolder from "./holder";
-import { UserMinimalType } from "@/types/user";
 import { useAppDispatch } from "@/store";
 import { clearCurrentChat, setCurrentChat } from "@/store/slices/chat-slice";
 

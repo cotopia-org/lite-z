@@ -8,17 +8,18 @@ import { UserContractType } from "@/types/contract";
 import { Briefcase } from "lucide-react";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
+import { isUserAdmin } from "@/lib/utils";
+import { useRoomContext } from "@/components/shared/room/room-context";
 
 type Props = {
   contract: UserContractType;
   onUpdate: (contract: UserContractType) => void;
 };
-export default function UserSignContract({ contract, onUpdate }: Props) {
+export default function ContractorSign({ contract, onUpdate }: Props) {
   const dispatch = useAppDispatch();
 
   const { user } = useAuth();
-
-  const belongToMe = user?.id === contract.user_id;
+  const { workspace_id } = useRoomContext();
 
   const [isSigned, setIsSigned] = useState<number>(0);
   useEffect(() => {
@@ -28,9 +29,6 @@ export default function UserSignContract({ contract, onUpdate }: Props) {
   const { startLoading, stopLoading, isLoading } = useLoading();
   const signContractToggle = () => {
     const newStatus = isSigned === 1 ? 0 : 1;
-
-    if (contract.contractor_sign_status === 1 && newStatus === 0)
-      return toast.error("You can not revoke your sign after admin signing.");
 
     startLoading();
     axiosInstance
@@ -48,17 +46,19 @@ export default function UserSignContract({ contract, onUpdate }: Props) {
       });
   };
 
-  let buttonText = isSigned ? "Revoke as contractor" : "Sign as contractor";
+  let buttonText = isSigned ? "Revoke as Manager" : "Sign as Manager";
+  if (workspace_id === undefined) return null;
 
-  if (!belongToMe)
-    buttonText = isSigned ? "Contractor signed" : "Awaiting contractor signing";
+  const userIsAdmin = isUserAdmin(user, +workspace_id);
 
+  if (!userIsAdmin)
+    buttonText = isSigned ? "Manager signed" : "Awaiting manager signing";
   return (
     <CotopiaButton
       onClick={signContractToggle}
       loading={isLoading}
       startIcon={<Briefcase />}
-      disabled={!belongToMe}
+      disabled={!userIsAdmin}
     >
       {buttonText}
     </CotopiaButton>

@@ -9,6 +9,10 @@ import ChatInnerHolder from "./chat/holder";
 
 type Props = {};
 export default function UserChatList() {
+
+
+  const { chats } = useChat2();
+  
   const appDispatch = useAppDispatch();
   const { push, back } = useSlides();
 
@@ -20,7 +24,7 @@ export default function UserChatList() {
     push(<ChatInnerHolder onBack={back} chat_id={chat?.id} />);
   });
 
-  const { chats } = useChat2();
+
 
   return (
     <div className="w-full chats-holder flex flex-col gap-y-0 overflow-y-auto">
