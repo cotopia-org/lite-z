@@ -1,4 +1,4 @@
-import { MeetingNodeType, MeetingTileType } from ".."
+import { MeetingNodeType } from ".."
 import UserSessionWrapper from "../../sessions/wrapper/user-session-wrapper"
 import MeetingParticipantTile from "./meeting-participant-tile"
 
@@ -7,14 +7,9 @@ type Props = {
 }
 
 const MeetingNode = ({ node }: Props) => {
-  let view = <MeetingParticipantTile node={node} />
-  if (node.type === MeetingTileType.ShareScreenTile) {
-    view = <>share screen card</>
-  }
-
   return (
     <UserSessionWrapper username={node.participant.username}>
-      {view}
+      <MeetingParticipantTile node={node} />
     </UserSessionWrapper>
   )
 }

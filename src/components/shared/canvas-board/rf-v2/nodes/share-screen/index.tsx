@@ -32,8 +32,6 @@ function ShareScreenNode({ data }: any) {
     )
   })
 
-  console.log(targetTrack, "TRACK")
-
   const canResize = user?.username === targetTrack?.participant.identity
 
   const rf = useReactFlow()

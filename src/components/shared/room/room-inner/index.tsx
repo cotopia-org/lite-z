@@ -8,10 +8,16 @@ import CanvasBoard from "../../canvas-board"
 import { useAppSelector } from "@/store"
 import { useRoomContext } from "@livekit/components-react"
 import { VARZ } from "@/const/varz"
+import { useRoomContext as localUseRoomContext } from "./../room-context"
 import GridRoomView from "../grid-room-view"
+import FullLoading from "../../full-loading"
 
 export default function RoomInner() {
   const { disconnect, connect } = useRoomContext()
+  const { room, roomLoading } = localUseRoomContext()
+
+  let is_grid_view = room?.type === "grid"
+  let is_flow_view = room?.type === "flow"
 
   const { token } = useAppSelector((store) => store.livekit)
   useEffect(() => {
@@ -26,14 +32,22 @@ export default function RoomInner() {
   let mainRoomHolderClss = "main-room-holder w-full h-screen overflow-hidden"
   if (sidebar) mainRoomHolderClss += " pr-[376px]"
 
+  let view = null
+  if (is_grid_view && !roomLoading) {
+    view = <GridRoomView />
+  }
+  if (is_flow_view && !roomLoading) {
+    view = <CanvasBoard />
+  }
+  if (roomLoading) {
+    view = <FullLoading />
+  }
+
   return (
     <>
       <InitRoom />
       <div id="main-room-holder" className={mainRoomHolderClss}>
-        <div className="w-full h-full relative">
-          <GridRoomView />
-          {/* <CanvasBoard /> */}
-        </div>
+        <div className="w-full h-full relative">{view}</div>
         {!!sidebar && (
           <div className="fixed right-0 top-0 bottom-0 w-[376px] bg-white h-screen overflow-y-auto">
             <RoomSidebar>

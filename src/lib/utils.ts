@@ -1,6 +1,7 @@
 import { mergePropsMain } from "@/components/shared/canvas-board/canvas-audio-rendrer/use-media-track-by-source-or-name/merge-props"
 import { ScheduleType } from "@/types/calendar"
 import { UserContractType } from "@/types/contract"
+import { WorkspaceRoomShortType } from "@/types/room"
 import { UserType, WorkspaceUserType } from "@/types/user"
 import { TrackReferenceOrPlaceholder } from "@livekit/components-core"
 import { clsx, type ClassValue } from "clsx"
@@ -8,8 +9,6 @@ import { Track } from "livekit-client"
 import moment from "moment"
 import { twMerge } from "tailwind-merge"
 const querystring = require("querystring")
-
-
 
 export const getQueryParams = (obj: object) => querystring.stringify(obj)
 
@@ -26,7 +25,7 @@ export function urlWithQueryParams(url: string, object: any) {
 
 export const getTimeFormat = (
   seconds: number,
-  hasHours: boolean = false,
+  hasHours: boolean = false
 ): string => {
   const hours = Math.floor(seconds / 3600)
   const minutes = Math.floor((seconds % 3600) / 60)
@@ -121,7 +120,7 @@ export const timeStringToMoment = (time: string) => {
 
 export function convertMinutesToHHMMSS(
   minutes: number,
-  short: boolean,
+  short: boolean
 ): string {
   const hours = Math.floor(minutes / 60)
   const mins = Math.floor(minutes % 60)
@@ -215,7 +214,7 @@ export const getFocusedMessage = ({
   if (message === undefined || targetIndex < 0)
     return {
       focusHandler: () => {},
-    };
+    }
 
   const findFocusedMessage = () => {
     const nodes = message.childNodes as NodeListOf<HTMLDivElement>
@@ -245,7 +244,7 @@ export const getTwelveClockFormat = (time: string) => {
 }
 
 export function extractMentions(
-  message: string,
+  message: string
 ): { start_position: number; user: string }[] {
   const mentionRegex = /@(\S+)/g // Fixed when a DOT was in the username.
   const mentions: { start_position: number; user: string }[] = []
@@ -296,31 +295,46 @@ export function compactNumber(value: number, decimals: number = 1): string {
 
 export function isUserAdmin(
   user: UserType | WorkspaceUserType | null,
-  workspace_id?: number,
+  workspace_id?: number
 ) {
-  if (workspace_id === undefined) return false;
+  if (workspace_id === undefined) return false
 
   if (user === null) return false
 
-  if (user?.workspaces?.length === 0) return false;
+  if (user?.workspaces?.length === 0) return false
 
   const userInTargetWorkspace = user?.workspaces?.find(
-    (x) => x.id === workspace_id,
-  );
+    (x) => x.id === workspace_id
+  )
 
   return (
     userInTargetWorkspace?.role === "super-admin" ||
     userInTargetWorkspace?.role === "owner"
-  );
+  )
 }
 
 export function getContractStatus(contract: UserContractType) {
   if (contract.user_sign_status === 1 && contract.contractor_sign_status === 1)
-    return "Signed";
+    return "Signed"
 
-  if (contract.user_sign_status === 0) return "Awaiting user signing";
+  if (contract.user_sign_status === 0) return "Awaiting user signing"
 
-  if (contract.contractor_sign_status === 0) return "Awaiting admin signing";
+  if (contract.contractor_sign_status === 0) return "Awaiting admin signing"
 
-  return "UnSigned";
+  return "UnSigned"
+}
+
+export const roomSeparatorByType = (rooms: WorkspaceRoomShortType[]) => {
+  let flowRooms: WorkspaceRoomShortType[] = []
+  let gridRooms: WorkspaceRoomShortType[] = []
+
+  for (let room of rooms) {
+    if (room?.type === "flow") {
+      flowRooms.push(room)
+    } else {
+      gridRooms.push(room)
+    }
+  }
+
+  return { flowRooms, gridRooms }
 }

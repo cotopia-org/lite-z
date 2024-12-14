@@ -12,27 +12,57 @@ type Props = {
 
 const ParticipantsView = ({ userNodes }: Props) => {
   //single view
+  const up_nodes = userNodes
+  // const up_nodes = userNodes
+  //   .concat(userNodes)
+  //   .concat(userNodes)
+  //   .concat(userNodes)
+  //   .concat(userNodes)
+  //   .concat(userNodes)
+  //   .concat(userNodes)
+  //   .concat(userNodes)
+  //   .concat(userNodes)
+  //   .concat(userNodes)
+  //   .concat(userNodes)
+  //   .concat(userNodes)
+  //   .concat(userNodes)
+  //   .concat(userNodes)
+  //   .concat(userNodes)
+  //   .concat(userNodes)
+  //   .concat(userNodes)
+  //   .concat(userNodes)
+  //   .concat(userNodes)
+  //   .concat(userNodes)
+  //   .concat(userNodes)
+  //   .concat(userNodes)
+  //   .concat(userNodes)
+  //   .concat(userNodes)
+  //   .concat(userNodes)
+  //   .concat(userNodes)
+  //   .concat(userNodes)
+  //   .concat(userNodes)
+  //   .concat(userNodes)
+  //   .concat(userNodes)
 
-  const userLength = useMemo(() => {
-    return userNodes.length
-  }, [userNodes])
+  const userLength = up_nodes.length
+  console.log(userLength, "USERLENGTh")
 
-  let content = <SingleMeetingView userNodes={userNodes} />
+  let content = <SingleMeetingView userNodes={up_nodes} />
 
   if (userLength === 1) {
-    content = <SingleMeetingView userNodes={userNodes} />
+    content = <SingleMeetingView userNodes={up_nodes} />
   }
   if (userLength === 2) {
-    content = <DoubleMeetingView userNodes={userNodes} />
+    content = <DoubleMeetingView userNodes={up_nodes} />
   }
   if (userLength === 3) {
-    content = <TriplexMeetingView userNodes={userNodes} />
+    content = <TriplexMeetingView userNodes={up_nodes} />
   }
   if (userLength === 4) {
-    content = <FourPartsMeetingView userNodes={userNodes} />
+    content = <FourPartsMeetingView userNodes={up_nodes} />
   }
-  if (userLength > 4 && userLength <= 9) {
-    content = <MultiPartMeetingView nodes={userNodes} />
+  if (userLength > 4) {
+    content = <MultiPartMeetingView nodes={up_nodes} />
   }
 
   return <div className="p-4 w-full h-full">{content}</div>
