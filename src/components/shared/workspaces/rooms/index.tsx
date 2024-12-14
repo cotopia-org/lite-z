@@ -6,6 +6,7 @@ import { roomSeparatorByType } from "@/lib/utils"
 import WorkspaceRoom from "./room"
 import { LayoutGrid } from "lucide-react"
 import { useRoomContext } from "../../room/room-context"
+import RoomsHolder from "./rooms-holder"
 
 type Props = {
   rooms: WorkspaceRoomShortType[]
@@ -52,53 +53,37 @@ export default function WorkspaceRooms({
   if (gridRooms.length > 0) {
     rooms_view = (
       <RoomTypesTabs>
-        <CTabs
-          defaultValue={default_value}
-          items={[
-            {
-              title: "grid rooms",
-              value: "grid",
-              content: (
-                <>
-                  {gridRooms.map((room) => {
-                    return (
-                      <WorkspaceRoom
-                        selected_room_id={selected_room_id}
-                        key={room.id}
-                        workspace_id={workspace_id}
-                        room={room}
-                        participants={workspaceUsers.filter(
-                          (x) => x.room_id === room.id && x.status === "online"
-                        )}
-                      />
-                    )
-                  })}
-                </>
-              ),
-            },
-            {
-              title: "flow rooms",
-              value: "flow",
-              content: (
-                <>
-                  {flowRooms.map((room) => {
-                    return (
-                      <WorkspaceRoom
-                        selected_room_id={selected_room_id}
-                        key={room.id}
-                        workspace_id={workspace_id}
-                        room={room}
-                        participants={workspaceUsers.filter(
-                          (x) => x.room_id === room.id && x.status === "online"
-                        )}
-                      />
-                    )
-                  })}
-                </>
-              ),
-            },
-          ]}
-        />
+        <RoomsHolder title="Canvas Room">
+          {flowRooms.map((room) => {
+            return (
+              <WorkspaceRoom
+                selected_room_id={selected_room_id}
+                key={room.id}
+                workspace_id={workspace_id}
+                room={room}
+                participants={workspaceUsers.filter(
+                  (x) => x.room_id === room.id && x.status === "online"
+                )}
+              />
+            )
+          })}
+        </RoomsHolder>
+        <hr className="my-4" />
+        <RoomsHolder title="Grid Room">
+          {gridRooms.map((room) => {
+            return (
+              <WorkspaceRoom
+                selected_room_id={selected_room_id}
+                key={room.id}
+                workspace_id={workspace_id}
+                room={room}
+                participants={workspaceUsers.filter(
+                  (x) => x.room_id === room.id && x.status === "online"
+                )}
+              />
+            )
+          })}
+        </RoomsHolder>
       </RoomTypesTabs>
     )
   }
