@@ -12,6 +12,11 @@ import { FetchDataType } from "@/services/axios";
 import JobItems from "@/components/shared/job-items";
 import CTabs from "@/components/shared-ui/c-tabs";
 import useAuth from "@/hooks/auth";
+import CotopiaButton from "@/components/shared-ui/c-button";
+import { Plus } from "lucide-react";
+import CFullDialog from "@/components/shared-ui/c-dialog/full-dialog";
+import Jobs from "@/pages/dashboard/jobs";
+import Dashboard from "@/pages/dashboard";
 
 export default function JobButton() {
   const { workspace_id } = useRoomContext();
@@ -137,7 +142,26 @@ export default function JobButton() {
           >
             <div className="flex w-full flex-col gap-y-6 items-end">
               {content}
-              <AddJobHandler workspaceId={workspace_id} onCreated={mutate} />
+
+              <div
+                className={"w-full flex flex-row items-center justify-between"}
+              >
+                <CFullDialog
+                  trigger={(open) => (
+                    <CotopiaButton
+                      onClick={open}
+                      className="bg-primary text-white rounded-xl mt-3"
+                    >
+                      Dashboard
+                    </CotopiaButton>
+                  )}
+                >
+                  {(close) => {
+                    return <Dashboard onClose={close} />;
+                  }}
+                </CFullDialog>
+                <AddJobHandler workspaceId={workspace_id} onCreated={mutate} />
+              </div>
             </div>
           </PopupBoxChild>
         );
