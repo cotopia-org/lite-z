@@ -47,6 +47,7 @@ export type UserMinimalType = {
   screenshare_coordinates: null | string;
   screenshare_size: null | string;
   schedule_hours_in_week?: number;
+  total_minutes?: number;
 };
 
 export type WorkspaceUserType = {
@@ -68,4 +69,9 @@ export type WorkspaceUserType = {
     hours: string;
     minutes: number;
   };
+  workspaces: {
+    id: number;
+    role: string;
+    title: string;
+  }[];
 };

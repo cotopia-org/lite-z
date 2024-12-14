@@ -1,23 +1,21 @@
 import StatusBox from "@/components/shared/status-box";
-import { cn, getTimeFormat } from "@/lib/utils";
 import { JobType } from "@/types/job";
+import CotopiaMention from "@/components/shared-ui/c-mention";
 
 type Props = {
   job: JobType;
 };
 export default function JobTag({ job }: Props) {
-  console.log(job);
   return (
-    <div className={"flex flex-row gap-x-2"}>
-      {job.tags.map((tag) => {
+    <div
+      className={"flex flex-wrap gap-1 border rounded-full items-center p-2"}
+    >
+      <strong className={"text-xs"}>Open to</strong>
+      {job.mentions.map((mention) => {
         return (
           <StatusBox
-            label={
-              <div className='flex flex-row items-center gap-x-1'>
-                <span>{tag.title}</span>
-              </div>
-            }
-            variant='default'
+            label={<CotopiaMention item={mention} />}
+            variant="default"
           />
         );
       })}

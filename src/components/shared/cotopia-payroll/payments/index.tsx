@@ -11,7 +11,7 @@ export default function UserPayments({ endpoint, status }: Props) {
 
   return (
     <CotopiaTable
-      items={payments.filter((a) => a.status === status)}
+      items={payments.slice(0, 5)}
       tableHeadItems={[
         // { title: "Id", render: (item: PaymentType) => item.id },
         // {
@@ -42,7 +42,7 @@ export default function UserPayments({ endpoint, status }: Props) {
         // },
         {
           title: "Amount",
-          render: (item: PaymentType) => item.amount,
+          render: (item: PaymentType) => item.amount.toFixed(1),
         },
         {
           title: "Status",

@@ -26,9 +26,10 @@ export default function LivekitRefactored({ children }: Props) {
         },
         publishDefaults: {
           screenShareEncoding: {
-            maxBitrate: 10_000_000,
-            maxFramerate: 30,
+            maxBitrate: 100_000_000,
+            maxFramerate: 15,
           },
+          videoCodec: 'av1',
           dtx: true,
         },
       }}

@@ -6,6 +6,7 @@ import { useEffect, useState } from "react";
 
 type Props = {
   payment: PaymentType;
+  onChange: () => void
 };
 
 enum PaymentStatusEnum {
@@ -13,7 +14,7 @@ enum PaymentStatusEnum {
   Pending = "pending",
 }
 
-export default function PaymentStatus({ payment }: Props) {
+export default function PaymentStatus({ payment, onChange }: Props) {
   const [status, setStatus] = useState<string>();
   useEffect(() => {
     if (payment?.status) setStatus(payment.status);
@@ -32,6 +33,7 @@ export default function PaymentStatus({ payment }: Props) {
           value === true ? PaymentStatusEnum.Paid : PaymentStatusEnum.Pending
         );
         stopLoading();
+        if ( onChange ) onChange()
       })
       .catch((err) => {
         stopLoading();

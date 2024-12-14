@@ -1,5 +1,4 @@
 import { useChat2 } from "@/hooks/chat/use-chat-2";
-import React from "react";
 import { useRoomContext } from "../room-context";
 import { useSocket } from "@/routes/private-wrarpper";
 import { Chat2ItemType } from "@/types/chat2";
@@ -7,8 +6,6 @@ import axiosInstance from "@/services/axios";
 import { useAppDispatch } from "@/store";
 import {
   addMentionedMessages,
-  addMessage,
-  setChatMessages,
   upcommingMessage,
 } from "@/store/slices/chat-slice";
 import useAuth from "@/hooks/auth";

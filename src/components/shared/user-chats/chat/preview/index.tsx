@@ -1,4 +1,3 @@
-import React from "react";
 import CotopiaAvatar from "@/components/shared-ui/c-avatar";
 import ChatDetails from "../details";
 import moment from "moment";
@@ -6,8 +5,6 @@ import UnSeenMessages from "./un-seen-messages";
 import { useChat } from "..";
 import useAuth from "@/hooks/auth";
 import MentionedMessages from "./mentioned-messages";
-
-type Props = {};
 
 export default function ChatPreview() {
   const { user } = useAuth();

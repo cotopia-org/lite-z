@@ -3,6 +3,7 @@ import CotopiaTable from "@/components/shared-ui/c-table";
 import PayrollContractDetails from "@/components/shared/cotopia-payroll/user-information/user-contract/contract-details";
 import ParticipantsWithPopover from "@/components/shared/participants/with-popover";
 import { useRoomContext } from "@/components/shared/room/room-context";
+import EditContract from "@/components/shared/room/tools/top-right/payroll-button/edit-contract";
 import { UserContractType } from "@/types/contract";
 import { ChevronRight } from "lucide-react";
 import moment from "moment";
@@ -77,13 +78,16 @@ export default function UserContracts({ items, loading }: Props) {
         {
           title: "",
           render: (item: UserContractType) => (
-            <CotopiaButton
-              variant={"link"}
-              endIcon={<ChevronRight size={16} />}
-              onClick={() => setSelectedContract(item)}
-            >
-              Details
-            </CotopiaButton>
+            <div className='flex flex-row items-center gap-x-2'>
+              <EditContract contract={item} />
+              <CotopiaButton
+                variant={"link"}
+                endIcon={<ChevronRight size={16} />}
+                onClick={() => setSelectedContract(item)}
+              >
+                Details
+              </CotopiaButton>
+            </div>
           ),
         },
       ]}

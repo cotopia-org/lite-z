@@ -8,21 +8,23 @@ import { ReactNode } from "react";
 import ParticipantsWithPopover from "../participants/with-popover";
 import { useRoomContext } from "../room/room-context";
 import useAuth from "@/hooks/auth";
-import { cn } from "@/lib/utils";
+import { cn, isUserAdmin } from "@/lib/utils";
+import ParticipantBadge from "./participant-badges";
+import { Crown, Shield } from "lucide-react";
 
 interface Props {
   participants: WorkspaceUserType[];
 }
 
 const ParticipantRows = ({ participants }: Props) => {
-  const { room_id } = useRoomContext();
+  const { room_id, workspace_id, workspaceUsers } = useRoomContext();
 
   const { user } = useAuth();
 
   if (participants.length === 0) return null;
 
   return (
-    <div className='w-full flex gap-y-4 flex-col pl-6 pb-5'>
+    <div className="w-full flex gap-y-4 flex-col pl-6 pb-5">
       {participants.map((participant) => {
         let has_video = participant.has_video;
         let has_mic = participant.has_mic;
@@ -45,35 +47,60 @@ const ParticipantRows = ({ participants }: Props) => {
 
         const userActiveJob = participant.active_job?.title ?? "Idle";
 
+        const findWorkspace = participant?.workspaces?.find(
+          (a) => a.id == +(workspace_id as string),
+        );
+
         return (
           <div
             key={participant.id}
-            className='flex items-center justify-between w-full'
+            className="flex items-center justify-between w-full"
           >
-            <div className='flex items-center gap-x-2'>
+            <div className="flex items-center gap-x-2">
               <ParticipantsWithPopover
-                avatarClss='border border-primary'
-                className='!pb-0'
+                avatarClss="border border-primary"
+                className="!pb-0"
                 roomId={room_id}
                 participants={[participant]}
+                render={(item, content) => {
+                  const user = workspaceUsers.find((a) => a.id === item.id);
+
+                  const admin = user
+                    ? isUserAdmin(user, +(workspace_id as string))
+                    : false;
+
+                  const isOwner = findWorkspace
+                    ? findWorkspace?.role === "owner"
+                    : false;
+
+                  return (
+                    <div className="relative">
+                      {!!isOwner && (
+                        <div className="absolute top-[-4px] right-[-4px] z-10 bg-muted rounded-full text-primary">
+                          <Crown size={16} />
+                        </div>
+                      )}
+                      {!!admin && !isOwner && (
+                        <div className="absolute top-[-4px] right-[-4px] z-10  bg-muted rounded-full text-primary">
+                          <Shield size={16} />
+                        </div>
+                      )}
+                      {content}
+                    </div>
+                  );
+                }}
               />
-              <div className='flex flex-col'>
-                <div className='flex flex-row items-center gap-x-2'>
-                  <span className='font-semibold text-grayscale-paragraph'>
+              <div className="flex flex-col">
+                <div className="flex flex-row items-center gap-x-2">
+                  <span className="font-semibold text-grayscale-paragraph">
                     {participant.username}
                   </span>
-                  {is_mine && (
-                    <div className='flex items-center justify-center p-1 py-[2px] rounded bg-primary-light'>
-                      <span className='text-xs font-medium text-primary-label'>
-                        You
-                      </span>
-                    </div>
-                  )}
+                  {is_mine && <ParticipantBadge title="You" />}
                 </div>
                 <span
                   className={cn(
                     userActiveJob === "Idle" ? "text-yellow-600" : "",
-                    "capitalize text-xs"
+                    "capitalize text-xs",
                   )}
                 >
                   {userActiveJob.length > 25
@@ -83,7 +110,7 @@ const ParticipantRows = ({ participants }: Props) => {
               </div>
             </div>
 
-            <div className='flex items-center gap-x-1'>{accessibilities}</div>
+            <div className="flex items-center gap-x-1">{accessibilities}</div>
           </div>
         );
       })}
