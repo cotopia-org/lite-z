@@ -5,9 +5,14 @@ import ParticipantsWithPopover from "@/components/shared/participants/with-popov
 import { useRoomContext } from "@/components/shared/room/room-context";
 import { useApi } from "@/hooks/swr";
 import { PaymentType } from "@/types/payment";
-import { ChevronLeft, ChevronRight } from "lucide-react";
+import { ChevronLeft, ChevronRight, Pencil, Plus, X } from "lucide-react";
 import { useMemo, useState } from "react";
-import { getContractStatus, urlWithQueryParams } from "@/lib/utils";
+import {
+  formatTime,
+  getContractStatus,
+  getDateTime,
+  urlWithQueryParams,
+} from "@/lib/utils";
 import TitleEl from "@/components/shared/title-el";
 import { JobType, UserJobType } from "@/types/job";
 import CotopiaDropdown from "@/components/shared-ui/c-dropdown";
@@ -16,93 +21,152 @@ import ParticipantDetails from "@/components/shared/room/participant-detail";
 import CotopiaAvatar from "@/components/shared-ui/c-avatar";
 import { UserType, WorkspaceUserType } from "@/types/user";
 import JobStatus from "@/components/shared/room/tools/top-left/job-button/shapes/job-list/job-item/job-status";
+import { colors, VARZ } from "@/const/varz";
+import CotopiaIconButton from "@/components/shared-ui/c-icon-button";
+import JobTag from "@/components/shared/room/tools/top-left/job-button/shapes/job-list/job-item/tag";
+import { TrashIcon } from "@/components/icons";
+import PropmptBox from "@/components/shared/prompt-box";
+import StatusBox from "@/components/shared/status-box";
+import CotopiaMention from "@/components/shared-ui/c-mention";
+import Page from "@/pages/dashboard/Page";
+import UserJob from "@/pages/dashboard/components/user-job";
 
 type Props = {
   job: JobType;
   onBack: () => void;
   setSelectedJob?: (job: JobType) => void;
+  setSelectedEdit: (job: JobType) => void;
+  setPreviousJob: (job: JobType) => void;
 };
 
-export default function Job({ job, onBack, setSelectedJob }: Props) {
+export default function Job({
+  job,
+  onBack,
+  setSelectedJob,
+  setSelectedEdit,
+  setPreviousJob,
+}: Props) {
   const { data, mutate } = useApi(`/jobs/${job.id}/jobs`);
   const jobs: JobType[] = data !== undefined ? data?.data : [];
 
   return (
-    <div className={" w-full flex flex-col p-4"}>
-      <div
-        className={
-          "w-full flex flex-row  justify-between items-center border-b"
-        }
-      >
-        <h1 className={"font-bold text-lg"}>{job.title}</h1>
-        {!!onBack && (
-          <CotopiaButton
-            variant={"link"}
-            startIcon={<ChevronLeft />}
-            onClick={onBack}
-          >
-            Back
-          </CotopiaButton>
-        )}
-      </div>
-      <div className={"flex w-full flex-row  justify-between"}>
-        <div className={"border-r p-4 flex flex-col items-start gap-y-2 w-1/2"}>
-          <div>Description: {job.description}</div>
-          <div>Status {job.status}</div>
-          <div>Estimate {job.estimate}</div>
-          <div>Date Created: {job.created_at}</div>
-          <div>
-            Total Minutes:
-            {job.members.reduce((sum, a) => sum + a.total_minutes, 0)}
+    <Page
+      header={
+        <>
+          <div className={"flex gap-2 items-center"}>
+            <h1 className={"font-bold text-lg"}>{job.title}</h1>
+
+            <JobStatus status={job.status} />
           </div>
-          <div>
-            Jobs:{" "}
-            {jobs.length > 0 ? (
-              jobs.map((job: JobType) => (
+          <div className={"flex items-center"}>
+            {!!onBack && (
+              <CotopiaButton
+                variant={"link"}
+                startIcon={<ChevronLeft />}
+                onClick={onBack}
+              >
+                Back
+              </CotopiaButton>
+            )}
+
+            <CotopiaButton
+              variant={"link"}
+              startIcon={<Pencil />}
+              onClick={() => {
+                setSelectedEdit(job);
+              }}
+            >
+              Edit
+            </CotopiaButton>
+          </div>
+        </>
+      }
+      main={
+        <>
+          <div className={"border-r  flex flex-col items-start gap-y-2 w-1/2"}>
+            <div>
+              <small>Description</small> {job.description}
+            </div>
+
+            <div>
+              <small>Estimate</small> {job.estimate} hrs
+            </div>
+            <div>
+              <small>Created At</small> {getDateTime(job.created_at)}
+            </div>
+
+            <div>
+              <small>Total Hours</small>{" "}
+              {formatTime(
+                job.members.reduce((sum, a) => sum + a.total_minutes, 0),
+              )}
+            </div>
+            <div>
+              <small>Parent</small>{" "}
+              {job.parent !== undefined ? (
                 <CotopiaButton
                   variant={"link"}
                   onClick={() => {
-                    if (setSelectedJob) setSelectedJob(job);
+                    if (setSelectedJob && job.parent !== undefined) {
+                      setSelectedJob(job.parent);
+                      setPreviousJob(job);
+                    }
                   }}
                 >
-                  {job.title}
+                  {job.parent?.title}
                 </CotopiaButton>
-              ))
+              ) : (
+                <span className={"text-sm text-black/50"}>
+                  This job has no parent
+                </span>
+              )}
+            </div>
+            <div>
+              <small>Jobs</small>{" "}
+              {jobs.length > 0 ? (
+                jobs.map((job: JobType) => (
+                  <CotopiaButton
+                    variant={"link"}
+                    onClick={() => {
+                      if (setSelectedJob) setSelectedJob(job);
+                    }}
+                  >
+                    {job.title}
+                  </CotopiaButton>
+                ))
+              ) : (
+                <span className={"text-sm text-black/50"}>
+                  This job has no children
+                </span>
+              )}
+            </div>
+            <div className={"flex items-center gap-1"}>
+              <small>Open to</small>
+
+              <div className={"flex gap-2 items-center flex-wrap"}>
+                {job.mentions.map((mention) => {
+                  return (
+                    <StatusBox
+                      label={<CotopiaMention item={mention} />}
+                      variant="default"
+                    />
+                  );
+                })}
+              </div>
+            </div>
+          </div>
+
+          <div className={"p-4 grid grid-cols-3 gap-4 w-1/2 "}>
+            {job.members.length > 0 ? (
+              job.members.map((user) => {
+                return <UserJob user={user} />;
+              })
             ) : (
-              <span className={"text-sm text-black/50"}>
-                This job has no children
-              </span>
+              <div>This job has no members!</div>
             )}
           </div>
-        </div>
-
-        <div className={"p-4 flex flex-col items-start gap-y-2  w-1/2"}>
-          {job.members.map((user) => {
-            return <UserJob user={user} />;
-          })}
-        </div>
-      </div>
-    </div>
-  );
-}
-
-function UserJob({ user }: { user: UserJobType }) {
-  return (
-    <div className={"flex flex-col gap-y-2 items-start"}>
-      <div className={"flex flex-row gap-x-2 items-center"}>
-        <CotopiaAvatar
-          className={`min-w-8 min-h-8`}
-          src={user.avatar.url}
-          title={user.username ? user.username?.[0] : undefined}
-        />
-        <span>{user.username}</span>
-      </div>
-
-      <div className={"flex flex-col bg-red-500"}>
-        <JobStatus status={user.status} />
-        <span>{user.total_minutes / 60} hrs</span>
-        <span>{user.created_at}</span>
-      </div>
-    </div>
+        </>
+      }
+    />
   );
 }

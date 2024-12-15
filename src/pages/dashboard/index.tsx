@@ -51,9 +51,7 @@ export default function Dashboard({
     setPage(page);
   };
 
-  const isAdmin = isUserAdmin(user, workspace_id ? +workspace_id : undefined);
-
-  console.log(page);
+  // const isAdmin = isUserAdmin(user, workspace_id ? +workspace_id : undefined);
 
   return (
     <main className="w-full min-h-screen flex gap-x-2">

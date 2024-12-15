@@ -4,39 +4,36 @@ import ContractDetailsById from "@/components/shared/cotopia-payroll/user-inform
 import ParticipantsWithPopover from "@/components/shared/participants/with-popover";
 import { useRoomContext } from "@/components/shared/room/room-context";
 import { useApi } from "@/hooks/swr";
-import { PaymentType } from "@/types/payment";
-import { ChevronRight } from "lucide-react";
 import { useMemo, useState } from "react";
-import { getContractStatus, urlWithQueryParams } from "@/lib/utils";
-import TitleEl from "@/components/shared/title-el";
 import { JobType } from "@/types/job";
 import CotopiaDropdown from "@/components/shared-ui/c-dropdown";
 import CPagination from "@/components/shared-ui/c-pagination";
 import Job from "@/pages/dashboard/jobs/single";
+import EditJob from "@/pages/dashboard/jobs/edit";
+import JobStatus from "@/components/shared/room/tools/top-left/job-button/shapes/job-list/job-item/job-status";
 
 type Props = {
   isAll?: boolean;
 };
 
 export default function Jobs({ isAll = true }: Props) {
-  const [selectStatus, setSelectStatus] = useState<string>();
+  const [selectStatus, setSelectStatus] = useState<string>("all");
   const [selectedJob, setSelectedJob] = useState<JobType>();
+  const [previousJob, setPreviousJob] = useState<JobType>();
+  const [selectedEdit, setSelectedEdit] = useState<JobType>();
 
   const { workspaceUsers, workspace_id } = useRoomContext();
 
   const [page, setPage] = useState(1);
 
   const { data, mutate } = useApi(
-    `/workspaces/${workspace_id}/jobs?page=${page}`,
+    `/workspaces/${workspace_id}/jobs?page=${page}&status=${selectStatus}`,
   );
   const jobs: JobType[] = data !== undefined ? data?.data : [];
 
   const jobsMeta = data !== undefined ? data?.meta : [];
 
   let finalJobs = jobs;
-
-  if (selectStatus)
-    finalJobs = finalJobs.filter((a) => a.status === selectStatus);
 
   const tableHeadItems = useMemo(() => {
     const items = [
@@ -77,18 +74,18 @@ export default function Jobs({ isAll = true }: Props) {
       {
         title: "Parent",
         render: (item: JobType) => {
-          if (!item.parent) {
+          if (item.parent !== undefined && item.parent !== null) {
+            return (
+              <CotopiaButton
+                variant={"link"}
+                onClick={() => setSelectedJob(item.parent)}
+              >
+                {item.parent.title}
+              </CotopiaButton>
+            );
+          } else {
             return "No Parent";
           }
-
-          return (
-            <CotopiaButton
-              variant={"link"}
-              onClick={() => setSelectedJob(item.parent)}
-            >
-              {item.parent.title}
-            </CotopiaButton>
-          );
         },
       },
       {
@@ -116,7 +113,7 @@ export default function Jobs({ isAll = true }: Props) {
       {
         title: "Status",
         render: (item: JobType) => {
-          return <>{item.status}</>;
+          return <JobStatus status={item.status} />;
         },
       },
     ];
@@ -124,12 +121,32 @@ export default function Jobs({ isAll = true }: Props) {
     return items;
   }, [isAll]);
 
+  if (selectedEdit)
+    return (
+      <EditJob
+        onBack={() => {
+          setSelectedJob(selectedEdit);
+          setSelectedEdit(undefined);
+        }}
+        job={selectedEdit}
+        setSelectedJob={setSelectedJob}
+        onUpdate={mutate}
+      />
+    );
   if (selectedJob)
     return (
       <Job
-        onBack={() => setSelectedJob(undefined)}
+        onBack={() =>
+          setSelectedJob(
+            previousJob === undefined || previousJob.id === selectedJob.id
+              ? undefined
+              : previousJob,
+          )
+        }
         job={selectedJob}
         setSelectedJob={setSelectedJob}
+        setSelectedEdit={setSelectedEdit}
+        setPreviousJob={setPreviousJob}
       />
     );
 
@@ -147,9 +164,8 @@ export default function Jobs({ isAll = true }: Props) {
             },
             { title: "Completed", value: "completed" },
           ]}
-          onSelect={(item) =>
-            setSelectStatus(item.value === "all" ? undefined : item.value)
-          }
+          defaultValue={selectStatus}
+          onSelect={(item) => setSelectStatus(item.value)}
         />
       </div>
 

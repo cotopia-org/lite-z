@@ -313,6 +313,29 @@ export function isUserAdmin(
   );
 }
 
+export function formatTime(totalMinutes: number): string {
+  const hours = Math.floor(totalMinutes / 60);
+  const wholeMinutes = Math.floor(totalMinutes % 60); // Extract whole minutes
+  const seconds = Math.round((totalMinutes % 1) * 60); // Convert fractional part to seconds
+
+  // Adjust minutes if rounding seconds overflows
+  let adjustedMinutes = wholeMinutes;
+  let adjustedHours = hours;
+  let adjustedSeconds = seconds;
+
+  if (seconds === 60) {
+    adjustedSeconds = 0;
+    adjustedMinutes += 1;
+  }
+
+  if (adjustedMinutes === 60) {
+    adjustedMinutes = 0;
+    adjustedHours += 1;
+  }
+
+  return `${String(adjustedHours).padStart(2, "0")}:${String(adjustedMinutes).padStart(2, "0")}:${String(adjustedSeconds).padStart(2, "0")}`;
+}
+
 export function getContractStatus(contract: UserContractType) {
   if (contract.user_sign_status === 1 && contract.contractor_sign_status === 1)
     return "Signed";
@@ -322,4 +345,11 @@ export function getContractStatus(contract: UserContractType) {
   if (contract.contractor_sign_status === 0) return "Awaiting admin signing";
 
   return "UnSigned";
+}
+
+export function getDateTime(
+  date: string,
+  format: string = "YYYY/MM/DD HH:mm:ss",
+) {
+  return moment(date).format(format);
 }

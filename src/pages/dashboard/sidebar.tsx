@@ -1,11 +1,7 @@
 import { Coins, Grid, HandCoins, User, UserRoundPen, X } from "lucide-react";
 import CotopiaButton from "@/components/shared-ui/c-button";
-import { PayrollPage, usePayroll } from "@/pages/cotopia-payroll/user/payroll";
-import { ReactNode, useState } from "react";
-import { cn, isUserAdmin } from "@/lib/utils";
-import useAuth from "@/hooks/auth";
-import { useRoomContext } from "@/components/shared/room/room-context";
-import Jobs from "@/pages/dashboard/jobs";
+import { ReactNode } from "react";
+import { cn } from "@/lib/utils";
 
 type Props = {
   onClose?: () => void;
