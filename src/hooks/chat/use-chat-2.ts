@@ -20,14 +20,18 @@ import useAuth from "../auth";
 import { useSocket } from "@/routes/private-wrarpper";
 import { __BUS } from "@/const/bus";
 import { extractMentions, uniqueById } from "@/lib/utils";
+import axiosInstance, { FetchDataType } from "@/services/axios";
+import { MessageType } from "@/types/message";
 
 function generateTempChat({
   chat_id,
+  user,
   user_id,
   text,
   reply,
 }: {
   chat_id: number;
+  user: number;
   user_id: number;
   text: string;
   reply?: Chat2ItemType;
@@ -35,9 +39,9 @@ function generateTempChat({
   const nonce_id = moment().unix() * 1000;
 
   //@ts-ignore
-  const object: any = {
+  const object: Chat2ItemType = {
     chat_id,
-    created_at: null,
+    created_at: moment().unix(),
     deleted_at: null,
     files: [],
     is_edited: null,
@@ -45,14 +49,15 @@ function generateTempChat({
     links: [],
     mentions: [],
     nonce_id,
-    seen: false,
+    seens: [],
     text,
     updated_at: nonce_id,
-    user: user_id,
+    user: user,
+    user_id: user_id,
     is_delivered: false,
     is_rejected: false,
     is_pending: false,
-  } as Chat2ItemType;
+  }
 
   if (reply) {
     object["reply_to"] = reply;
@@ -94,15 +99,11 @@ export const useChat2 = (props?: {
     console.log("data", data)
   );
 
-  const seenFn = (message: Chat2ItemType, onSuccess?: () => void) => {
+  const seenFn = async (message: Chat2ItemType, onSuccess?: () => void) => {
     const lastMessage = chats[message.chat_id].object.last_message;
 
-    socket?.emit("seenMessage", {
-      chat_id: message.chat_id,
-      nonce_id: message.nonce_id,
-    });
+    await axiosInstance.get(`/messages/${message.id}/seen`)
 
-    //Seen message
     dispatch(
       seenMessage({
         chat_id: message.chat_id,
@@ -110,6 +111,8 @@ export const useChat2 = (props?: {
         user_id: (user as UserType)?.id,
       })
     );
+
+    
 
     if (
       message?.mentions?.length > 0 &&
@@ -120,13 +123,13 @@ export const useChat2 = (props?: {
 
     //Because seening the last message means you've seen all messages before
     if (message.id === lastMessage?.id) {
-      dispatch(seenAllMessages({ chat_id: message.chat_id }));
+      dispatch(seenAllMessages({ chat_id: message.chat_id,  user_id: user.id }));
     }
 
     if (onSuccess) onSuccess();
   };
 
-  const send = (
+  const send = async (
     {
       text,
       links,
@@ -153,10 +156,11 @@ export const useChat2 = (props?: {
 
     const message = generateTempChat({
       chat_id: chat_id as number,
+      user: (user as UserType)?.id,
       user_id: (user as UserType)?.id,
       text,
       reply,
-    });
+    })
 
     const sendObject = { ...message, mentions: properMentions, seen };
 
@@ -166,18 +170,30 @@ export const useChat2 = (props?: {
       sendObject["reply_to"] = reply;
     }
 
-    dispatch(addMessage(sendObject));
+    dispatch(addMessage({...sendObject, is_delivered: false, is_pending: true, is_rejected: false}));
 
     //Clear reply message
     if (currentChat && reply) dispatch(clearReplyMessage(currentChat?.id));
 
-    socket?.emit(
-      "sendMessage",
-      { ...message, mentions: properMentions },
-      (data: any) => {
-        if (seen === true) seenMessage(data);
-      }
-    );
+    const recievedMessageFromServerRes = await axiosInstance.post<FetchDataType<MessageType>>(`/messages`, {
+      text: sendObject.text,
+      chat_id: sendObject.chat_id,
+      nonce_id: sendObject.nonce_id,
+      mentions: sendObject.mentions,
+      links: sendObject.links
+    })
+
+    const recievedMessageFromServer = recievedMessageFromServerRes?.data?.data
+
+    dispatch(updateMessage({...recievedMessageFromServer, is_delivered: true, is_pending: false, is_rejected: false}))
+
+    // socket?.emit(
+    //   "sendMessage",
+    //   { ...message, mentions: properMentions },
+    //   (data: any) => {
+    //     if (seen === true) seenMessage(data);
+    //   }
+    // );
 
     if (onSuccess) onSuccess();
     setTimeout(() => {

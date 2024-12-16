@@ -120,7 +120,7 @@ export const useChat2 = (props?: {
 
     //Because seening the last message means you've seen all messages before
     if (message.id === lastMessage?.id) {
-      dispatch(seenAllMessages({ chat_id: message.chat_id }));
+      dispatch(seenAllMessages({ chat_id: message.chat_id, user_id: user.id }));
     }
 
     if (onSuccess) onSuccess();

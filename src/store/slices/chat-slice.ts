@@ -197,14 +197,11 @@ const chatSlice = createSlice({
     upcommingMessage: (
       state,
       action: PayloadAction<{
-        messages: Chat2ItemType[];
         message: Chat2ItemType;
       }>
     ) => {
-      const { messages, message } = action.payload;
-
-      const chat_id = messages?.[0]?.chat_id;
-      state.chats[chat_id].messages = messages;
+      const {  message } = action.payload;
+      const chat_id = message.chat_id
       state.chats[chat_id].object.last_message = message;
       state.chats[chat_id].object.unseens =
         state.chats[chat_id].object.unseens + 1;
@@ -296,12 +293,12 @@ const chatSlice = createSlice({
             ) ?? [],
         };
     },
-    seenAllMessages: (state, action: PayloadAction<{ chat_id: number }>) => {
+    seenAllMessages: (state, action: PayloadAction<{ chat_id: number, user_id: number }>) => {
       const chat_id = action.payload.chat_id;
       state.chats[chat_id].object.unseens = 0;
       state.chats[chat_id].object.mentioned_messages = 0;
       state.chats[chat_id].messages.map((x) => {
-        x.seen = true;
+        x.seens = [...new Set([...x.seens, action.payload.user_id])]
         return x;
       });
     },

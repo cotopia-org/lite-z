@@ -7,7 +7,7 @@ import { toast } from "sonner";
 
 // Define the initial state using a TypeScript interface
 interface AuthState {
-  user: UserType | null;
+  user: UserType;
   accessToken: string | null;
   isLoading: boolean;
   error: string | null;
@@ -20,6 +20,7 @@ interface LoginResponse extends UserType {
 
 // Initialize the initial state
 const initialState: AuthState = {
+  //@ts-ignore
   user: null,
   accessToken: null,
   isLoading: false,
@@ -93,6 +94,7 @@ const authSlice = createSlice({
   initialState,
   reducers: {
     logout: (state) => {
+      //@ts-ignore
       state.user = null;
       state.accessToken = null;
       state.isLoading = false;

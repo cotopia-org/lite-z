@@ -1,13 +1,13 @@
 import { Chat2ItemType } from "@/types/chat2";
 import ChatUserOverView from "./user-overview";
 import ChatItemContent from "./content";
-import { UserMinimalType } from "@/types/user";
-import { createContext, useContext, useEffect, useRef, useState } from "react";
+import { createContext, useContext, useEffect, useMemo, useRef, useState } from "react";
 import { useChat2 } from "@/hooks/chat/use-chat-2";
 import CotopiaContextMenu from "@/components/shared-ui/c-context-menu";
 import RightClickActions from "./right-click-actions";
-import CotopiaPrompt from "@/components/shared-ui/c-prompt";
 import DeletePrompt from "./content/delete-prompt";
+import useAuth from "@/hooks/auth";
+import { cn } from "@/lib/utils";
 
 type Props = {
   item: Chat2ItemType;
@@ -28,20 +28,30 @@ const ChatItemContext = createContext<{
 export const useChatItem = () => useContext(ChatItemContext);
 
 export default function ChatItem({ item, isMine }: Props) {
+
+  const {user} = useAuth()
+
   const [isShowDeletePrompt, showDeletePrompt] = useState(false);
 
-  const { seen } = useChat2();
+  const { seen, chatObjects } = useChat2();
 
   const divRef = useRef<HTMLDivElement>(null);
-
-  const [isVisible, setIsVisible] = useState(false);
 
   useEffect(() => {
     const observer = new IntersectionObserver(
       ([entry]) => {
-        setIsVisible(entry.isIntersecting);
+        if (entry.isIntersecting) {
+          if ( user?.id === null ) return 
+
+          const isMeSeen = item.seens.includes(user.id)
+
+          //Should remove item.nonce_id !== 0 in the feuture (just for legacy messages)
+          if (isMeSeen === false && item.nonce_id !== 0 && !isMine) {
+            seen(item);
+          }
+        }
       },
-      { threshold: 0.5 } // Trigger when 50% of the element is visible
+      { threshold: 0.1 } // Customize visibility threshold
     );
 
     if (divRef.current) {
@@ -53,14 +63,41 @@ export default function ChatItem({ item, isMine }: Props) {
         observer.unobserve(divRef.current);
       }
     };
-  }, []);
+  }, [user?.id, seen]);
 
-  useEffect(() => {
-    //Should remove item.nonce_id !== 0 in the feuture (just for legacy messages)
-    if (isVisible && item?.seen === false && item.nonce_id !== 0 && !isMine) {
-      seen(item);
-    }
-  }, [item, isVisible, isMine, seen]);
+  const prevMessage = useMemo(() => {
+
+    const messageIndex = chatObjects?.[item?.chat_id]?.messages?.findIndex(a => a.id === item.id)
+
+    if ( messageIndex <= 0 ) return undefined
+
+    let prevMessage = chatObjects?.[item?.chat_id]?.messages[messageIndex + 1]
+
+    return prevMessage
+
+  }, [item, chatObjects])
+
+  const nextMessage = useMemo(() => {
+
+    const messageIndex = chatObjects?.[item?.chat_id]?.messages?.findIndex(a => a.id === item.id)
+
+    if ( messageIndex <= 0 ) return undefined
+
+    let prevMessage = chatObjects?.[item?.chat_id]?.messages[messageIndex - 1]
+
+    return prevMessage
+
+  }, [item, chatObjects])
+
+  const isLastMessage = useMemo(() => {
+    const messageIndex = chatObjects?.[item?.chat_id]?.messages?.findIndex(a => a.id === item.id)
+    return messageIndex === 0
+  }, [item, chatObjects])
+
+  const isFirstMessage = useMemo(() => {
+    const messageIndex = chatObjects?.[item?.chat_id]?.messages?.findIndex(a => a.id === item.id)
+    return messageIndex === chatObjects?.[item?.chat_id]?.messages.length -1 
+  }, [item, chatObjects])
 
   return (
     <>
@@ -77,10 +114,10 @@ export default function ChatItem({ item, isMine }: Props) {
           trigger={
             <div
               ref={divRef}
-              className={`message-item p-4 flex flex-row items-end gap-x-2`}
+              className={cn('message-item py-[2px] px-4 flex flex-row items-end gap-x-2', (nextMessage?.user !== item?.user) ? 'mb-4' : '', isLastMessage ? 'pb-4' : '', isFirstMessage ? 'mt-4' : '')}
             >
-              <ChatUserOverView chat={item} />
-              <ChatItemContent chat={item} />
+              <ChatUserOverView chat={item} prev={prevMessage} next={nextMessage} />
+              <ChatItemContent chat={item} prev={prevMessage} />
             </div>
           }
         >

@@ -18,7 +18,10 @@ export default function UnSeenHandlers({ items }: Props) {
 
   const chat_id = items?.[0]?.chat_id;
 
-  const unSeenCount = items.filter((x) => x.seen === false).length;
+  const unSeenCount = items.filter((x) => {
+    const isSeen = !!!x.seens.find(a => a === user.id)
+    return isSeen
+  }).filter(a => a.is_pending === false).length;
 
   const mentionedMe =
     items.findIndex(
@@ -29,7 +32,7 @@ export default function UnSeenHandlers({ items }: Props) {
 
   const handleReachMessages = () => {
     if (chat_id) {
-      dispatch(seenAllMessages({ chat_id }));
+      dispatch(seenAllMessages({ chat_id ,  user_id: user.id}));
       busDispatch(__BUS.scrollEndChatBox);
     }
   };
