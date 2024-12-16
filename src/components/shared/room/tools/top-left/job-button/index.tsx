@@ -38,7 +38,8 @@ export default function JobButton() {
   let jobItems = (data && data?.data) ?? [];
   let suggestItems = (suggestionsJobs && suggestionsJobs?.data) ?? [];
   let job_label = "Create job";
-  const active_job = jobItems.find((j) => j.status === "in_progress");
+  const active_job = user?.active_job;
+
   if (active_job)
     job_label =
       active_job.title.length > 20

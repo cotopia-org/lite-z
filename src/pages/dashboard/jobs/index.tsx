@@ -4,7 +4,7 @@ import ContractDetailsById from "@/components/shared/cotopia-payroll/user-inform
 import ParticipantsWithPopover from "@/components/shared/participants/with-popover";
 import { useRoomContext } from "@/components/shared/room/room-context";
 import { useApi } from "@/hooks/swr";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { JobType } from "@/types/job";
 import CotopiaDropdown from "@/components/shared-ui/c-dropdown";
 import CPagination from "@/components/shared-ui/c-pagination";
@@ -34,6 +34,13 @@ export default function Jobs({ isAll = true }: Props) {
   const jobsMeta = data !== undefined ? data?.meta : [];
 
   let finalJobs = jobs;
+
+  useEffect(() => {
+    if (selectedJob === undefined) {
+      console.log("Reset");
+      setPreviousJob(undefined);
+    }
+  }, [selectedJob]);
 
   const tableHeadItems = useMemo(() => {
     const items = [
@@ -136,13 +143,19 @@ export default function Jobs({ isAll = true }: Props) {
   if (selectedJob)
     return (
       <Job
-        onBack={() =>
+        onBack={() => {
+          console.log(
+            "p",
+            previousJob === undefined || previousJob.id === selectedJob.id
+              ? undefined
+              : previousJob,
+          );
           setSelectedJob(
             previousJob === undefined || previousJob.id === selectedJob.id
               ? undefined
               : previousJob,
-          )
-        }
+          );
+        }}
         job={selectedJob}
         setSelectedJob={setSelectedJob}
         setSelectedEdit={setSelectedEdit}
