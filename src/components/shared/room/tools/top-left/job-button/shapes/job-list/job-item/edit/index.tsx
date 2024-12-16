@@ -1,16 +1,17 @@
-import CotopiaIconButton from "@/components/shared-ui/c-icon-button"
-import CotopiaTooltip from "@/components/shared-ui/c-tooltip"
-import { FullModalBox } from "@/components/shared/modal-box"
-import { JobType } from "@/types/job"
-import ManageJobContent from "../../../add-job/content"
-import { EditIcon } from "@/components/icons"
-import { colors } from "@/const/varz"
+import CotopiaIconButton from "@/components/shared-ui/c-icon-button";
+import CotopiaTooltip from "@/components/shared-ui/c-tooltip";
+import { FullModalBox } from "@/components/shared/modal-box";
+import { JobType } from "@/types/job";
+import ManageJobContent from "../../../add-job/content";
+import { EditIcon } from "@/components/icons";
+import { colors } from "@/const/varz";
 
 type Props = {
-  job: JobType
-  fetchAgain?: () => void
-}
-export default function EditJobButton({ job, fetchAgain }: Props) {
+  job: JobType;
+  fetchAgain?: () => void;
+  parentJobs: JobType[];
+};
+export default function EditJobButton({ job, fetchAgain, parentJobs }: Props) {
   return (
     <FullModalBox
       title="Edit Job"
@@ -24,22 +25,23 @@ export default function EditJobButton({ job, fetchAgain }: Props) {
           </CotopiaIconButton>
         </CotopiaTooltip>
       )}
-      className="w-[440px] [&_.dialog-title]:text-lg [&_.dialog-header]:pb-4 [&_.dialog-header]:border-b"
+      className="w-auto min-w-[440px] [&_.dialog-title]:text-lg [&_.dialog-header]:pb-4 [&_.dialog-header]:border-b"
     >
       {(open, close) => (
         <ManageJobContent
+          parentJobs={parentJobs}
           onClose={close}
           defaultValue={job}
           onCreated={() => {
-            if (fetchAgain) fetchAgain()
-            close()
+            if (fetchAgain) fetchAgain();
+            close();
           }}
           onDelete={() => {
-            if (fetchAgain) fetchAgain()
-            close()
+            if (fetchAgain) fetchAgain();
+            close();
           }}
         />
       )}
     </FullModalBox>
-  )
+  );
 }

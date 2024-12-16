@@ -29,5 +29,8 @@ export type JobType = {
   job_id: number;
   level: number;
   old: boolean;
+  role?: string;
+  total_minutes?: number;
+
   mentions: MentionType[];
 };

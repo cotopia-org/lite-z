@@ -4,7 +4,7 @@ import ToolButton from "../../tool-button";
 import { BriefcaseIcon } from "@/components/icons";
 import { useRoomContext } from "../../../room-context";
 import { useApi } from "@/hooks/swr";
-import { urlWithQueryParams } from "@/lib/utils";
+import { isUserAdmin, urlWithQueryParams } from "@/lib/utils";
 import FullLoading from "@/components/shared/full-loading";
 import AddJobHandler from "./shapes/add-job";
 import { JobType, JobStatusType } from "@/types/job";
@@ -47,9 +47,6 @@ export default function JobButton() {
         : active_job.title;
   if (!active_job && jobItems.length > 0) job_label = "Start job";
 
-  const getUser = (item: JobType) => {
-    return item.members.find((u) => u.id === user?.id);
-  };
   return (
     <PopupBox
       trigger={(open, isOpen) => (
@@ -77,9 +74,10 @@ export default function JobButton() {
                     user={user}
                     hasAction
                     items={jobItems.filter((x) =>
-                      ["in_progress"].includes(getUser(x)?.status + ""),
+                      ["in_progress"].includes(x.status + ""),
                     )}
                     onMutate={mutate}
+                    parentJobs={isUserAdmin(user) ? jobItems : suggestItems}
                   />
                 ),
                 value: "in_progress",
@@ -91,9 +89,10 @@ export default function JobButton() {
                     user={user}
                     hasAction
                     items={jobItems.filter((x) =>
-                      ["paused"].includes(getUser(x)?.status + ""),
+                      ["paused"].includes(x.status + ""),
                     )}
                     onMutate={mutate}
+                    parentJobs={isUserAdmin(user) ? jobItems : suggestItems}
                   />
                 ),
                 value: "paused",
@@ -105,8 +104,9 @@ export default function JobButton() {
                     user={user}
                     hasAction
                     items={jobItems.filter((x) =>
-                      ["completed"].includes(getUser(x)?.status + ""),
+                      ["completed"].includes(x.status + ""),
                     )}
+                    parentJobs={isUserAdmin(user) ? jobItems : suggestItems}
                     onMutate={mutate}
                   />
                 ),
@@ -121,6 +121,7 @@ export default function JobButton() {
                     items={suggestItems}
                     onMutate={mutateSuggest}
                     suggested={true}
+                    parentJobs={isUserAdmin(user) ? jobItems : suggestItems}
                   />
                 ),
                 value: "suggestions",
@@ -150,8 +151,8 @@ export default function JobButton() {
                 <CFullDialog
                   trigger={(open) => (
                     <CotopiaButton
+                      className="min-w-[100px] !bg-primary"
                       onClick={open}
-                      className="bg-primary text-white rounded-xl mt-3"
                     >
                       Dashboard
                     </CotopiaButton>
@@ -161,7 +162,11 @@ export default function JobButton() {
                     return <Dashboard onClose={close} defaultPage={"jobs"} />;
                   }}
                 </CFullDialog>
-                <AddJobHandler workspaceId={workspace_id} onCreated={mutate} />
+                <AddJobHandler
+                  parentJobs={isUserAdmin(user) ? jobItems : suggestItems}
+                  workspaceId={workspace_id}
+                  onCreated={mutate}
+                />
               </div>
             </div>
           </PopupBoxChild>

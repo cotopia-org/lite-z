@@ -25,6 +25,7 @@ interface Props {
   hasAction?: boolean;
   suggested?: boolean;
   user?: UserType | null;
+  parentJobs: JobType[];
 }
 
 const JobItem = ({
@@ -32,6 +33,7 @@ const JobItem = ({
   mutate,
   hasAction = false,
   suggested = false,
+  parentJobs,
   user,
 }: Props) => {
   const { startLoading, stopLoading, isLoading } = useLoading();
@@ -67,10 +69,6 @@ const JobItem = ({
       });
   };
 
-  const getUser = (item: JobType) => {
-    return item.members.find((u) => u.id === user?.id);
-  };
-
   const { chats } = useChat2();
   const chat = chats[0];
 
@@ -103,15 +101,20 @@ const JobItem = ({
           <div className="flex flex-row gap-x-3 items-center">
             <JobActions
               job={item}
-              status={getUser(item)?.status}
+              status={item.status}
               onPause={mutate}
               onStart={mutate}
               onDelete={mutate}
               onDone={mutate}
+              openChat={handleOpenChat}
             />
 
-            {getUser(item)?.role === "owner" && (
-              <EditJobButton job={item} fetchAgain={mutate} />
+            {item.role === "owner" && (
+              <EditJobButton
+                job={item}
+                parentJobs={parentJobs}
+                fetchAgain={mutate}
+              />
             )}
           </div>
         )}
@@ -148,10 +151,10 @@ const JobItem = ({
           {!suggested && (
             <>
               <div>
-                <JobStatus status={getUser(item)?.status} />
+                <JobStatus status={item.status} />
               </div>
               <div>
-                <JobEstimate job={item} getUser={getUser} />
+                <JobEstimate job={item} />
               </div>
             </>
           )}
@@ -162,15 +165,6 @@ const JobItem = ({
             <JobTag job={item} />
           </div>
         )}
-
-        <div
-          onClick={() => {
-            handleOpenChat();
-          }}
-          className={"rounded border p-1"}
-        >
-          Go to chat
-        </div>
       </div>
     </div>
   );

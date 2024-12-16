@@ -55,7 +55,7 @@ const JobTable = (props: Props) => {
             </div>
 
             <div className={"text-sm flex flex-row  items-center gap-x-1"}>
-              {Math.round(getUserTotalHours(job) / 60)} /{" "}
+              {Math.round((job.total_minutes ? job.total_minutes : 0) / 60)} /{" "}
               {job.estimate === null ? 0 : job.estimate}
             </div>
           </div>
@@ -76,7 +76,8 @@ const JobTable = (props: Props) => {
             ~
             {Math.round(
               props.items.reduce(
-                (sum, item) => sum + getUserTotalHours(item),
+                (sum, item) =>
+                  sum + (item.total_minutes ? item.total_minutes : 0),
                 0,
               ) / 60,
             )}{" "}

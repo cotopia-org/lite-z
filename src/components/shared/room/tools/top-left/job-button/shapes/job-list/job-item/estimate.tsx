@@ -4,13 +4,12 @@ import { JobType, UserJobType } from "@/types/job";
 
 type Props = {
   job: JobType;
-  getUser: (value: JobType) => UserJobType | undefined;
 };
-export default function JobEstimate({ job, getUser }: Props) {
+export default function JobEstimate({ job }: Props) {
   if (!job.estimate) return null;
 
   const jobEstimateSeconds = (job.estimate ?? 0) * 60 * 60;
-  const jobWorkedSeconds = (getUser(job)?.total_minutes ?? 0) * 60;
+  const jobWorkedSeconds = (job.total_minutes ?? 0) * 60;
 
   const workedMoreThanEstimate = jobWorkedSeconds > jobEstimateSeconds;
 
