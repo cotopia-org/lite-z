@@ -145,6 +145,9 @@ export const useChat2 = (props?: {
     },
     onSuccess?: () => void
   ) => {
+
+    if ( !text ) return
+
     const mentions = extractMentions(text);
     const currentChatMembers = currentChat?.participants ?? [];
 

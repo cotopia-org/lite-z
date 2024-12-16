@@ -199,6 +199,7 @@ export default function Items({
                 item={message}
                 key={message.nonce_id}
                 isMine={message?.user === profile?.id}
+                index={i}
               />
             </div>
           );

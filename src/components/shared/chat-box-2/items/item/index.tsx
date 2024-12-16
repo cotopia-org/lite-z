@@ -12,6 +12,7 @@ import { cn } from "@/lib/utils";
 type Props = {
   item: Chat2ItemType;
   isMine?: boolean;
+  index: number
 };
 
 const ChatItemContext = createContext<{
@@ -27,7 +28,7 @@ const ChatItemContext = createContext<{
 
 export const useChatItem = () => useContext(ChatItemContext);
 
-export default function ChatItem({ item, isMine }: Props) {
+export default function ChatItem({ item, isMine, index }: Props) {
 
   const {user} = useAuth()
 
@@ -71,9 +72,10 @@ export default function ChatItem({ item, isMine }: Props) {
 
     if ( messageIndex < 0 ) return undefined
 
-    let prevMessage = chatObjects?.[item?.chat_id]?.messages[messageIndex + 1]
 
-    return prevMessage
+    let message = chatObjects?.[item?.chat_id]?.messages[messageIndex + 1]
+
+    return message
 
   }, [item, chatObjects])
 
@@ -115,8 +117,10 @@ export default function ChatItem({ item, isMine }: Props) {
             <div
               ref={divRef}
               className={cn('message-item py-[2px] px-4 flex flex-row items-end gap-x-2', (nextMessage?.user !== item?.user) ? 'mb-4' : '', isLastMessage ? 'pb-4' : '', isFirstMessage ? 'mt-4' : '')}
-            >
-              <ChatUserOverView chat={item} prev={prevMessage} next={nextMessage} />
+            >              
+              <div className="w-9">
+                <ChatUserOverView chat={item} prev={prevMessage} next={nextMessage} />
+              </div>
               <ChatItemContent chat={item} next={nextMessage} prev={prevMessage} />
             </div>
           }

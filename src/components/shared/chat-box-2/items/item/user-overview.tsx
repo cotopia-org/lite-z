@@ -3,6 +3,7 @@ import ParticipantDetails from "@/components/shared/room/participant-detail";
 import { capitalizeWords } from "@/lib/utils";
 import { Chat2ItemType } from "@/types/chat2";
 import { useChat2 } from "@/hooks/chat/use-chat-2";
+import moment from "moment";
 
 type Props = {
   chat: Chat2ItemType;
@@ -14,7 +15,18 @@ export default function ChatUserOverView({ chat, prev, next }: Props) {
 
   const user = getUser(chat.user);
 
-  if (next !== null && next?.user === chat?.user) return <div className="w-9"></div>
+  const messageDate = moment(
+    chat?.created_at ? chat?.created_at * 1000 : chat?.nonce_id
+  ).format("dddd, MMMM D, YYYY");
+  const messageNextDate = moment(
+    next?.created_at
+      ? next?.created_at * 1000
+      : next?.nonce_id
+  ).format("dddd, MMMM D, YYYY");
+
+  const showDateHeader = messageDate !== messageNextDate;
+
+  if (next !== null && next?.user === chat?.user && !showDateHeader) return <div className="w-9"></div>
 
   if (!user) return null;
 
