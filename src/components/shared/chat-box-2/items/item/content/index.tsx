@@ -4,12 +4,15 @@ import Linkify from "linkify-react";
 import useAuth from "@/hooks/auth";
 import ChatRepliedItem from "./replied-item";
 import { useChat2 } from "@/hooks/chat/use-chat-2";
-import Markdown from "markdown-to-jsx";
+import MessageDeliveredState from "./delievered";
+import { cn } from "@/lib/utils";
 
 type Props = {
   chat: Chat2ItemType;
+  prev?: Chat2ItemType
+  next?: Chat2ItemType
 };
-export default function ChatItemContent({ chat }: Props) {
+export default function ChatItemContent({ chat,next , prev}: Props) {
   const { user: myAccount } = useAuth();
 
   const { getUser } = useChat2();
@@ -21,7 +24,7 @@ export default function ChatItemContent({ chat }: Props) {
   const linkElement = (
     attributes: { [attr: string]: any },
     content: string,
-    type: "mention" | "link",
+    type: "mention" | "link"
   ) => {
     let clss = "text-blue-600 whitespace-pre-wrap";
     if (type === "link") {
@@ -44,18 +47,20 @@ export default function ChatItemContent({ chat }: Props) {
     );
   };
 
+  const prevBelongToMe = prev?.user === chat?.user 
+
   return (
-    <div className="flex flex-1 flex-col gap-y-2 bg-black/5 rounded-xl rounded-bl-none p-2 max-w-full w-full">
+    <div className={cn('flex flex-col gap-y-2 bg-black/5 rounded-xl rounded-bl-none p-2 max-w-full w-auto min-w-[120px]', prevBelongToMe ? 'rounded-tl-sm' : '')}>
       {/* HEADER */}
       {chat?.reply_to ? (
         <ChatRepliedItem item={chat.reply_to} />
       ) : (
-        !!!isMyUser && <strong>{user?.name}</strong>
+        !!!isMyUser && !prevBelongToMe && <strong className="min-w-[160px]">{user?.name}</strong>
       )}
       {/* HEADER */}
       <p
-        className="text-wrap mb-3 w-full"
-        dir="auto"
+        className='text-wrap mb-3 w-full'
+        dir='auto'
         style={{
           overflowWrap: "break-word",
           wordBreak: "break-word",
@@ -84,7 +89,10 @@ export default function ChatItemContent({ chat }: Props) {
           </Linkify>
         ))}
       </p>
-      <ChatDate chat={chat} />
+      <div className="flex flex-row items-center gap-x-2">
+        <ChatDate chat={chat} />
+        <MessageDeliveredState chat={chat} />
+      </div>
     </div>
   );
 }

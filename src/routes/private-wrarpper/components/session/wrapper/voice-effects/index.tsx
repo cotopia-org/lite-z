@@ -1,66 +1,68 @@
-import React, { useEffect, useState } from "react";
-import Ping from "./ping";
+import React, { useEffect, useState } from "react"
+import Ping from "./ping"
 
-import { useUserTile } from "../..";
+import { useUserTile } from "../.."
 
 const getNumberRandom = () => {
-  return Math.random() * 10000000;
-};
-
-function getRandomDelay(min: number, max: number): number {
-  return Math.floor(Math.random() * (max - min + 1)) + min;
+  return Math.random() * 10000000
 }
 
-const minDelay = 600;
-const maxDelay = 900;
+function getRandomDelay(min: number, max: number): number {
+  return Math.floor(Math.random() * (max - min + 1)) + min
+}
 
-const randomDelay = getRandomDelay(minDelay, maxDelay);
+const minDelay = 600
+const maxDelay = 900
+
+const randomDelay = getRandomDelay(minDelay, maxDelay)
 
 export default function VoiceEffects() {
-  const { track } = useUserTile();
+  const { track } = useUserTile()
 
-  const [pings, setPings] = useState<number[]>([]);
+  const [pings, setPings] = useState<number[]>([])
 
-  if (track === undefined) return;
+  if (track === undefined) return
 
   const generateVoiceEffect = () => {
-    const id = getNumberRandom();
+    const id = getNumberRandom()
 
-    setPings((prev) => [...prev, id]);
+    setPings((prev) => [...prev, id])
 
     setTimeout(() => {
-      setPings((prev) => prev.filter((x) => x !== id));
-    }, randomDelay);
-  };
+      setPings((prev) => prev.filter((x) => x !== id))
+    }, randomDelay)
+  }
 
+  // eslint-disable-next-line react-hooks/rules-of-hooks
   useEffect(() => {
-    if (track === undefined) return;
+    if (track === undefined) return
 
-    generateVoiceEffect();
+    generateVoiceEffect()
 
     return () => {
-      setPings([]);
-    };
-  }, [track?.participant?.audioLevel]);
+      setPings([])
+    }
+  }, [track?.participant?.audioLevel])
 
-  let interval: NodeJS.Timeout;
+  let interval: NodeJS.Timeout
+  // eslint-disable-next-line react-hooks/rules-of-hooks
   useEffect(() => {
     function resetVoices() {
-      clearInterval(interval);
-      setPings([]);
+      clearInterval(interval)
+      setPings([])
     }
 
     if (track?.participant?.isSpeaking === false) {
-      resetVoices();
+      resetVoices()
     } else {
       interval = setInterval(() => {
-        generateVoiceEffect();
-      }, randomDelay);
+        generateVoiceEffect()
+      }, randomDelay)
     }
     return () => {
-      resetVoices();
-    };
-  }, [track?.participant?.isSpeaking]);
+      resetVoices()
+    }
+  }, [track?.participant?.isSpeaking])
 
   return (
     <>
@@ -68,5 +70,5 @@ export default function VoiceEffects() {
         <Ping key={key} />
       ))}
     </>
-  );
+  )
 }

@@ -124,7 +124,7 @@ export default function JobButton() {
                   />
                 ),
                 value: "suggestions",
-                badge: suggestItems.length > 0,
+                // badge: suggestItems.length > 0,
               },
             ]}
           />
