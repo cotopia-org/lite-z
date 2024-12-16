@@ -10,8 +10,9 @@ import { cn } from "@/lib/utils";
 type Props = {
   chat: Chat2ItemType;
   prev?: Chat2ItemType
+  next?: Chat2ItemType
 };
-export default function ChatItemContent({ chat , prev}: Props) {
+export default function ChatItemContent({ chat,next , prev}: Props) {
   const { user: myAccount } = useAuth();
 
   const { getUser } = useChat2();

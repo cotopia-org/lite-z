@@ -69,7 +69,7 @@ export default function ChatItem({ item, isMine }: Props) {
 
     const messageIndex = chatObjects?.[item?.chat_id]?.messages?.findIndex(a => a.id === item.id)
 
-    if ( messageIndex <= 0 ) return undefined
+    if ( messageIndex < 0 ) return undefined
 
     let prevMessage = chatObjects?.[item?.chat_id]?.messages[messageIndex + 1]
 
@@ -81,7 +81,7 @@ export default function ChatItem({ item, isMine }: Props) {
 
     const messageIndex = chatObjects?.[item?.chat_id]?.messages?.findIndex(a => a.id === item.id)
 
-    if ( messageIndex <= 0 ) return undefined
+    if ( messageIndex < 0 ) return undefined
 
     let prevMessage = chatObjects?.[item?.chat_id]?.messages[messageIndex - 1]
 
@@ -117,7 +117,7 @@ export default function ChatItem({ item, isMine }: Props) {
               className={cn('message-item py-[2px] px-4 flex flex-row items-end gap-x-2', (nextMessage?.user !== item?.user) ? 'mb-4' : '', isLastMessage ? 'pb-4' : '', isFirstMessage ? 'mt-4' : '')}
             >
               <ChatUserOverView chat={item} prev={prevMessage} next={nextMessage} />
-              <ChatItemContent chat={item} prev={prevMessage} />
+              <ChatItemContent chat={item} next={nextMessage} prev={prevMessage} />
             </div>
           }
         >
