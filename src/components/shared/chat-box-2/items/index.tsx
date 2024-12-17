@@ -27,12 +27,22 @@ export default function Items({
   marginFetching = 1000,
   onGetVirtualizer,
 }: Props) {
+
+
+  const chatItemInit = useRef(false);
+  useEffect(() => {
+    const timeout = setTimeout(() => {
+      chatItemInit.current = true
+    }, 1000)
+    return () => clearInterval(timeout)
+  }, [])
+
   const dispatch = useAppDispatch();
 
   const { chatObjects } = useChat2({ chat_id });
 
   const items = chatObjects?.[chat_id]?.messages ?? [];
-  const loading = chatObjects?.[chat_id]?.loading ?? false;
+  const loading = chatObjects?.[chat_id]?.loading ?? true;
   const chatPageLoading = chatObjects?.[chat_id]?.fetchPageLoading ?? false;
   const chatPage = chatObjects?.[chat_id]?.page ?? 1;
   const firstPage = chatObjects?.[chat_id]?.firstPage ?? true;
@@ -118,14 +128,16 @@ export default function Items({
     if (!rowVirtualizer) return;
 
     if (onGetVirtualizer) onGetVirtualizer(rowVirtualizer);
-  }, [onGetVirtualizer, rowVirtualizer]);
+  }, [onGetVirtualizer, rowVirtualizer]);  
 
   const handleScroll = () => {
+
+    if ( chatItemInit.current === false) return
+    
     if (!vlistRef.current) return;
 
     if (chatPageLoading) return;
 
-    const scrollHeight = vlistRef.current?.scrollSize;
     const scrollTop = vlistRef?.current?.scrollOffset;
 
     // Trigger fetching previous messages when scrolled to top
@@ -142,11 +154,7 @@ export default function Items({
         () => {}
       );
     }
-
-    // Trigger fetching next messages when scrolled to bottom
-    // if (scrollTop + marginFetching >= scrollHeight - 10 && chatPage > 1) {
-    //   dispatch(getNextMessages({ chat_id, page: chatPage - 1 }));
-    // }
+    
   };
 
   useEffect(() => {

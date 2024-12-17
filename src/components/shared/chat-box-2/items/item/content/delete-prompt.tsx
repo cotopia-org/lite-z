@@ -17,6 +17,7 @@ export default function DeletePrompt({ item }: { item: Chat2ItemType }) {
             title='Do you want to delete this message?'
             onSubmit={() => {
               deleteFn(item);
+              showDeletePrompt(false);
             }}
             onClose={() => {
               showDeletePrompt(false);

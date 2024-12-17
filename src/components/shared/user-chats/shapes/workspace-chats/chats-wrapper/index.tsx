@@ -44,7 +44,6 @@ export default function ChatsWrapper() {
   useSocket('newMessage', (newMessage: MessageType) => {
 
     console.log('targetChat', chatObjects[newMessage.chat_id]);
-
     
   }, [chats])
 

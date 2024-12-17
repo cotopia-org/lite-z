@@ -22,9 +22,26 @@ export default function WorkspaceChats({ workspace_id }: Props) {
 
   const { add , chatObjects} = useChat2({ workspace_id });
 
-  useSocket('messageSeen', (data: MessageType) => {
+  useSocket('messageSeen', (data: {
+    chat_id: number
+    message_id: number
+    user_id: number}) => {
     console.log('messageSeen', data);
-  })
+
+    const targetChat = chatObjects?.[data.chat_id]
+
+    if (!targetChat) return
+
+
+
+    const message = targetChat?.messages?.find(a => a?.id === data?.message_id)
+    
+
+      if (!message) return
+
+    dispatch(updateMessage({...message, seens: [...new Set([...message.seens, data.user_id])]}))
+
+  }, [chatObjects])
 
   useSocket('newMessage', async (newMessage: MessageType) => {
 
