@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react"
+import { useCallback, useMemo, useState } from "react"
 
 import "@xyflow/react/dist/style.css"
 
@@ -13,6 +13,7 @@ import {
   NodeDimensionChange,
   ReactFlowInstance,
   Edge,
+  Viewport,
 } from "@xyflow/react"
 import JailNode from "./custom-nodes/jail-node"
 import Toolbar from "../../room/toolbar"
@@ -22,6 +23,7 @@ import BottomLeftTools from "../../room/tools/bottom-left"
 import BottomMiddleTools from "../../room/tools/bottom-middle"
 import BottomRightTools from "../../room/tools/bottom-right"
 import BgNode from "./custom-nodes/bg-node"
+import { VARZ } from "@/const/varz"
 
 const initBgColor = "#c9f1dd"
 
@@ -32,6 +34,9 @@ type Props = {
   onNodeDragStart?: OnNodeDrag<Node>
   onNodeDimensionChanges?: (changes: NodeDimensionChange[]) => void
   onNodeDimensionChangesTurtle?: (changes: NodeDimensionChange[]) => void
+  onViewportChange?: (
+    viewport: Viewport & { width: number; height: number }
+  ) => void
   translateExtent?: CoordinateExtent
   onInit?: (rf: ReactFlowInstance<Node, Edge>) => void
   hasJail?: boolean
@@ -46,11 +51,12 @@ export default function ReactFlowV2({
   onNodeDragStart,
   onNodeDimensionChanges,
   onNodeDimensionChangesTurtle,
+  onViewportChange,
   translateExtent,
   onInit,
   hasJail = false,
 }: Props) {
-  const defaultViewport = { x: 0, y: 0, zoom: 1.5 }
+  let defaultViewport = { x: 0, y: 0, zoom: 1.5 }
 
   const [nodes, setNodes, onNodesChange] = useNodesState<Node>([])
   const handleChangeNode = (changes: NodeChange<Node>[]) => {
@@ -78,6 +84,20 @@ export default function ReactFlowV2({
 
     onNodesChange(changes)
   }
+
+  const changeViewportHandler = useCallback(
+    (viewport: Viewport) => {
+      const zoom = viewport.zoom
+      const width = Math.round((window.innerWidth - VARZ.sidebarWidth) / zoom)
+      const height = Math.round(window.innerHeight / zoom)
+
+      if (onViewportChange) {
+        onViewportChange({ ...viewport, width, height })
+      }
+    },
+    [onViewportChange]
+  )
+
   const [bgColor] = useState(initBgColor)
 
   //We define finalNodeTypes because we want to add custom node type but always static such as jailNode and ...
@@ -95,6 +115,7 @@ export default function ReactFlowV2({
       style={{ background: bgColor }}
       nodeTypes={finalNodeTypes}
       defaultViewport={defaultViewport}
+      onViewportChange={changeViewportHandler}
       translateExtent={translateExtent}
       fitView
       attributionPosition="bottom-left"

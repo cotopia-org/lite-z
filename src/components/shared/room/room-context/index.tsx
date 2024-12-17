@@ -154,7 +154,6 @@ export default function RoomContext({
           return
         }
 
-        console.log("res", res.data)
       })
   }
 
@@ -180,7 +179,6 @@ export default function RoomContext({
     const participant_index = participants.findIndex(
       (x: any) => x.username === username
     )
-    console.log(participant_index, "POSITION")
 
     if (participant_index === -1) return setRoom(room)
 

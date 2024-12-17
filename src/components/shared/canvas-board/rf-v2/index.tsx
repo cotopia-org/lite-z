@@ -1,7 +1,14 @@
 import { useCallback, useEffect, useRef } from "react"
 import ReactFlowV2 from "../../react-flow/v2"
 import { useRoomContext } from "../../room/room-context"
-import { Edge, Node, ReactFlowInstance, XYPosition } from "@xyflow/react"
+import {
+  Edge,
+  Node,
+  ReactFlowInstance,
+  Viewport,
+  XYPosition,
+  useReactFlow,
+} from "@xyflow/react"
 import useAuth from "@/hooks/auth"
 import ShareScreenNode from "./nodes/share-screen"
 import { useSocket } from "@/routes/private-wrarpper"
@@ -22,7 +29,10 @@ import { UserMinimalType } from "@/types/user"
 import BgNode from "./nodes/bg-node"
 import { useTracks } from "@livekit/components-react"
 import { Track } from "livekit-client"
-import { checkNodesCollision } from "@/utils/utils"
+import {
+  checkNodesCollision,
+  getExternalNodesFromViewport,
+} from "@/utils/utils"
 import { doCirclesMeetRaw } from "../canvas-audio-rendrer"
 
 enum RoomRfNodeType {
@@ -513,6 +523,28 @@ export default function WithReactFlowV2() {
     [rf?.current, user]
   )
 
+  const changeViewportHandler = useCallback(
+    (viewport: Viewport & { width: number; height: number }) => {
+      if (!user) return
+      const nodes = rf?.current?.getNodes() || []
+
+      const user_nodes = nodes.filter(
+        (node) =>
+          node.type !== VARZ.jailNodeType &&
+          node.type !== VARZ.backgroundNodeType
+      )
+
+      const viewportNodes = getExternalNodesFromViewport(
+        user,
+        viewport,
+        user_nodes
+      )
+
+      console.log(viewportNodes, "VIEWPORTNODES")
+    },
+    [rf?.current, user]
+  )
+
   return (
     <div className="w-full h-screen">
       <ReactFlowV2
@@ -525,11 +557,12 @@ export default function WithReactFlowV2() {
         onInit={(rfinstance) => {
           rf.current = rfinstance
         }}
+        onViewportChange={changeViewportHandler}
         onNodeDragging={dragNodeHandler}
         onNodeDragStop={handleDragStopRfNodes}
         translateExtent={[
-          [-200, 0],
-          [3800, 1700],
+          [0, 0],
+          [VARZ.jailWidth - 150, VARZ.jailHeight],
         ]}
         hasJail
       />
