@@ -3,27 +3,21 @@ import EditJobButton from "./edit";
 import { limitChar } from "@/lib/utils";
 import JobStatus from "./job-status";
 import JobActions from "./job-actions";
-import JobDate from "./job-date";
 import JobEstimate from "./estimate";
 import JobParent from "./parent";
 import JobTag from "./tag";
-import CotopiaButton from "@/components/shared-ui/c-button";
-import {
-  Plus,
-  SendHorizonal,
-  UserCheck,
-  UserRoundCheck,
-  UserRoundX,
-} from "lucide-react";
+import { UserRoundCheck, UserRoundX } from "lucide-react";
 import moment from "moment/moment";
 import CotopiaTooltip from "@/components/shared-ui/c-tooltip";
 import CotopiaIconButton from "@/components/shared-ui/c-icon-button";
-import { PlayCircleIcon } from "@/components/icons";
 import { colors } from "@/const/varz";
 import useLoading from "@/hooks/use-loading";
 import axiosInstance from "@/services/axios";
 import { toast } from "sonner";
 import { UserType } from "@/types/user";
+import { __BUS } from "@/const/bus";
+import { useChat2 } from "@/hooks/chat/use-chat-2";
+import { dispatch } from "use-bus";
 
 interface Props {
   item: JobType;
@@ -31,6 +25,7 @@ interface Props {
   hasAction?: boolean;
   suggested?: boolean;
   user?: UserType | null;
+  parentJobs: JobType[];
 }
 
 const JobItem = ({
@@ -38,6 +33,7 @@ const JobItem = ({
   mutate,
   hasAction = false,
   suggested = false,
+  parentJobs,
   user,
 }: Props) => {
   const { startLoading, stopLoading, isLoading } = useLoading();
@@ -73,8 +69,15 @@ const JobItem = ({
       });
   };
 
-  const getUser = (item: JobType) => {
-    return item.members.find((u) => u.id === user?.id);
+  const { chats } = useChat2();
+  const chat = chats[0];
+
+  const handleOpenChat = () => {
+    console.log("Open CHat");
+    dispatch({
+      type: __BUS.selectChat,
+      chat,
+    });
   };
 
   return (
@@ -98,15 +101,20 @@ const JobItem = ({
           <div className="flex flex-row gap-x-3 items-center">
             <JobActions
               job={item}
-              status={getUser(item)?.status}
+              status={item.status}
               onPause={mutate}
               onStart={mutate}
               onDelete={mutate}
               onDone={mutate}
+              openChat={handleOpenChat}
             />
 
-            {getUser(item)?.role === "owner" && (
-              <EditJobButton job={item} fetchAgain={mutate} />
+            {item.role === "owner" && (
+              <EditJobButton
+                job={item}
+                parentJobs={parentJobs}
+                fetchAgain={mutate}
+              />
             )}
           </div>
         )}

@@ -1,15 +1,18 @@
 import { UserMinimalType } from "./user";
 import { TagType } from "@/types/tag";
 import { MentionType } from "@/types/mention";
+import { AttachmentFileType } from "@/types/file";
 
 export type JobStatusType = "in_progress" | "paused" | "completed" | "started";
 
 export type UserJobType = {
   id: number;
+  avatar: AttachmentFileType;
   total_minutes: number;
   role: string;
   created_at: string;
   status: JobStatusType;
+  username: string;
 };
 export type JobType = {
   created_at: string;
@@ -26,5 +29,8 @@ export type JobType = {
   job_id: number;
   level: number;
   old: boolean;
+  role?: string;
+  total_minutes?: number;
+
   mentions: MentionType[];
 };

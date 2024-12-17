@@ -1,0 +1,194 @@
+import CotopiaButton from "@/components/shared-ui/c-button";
+import CotopiaTable from "@/components/shared-ui/c-table";
+import ContractDetailsById from "@/components/shared/cotopia-payroll/user-information/user-contract/contract-details/view-by-id";
+import ParticipantsWithPopover from "@/components/shared/participants/with-popover";
+import { useRoomContext } from "@/components/shared/room/room-context";
+import { useApi } from "@/hooks/swr";
+import { useEffect, useMemo, useState } from "react";
+import { JobType } from "@/types/job";
+import CotopiaDropdown from "@/components/shared-ui/c-dropdown";
+import CPagination from "@/components/shared-ui/c-pagination";
+import Job from "@/pages/dashboard/jobs/single";
+import EditJob from "@/pages/dashboard/jobs/edit";
+import JobStatus from "@/components/shared/room/tools/top-left/job-button/shapes/job-list/job-item/job-status";
+
+type Props = {
+  isAll?: boolean;
+};
+
+export default function Jobs({ isAll = true }: Props) {
+  const [selectStatus, setSelectStatus] = useState<string>("all");
+  const [selectedJob, setSelectedJob] = useState<JobType>();
+  const [previousJob, setPreviousJob] = useState<JobType>();
+  const [selectedEdit, setSelectedEdit] = useState<JobType>();
+
+  const { workspaceUsers, workspace_id } = useRoomContext();
+
+  const [page, setPage] = useState(1);
+
+  const { data, mutate } = useApi(
+    `/workspaces/${workspace_id}/jobs?page=${page}&status=${selectStatus}`,
+  );
+  const jobs: JobType[] = data !== undefined ? data?.data : [];
+
+  const jobsMeta = data !== undefined ? data?.meta : [];
+
+  let finalJobs = jobs;
+
+  useEffect(() => {
+    if (selectedJob === undefined) {
+      console.log("Reset");
+      setPreviousJob(undefined);
+    }
+  }, [selectedJob]);
+
+  const tableHeadItems = useMemo(() => {
+    const items = [
+      {
+        title: "#",
+        render: (item: JobType) => {
+          return item.id;
+        },
+      },
+      {
+        title: "User",
+        render: (item: JobType) => {
+          return (
+            <ParticipantsWithPopover
+              className="!pb-0"
+              participants={workspaceUsers.filter((a) =>
+                item.members.map((b) => b.id).includes(a.id),
+              )}
+            />
+          );
+        },
+      },
+
+      {
+        title: "Title",
+        render: (item: JobType) => {
+          return (
+            <CotopiaButton
+              variant={"link"}
+              onClick={() => setSelectedJob(item)}
+            >
+              {item.title}
+            </CotopiaButton>
+          );
+        },
+      },
+
+      {
+        title: "Parent",
+        render: (item: JobType) => {
+          if (item.parent !== undefined && item.parent !== null) {
+            return (
+              <CotopiaButton
+                variant={"link"}
+                onClick={() => setSelectedJob(item.parent)}
+              >
+                {item.parent.title}
+              </CotopiaButton>
+            );
+          } else {
+            return "No Parent";
+          }
+        },
+      },
+      {
+        title: "Total Hours",
+        render: (item: JobType) =>
+          (
+            item.members.reduce((sum, a) => sum + a.total_minutes, 0) / 60
+          ).toFixed(2) + " hrs",
+      },
+      //
+      // {
+      //   title: "Payment",
+      //   render: (item: PaymentType) => {
+      //     return (
+      //       <CotopiaButton
+      //         variant={"link"}
+      //         endIcon={<ChevronRight />}
+      //         onClick={() => setSelectedPayment(item)}
+      //       >
+      //         Details
+      //       </CotopiaButton>
+      //     );
+      //   },
+      // },
+      {
+        title: "Status",
+        render: (item: JobType) => {
+          return <JobStatus status={item.status} />;
+        },
+      },
+    ];
+
+    return items;
+  }, [isAll]);
+
+  if (selectedEdit)
+    return (
+      <EditJob
+        onBack={() => {
+          setSelectedJob(selectedEdit);
+          setSelectedEdit(undefined);
+        }}
+        job={selectedEdit}
+        setSelectedJob={setSelectedJob}
+        onUpdate={mutate}
+      />
+    );
+  if (selectedJob)
+    return (
+      <Job
+        onBack={() => {
+          console.log(
+            "p",
+            previousJob === undefined || previousJob.id === selectedJob.id
+              ? undefined
+              : previousJob,
+          );
+          setSelectedJob(
+            previousJob === undefined || previousJob.id === selectedJob.id
+              ? undefined
+              : previousJob,
+          );
+        }}
+        job={selectedJob}
+        setSelectedJob={setSelectedJob}
+        setSelectedEdit={setSelectedEdit}
+        setPreviousJob={setPreviousJob}
+      />
+    );
+
+  return (
+    <>
+      <div className="flex flex-row items-center gap-x-4">
+        <CotopiaDropdown
+          label="Job Status"
+          items={[
+            { title: "All", value: "all" },
+            { title: "In Progress", value: "in_progress" },
+            {
+              title: "Paused",
+              value: "paused",
+            },
+            { title: "Completed", value: "completed" },
+          ]}
+          defaultValue={selectStatus}
+          onSelect={(item) => setSelectStatus(item.value)}
+        />
+      </div>
+
+      <CotopiaTable items={finalJobs} tableHeadItems={tableHeadItems} />
+      <CPagination
+        totalItems={jobsMeta.total}
+        currentPage={page}
+        onPageChange={setPage}
+        perPage={10}
+      />
+    </>
+  );
+}
