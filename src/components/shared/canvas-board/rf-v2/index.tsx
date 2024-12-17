@@ -7,6 +7,7 @@ import {
   ReactFlowInstance,
   Viewport,
   XYPosition,
+  getNodesBounds,
   useReactFlow,
 } from "@xyflow/react"
 import useAuth from "@/hooks/auth"
@@ -31,9 +32,11 @@ import { useTracks } from "@livekit/components-react"
 import { Track } from "livekit-client"
 import {
   checkNodesCollision,
-  getExternalNodesFromViewport,
 } from "@/utils/utils"
 import { doCirclesMeetRaw } from "../canvas-audio-rendrer"
+
+
+const userNodeBound = 100
 
 enum RoomRfNodeType {
   shareScreenNode = "shareScreenNode",
@@ -525,6 +528,20 @@ export default function WithReactFlowV2() {
 
   const changeViewportHandler = useCallback(
     (viewport: Viewport & { width: number; height: number }) => {
+
+      //Mahdi work
+      const properX = Math.abs(viewport.x)
+      const properY = Math.abs(viewport.y)
+      const properWidth = viewport.width
+      const properHeight = viewport.height
+
+      //Covering area will be from properX to properWidth + properX // properY to properHeight + properY
+      const coveringArea = {
+        x: {from: properX , to: properX + properWidth},
+        y: {from: properY, to: properY + properHeight}
+      }
+      //Mahdi work
+
       if (!user) return
       const nodes = rf?.current?.getNodes() || []
 
@@ -533,14 +550,25 @@ export default function WithReactFlowV2() {
           node.type !== VARZ.jailNodeType &&
           node.type !== VARZ.backgroundNodeType
       )
+      
+      const invisibleNodes = user_nodes.filter(item => {
+        //Visible situation 
+        //If item's left direction is less than viewport's x and viewport's y is less than item's y
+        const itemPositionX = item.position.x * viewport.zoom
+        const itemPositionY = item.position.y * viewport.zoom
 
-      const viewportNodes = getExternalNodesFromViewport(
-        user,
-        viewport,
-        user_nodes
-      )
+        const userNodeHeight = (userNodeBound * viewport.zoom)
 
-      console.log(viewportNodes, "VIEWPORTNODES")
+        const inTheRightSide = itemPositionX > coveringArea.x.to 
+        const inTheLeftSide = itemPositionX +  userNodeHeight <= coveringArea.x.from
+        const inTheTopSide = itemPositionY + userNodeHeight <= coveringArea.y.from
+        const inTheBottomSide = coveringArea.y.to < itemPositionY
+
+        return inTheRightSide || inTheLeftSide || inTheTopSide || inTheBottomSide;  
+      })
+
+      console.log('invisibleNodes', invisibleNodes);
+
     },
     [rf?.current, user]
   )

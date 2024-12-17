@@ -22,7 +22,6 @@ import TopRightTools from "../../room/tools/top-right"
 import BottomLeftTools from "../../room/tools/bottom-left"
 import BottomMiddleTools from "../../room/tools/bottom-middle"
 import BottomRightTools from "../../room/tools/bottom-right"
-import BgNode from "./custom-nodes/bg-node"
 import { VARZ } from "@/const/varz"
 
 const initBgColor = "#c9f1dd"
@@ -87,9 +86,9 @@ export default function ReactFlowV2({
 
   const changeViewportHandler = useCallback(
     (viewport: Viewport) => {
-      const zoom = viewport.zoom
-      const width = Math.round((window.innerWidth - VARZ.sidebarWidth) / zoom)
-      const height = Math.round(window.innerHeight / zoom)
+
+      const width = Math.round((window.innerWidth - VARZ.sidebarWidth))
+      const height = Math.round(window.innerHeight)      
 
       if (onViewportChange) {
         onViewportChange({ ...viewport, width, height })
