@@ -1,27 +1,33 @@
 import { ContextMenuItem } from "@/components/ui/context-menu";
-import { ReplyIcon } from "lucide-react";
 import { useChatItem } from "../..";
 import { useAppDispatch } from "@/store";
-import { setReplyMessage } from "@/store/slices/chat-slice";
+import { setEditMessage } from "@/store/slices/chat-slice";
 import { dispatch as busDispatch } from "use-bus";
 import { __BUS } from "@/const/bus";
+import { EditIcon } from "lucide-react";
+import useAuth from "@/hooks/auth";
 
-export default function Reply() {
+export default function Edit() {
+
+  const {user} = useAuth()
+
   const { item } = useChatItem();
   const dispatch = useAppDispatch();
 
-  const handleSelectReplyMessage = () => {
-    dispatch(setReplyMessage(item));
-    setTimeout(() => {busDispatch(__BUS.chatInputFocus);}, 100)
+  const handleEditMessage = () => {
+    dispatch(setEditMessage(item));
+    busDispatch(__BUS.chatInputFocus);
   };
+
+  if ( user.id !== item.user ) return null
 
   return (
     <ContextMenuItem
       className='py-2 px-4 cursor-pointer !text-white rounded-none gap-x-2'
-      onClick={handleSelectReplyMessage}
+      onClick={handleEditMessage}
     >
-      <ReplyIcon />
-      Reply
+      <EditIcon />
+      Edit
     </ContextMenuItem>
   );
 }

@@ -40,13 +40,6 @@ export default function ChatsWrapper() {
     push(<ChatInnerHolder onBack={back} chat_id={chat?.id} />);
   });
 
-  //Listen to new message upcoming
-  useSocket('newMessage', (newMessage: MessageType) => {
-
-    console.log('targetChat', chatObjects[newMessage.chat_id]);
-    
-  }, [chats])
-
   let content = (
     <div className='w-full chats-holder flex flex-col gap-y-0 overflow-y-auto h-[calc(100vh-80px)] pb-20'>
       {chatSortedByLastMessage.map((chat) => (

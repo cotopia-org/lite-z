@@ -1,12 +1,12 @@
 import { useEffect } from "react";
 
-type Callback = () => void;
+type Callback = (event: KeyboardEvent) => void;
 
 function useKeyPress(targetKey: string, callback: Callback) {
   useEffect(() => {
     const handleKeyPress = (event: KeyboardEvent) => {
       if (event.key === targetKey) {
-        callback();
+        callback(event);
       }
     };
 

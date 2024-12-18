@@ -10,11 +10,7 @@ export type MessageType = {
   is_edited: boolean | null;
   is_pinned: 0 | 1;
   links: any[];
-  mentions: {
-    start_position: number;
-    model_type: string;
-    model_id: number | undefined;
-}[];
+  mentions: any[];
   nonce_id: number;
   reply_to: Chat2ItemType;
   reply_id?: number

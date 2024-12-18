@@ -15,6 +15,7 @@ type ChatState = {
       lastPage?: boolean;
       firstPage?: boolean;
       replyMessage?: Chat2ItemType;
+      editMessage?: Chat2ItemType;
       pin?: {
         items: Chat2ItemType[];
         currentIndex: number;
@@ -171,9 +172,18 @@ const chatSlice = createSlice({
 
       state.chats[item.chat_id].replyMessage = item;
     },
+    setEditMessage: (state, action: PayloadAction<Chat2ItemType>) => {
+      const item = action.payload;
+
+      state.chats[item.chat_id].editMessage = item;
+    },
     clearReplyMessage: (state, action: PayloadAction<number>) => {
       const chat_id = action.payload;
       state.chats[chat_id].replyMessage = undefined;
+    },
+    clearEditMessage: (state, action: PayloadAction<number>) => {
+      const chat_id = action.payload;
+      state.chats[chat_id].editMessage = undefined;
     },
     addMessage: (state, action: PayloadAction<Chat2ItemType>) => {
       const chat_id = action.payload.chat_id;
@@ -517,6 +527,8 @@ export const {
   setChatMessages,
   upcommingMessage,
   setReplyMessage,
+  setEditMessage,
+  clearEditMessage,
   clearReplyMessage,
   bulkPinMessages,
   pinMessage,

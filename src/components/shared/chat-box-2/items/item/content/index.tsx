@@ -6,6 +6,7 @@ import ChatRepliedItem from "./replied-item";
 import { useChat2 } from "@/hooks/chat/use-chat-2";
 import MessageDeliveredState from "./delievered";
 import { cn } from "@/lib/utils";
+import Edited from "./edited";
 
 type Props = {
   chat: Chat2ItemType;
@@ -90,6 +91,7 @@ export default function ChatItemContent({ chat,next , prev}: Props) {
         ))}
       </p>
       <div className="flex flex-row items-center gap-x-2">
+        {chat.is_edited && <Edited />}
         <ChatDate chat={chat} />
         <MessageDeliveredState chat={chat} />
       </div>
