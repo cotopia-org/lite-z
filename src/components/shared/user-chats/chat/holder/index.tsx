@@ -1,7 +1,5 @@
-import React, { useCallback, useEffect, useRef } from "react";
+import { useCallback, useEffect, useRef } from "react";
 import { ChatType } from "@/types/chat2";
-import BackHolder from "./back";
-import ChatDetails from "../details";
 import Chat2 from "@/components/shared/chat-box-2";
 import { useChat2 } from "@/hooks/chat/use-chat-2";
 import { Virtualizer } from "@tanstack/react-virtual";
@@ -9,12 +7,11 @@ import FullLoading from "@/components/shared/full-loading";
 import { useAppDispatch, useAppSelector } from "@/store";
 import {
   getChatMessages,
-  getNextMessages,
   getPinMessags,
-  getPrevMessages,
 } from "@/store/slices/chat-slice";
-import { thunkResHandler } from "@/utils/utils";
 import ChatHeading from "./heading";
+import {dispatch as busDispatch} from 'use-bus'
+import { __BUS } from "@/const/bus";
 
 type Props = {
   chat_id: number;
@@ -26,19 +23,25 @@ export default function ChatInnerHolder({ chat_id, onBack }: Props) {
 
   const chatDetails = useAppSelector((store) => store.chat);
 
-  const { chatObjects, send, currentChat } = useChat2({ chat_id });
+  const { chatObjects, send, edit, currentChat, editMessage } = useChat2({ chat_id });
 
   const reply =
     chatDetails?.chats?.[(chatDetails?.currentChat as ChatType)?.id]
       ?.replyMessage;
 
   const handleSendMessage = useCallback(
-    (text: string) => {
-      if (!chatDetails?.currentChat?.id) return;
+   async (text: string) => {
 
-      send({ text, seen: true, reply });
+      if (!chatDetails?.currentChat?.id) return;
+      if ( editMessage ) {
+        await edit({text})
+      } else {
+        busDispatch(__BUS.scrollEndChatBox)
+        await send({ text, seen: true, reply });
+      }
+      
     },
-    [reply, chatDetails, send]
+    [reply, chatDetails, send, editMessage]
   );
 
   const dispatch = useAppDispatch();

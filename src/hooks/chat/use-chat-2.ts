@@ -1,5 +1,6 @@
 import {
   addMessage,
+  clearEditMessage,
   clearReplyMessage,
   deleteMessage,
   pinMessage,
@@ -88,6 +89,11 @@ export const useChat2 = (props?: {
     ? chats?.[currentChat?.id]?.replyMessage
     : undefined;
 
+  //current edit message
+  const editMessage = currentChat
+    ? chats?.[currentChat?.id]?.editMessage
+    : undefined;
+
   //current pins
   const currentChatPins = currentChat
     ? chats?.[currentChat?.id]?.pin
@@ -128,6 +134,7 @@ export const useChat2 = (props?: {
 
     if (onSuccess) onSuccess();
   };
+  
 
   const send = async (
     {
@@ -183,7 +190,9 @@ export const useChat2 = (props?: {
       chat_id: sendObject.chat_id,
       nonce_id: sendObject.nonce_id,
       mentions: sendObject.mentions,
-      links: sendObject.links
+      links: sendObject.links,
+      reply_to: sendObject?.reply_to,
+      reply_id: sendObject?.reply_to?.id,
     })
 
     const recievedMessageFromServer = recievedMessageFromServerRes?.data?.data
@@ -205,6 +214,51 @@ export const useChat2 = (props?: {
 
     return message;
   };
+
+  const edit = async (
+    {
+      text,
+      links,
+    }: {
+      text: string;
+      links?: any[];
+    },
+    onSuccess?: () => void
+  ) => {
+
+    if ( !editMessage)return
+
+    if ( !text ) return
+
+    const mentions = extractMentions(text);
+    const currentChatMembers = currentChat?.participants ?? [];
+
+    const properMentions = mentions.map((x) => ({
+      start_position: x.start_position,
+      model_type: "user",
+      model_id: currentChatMembers.find((a) => a.username === x.user)?.id,
+    }));
+
+
+    const sendObject = {text, mentions: properMentions, links}
+
+    const recievedMessageFromServerRes = await axiosInstance.put<FetchDataType<MessageType>>(`/messages/${editMessage?.id}`, {
+      text: sendObject.text,
+      mentions: sendObject.mentions,
+      links: sendObject.links,
+    })
+
+    const recievedMessageFromServer = recievedMessageFromServerRes?.data?.data
+
+    dispatch(updateMessage({...recievedMessageFromServer, is_delivered: true, is_pending: false, is_rejected: false}))
+
+    dispatch(clearEditMessage(editMessage?.chat_id))
+
+    if (onSuccess) onSuccess();
+
+    return recievedMessageFromServer;
+
+  }
 
   const deleteFn = (message: Chat2ItemType) => {
     socket?.emit(
@@ -294,6 +348,7 @@ export const useChat2 = (props?: {
   return {
     add,
     send,
+    edit,
     update,
     deleteFn,
     seen: seenFn,
@@ -304,6 +359,7 @@ export const useChat2 = (props?: {
     participants,
     currentChat,
     replyMessage,
+    editMessage,
     getUser,
     currentChatPins,
     pin,

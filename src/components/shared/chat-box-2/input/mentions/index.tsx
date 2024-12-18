@@ -7,11 +7,11 @@ import useBus, { dispatch } from "use-bus";
 
 type Props = {
   value: string;
-  onAdd: (user: UserMinimalType) => void;
+  onAdd: (value: string) => void;
 };
 export default function Mentions({ value, onAdd }: Props) {
   const { currentChat } = useChat2();
-  const currentChatParticipants = currentChat?.participants ?? [];
+  let currentChatParticipants = currentChat?.participants ?? [];
 
   const [isShowMention, setShowMention] = useState(false);
   useBus(__BUS.showChatMention, () => {
@@ -23,11 +23,22 @@ export default function Mentions({ value, onAdd }: Props) {
 
   const handleAddMention = (user: UserMinimalType) => {
     setShowMention(false);
-    if (onAdd) onAdd(user);
+    const mentionIndex = value.lastIndexOf("@");
+    if (mentionIndex !== -1) {
+      const updatedValue =
+        value.slice(0, mentionIndex) + `@${user.username} `;
+        if (onAdd) onAdd(updatedValue);
+    }
+
     dispatch(__BUS.chatInputFocus);
+
   };
 
-  if (!isShowMention) return null;
+  const searchText = value.slice(1)
+
+  if ( searchText ) currentChatParticipants = currentChatParticipants.filter(a => a.username.toLocaleLowerCase().includes(searchText.toLowerCase()))
+
+  if (!isShowMention || currentChatParticipants.length === 0) return null;
 
   return (
     <div className='absolute bottom-[58px] bg-white w-full h-auto min-h-[64px] border-b flex flex-col'>

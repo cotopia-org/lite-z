@@ -20,16 +20,15 @@ const MultilineTextarea: React.FC<Props> = ({
   const textareaRef = useRef<HTMLTextAreaElement | null>(null);
 
   useEffect(() => {
-    // Adjust the height of the textarea dynamically based on its content
     if (textareaRef.current) {
-      textareaRef.current.style.height = "auto"; // Reset the height first
+      textareaRef.current.style.height = "auto"; 
       textareaRef.current.style.height = `${textareaRef.current.scrollHeight}px`; // Adjust height based on scroll height
     }
   }, [text]);
 
   const handleKeyDown = (event: React.KeyboardEvent<HTMLTextAreaElement>) => {
     if (event.key === "Enter" && !event.shiftKey) {
-      event.preventDefault(); // Prevent new line on Enter without Shift
+      event.preventDefault(); 
       if (onSend) onSend(text);
       setText("");
     }
@@ -41,22 +40,11 @@ const MultilineTextarea: React.FC<Props> = ({
     setText(value);
     onChange(value);
 
-    // if (selectionStart !== null && selectionStart > 0) {
-    //   const cursorPosition = selectionStart - 1; // character before the cursor
-    //   if (value[cursorPosition] === "@") {
-    //     dispatch(__BUS.showChatMention);
-    //   } else {
-    //     dispatch(__BUS.hideChatMention);
-    //   }
-    // } else {
-    //   dispatch(__BUS.hideChatMention);
-    // }
-
-    const mentionPattern = /@[\w.]*$/; // I think this is a better approach
-    if (mentionPattern.test(value)) {
-      dispatch(__BUS.showChatMention);
+    const mentionIndex = value.lastIndexOf("@");
+    if (mentionIndex !== -1 && (mentionIndex === 0 || value[mentionIndex - 1] === " ")) {
+      dispatch(__BUS.showChatMention)
     } else {
-      dispatch(__BUS.hideChatMention);
+      dispatch(__BUS.hideChatMention)
     }
   };
 

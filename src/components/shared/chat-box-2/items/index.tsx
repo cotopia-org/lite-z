@@ -28,6 +28,8 @@ export default function Items({
   onGetVirtualizer,
 }: Props) {
 
+  const vlistRef = useRef<VListHandle | null>(null);
+
 
   const chatItemInit = useRef(false);
   useEffect(() => {
@@ -39,7 +41,7 @@ export default function Items({
 
   const dispatch = useAppDispatch();
 
-  const { chatObjects } = useChat2({ chat_id });
+  const { chatObjects, editMessage } = useChat2({ chat_id });
 
   const items = chatObjects?.[chat_id]?.messages ?? [];
   const loading = chatObjects?.[chat_id]?.loading ?? true;
@@ -89,9 +91,10 @@ export default function Items({
   useBus(
     __BUS.scrollEndChatBox,
     () => {
-      scrollToEnd();
+      if (items.length === 0 ) return
+      vlistRef.current?.scrollToIndex(items.length - 1);
     },
-    [scrollToEnd]
+    [items, vlistRef.current]
   );
 
   useBus(
@@ -173,17 +176,16 @@ export default function Items({
     setIsFetching(false);
   }, [items.length, rowVirtualizer]);
 
-  const vlistRef = useRef<VListHandle | null>(null);
 
   // const initScrollEnd = useRef(false);
-  useEffect(() => {
-    // if (items.length === 0) return;
-    // if (initScrollEnd.current === true) return;
+  // useEffect(() => {
+  //   // if (items.length === 0) return;
+  //   // if (initScrollEnd.current === true) return;
 
-    vlistRef.current?.scrollToIndex(items.length - 1);
+  //   vlistRef.current?.scrollToIndex(items.length - 1);
 
-    // initScrollEnd.current = true;
-  }, [items]);
+  //   // initScrollEnd.current = true;
+  // }, [items, editMessage]);
 
   let content = (
     <>
