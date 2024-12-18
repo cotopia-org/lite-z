@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef } from "react"
+import { useCallback, useEffect, useRef, useState } from "react"
 import ReactFlowV2 from "../../react-flow/v2"
 import { useRoomContext } from "../../room/room-context"
 import {
@@ -7,8 +7,6 @@ import {
   ReactFlowInstance,
   Viewport,
   XYPosition,
-  getNodesBounds,
-  useReactFlow,
 } from "@xyflow/react"
 import useAuth from "@/hooks/auth"
 import ShareScreenNode from "./nodes/share-screen"
@@ -30,13 +28,13 @@ import { UserMinimalType } from "@/types/user"
 import BgNode from "./nodes/bg-node"
 import { useTracks } from "@livekit/components-react"
 import { Track } from "livekit-client"
-import {
-  checkNodesCollision,
-} from "@/utils/utils"
+import { checkNodesCollision } from "@/utils/utils"
 import { doCirclesMeetRaw } from "../canvas-audio-rendrer"
+import InvisibleNodesViewer, {
+  InvisibleNodeType,
+} from "./invisible-nodes-viewer"
 
-
-const userNodeBound = 100
+const userNodeBound = 94
 
 enum RoomRfNodeType {
   shareScreenNode = "shareScreenNode",
@@ -51,6 +49,8 @@ export default function WithReactFlowV2() {
   const rf = useRef<ReactFlowInstance<Node, Edge>>()
 
   const { room, updateUserCoords } = useRoomContext()
+
+  const [invisibleNodes, setInvisibleNodes] = useState<InvisibleNodeType[]>([])
 
   //Init react flow
   const init = useRef<boolean>(false)
@@ -528,53 +528,89 @@ export default function WithReactFlowV2() {
 
   const changeViewportHandler = useCallback(
     (viewport: Viewport & { width: number; height: number }) => {
-
-      //Mahdi work
       const properX = Math.abs(viewport.x)
       const properY = Math.abs(viewport.y)
       const properWidth = viewport.width
       const properHeight = viewport.height
-
       //Covering area will be from properX to properWidth + properX // properY to properHeight + properY
       const coveringArea = {
-        x: {from: properX , to: properX + properWidth},
-        y: {from: properY, to: properY + properHeight}
+        x: { from: properX, to: properX + properWidth },
+        y: { from: properY, to: properY + properHeight },
       }
-      //Mahdi work
-
       if (!user) return
       const nodes = rf?.current?.getNodes() || []
-
       const user_nodes = nodes.filter(
         (node) =>
           node.type !== VARZ.jailNodeType &&
           node.type !== VARZ.backgroundNodeType
       )
-      
-      const invisibleNodes = user_nodes.filter(item => {
-        //Visible situation 
-        //If item's left direction is less than viewport's x and viewport's y is less than item's y
-        const itemPositionX = item.position.x * viewport.zoom
-        const itemPositionY = item.position.y * viewport.zoom
+      const flatted_nodes = user_nodes
+        .map((item) => {
+          //Visible situation
+          //If item's left direction is less than viewport's x and viewport's y is less than item's y
+          const itemPositionX = item.position.x * viewport.zoom
+          const itemPositionY = item.position.y * viewport.zoom
+          let userNodeHeight = userNodeBound * viewport.zoom
+          const inTheRightSide = itemPositionX > coveringArea.x.to
+          const inTheLeftSide =
+            itemPositionX + userNodeHeight <= coveringArea.x.from
+          const inTheTopSide =
+            itemPositionY + userNodeHeight <= coveringArea.y.from
+          const inTheBottomSide = coveringArea.y.to < itemPositionY
+          //define direction based on invisible side of node
+          let dir = undefined
+          //calc delta_x and delta_y to find difference of x point and y point from viewport
+          let delta_x = undefined
+          let delta_y = undefined
 
-        const userNodeHeight = (userNodeBound * viewport.zoom)
+          if (inTheRightSide) {
+            dir = "right"
+            delta_x = Math.floor(itemPositionX - coveringArea.x.to)
+            delta_y = Math.floor(itemPositionY - coveringArea.y.from)
+          } else if (inTheLeftSide) {
+            dir = "left"
+            delta_x = Math.floor(
+              itemPositionX + userNodeHeight - coveringArea.x.from
+            )
+            delta_y = Math.floor(itemPositionY - coveringArea.y.from)
+          } else if (inTheTopSide) {
+            delta_x = Math.floor(itemPositionX - coveringArea.x.from)
+            delta_y = Math.floor(
+              itemPositionY + userNodeHeight - coveringArea.y.from
+            )
+            dir = "top"
+          } else if (inTheBottomSide) {
+            delta_x = Math.floor(itemPositionX - coveringArea.x.from)
+            delta_y = Math.floor(itemPositionY - coveringArea.y.to)
+            dir = "bottom"
+          }
 
-        const inTheRightSide = itemPositionX > coveringArea.x.to 
-        const inTheLeftSide = itemPositionX +  userNodeHeight <= coveringArea.x.from
-        const inTheTopSide = itemPositionY + userNodeHeight <= coveringArea.y.from
-        const inTheBottomSide = coveringArea.y.to < itemPositionY
+          const isInvisible =
+            inTheRightSide || inTheLeftSide || inTheTopSide || inTheBottomSide
 
-        return inTheRightSide || inTheLeftSide || inTheTopSide || inTheBottomSide;  
-      })
+          return {
+            node: item,
+            invisible: isInvisible,
+            invisible_side: dir,
+            delta_x,
+            delta_y,
+            coveringArea,
+            itemPositionX,
+            itemPositionY,
+            nodeHeight: userNodeHeight,
+          }
+        })
+        .filter((n) => !!n.invisible)
+      setInvisibleNodes(flatted_nodes)
 
-      console.log('invisibleNodes', invisibleNodes);
-
+      console.log("invisibleNodes", invisibleNodes)
     },
     [rf?.current, user]
   )
 
   return (
-    <div className="w-full h-screen">
+    <div className="w-full h-screen relative">
+      <InvisibleNodesViewer invisibleNodes={invisibleNodes} />
       <ReactFlowV2
         nodeTypes={{
           userNode: UserNode,
