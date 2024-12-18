@@ -17,6 +17,7 @@ export default function UserChatList() {
   const { push, back } = useSlides();
 
   useBus(__BUS.selectChat, (data) => {
+    console.log("Here Too");
     const chat = data.chat;
 
     appDispatch(setCurrentChat(chat));
@@ -26,7 +27,7 @@ export default function UserChatList() {
 
 
   return (
-    <div className='w-full chats-holder flex flex-col gap-y-0 overflow-y-auto'>
+    <div className="w-full chats-holder flex flex-col gap-y-0 overflow-y-auto">
       {chats.map((chat) => (
         <Chat chat={chat} key={chat.id} />
       ))}

@@ -9,6 +9,7 @@ type Props = {
   hasAction?: boolean;
   suggested?: boolean;
   user?: UserType | null;
+  parentJobs: JobType[];
 };
 export default function JobItems({
   items,
@@ -16,6 +17,7 @@ export default function JobItems({
   hasAction = false,
   suggested = false,
   user,
+  parentJobs,
 }: Props) {
   if (items.length === 0) return <NotFound title="No job yet! 😞" />;
   return (
@@ -23,6 +25,7 @@ export default function JobItems({
       {items.map((item, key) => {
         return (
           <JobItem
+            parentJobs={parentJobs}
             user={user}
             hasAction={hasAction && !suggested}
             suggested={suggested}

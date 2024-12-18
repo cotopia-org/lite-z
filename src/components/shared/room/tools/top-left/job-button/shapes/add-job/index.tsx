@@ -1,17 +1,18 @@
-import CotopiaButton from "@/components/shared-ui/c-button"
-import { FullModalBox } from "@/components/shared/modal-box"
-import { Plus } from "lucide-react"
-import ManageJobContent from "./content"
-import {JobType} from "@/types/job";
+import CotopiaButton from "@/components/shared-ui/c-button";
+import { FullModalBox } from "@/components/shared/modal-box";
+import { Plus } from "lucide-react";
+import ManageJobContent from "./content";
+import { JobType } from "@/types/job";
 
 interface Props {
-  onDelete?: () => void
-  onCreated?: () => void
-  workspaceId?: string,
+  onDelete?: () => void;
+  onCreated?: () => void;
+  workspaceId?: string;
+  parentJobs: JobType[];
 }
 
-const AddJobHandler = ({ onCreated, workspaceId }: Props) => {
-  if (workspaceId === undefined) return null
+const AddJobHandler = ({ onCreated, workspaceId, parentJobs }: Props) => {
+  if (workspaceId === undefined) return null;
   return (
     <FullModalBox
       title="Add job"
@@ -24,22 +25,23 @@ const AddJobHandler = ({ onCreated, workspaceId }: Props) => {
           Add Job
         </CotopiaButton>
       )}
-      className="w-[464px] [&_.dialog-title]:text-lg [&_.dialog-header]:pb-4 [&_.dialog-header]:border-b"
+      className="w-auto [&_.dialog-title]:text-lg [&_.dialog-header]:pb-4 [&_.dialog-header]:border-b"
     >
       {(open, close) => {
         return (
           <ManageJobContent
+            parentJobs={parentJobs}
             workspaceId={workspaceId}
             onClose={close}
             onCreated={() => {
-              if (onCreated) onCreated()
-              close()
+              if (onCreated) onCreated();
+              close();
             }}
           />
-        )
+        );
       }}
     </FullModalBox>
-  )
-}
+  );
+};
 
-export default AddJobHandler
+export default AddJobHandler;

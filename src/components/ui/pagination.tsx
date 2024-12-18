@@ -4,11 +4,10 @@ import { ButtonProps, buttonVariants } from "@/components/ui/button";
 import { ChevronLeftIcon, ChevronRightIcon, Ellipsis } from "lucide-react";
 import { cn } from "@/lib/utils";
 
-
 const Pagination = ({ className, ...props }: React.ComponentProps<"nav">) => (
   <nav
-    role='navigation'
-    aria-label='pagination'
+    role="navigation"
+    aria-label="pagination"
     className={cn("mx-auto flex w-full justify-center", className)}
     {...props}
   />
@@ -54,7 +53,7 @@ const PaginationLink = ({
         variant: isActive ? "default" : "link",
         size,
       }),
-      className
+      className,
     )}
     {...props}
   />
@@ -67,16 +66,16 @@ const PaginationPrevious = ({
   ...props
 }: React.ComponentProps<typeof PaginationLink> & { disabled?: boolean }) => (
   <PaginationLink
-    aria-label='Go to previous page'
-    size='default'
+    aria-label="Go to previous page"
+    size="default"
     className={cn(
       "gap-1 pl-2.5 cursor-pointer",
       className,
-      disabled ? "pointer-events-none opacity-30" : ""
+      disabled ? "pointer-events-none opacity-30" : "",
     )}
     {...props}
   >
-    <ChevronRightIcon className='h-4 w-4' />
+    <ChevronLeftIcon className="h-4 w-4" />
   </PaginationLink>
 );
 PaginationPrevious.displayName = "PaginationPrevious";
@@ -87,16 +86,16 @@ const PaginationNext = ({
   ...props
 }: React.ComponentProps<typeof PaginationLink> & { disabled?: boolean }) => (
   <PaginationLink
-    aria-label='Go to next page'
-    size='default'
+    aria-label="Go to next page"
+    size="default"
     className={cn(
       "gap-1 pr-2.5 cursor-pointer",
       className,
-      disabled ? "pointer-events-none opacity-30" : ""
+      disabled ? "pointer-events-none opacity-30" : "",
     )}
     {...props}
   >
-    <ChevronLeftIcon className='h-4 w-4' />
+    <ChevronRightIcon className="h-4 w-4" />
   </PaginationLink>
 );
 PaginationNext.displayName = "PaginationNext";
@@ -110,7 +109,7 @@ const PaginationEllipsis = ({
     className={cn("flex h-9 w-9 items-center justify-center", className)}
     {...props}
   >
-    <Ellipsis className='h-4 w-4' />
+    <Ellipsis className="h-4 w-4" />
   </span>
 );
 PaginationEllipsis.displayName = "PaginationEllipsis";

@@ -16,7 +16,7 @@ export default function AddChatNew() {
   const hideFab = () => setShowFab(false);
   const showFab = () => setShowFab(true);
 
-  useBus(__BUS.showAddChat, () => {
+  useBus(__BUS.showAddChat, () => {    
     showFab();
   });
 
@@ -27,7 +27,7 @@ export default function AddChatNew() {
   return (
     <div
       className={cn(
-        "absolute right-4 flex flex-col gap-y-4 justify-end z-10 transition-all",
+        "absolute right-4 flex flex-col gap-y-4 justify-end z-[100] transition-all",
         isShowFab && currentChat === undefined
           ? "opacity-100 visible bottom-4"
           : "bottom-0 opacity-0 invisible"

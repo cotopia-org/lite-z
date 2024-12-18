@@ -5,17 +5,17 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from "@/components/ui/dialog"
-import { X } from "lucide-react"
-import { ReactNode, useState } from "react"
+} from "@/components/ui/dialog";
+import { X } from "lucide-react";
+import { ReactNode, useState } from "react";
 
 type Props = {
-  trigger: (open: () => void, isOpen: boolean) => ReactNode
-  children?: (open: () => void, close: () => void) => ReactNode
-  title?: string
-  className?: string
-  hasClose?: boolean
-}
+  trigger: (open: () => void, isOpen: boolean) => ReactNode;
+  children?: (open: () => void, close: () => void) => ReactNode;
+  title?: string;
+  className?: string;
+  hasClose?: boolean;
+};
 export default function ModalBox({
   trigger,
   children,
@@ -23,18 +23,18 @@ export default function ModalBox({
   title = "",
   hasClose = true,
 }: Props) {
-  const [isOpen, setIsOpen] = useState(false)
+  const [isOpen, setIsOpen] = useState(false);
   const handleClose = () => {
-    setIsOpen(false)
-  }
+    setIsOpen(false);
+  };
 
   const handleOpen = () => {
-    setIsOpen(true)
-  }
+    setIsOpen(true);
+  };
 
-  let finalClassName = className ?? ""
+  let finalClassName = className ?? "";
 
-  if (!hasClose) finalClassName += ` [&_.right-4]:hidden`
+  if (!hasClose) finalClassName += ` [&_.right-4]:hidden`;
 
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
@@ -54,14 +54,14 @@ export default function ModalBox({
         {children ? children(handleOpen, handleClose) : null}
       </DialogContent>
     </Dialog>
-  )
+  );
 }
 
 //Export full Modal
 export function FullModalBox({ ...props }: Props) {
   let clss =
-    "max-w-full max-h-[calc(100vh-200px)] overflow-y-auto z-[10] p-6 lg:rounded-[20px]"
-  if (props?.className) clss += ` ${props.className}`
+    "max-w-full max-h-[calc(100vh-50px)] overflow-y-auto z-[10] p-6 lg:rounded-[20px]";
+  if (props?.className) clss += ` ${props.className}`;
 
-  return <ModalBox {...props} className={clss} />
+  return <ModalBox {...props} className={clss} />;
 }

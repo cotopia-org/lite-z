@@ -22,6 +22,7 @@ interface Props {
   onDelete?: () => void;
   onCreated?: () => void;
   workspaceId?: string;
+  parentJobs: JobType[];
 }
 
 const dropdownItems = [
@@ -37,15 +38,8 @@ const ManageJobContent = ({
   onCreated,
   onDelete,
   onClose,
+  parentJobs,
 }: Props) => {
-  const worksapce_id =
-    workspaceId === undefined ? defaultValue?.workspace_id : workspaceId;
-
-  const { data: workspaceJobs } = useApi<FetchDataType<JobType[]>>(
-    "/workspaces/" + worksapce_id + "/jobs",
-  );
-  let allJobs = (workspaceJobs && workspaceJobs?.data) ?? [];
-
   const isEdit = defaultValue !== undefined;
   const { isLoading, stopLoading, startLoading } = useLoading();
   const {
@@ -108,10 +102,10 @@ const ManageJobContent = ({
   });
 
   return (
-    <form onSubmit={handleSubmit} className="flex flex-col gap-y-5 px-4">
-      <TitleEl title="Parent">
+    <form onSubmit={handleSubmit} className="flex flex-wrap gap-4 px-4 w-full">
+      <TitleEl title="Parent" className={"w-1/2"}>
         <CSelect
-          items={allJobs
+          items={parentJobs
             .filter((x) => !x.old)
             .map((x) => ({
               title: "- ".repeat(x.level) + x.title,
@@ -129,6 +123,14 @@ const ManageJobContent = ({
           hasError={!!touched.title && !!errors.title}
           helperText={!!touched.title && errors.title}
           placeholder="Enter Job Title"
+        />
+      </TitleEl>
+      <TitleEl title="Description" className={"w-full"}>
+        <CotopiaTextarea
+          {...getFieldProps("description")}
+          placeholder="Enter job Description"
+          rows={5}
+          className="resize-none"
         />
       </TitleEl>
       <TitleEl title="Estimate Time (Hours)">
@@ -152,16 +154,8 @@ const ManageJobContent = ({
           />
         </TitleEl>
       )}
-      <TitleEl title="Description">
-        <CotopiaTextarea
-          {...getFieldProps("description")}
-          placeholder="Enter job Description"
-          rows={5}
-          className="resize-none"
-        />
-      </TitleEl>
 
-      <TitleEl title="Open to">
+      <TitleEl title="Open to" className={"w-full"}>
         <Search
           defaultSelected={values.mentions}
           onChange={(items) => {
@@ -171,9 +165,9 @@ const ManageJobContent = ({
       </TitleEl>
 
       <div className="flex flex-row justify-between w-full gap-x-8">
-        {isEdit && (
-          <DeleteJobHandler jobId={defaultValue.id} onDelete={onDelete} />
-        )}
+        {/*{isEdit && (*/}
+        {/*  <DeleteJobHandler jobId={defaultValue.id} onDelete={onDelete} />*/}
+        {/*)}*/}
         <div className="flex items-center w-full justify-end gap-x-2">
           <CotopiaButton
             variant={"outline"}
