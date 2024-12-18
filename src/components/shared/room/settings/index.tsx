@@ -6,7 +6,7 @@ import { SoundIcon } from "@/components/icons"
 import { colors } from "@/const/varz"
 import { useRoomContext } from "../room-context"
 import { useAppDispatch } from "@/store"
-import { addMessage, addNewChat, getChats, setChatMessages, upcommingMessage, updateMessage } from "@/store/slices/chat-slice"
+import { addMentionedMessages, addMessage, addNewChat, getChats, setChatMessages, upcommingMessage, updateMessage } from "@/store/slices/chat-slice"
 import ChatIcon from "./chat-icon"
 import UserActionsAvatarButton from "../../user-actions-avatar-button"
 import ChatEvents from "./chat-events"
@@ -64,6 +64,15 @@ export default function RoomSettings() {
     if ( newMessage.user !== user.id)
     dispatch(upcommingMessage({message: {...newMessage, is_delivered: true,is_pending: false, is_rejected: false}}))
 
+    if (newMessage?.mentions?.length > 0) {
+        const myUserMentioned = !!newMessage.mentions.find(
+          (x) => x?.type === "user" && x?.model_id === user.id
+        );
+        if (myUserMentioned) {
+          dispatch(addMentionedMessages({ chat_id: newMessage.chat_id }));
+        }
+      }
+
     if ( targetChat === undefined ) {
 
       //We should add chat object to our slice
@@ -96,7 +105,7 @@ export default function RoomSettings() {
       }
     }
     
-  }, [chatObjects])
+  }, [chatObjects, user.id])
 
 
   const [value, setValue] = useState("rooms")

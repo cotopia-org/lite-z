@@ -167,16 +167,6 @@ export default function Items({
     setIsFetching(false);
   }, [items.length, rowVirtualizer]);
 
-
-  // useEffect(() => {
-  //   // if (items.length === 0) return;
-  //   // if (initScrollEnd.current === true) return;
-
-  //   vlistRef.current?.scrollToIndex(items.length - 1);
-
-  //   // initScrollEnd.current = true;
-  // }, [items, editMessage]);
-
   
   const initScrollEnd = useRef(false);
 

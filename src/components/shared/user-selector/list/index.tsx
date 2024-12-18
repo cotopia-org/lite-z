@@ -1,6 +1,6 @@
 import { UserMinimalType } from "@/types/user";
 import UserCardItem from "./item";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import useKeyPress from "@/hooks/use-key-press";
 
 type Props = {
@@ -8,67 +8,87 @@ type Props = {
   onPick?: (item: UserMinimalType) => void;
   defaultSelectedId?: number;
   env?: "simple" | "detailed";
-  excludes?: number[]
+  excludes?: number[];
 };
+
 export default function UserList({
   items,
   onPick,
   defaultSelectedId,
   env = "detailed",
-  excludes = []
+  excludes = [],
 }: Props) {
 
-  const [keyboardSelected, setKeyboardSelected] = useState(0)
-  useKeyPress('ArrowDown', () => {
-    const next = keyboardSelected + 1
-    if (items?.[next] )
-      setKeyboardSelected(next)
-    else 
-      setKeyboardSelected(0)
-  })
-
-  useKeyPress('ArrowUp', () => {
-    const prev = keyboardSelected - 1
-    if (items?.[prev] )
-      setKeyboardSelected(prev)
-    else 
-      setKeyboardSelected(items.length -1 )
-  })
-
-  useKeyPress('Enter', (e) => {
-    if (!onPick) return
-    onPick(items?.[keyboardSelected])
-    e.stopPropagation()
-    e.preventDefault()
-  })
+  let finalItems = [...items];
+  if (excludes.length > 0) finalItems = finalItems.filter((a) => !excludes.includes(a.id));
 
 
-  useKeyPress('ArrowUp', () => {
-    const prev = keyboardSelected - 1
-    if (items?.[prev] )
-      setKeyboardSelected(prev)
-    else 
-      setKeyboardSelected(items.length -1 )
-  })
-  
+  const container = useRef<HTMLDivElement>(null);
+  const itemRefs = useRef<(HTMLDivElement | null)[]>([]);
 
-  if (items.length === 0) return null;
+  const [keyboardSelected, setKeyboardSelected] = useState(0);
 
-  let finalItems = [...items]
+  const scrollToSelected = () => {
+    const containerElement = container.current;
+    const selectedItem = itemRefs.current[keyboardSelected];
 
-  if ( excludes.length > 0 ) finalItems = finalItems.filter(a => !excludes.includes(a.id)) 
+    if (containerElement && selectedItem) {
+      const containerBounds = containerElement.getBoundingClientRect();
+      const itemBounds = selectedItem.getBoundingClientRect();
+
+      if (itemBounds.top < containerBounds.top) {
+        // Scroll up to bring the item into view
+        containerElement.scrollTop -= containerBounds.top - itemBounds.top;
+      } else if (itemBounds.bottom > containerBounds.bottom) {
+        // Scroll down to bring the item into view
+        containerElement.scrollTop += itemBounds.bottom - containerBounds.bottom;
+      }
+    }
+  };
+
+  useEffect(() => {
+    scrollToSelected();
+  }, [keyboardSelected]);
+
+  useKeyPress("ArrowDown", () => {
+    const next = keyboardSelected + 1;
+    if (finalItems?.[next]) setKeyboardSelected(next);
+    else setKeyboardSelected(0);
+  });
+
+  useKeyPress("ArrowUp", () => {
+    const prev = keyboardSelected - 1;
+    if (finalItems?.[prev]) setKeyboardSelected(prev);
+    else setKeyboardSelected(finalItems.length - 1);
+  });
+
+  useKeyPress("Enter", (e) => {
+    if (!onPick) return;
+    onPick(finalItems?.[keyboardSelected]);
+    e.stopPropagation();
+    e.preventDefault();
+  });
+
+  if (finalItems.length === 0) return null;
 
   return (
-    <div className='py-2 flex flex-col overflow-hidden max-h-[300px] overflow-y-auto'>
+    <div
+      className="py-2 flex flex-col overflow-hidden max-h-[300px] overflow-y-auto"
+      ref={container}
+    >
       {finalItems.map((user, index) => (
-        <UserCardItem
-          item={user}
+        <div
+          ref={(el) => (itemRefs.current[index] = el)}
           key={user.id}
-          onPick={onPick}
-          isSelected={defaultSelectedId === user?.id}
-          isKeyboardSelected={keyboardSelected === index}
-          env={env}
-        />
+        >
+          <UserCardItem
+            item={user}
+            onPick={onPick}
+            isSelected={defaultSelectedId === user?.id}
+            isKeyboardSelected={keyboardSelected === index}
+            env={env}
+          />
+        </div>
       ))}
     </div>
   );

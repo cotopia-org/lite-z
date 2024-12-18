@@ -13,13 +13,12 @@ type Props = {
 };
 
 export default function Mentions({ value, onAdd }: Props) {
-
-  const {user} = useAuth()
-
+  const { user } = useAuth();
   const { currentChat } = useChat2();
   let currentChatParticipants = currentChat?.participants ?? [];
 
   const [isShowMention, setShowMention] = useState(false);
+
   useBus(__BUS.showChatMention, () => {
     setShowMention(true);
   });
@@ -27,33 +26,38 @@ export default function Mentions({ value, onAdd }: Props) {
     setShowMention(false);
   });
 
-  const handleAddMention = (user: UserMinimalType) => {
+  const handleAddMention = (selectedUser: UserMinimalType) => {
     setShowMention(false);
     const mentionIndex = value.lastIndexOf("@");
     if (mentionIndex !== -1) {
       const updatedValue =
-        value.slice(0, mentionIndex) + `@${user.username} `;
-        if (onAdd) onAdd(updatedValue);
+        value.slice(0, mentionIndex) + `@${selectedUser.username} `;
+      if (onAdd) onAdd(updatedValue);
     }
 
     dispatch(__BUS.hideChatMention);
     dispatch(__BUS.chatInputFocus);
-
   };
 
-  const mentions = extractMentions(value)
+  // Extract the last word after the last "@" for mentions
+  const mentions = extractMentions(value);
+  const lastMention = mentions.length > 0 ? mentions[mentions.length - 1] : null;
 
-  const searchText = mentions[mentions.length -1]
+  // Determine if the last mention is valid and filter participants
+  const searchText = value.split(" ").pop()?.replace("@", "").trim();
+  if (searchText) {
+    currentChatParticipants = currentChatParticipants.filter((participant) =>
+      participant.username.toLowerCase().includes(searchText.toLowerCase())
+    );
+  }
 
-  if ( searchText ) currentChatParticipants = currentChatParticipants.filter(a => a.username.toLocaleLowerCase().includes(searchText.user.toLowerCase()))
-
-  if (!isShowMention) return null;
+  if (!isShowMention || !lastMention) return null;
 
   return (
-    <div className='absolute bottom-[58px] bg-white w-full h-auto min-h-[64px] border-b flex flex-col'>
+    <div className="absolute bottom-[58px] bg-white w-full h-auto min-h-[64px] border-b flex flex-col">
       <UserList
         items={currentChatParticipants}
-        env='simple'
+        env="simple"
         onPick={handleAddMention}
         excludes={[user.id]}
       />
