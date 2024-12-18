@@ -12,7 +12,7 @@ export default function Reply() {
 
   const handleSelectReplyMessage = () => {
     dispatch(setReplyMessage(item));
-    busDispatch(__BUS.chatInputFocus);
+    setTimeout(() => {busDispatch(__BUS.chatInputFocus);}, 100)
   };
 
   return (

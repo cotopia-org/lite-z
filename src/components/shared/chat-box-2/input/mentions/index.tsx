@@ -1,6 +1,8 @@
 import UserList from "@/components/shared/user-selector/list";
 import { __BUS } from "@/const/bus";
+import useAuth from "@/hooks/auth";
 import { useChat2 } from "@/hooks/chat/use-chat-2";
+import { extractMentions } from "@/lib/utils";
 import { UserMinimalType } from "@/types/user";
 import { useState } from "react";
 import useBus, { dispatch } from "use-bus";
@@ -9,7 +11,11 @@ type Props = {
   value: string;
   onAdd: (value: string) => void;
 };
+
 export default function Mentions({ value, onAdd }: Props) {
+
+  const {user} = useAuth()
+
   const { currentChat } = useChat2();
   let currentChatParticipants = currentChat?.participants ?? [];
 
@@ -30,15 +36,18 @@ export default function Mentions({ value, onAdd }: Props) {
         if (onAdd) onAdd(updatedValue);
     }
 
+    dispatch(__BUS.hideChatMention);
     dispatch(__BUS.chatInputFocus);
 
   };
 
-  const searchText = value.slice(1)
+  const mentions = extractMentions(value)
 
-  if ( searchText ) currentChatParticipants = currentChatParticipants.filter(a => a.username.toLocaleLowerCase().includes(searchText.toLowerCase()))
+  const searchText = mentions[mentions.length -1]
 
-  if (!isShowMention || currentChatParticipants.length === 0) return null;
+  if ( searchText ) currentChatParticipants = currentChatParticipants.filter(a => a.username.toLocaleLowerCase().includes(searchText.user.toLowerCase()))
+
+  if (!isShowMention) return null;
 
   return (
     <div className='absolute bottom-[58px] bg-white w-full h-auto min-h-[64px] border-b flex flex-col'>
@@ -46,6 +55,7 @@ export default function Mentions({ value, onAdd }: Props) {
         items={currentChatParticipants}
         env='simple'
         onPick={handleAddMention}
+        excludes={[user.id]}
       />
     </div>
   );

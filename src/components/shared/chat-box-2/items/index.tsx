@@ -79,15 +79,6 @@ export default function Items({
     }
   }, [rowVirtualizer]);
 
-  const scrollToEnd = () => {
-    if (items.length === 0) return;
-
-    // Scroll to the latest message when a new message is added
-    rowVirtualizer.scrollToIndex(items.length, {
-      align: "end",
-    });
-  };
-
   useBus(
     __BUS.scrollEndChatBox,
     () => {
@@ -177,7 +168,6 @@ export default function Items({
   }, [items.length, rowVirtualizer]);
 
 
-  // const initScrollEnd = useRef(false);
   // useEffect(() => {
   //   // if (items.length === 0) return;
   //   // if (initScrollEnd.current === true) return;
@@ -186,6 +176,18 @@ export default function Items({
 
   //   // initScrollEnd.current = true;
   // }, [items, editMessage]);
+
+  
+  const initScrollEnd = useRef(false);
+
+  useEffect(() => {
+    
+    if (items.length === 0 ) return
+    if (initScrollEnd.current === true) return
+
+    vlistRef.current?.scrollToIndex(items.length - 1);
+    initScrollEnd.current = true
+  }, [items, initScrollEnd.current])
 
   let content = (
     <>
