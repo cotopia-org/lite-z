@@ -6,6 +6,8 @@ export type InvisibleNodeType = {
   invisible: boolean
   invisible_side?: string
   delta_x?: number
+  delta_x_prime: number
+  delta_y_prime: number
   delta_y?: number
   coveringArea: {
     x: { from: number; to: number }

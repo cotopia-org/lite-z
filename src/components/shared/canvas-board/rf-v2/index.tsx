@@ -562,11 +562,17 @@ export default function WithReactFlowV2() {
           //calc delta_x and delta_y to find difference of x point and y point from viewport
           let delta_x = undefined
           let delta_y = undefined
+          //calc distance between end of covering height and  client y
+          let delta_y_prime = coveringArea.y.to - itemPositionY
+          //calc distance between end covering width and client x
+          let delta_x_prime = coveringArea.x.to - itemPositionX
 
           if (inTheRightSide) {
             dir = "right"
             delta_x = Math.floor(itemPositionX - coveringArea.x.to)
             delta_y = Math.floor(itemPositionY - coveringArea.y.from)
+            delta_x_prime = coveringArea.x.to - itemPositionX
+            delta_y_prime = coveringArea.y.to - itemPositionY
           } else if (inTheLeftSide) {
             dir = "left"
             delta_x = Math.floor(
@@ -594,6 +600,8 @@ export default function WithReactFlowV2() {
             invisible_side: dir,
             delta_x,
             delta_y,
+            delta_x_prime,
+            delta_y_prime,
             coveringArea,
             itemPositionX,
             itemPositionY,
@@ -602,8 +610,6 @@ export default function WithReactFlowV2() {
         })
         .filter((n) => !!n.invisible)
       setInvisibleNodes(flatted_nodes)
-
-      console.log("invisibleNodes", invisibleNodes)
     },
     [rf?.current, user]
   )

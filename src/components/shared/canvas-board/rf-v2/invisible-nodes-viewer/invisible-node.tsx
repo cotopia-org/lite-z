@@ -1,17 +1,8 @@
 import CotopiaAvatar from "@/components/shared-ui/c-avatar"
 import { InvisibleNodeType } from "."
-import { cn } from "@/lib/utils"
 
 const InvisibleNode = ({ node }: { node: InvisibleNodeType }) => {
-  const {
-    node: rfNode,
-    invisible_side,
-    delta_x,
-    delta_y,
-    coveringArea,
-    itemPositionX,
-    itemPositionY,
-  } = node
+  const { node: rfNode, invisible_side, delta_x, delta_y, delta_y_prime } = node
 
   if (!delta_x || !delta_y) return null
   let clss = "flex flex-col items-center gap-y-1 absolute z-[2]"
@@ -20,36 +11,34 @@ const InvisibleNode = ({ node }: { node: InvisibleNodeType }) => {
   switch (invisible_side) {
     case "right":
       clss += " right-0"
+      style["top"] = `${delta_y}px`
+
       if (delta_y < 0) {
         style["top"] = `${delta_y}px`
         clss += " !top-0 !right-0"
       }
-      if (itemPositionY > coveringArea.y.to) {
-        clss += " !bottom-0 !left-0"
+      if (delta_y_prime < 0) {
+        style["bottom"] = 0
+        style["top"] = "initial"
       }
-      style["top"] = `${delta_y}px`
       break
     case "left":
       clss += " left-0"
+      style["top"] = `${delta_y}px`
       if (delta_y < 0) {
-        style["top"] = `${delta_y}px`
         clss += " !top-0 !left-0"
       }
-      if (itemPositionY + coveringArea.y.from > coveringArea.y.to) {
-        clss += " !bottom-0 !left-0"
+      if (delta_y_prime < 0) {
+        style["bottom"] = 0
+        style["top"] = "initial"
       }
-      style["top"] = `${delta_y}px`
-
       break
     case "bottom":
       clss += " !bottom-0"
-      if (itemPositionY + coveringArea.y.from > coveringArea.y.to) {
+      style["left"] = `${delta_x}px`
+      if (delta_y_prime < 0) {
         clss += " !bottom-0"
       }
-      //   if (Math.floor(itemPositionX) > Math.floor(coveringArea.x.to)) {
-      //     clss += "!right-0"
-      //   }
-      style["left"] = `${delta_x}px`
       break
     case "top":
       clss += " top-0"
