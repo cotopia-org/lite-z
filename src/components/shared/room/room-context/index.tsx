@@ -8,11 +8,9 @@ import axiosInstance, { FetchDataType } from "@/services/axios"
 import { ScheduleType } from "@/types/calendar"
 import { JobType } from "@/types/job"
 import { LeaderboardType } from "@/types/leaderboard"
+import { PaymentType } from "@/types/payment"
 import { WorkspaceRoomJoinType, WorkspaceRoomType } from "@/types/room"
-import {
-  LivekitTrackPublishedType,
-  updateCoordinatesEvent,
-} from "@/types/socket"
+
 import { UserMinimalType, WorkspaceUserType } from "@/types/user"
 import {
   createContext,
@@ -31,12 +29,11 @@ type Props = {
   workspace_id?: string
 }
 
-const DEFAULT_OBJECT_POSITION = { x: 200, y: 200 }
-
 const RoomCtx = createContext<{
   room_id: number
   updateParticipants: (participants: UserMinimalType[]) => void
   room?: WorkspaceRoomType
+  roomLoading?: boolean
   workspace_id?: string
   livekit_token?: string
   openSidebar: (node: ReactNode) => void
@@ -58,6 +55,7 @@ const RoomCtx = createContext<{
   onlineUsers: UserMinimalType[]
   usersHaveJobs: UserMinimalType[]
   usersHaveInProgressJobs: UserMinimalType[]
+  payments: PaymentType[]
 }>({
   room: undefined,
   updateParticipants: (participants: UserMinimalType[]) => {},
@@ -80,6 +78,7 @@ const RoomCtx = createContext<{
   onlineUsers: [],
   usersHaveJobs: [],
   usersHaveInProgressJobs: [],
+  payments: [],
 })
 
 export const useRoomContext = () => useContext(RoomCtx)
@@ -89,6 +88,17 @@ export default function RoomContext({
   room_id,
   workspace_id,
 }: Props) {
+  const [myPayments, setPayments] = useState<PaymentType[]>([])
+  useEffect(() => {
+    async function getPayments() {
+      axiosInstance
+        .get(`/users/me/payments`)
+        .then((res) => setPayments(res.data?.data ?? []))
+    }
+
+    getPayments()
+  }, [])
+
   const [room, setRoom] = useState<WorkspaceRoomType>()
   const { startLoading, stopLoading, isLoading } = useLoading()
 
@@ -144,7 +154,6 @@ export default function RoomContext({
           return
         }
 
-        console.log("res", res.data)
       })
   }
 
@@ -170,7 +179,6 @@ export default function RoomContext({
     const participant_index = participants.findIndex(
       (x: any) => x.username === username
     )
-    console.log(participant_index, "POSITION")
 
     if (participant_index === -1) return setRoom(room)
 
@@ -285,6 +293,7 @@ export default function RoomContext({
         sidebar,
         closeSidebar,
         openSidebar,
+        roomLoading: isLoading,
         updateUserCoords,
         audioState: permissionState.audio,
         videoState: permissionState.video,
@@ -299,6 +308,7 @@ export default function RoomContext({
         onlineUsers: onlineUsers,
         usersHaveJobs: usersHaveJobs,
         usersHaveInProgressJobs: usersHaveInProgressJobs,
+        payments: myPayments,
       }}
     >
       {children}

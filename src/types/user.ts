@@ -1,3 +1,4 @@
+import { UserContractType } from "./contract";
 import { AttachmentFileType } from "./file";
 import { JobType } from "./job";
 
@@ -7,6 +8,11 @@ export type UserType = {
   bio: null | string;
   coordinates: null | string;
   email: string;
+  workspaces: {
+    id: number;
+    role: string;
+    title: string;
+  }[];
   id: number;
   name: string;
   room_id: null | number;
@@ -19,6 +25,8 @@ export type UserType = {
   video_size: null | string;
   video_status: null | string;
   voice_status: null | string;
+  active_contract?: UserContractType;
+  active_job?: JobType;
 };
 
 export type UserMinimalTypeScheduleType = {
@@ -39,10 +47,12 @@ export type UserMinimalType = {
   screenshare_coordinates: null | string;
   screenshare_size: null | string;
   schedule_hours_in_week?: number;
+  total_minutes?: number;
 };
 
 export type WorkspaceUserType = {
   active_job: JobType | null;
+  active_contract?: UserContractType;
   avatar: AttachmentFileType;
   coordinates: string;
   id: number;
@@ -56,6 +66,12 @@ export type WorkspaceUserType = {
   verified: boolean;
   room_id: number | null;
   schedule_hours_in_week?: {
-    hours:string,minutes:number
+    hours: string;
+    minutes: number;
   };
+  workspaces: {
+    id: number;
+    role: string;
+    title: string;
+  }[];
 };

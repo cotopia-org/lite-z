@@ -6,7 +6,7 @@ import AccountLogout from "@/components/shared/account-logout";
 
 export default function UserSettings() {
   return (
-    <div className='p-6 flex flex-col gap-y-4'>
+    <div className='flex flex-col gap-y-4'>
       <CTabs
         title={<AccountLogout />}
         dividerBetweenContentAndTabs

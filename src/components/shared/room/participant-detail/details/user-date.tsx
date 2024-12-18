@@ -1,10 +1,7 @@
-import React from "react";
-import { useUserDetail } from ".";
+
 import moment from "moment";
 
 export default function UserDate() {
-  const { user } = useUserDetail();
-
   const createdAt = moment();
 
   return (

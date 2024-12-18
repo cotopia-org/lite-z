@@ -1,18 +1,18 @@
-import React, { ReactNode } from "react";
-import ToolbarTopLeft from "./top-left";
-import ToolbarTopRight from "./top-right";
-import ToolbarBottomLeft from "./bottom-left";
-import ToolbarBottomRight from "./bottom-right";
-import ToolbarBottomMiddle from "./bottom-middle";
-import { useRoomContext } from "../room-context";
+import { ReactNode } from "react"
+import ToolbarTopLeft from "./top-left"
+import ToolbarTopRight from "./top-right"
+import ToolbarBottomLeft from "./bottom-left"
+import ToolbarBottomRight from "./bottom-right"
+import ToolbarBottomMiddle from "./bottom-middle"
 
 type Props = {
-  topLeft?: ReactNode;
-  topRight?: ReactNode;
-  bottomLeft?: ReactNode;
-  bottomMiddle?: ReactNode;
-  bottomRight?: ReactNode;
-};
+  topLeft?: ReactNode
+  topRight?: ReactNode
+  bottomLeft?: ReactNode
+  bottomMiddle?: ReactNode
+  bottomRight?: ReactNode
+  className?: string
+}
 
 export default function Toolbar({
   topLeft,
@@ -21,15 +21,7 @@ export default function Toolbar({
   bottomRight,
   bottomMiddle,
 }: Props) {
-  const { sidebar } = useRoomContext();
-
-  let clss = "relative h-screen w-full";
-
-  // if (sidebar) {
-  //   clss += ` w-[calc(100%-380px)]`;
-  // } else {
-  //   clss += ` w-full`;
-  // }
+  let clss = "relative h-screen w-full"
 
   return (
     <div className={clss}>
@@ -39,5 +31,5 @@ export default function Toolbar({
       <ToolbarBottomMiddle>{bottomMiddle}</ToolbarBottomMiddle>
       <ToolbarBottomRight>{bottomRight}</ToolbarBottomRight>
     </div>
-  );
+  )
 }

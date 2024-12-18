@@ -8,6 +8,8 @@ import {
 } from "@/components/ui/dialog";
 import { ReactNode, useState } from "react";
 import CotopiaButton from "../shared-ui/c-button";
+import { VariantProps } from "class-variance-authority";
+import { ButtonProps } from "@/components/ui/button";
 
 type Props = {
   trigger: (open: () => void) => ReactNode;
@@ -15,6 +17,8 @@ type Props = {
   description?: string;
   onSubmit: () => void;
   onClose?: () => void;
+  submitLabel?: string;
+  submitVariant?: ButtonProps["variant"];
 };
 export default function PropmptBox({
   trigger,
@@ -22,6 +26,8 @@ export default function PropmptBox({
   description,
   onSubmit,
   onClose,
+  submitLabel = "Submit",
+  submitVariant = "default",
 }: Props) {
   const [isOpen, setIsOpen] = useState(false);
   const handleClose = () => {
@@ -42,16 +48,16 @@ export default function PropmptBox({
         <DialogHeader>
           <DialogTitle>{title}</DialogTitle>
           {description && <DialogDescription>{description}</DialogDescription>}
-          <div className='flex flex-row gap-x-2 !mt-6'>
+          <div className="flex flex-row gap-x-2 !mt-6">
             <CotopiaButton
-              variant={"default"}
+              variant={submitVariant}
               onClick={handleSubmit}
-              className='!px-6'
+              className="!px-6"
             >
-              Submit
+              {submitLabel}
             </CotopiaButton>
             <CotopiaButton
-              className='!px-6'
+              className="!px-6"
               variant={"ghost"}
               onClick={handleClose}
             >

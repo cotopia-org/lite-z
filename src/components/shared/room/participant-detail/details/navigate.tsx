@@ -1,142 +1,140 @@
-import CotopiaIconButton from "@/components/shared-ui/c-icon-button";
-import CotopiaTooltip from "@/components/shared-ui/c-tooltip";
-import { LocateFixed } from "lucide-react";
-import { useReactFlow, XYPosition } from "@xyflow/react";
-import { useUserDetail } from ".";
-import { useCallback } from "react";
-import { useRoomContext } from "../../room-context";
-import { useSocket } from "@/routes/private-wrarpper";
-import useAuth from "@/hooks/auth";
-import { VARZ } from "@/const/varz";
-import { dispatch } from "use-bus";
-import { __BUS } from "@/const/bus";
-import { doCirclesMeetRaw } from "../../sessions/room-audio-renderer";
+import CotopiaIconButton from "@/components/shared-ui/c-icon-button"
+import CotopiaTooltip from "@/components/shared-ui/c-tooltip"
+import { LocateFixed } from "lucide-react"
+import { useReactFlow, XYPosition } from "@xyflow/react"
+import { useUserDetail } from "."
+import { useRoomContext } from "../../room-context"
+import useAuth from "@/hooks/auth"
+import { VARZ } from "@/const/varz"
+import { dispatch } from "use-bus"
+import { __BUS } from "@/const/bus"
+import { doCirclesMeetRaw } from "@/components/shared/canvas-board/canvas-audio-rendrer"
 
 interface Props {}
 
 const getAroundPoints = (r: number, margin: number) => {
   //get the random angle between 0 and 2Pi (360deg)
-  const angle = Math.random() * 2 * Math.PI;
+  const angle = Math.random() * 2 * Math.PI
   //calc distance from center of circle
-  const distance = r + margin;
+  const distance = r + margin
   //clac the distance from the center with the sin cos ratio in the x and y axis
 
-  const xPosition = Math.cos(angle);
-  const yPosition = Math.sin(angle);
+  const xPosition = Math.cos(angle)
+  const yPosition = Math.sin(angle)
 
-  let x = distance * xPosition;
-  let y = distance * yPosition;
+  let x = distance * xPosition
+  let y = distance * yPosition
   if (xPosition < 0) {
-    x -= margin;
+    x -= margin
   } else {
-    x += margin;
+    x += margin
   }
   if (yPosition < 0) {
-    y -= margin;
+    y -= margin
   } else {
-    y += margin;
+    y += margin
   }
 
-  return { x, y };
-};
+  return { x, y }
+}
 
 const UserNavigate = (props: Props) => {
-  const { user } = useUserDetail();
-  const { user: myAccount } = useAuth();
+  const { user } = useUserDetail()
+  const { user: myAccount } = useAuth()
 
-  const { updateUserCoords } = useRoomContext();
-  const rf = useReactFlow();
+  const { updateUserCoords } = useRoomContext()
+  const rf = useReactFlow()
 
-  const nodes = rf.getNodes();
+  const nodes = rf.getNodes()
 
   const handleCircleMeet = (
     targetUserName: string,
     targetPosition: XYPosition
   ) => {
-    const targetUserNode = rf?.getNode(targetUserName);
+    const targetUserNode = rf?.getNode(targetUserName)
 
-    if (targetUserNode === undefined) return;
+    if (targetUserNode === undefined) return
 
-    const position = targetPosition;
+    const position = targetPosition
 
-    if (!user?.username) return;
+    if (!user?.username) return
 
-    const myUserPosition = rf?.getNode(user?.username)?.position;
+    const myUserPosition = rf?.getNode(user?.username)?.position
 
-    if (myUserPosition === undefined) return;
+    if (myUserPosition === undefined) return
 
     const { meet } = doCirclesMeetRaw(
       46,
       VARZ.voiceAreaRadius,
       myUserPosition,
       position
-    );
+    )
 
     rf?.updateNode(targetUserName, {
       data: { ...targetUserNode?.data, meet },
-    });
+    })
 
-    return meet;
-  };
+    return meet
+  }
 
   const navigateHandler = () => {
-    if (!myAccount) return;
+    if (!myAccount) return
 
     const currentUserNode = nodes.find(
       (userNode) => userNode.id === user?.username
-    );
+    )
 
-    if (currentUserNode === undefined) return;
+    if (currentUserNode === undefined) return
 
-    const xdimension = currentUserNode?.position.x;
-    const ydimension = currentUserNode?.position.y;
+    const xdimension = currentUserNode?.position.x
+    const ydimension = currentUserNode?.position.y
 
-    const radius = 75;
+    const radius = 75
 
     if (xdimension && ydimension) {
-      const x = xdimension + radius;
-      const y = ydimension + radius;
-      const zoom = 1.5;
+      const x = xdimension + radius
+      const y = ydimension + radius
+      const zoom = 1.5
 
-      rf.setCenter(x, y, { zoom, duration: 1000 });
+      rf.setCenter(x, y, { zoom, duration: 1000 })
 
       //calc radius of target user participant
       const { x: aroundX, y: aroundY } = getAroundPoints(
         radius,
         VARZ.teleportMargin
-      );
-      let finalXCordinate = xdimension + aroundX;
-      let finalYCordinate = ydimension + aroundY;
+      )
+      let finalXCordinate = xdimension + aroundX
+      let finalYCordinate = ydimension + aroundY
 
       const nPosition = {
         x: finalXCordinate,
         y: finalYCordinate,
-      };
+      }
 
-      updateUserCoords(myAccount?.username, nPosition);
+      updateUserCoords(myAccount?.username, nPosition)
 
-      handleCircleMeet(currentUserNode.id, currentUserNode.position);
+      handleCircleMeet(currentUserNode.id, currentUserNode.position)
 
-      rf.updateNode(myAccount.username, { position: nPosition });
+      rf.updateNode(myAccount.username, { position: nPosition })
 
       dispatch({
         type: __BUS.changeMyUserCoord,
         data: { id: myAccount.username, position: nPosition },
-      });
+      })
     }
-  };
+  }
 
   return (
-    <CotopiaTooltip title='User navigate'>
+    <CotopiaTooltip title="User navigate">
       <CotopiaIconButton
         onClick={navigateHandler}
         size={"icon"}
-        className='text-black w-6 h-6'
+        className="text-black w-6 h-6"
       >
         <LocateFixed size={16} />
       </CotopiaIconButton>
     </CotopiaTooltip>
-  );
-};
+  )
+}
 
-export default UserNavigate;
+export default UserNavigate

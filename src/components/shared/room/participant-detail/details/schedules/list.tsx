@@ -20,19 +20,20 @@ export default function SchedulesList({ justView = true }: Props) {
   const schedules: ScheduleType[] = data !== undefined ? data?.data : [];
 
   const totalHours = useMemo(() => {
-    return workspaceUsers.find((x) => x.id === user?.id)?.schedule_hours_in_week?.hours;
+    return workspaceUsers.find((x) => x.id === user?.id)?.schedule_hours_in_week
+      ?.hours;
   }, [workspaceUsers, user]);
 
-  console.log(totalHours)
+  console.log(totalHours);
   if (data === undefined || isLoading) return <FullLoading />;
-//Just for commit Test.
+  //Just for commit Test.
   return (
-      <BoxHolder
-          title={`${capitalizeWords(
-              user?.username ?? ""
-          )}'s schedules (${totalHours}) per week`}
-      >
-        <Schedules items={schedules} justView={justView} />
-      </BoxHolder>
+    <BoxHolder
+      title={`${capitalizeWords(
+        user?.username ?? ""
+      )}'s schedules (${totalHours}) per week`}
+    >
+      <Schedules items={schedules} justView={justView} />
+    </BoxHolder>
   );
 }

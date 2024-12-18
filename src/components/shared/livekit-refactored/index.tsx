@@ -1,16 +1,16 @@
-import { VARZ } from "@/const/varz"
-import { useAppSelector } from "@/store"
-import { LiveKitRoom } from "@livekit/components-react"
-import { ReactNode } from "react"
-import { useRoomHolder } from "../room"
+import { VARZ } from "@/const/varz";
+import { useAppSelector } from "@/store";
+import { LiveKitRoom } from "@livekit/components-react";
+import { ReactNode } from "react";
+import { useRoomHolder } from "../room";
 
 type Props = {
-  children: ReactNode
-}
+  children: ReactNode;
+};
 export default function LivekitRefactored({ children }: Props) {
-  const { token } = useAppSelector((store) => store.livekit)
+  const { token } = useAppSelector((store) => store.livekit);
 
-  const { mediaPermissions } = useRoomHolder()
+  const { mediaPermissions } = useRoomHolder();
 
   return (
     //@ts-ignore
@@ -20,8 +20,21 @@ export default function LivekitRefactored({ children }: Props) {
       connect={true}
       video={mediaPermissions.video}
       audio={mediaPermissions.audio}
+      options={{
+        adaptiveStream: {
+          pixelDensity: "screen",
+        },
+        publishDefaults: {
+          screenShareEncoding: {
+            maxBitrate: 100_000_000,
+            maxFramerate: 15,
+          },
+          videoCodec: 'av1',
+          dtx: true,
+        },
+      }}
     >
       {children}
     </LiveKitRoom>
-  )
+  );
 }

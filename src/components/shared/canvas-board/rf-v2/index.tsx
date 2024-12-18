@@ -1,7 +1,13 @@
-import { useCallback, useEffect, useRef } from "react"
+import { useCallback, useEffect, useRef, useState } from "react"
 import ReactFlowV2 from "../../react-flow/v2"
 import { useRoomContext } from "../../room/room-context"
-import { Edge, Node, ReactFlowInstance, XYPosition } from "@xyflow/react"
+import {
+  Edge,
+  Node,
+  ReactFlowInstance,
+  Viewport,
+  XYPosition,
+} from "@xyflow/react"
 import useAuth from "@/hooks/auth"
 import ShareScreenNode from "./nodes/share-screen"
 import { useSocket } from "@/routes/private-wrarpper"
@@ -15,7 +21,6 @@ import {
   UserLeftJoinType,
 } from "@/types/socket"
 import UserNode from "./nodes/user"
-import { doCirclesMeetRaw } from "../../room/sessions/room-audio-renderer"
 import { VARZ } from "@/const/varz"
 import JailNode from "./nodes/jail-node"
 import { getPositionFromStringCoordinates } from "@/lib/utils"
@@ -24,6 +29,12 @@ import BgNode from "./nodes/bg-node"
 import { useTracks } from "@livekit/components-react"
 import { Track } from "livekit-client"
 import { checkNodesCollision } from "@/utils/utils"
+import { doCirclesMeetRaw } from "../canvas-audio-rendrer"
+import InvisibleNodesViewer, {
+  InvisibleNodeType,
+} from "./invisible-nodes-viewer"
+
+const userNodeBound = 94
 
 enum RoomRfNodeType {
   shareScreenNode = "shareScreenNode",
@@ -38,6 +49,8 @@ export default function WithReactFlowV2() {
   const rf = useRef<ReactFlowInstance<Node, Edge>>()
 
   const { room, updateUserCoords } = useRoomContext()
+
+  const [invisibleNodes, setInvisibleNodes] = useState<InvisibleNodeType[]>([])
 
   //Init react flow
   const init = useRef<boolean>(false)
@@ -199,10 +212,12 @@ export default function WithReactFlowV2() {
     if (init.current === true) return
 
     //Convert participants to rf nodes Node[]
-    // let nodes = participantsToRfNodes(room?.participants ?? [])
-
-    //Convert participants to rf nodes Node[]
     let nodes = participantsToRfNodes(room?.participants ?? [])
+
+    for (let node of nodes) {
+      handleCircleMeet(node.id, node.position)
+    }
+
     //Add Node[] to react flow canvas
     addNodesToRf(nodes, {
       id: "bg-node",
@@ -257,10 +272,10 @@ export default function WithReactFlowV2() {
             (n) => n.data.username === node.data.username
           ) as Node
           const targetUserName = (droped_node.data as any)?.username
-          updateUserCoords(targetUserName, droped_node.position)
+          updateUserCoords(targetUserName, droped_node?.position)
 
           for (let n of allNodes) {
-            handleCircleMeet(n.id, n.position)
+            handleCircleMeet(n.id, n?.position)
           }
           break
       }
@@ -270,11 +285,14 @@ export default function WithReactFlowV2() {
 
   const handleCircleMeet = (
     targetUserName: string,
-    targetPosition: XYPosition
+    targetPosition: XYPosition,
+    node?: Node
   ) => {
-    const targetUserNode = rf?.current?.getNode(targetUserName)
+    let targetUserNode = rf?.current?.getNode(targetUserName)
 
-    if (targetUserNode === undefined) return
+    if (targetUserNode === undefined && node === undefined) return
+
+    if (node) targetUserNode = node
 
     const position = targetPosition
 
@@ -386,10 +404,6 @@ export default function WithReactFlowV2() {
     (data: UserLeftJoinType) => {
       if (data.room_id === room?.id) {
         rf.current?.setNodes((prev) => {
-          console.log(
-            "nodes",
-            prev.filter((n) => n.id !== data.user.username)
-          )
           return prev.filter((n) => n.id !== data.user.username)
         })
       }
@@ -414,29 +428,31 @@ export default function WithReactFlowV2() {
 
       const meet = handleCircleMeet(data.user.username, currentPositionCoords)
 
-      rf.current?.setNodes((prev) => [
-        ...prev,
-        {
-          id: data.user.username,
-          type: "userNode",
-          data: {
-            username: data.user.username,
-            draggable: isMe,
-            isDragging: false,
-            meet,
-          },
-          position: { x: currentPositionCoords.x, y: currentPositionCoords.y },
-          extent: "parent",
-          deletable: false,
+      const nNode: Node = {
+        id: data.user.username,
+        type: "userNode",
+        data: {
+          username: data.user.username,
           draggable: isMe,
+          isDragging: false,
+          meet,
         },
-      ])
+        position: { x: currentPositionCoords.x, y: currentPositionCoords.y },
+        extent: "parent",
+        deletable: false,
+        draggable: isMe,
+      }
+
+      rf.current?.setNodes((prev) => [...prev, nNode])
+
+      handleCircleMeet(nNode.id, nNode?.position, nNode)
     },
     [user?.username]
   )
 
   const dragNodeHandler = useCallback(
     (e: any, draggingNode: Node) => {
+      if (draggingNode.type === VARZ.shareScreenNodeType) return
       let my_node = draggingNode
       if (!user) return
       //get all nodes from react flow
@@ -493,8 +509,8 @@ export default function WithReactFlowV2() {
               {
                 ...my_node,
                 position: {
-                  x: flatted_nodes[flatted_nodes.length - 2].position.x,
-                  y: flatted_nodes[flatted_nodes.length - 2].position.y,
+                  x: flatted_nodes[flatted_nodes.length - 2]?.position.x,
+                  y: flatted_nodes[flatted_nodes.length - 2]?.position.y,
                 },
               },
               target_node,
@@ -510,8 +526,97 @@ export default function WithReactFlowV2() {
     [rf?.current, user]
   )
 
+  const changeViewportHandler = useCallback(
+    (viewport: Viewport & { width: number; height: number }) => {
+      const properX = Math.abs(viewport.x)
+      const properY = Math.abs(viewport.y)
+      const properWidth = viewport.width
+      const properHeight = viewport.height
+      //Covering area will be from properX to properWidth + properX // properY to properHeight + properY
+      const coveringArea = {
+        x: { from: properX, to: properX + properWidth },
+        y: { from: properY, to: properY + properHeight },
+      }
+      if (!user) return
+      const nodes = rf?.current?.getNodes() || []
+      const user_nodes = nodes.filter(
+        (node) =>
+          node.type !== VARZ.jailNodeType &&
+          node.type !== VARZ.backgroundNodeType
+      )
+      const flatted_nodes = user_nodes
+        .map((item) => {
+          //Visible situation
+          //If item's left direction is less than viewport's x and viewport's y is less than item's y
+          const itemPositionX = item.position.x * viewport.zoom
+          const itemPositionY = item.position.y * viewport.zoom
+          let userNodeHeight = userNodeBound * viewport.zoom
+          const inTheRightSide = itemPositionX > coveringArea.x.to
+          const inTheLeftSide =
+            itemPositionX + userNodeHeight <= coveringArea.x.from
+          const inTheTopSide =
+            itemPositionY + userNodeHeight <= coveringArea.y.from
+          const inTheBottomSide = coveringArea.y.to < itemPositionY
+          //define direction based on invisible side of node
+          let dir = undefined
+          //calc delta_x and delta_y to find difference of x point and y point from viewport
+          let delta_x = undefined
+          let delta_y = undefined
+          //calc distance between end of covering height and  client y
+          let delta_y_prime = coveringArea.y.to - itemPositionY
+          //calc distance between end covering width and client x
+          let delta_x_prime = coveringArea.x.to - itemPositionX
+
+          if (inTheRightSide) {
+            dir = "right"
+            delta_x = Math.floor(itemPositionX - coveringArea.x.to)
+            delta_y = Math.floor(itemPositionY - coveringArea.y.from)
+            delta_x_prime = coveringArea.x.to - itemPositionX
+            delta_y_prime = coveringArea.y.to - itemPositionY
+          } else if (inTheLeftSide) {
+            dir = "left"
+            delta_x = Math.floor(
+              itemPositionX + userNodeHeight - coveringArea.x.from
+            )
+            delta_y = Math.floor(itemPositionY - coveringArea.y.from)
+          } else if (inTheTopSide) {
+            delta_x = Math.floor(itemPositionX - coveringArea.x.from)
+            delta_y = Math.floor(
+              itemPositionY + userNodeHeight - coveringArea.y.from
+            )
+            dir = "top"
+          } else if (inTheBottomSide) {
+            delta_x = Math.floor(itemPositionX - coveringArea.x.from)
+            delta_y = Math.floor(itemPositionY - coveringArea.y.to)
+            dir = "bottom"
+          }
+
+          const isInvisible =
+            inTheRightSide || inTheLeftSide || inTheTopSide || inTheBottomSide
+
+          return {
+            node: item,
+            invisible: isInvisible,
+            invisible_side: dir,
+            delta_x,
+            delta_y,
+            delta_x_prime,
+            delta_y_prime,
+            coveringArea,
+            itemPositionX,
+            itemPositionY,
+            nodeHeight: userNodeHeight,
+          }
+        })
+        .filter((n) => !!n.invisible)
+      setInvisibleNodes(flatted_nodes)
+    },
+    [rf?.current, user]
+  )
+
   return (
-    <div className="w-full h-screen">
+    <div className="w-full h-screen relative">
+      <InvisibleNodesViewer invisibleNodes={invisibleNodes} />
       <ReactFlowV2
         nodeTypes={{
           userNode: UserNode,
@@ -522,11 +627,12 @@ export default function WithReactFlowV2() {
         onInit={(rfinstance) => {
           rf.current = rfinstance
         }}
+        onViewportChange={changeViewportHandler}
         onNodeDragging={dragNodeHandler}
         onNodeDragStop={handleDragStopRfNodes}
         translateExtent={[
-          [-200, 0],
-          [3800, 1700],
+          [0, 0],
+          [VARZ.jailWidth - 150, VARZ.jailHeight],
         ]}
         hasJail
       />

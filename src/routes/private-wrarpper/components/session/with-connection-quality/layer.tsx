@@ -1,16 +1,16 @@
-import { cn } from "@/lib/utils";
-import { ConnectionQuality } from "livekit-client";
-import { TriangleAlert } from "lucide-react";
+import { cn } from "@/lib/utils"
+import { ConnectionQuality } from "livekit-client"
+import { TriangleAlert } from "lucide-react"
 
 type Props = {
-  quality: ConnectionQuality;
-};
+  quality: ConnectionQuality
+}
 export default function Layer({ quality }: Props) {
-  if (quality === ConnectionQuality.Unknown) return null;
-  if (quality === ConnectionQuality.Excellent) return null;
-  if (quality === ConnectionQuality.Good) return null;
+  if (quality === ConnectionQuality.Unknown) return null
+  if (quality === ConnectionQuality.Excellent) return null
+  if (quality === ConnectionQuality.Good) return null
 
-  let icon = <TriangleAlert size={32} />;
+  let icon = <TriangleAlert size={32} />
 
   return (
     <div
@@ -20,5 +20,5 @@ export default function Layer({ quality }: Props) {
     >
       {icon}
     </div>
-  );
+  )
 }

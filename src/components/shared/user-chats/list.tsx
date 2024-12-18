@@ -9,20 +9,25 @@ import ChatInnerHolder from "./chat/holder";
 
 type Props = {};
 export default function UserChatList() {
+
+
+  const { chats } = useChat2();
+  
   const appDispatch = useAppDispatch();
   const { push, back } = useSlides();
 
   useBus(__BUS.selectChat, (data) => {
+    console.log("Here Too");
     const chat = data.chat;
 
     appDispatch(setCurrentChat(chat));
     push(<ChatInnerHolder onBack={back} chat_id={chat?.id} />);
   });
 
-  const { chats } = useChat2();
+
 
   return (
-    <div className='w-full chats-holder flex flex-col gap-y-0 overflow-y-auto'>
+    <div className="w-full chats-holder flex flex-col gap-y-0 overflow-y-auto">
       {chats.map((chat) => (
         <Chat chat={chat} key={chat.id} />
       ))}

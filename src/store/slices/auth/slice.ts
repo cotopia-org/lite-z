@@ -7,7 +7,7 @@ import { toast } from "sonner";
 
 // Define the initial state using a TypeScript interface
 interface AuthState {
-  user: UserType | null;
+  user: UserType;
   accessToken: string | null;
   isLoading: boolean;
   error: string | null;
@@ -20,6 +20,7 @@ interface LoginResponse extends UserType {
 
 // Initialize the initial state
 const initialState: AuthState = {
+  //@ts-ignore
   user: null,
   accessToken: null,
   isLoading: false,
@@ -37,6 +38,20 @@ export const loginThunk = createAsyncThunk<
       ...credentials,
     });
     toast.success("You logged in successfully.");
+    return response.data;
+  } catch (error) {
+    return rejectWithValue("Something wen't wrong");
+  }
+});
+
+// Async thunk for getting profile
+export const getProfileThunk = createAsyncThunk<
+  { data: UserType },
+  undefined,
+  { rejectValue: string }
+>("auth/login/get-profile", async (credentials, { rejectWithValue }) => {
+  try {
+    const response = await axiosInstance.get("/users/me");
     return response.data;
   } catch (error) {
     return rejectWithValue("Something wen't wrong");
@@ -79,6 +94,7 @@ const authSlice = createSlice({
   initialState,
   reducers: {
     logout: (state) => {
+      //@ts-ignore
       state.user = null;
       state.accessToken = null;
       state.isLoading = false;
@@ -103,6 +119,24 @@ const authSlice = createSlice({
         }
       )
       .addCase(loginThunk.rejected, (state, action) => {
+        state.isLoading = false;
+        state.error = action.payload || "Failed to login";
+        toast.error(action.payload || "Failed to login");
+      });
+    builder
+      // Login actions
+      .addCase(getProfileThunk.pending, (state) => {
+        state.isLoading = true;
+        state.error = null;
+      })
+      .addCase(
+        getProfileThunk.fulfilled,
+        (state, action: PayloadAction<{ data: UserType }>) => {
+          state.user = action.payload.data;
+          state.isLoading = false;
+        }
+      )
+      .addCase(getProfileThunk.rejected, (state, action) => {
         state.isLoading = false;
         state.error = action.payload || "Failed to login";
         toast.error(action.payload || "Failed to login");
