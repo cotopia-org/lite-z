@@ -1,5 +1,6 @@
 import CotopiaAvatar from "@/components/shared-ui/c-avatar"
 import { InvisibleNodeType } from "."
+import UserTeleportation from "@/components/shared/user-teleportation"
 
 const InvisibleNode = ({ node }: { node: InvisibleNodeType }) => {
   const { node: rfNode, invisible_side, delta_x, delta_y, delta_y_prime } = node
@@ -49,9 +50,17 @@ const InvisibleNode = ({ node }: { node: InvisibleNodeType }) => {
   return (
     <div style={style} className={clss}>
       <span className="font-medium text-xs italic">{rfNode.id}</span>
-      <CotopiaAvatar
-        className="w-7 h-7 [&_.avatar-fallback]:bg-blue-300 text-primary border-primary border"
-        title={rfNode.id[0] ?? ""}
+      <UserTeleportation
+        username={rfNode.id}
+        trigger={(navigateHandler) => {
+          return (
+            <CotopiaAvatar
+              onClick={() => navigateHandler()}
+              className="w-7 h-7 [&_.avatar-fallback]:bg-blue-300 text-primary border-primary border cursor-pointer"
+              title={rfNode.id[0] ?? ""}
+            />
+          )
+        }}
       />
     </div>
   )
