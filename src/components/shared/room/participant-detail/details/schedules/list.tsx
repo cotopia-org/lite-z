@@ -7,6 +7,7 @@ import Schedules from "@/components/shared/schedules";
 import { capitalizeWords } from "@/lib/utils";
 import BoxHolder from "@/components/shared/box-holder";
 import { useRoomContext } from "../../../room-context";
+import { ScheduleFillment } from "@/components/shared/room/tools/top-left/schedule-button";
 
 type Props = {
   justView?: boolean;
@@ -24,15 +25,15 @@ export default function SchedulesList({ justView = true }: Props) {
       ?.hours;
   }, [workspaceUsers, user]);
 
-  console.log(totalHours);
   if (data === undefined || isLoading) return <FullLoading />;
-  //Just for commit Test.
   return (
     <BoxHolder
       title={`${capitalizeWords(
-        user?.username ?? ""
+        user?.username ?? "",
       )}'s schedules (${totalHours}) per week`}
     >
+      <ScheduleFillment userId={user?.id} />
+
       <Schedules items={schedules} justView={justView} />
     </BoxHolder>
   );

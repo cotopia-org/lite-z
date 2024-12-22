@@ -8,6 +8,7 @@ type Props = {
   onClick: () => void;
   isOpen: boolean;
   defaultSeconds: number;
+  stop: boolean;
 };
 
 export default function TimeTrackingButton({
@@ -15,18 +16,26 @@ export default function TimeTrackingButton({
   onClick,
   isOpen,
   defaultSeconds,
+  stop,
 }: Props) {
   return (
     <ToolButton
       isOpen={isOpen}
       open={onClick}
       startIcon={<ClockIcon size={20} />}
-      className='!min-w-[135px] !px-2'
+      className="!min-w-[135px] !px-2"
       loading={isLoading}
     >
-      <div className='absolute top-2 right-2 w-2 h-2 bg-red-600 rounded-full animate-pulse'></div>
-      <Timer initialSeconds={defaultSeconds} id={VARZ.userTimeTrackerId}>
-        {(time) => <span className='min-w-[60px]'>{time}</span>}
+      {!stop && (
+        <div className="absolute top-2 right-2 w-2 h-2 bg-red-600 rounded-full animate-pulse"></div>
+      )}
+      <Timer
+        initialSeconds={defaultSeconds}
+        stop={stop}
+        id={VARZ.userTimeTrackerId}
+        defaultStatus={stop ? "stopped" : "normal"}
+      >
+        {(time) => <span className="min-w-[60px]">{time}</span>}
       </Timer>
     </ToolButton>
   );

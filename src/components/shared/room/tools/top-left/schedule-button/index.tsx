@@ -3,6 +3,7 @@ import PopupBoxChild from "@/components/shared/popup-box/child";
 import { ScheduleType } from "@/types/calendar";
 import {
   estimateTotalHoursBySchedules,
+  formatTime,
   getTwelveClockFormat,
 } from "@/lib/utils";
 import moment from "moment";
@@ -14,6 +15,11 @@ import FullLoading from "@/components/shared/full-loading";
 import AddScheduleButton from "./shapes/add-schedule";
 import { FetchDataType } from "@/services/axios";
 
+export type FulFillmentType = {
+  percentage: number;
+  total_week_activities_in_schedules: number;
+  total_week_schedules: number;
+};
 export default function ScheduleButton() {
   const { data, isLoading, mutate } =
     useApi<FetchDataType<ScheduleType[]>>(`/users/me/schedules`);
@@ -39,12 +45,12 @@ export default function ScheduleButton() {
   if (schedules.length > 0 && !todayDate) event_label = "Schedules";
 
   let title_node = (
-    <div className='flex items-center gap-x-1'>
-      <span className='text-lg text-grayscale-title font-medium'>
+    <div className="flex items-center gap-x-1">
+      <span className="text-lg text-grayscale-title font-medium">
         Scheduled this week :
       </span>
-      <span className='text-sm text-grayscale-subtitle font-medium'>
-        {totalHours > 0 ? `${totalHours}h` : "No schedule"}
+      <span className="text-sm text-grayscale-subtitle font-medium">
+        {totalHours > 0 ? `${totalHours}h ` : "No schedule "}
       </span>
     </div>
   );
@@ -78,7 +84,8 @@ export default function ScheduleButton() {
             title={title_node}
             width={500}
           >
-            <div className='flex w-full flex-col gap-y-2 items-end max-h-[400px] overflow-y-auto'>
+            <div className="flex w-full flex-col gap-y-2 items-end max-h-[400px] overflow-y-auto">
+              <ScheduleFillment userId={"me"} />
               {content}
               <AddScheduleButton onDelete={mutate} onCreated={mutate} />
             </div>
@@ -86,5 +93,31 @@ export default function ScheduleButton() {
         );
       }}
     </PopupBox>
+  );
+}
+
+export function ScheduleFillment({ userId }: { userId?: string | number }) {
+  const { data: fulfillment } = useApi<FetchDataType<FulFillmentType>>(
+    `/users/${userId}/scheduleFulfillment`,
+  );
+
+  const fulfillmentData = fulfillment?.data;
+  if (fulfillmentData === undefined) return <></>;
+  return (
+    <div className={"w-full"}>
+      <div className={"bg-slate-300 h-[30px] rounded-lg"}>
+        <div
+          className="h-full bg-primary rounded-l-lg"
+          style={{
+            width: fulfillmentData.percentage + "" + "%",
+          }}
+        />
+      </div>
+      <p className={"text-center m-1 text-sm"}>
+        {formatTime(fulfillmentData.total_week_activities_in_schedules)} /{" "}
+        {formatTime(fulfillmentData.total_week_schedules)} (
+        {fulfillmentData.percentage}%)
+      </p>
+    </div>
   );
 }
