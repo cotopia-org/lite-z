@@ -54,15 +54,15 @@ export default function PayrollContractDetails({
   // ];
 
   return (
-    <div className='flex flex-col gap-y-4'>
-      <PayrollSectionTitle title='User Contract' />
+    <div className="flex flex-col gap-y-4">
+      <PayrollSectionTitle title="User Contract" />
       {isLoading ? (
-        <p className='text-gray-400 text-xl font-semibold text-center'>
+        <p className="text-gray-400 text-xl font-semibold text-center">
           Loading contract details...
         </p>
       ) : contract ? (
         <>
-          <Markdown className='[&_h1]:text-xl [&_h1]:mb-4 [&_h1]:font-bold [&_ol]:ml-4 [&_li]:mb-4 [&_li]:list-decimal'>{`${
+          <Markdown className="[&_h1]:text-xl [&_h1]:mb-4 [&_h1]:font-bold [&_ol]:ml-4 [&_li]:mb-4 [&_li]:list-decimal">{`${
             contract.text ?? ""
           }`}</Markdown>
           {/* <ul className='grid grid-cols-12 gap-4 w-full'> */}
@@ -84,15 +84,18 @@ export default function PayrollContractDetails({
           {/* </ul> */}
         </>
       ) : (
-        <p className='text-gray-400 text-xl font-semibold text-center'>
+        <p className="text-gray-400 text-xl font-semibold text-center">
           You don't have any contract yet.
         </p>
       )}
       {!!localContract.payment_address && (
-        <TitleEl title='Payment address'>
+        <TitleEl title="Payment address">
           {localContract.payment_address}
         </TitleEl>
       )}
+      <TitleEl title="User must be online on schedules?">
+        {localContract.in_schedule ? "Yes" : "No"}
+      </TitleEl>
       <HintAddressContract
         contract={localContract}
         onUpdate={(contract) => {

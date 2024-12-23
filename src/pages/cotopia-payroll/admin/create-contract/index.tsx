@@ -29,7 +29,7 @@ export default function PayrollCreateContract({
   const [state, dispatch] = useReducer(payrollReducer, PayrollInitialState);
   const userData = useAppSelector((store) => store.auth);
   const [selectedUser, setSelectedUser] = useState<UserMinimalType | null>(
-    null
+    null,
   );
   const { createContract, updateContract, loading } = useCreateContract();
 
@@ -76,7 +76,7 @@ export default function PayrollCreateContract({
         dispatch({ type: "SET_USER_CONTRACT", payload: null });
       }
     },
-    [userData.accessToken]
+    [userData.accessToken],
   );
 
   const handleUserIdChange = useCallback(
@@ -92,7 +92,7 @@ export default function PayrollCreateContract({
         getUserContract(+id);
       }
     },
-    [state.employees, getUserContract]
+    [state.employees, getUserContract],
   );
 
   const formik = useFormik({
@@ -133,17 +133,17 @@ export default function PayrollCreateContract({
   return (
     <form
       onSubmit={handleSubmit}
-      className='w-full p-4 flex flex-col gap-y-8 items-center'
+      className="w-full p-4 flex flex-col gap-y-8 items-center"
     >
       {onBack && (
-        <div className='flex flex-row items-center justify-between w-full border-b pb-4'>
-          <strong className='text-xl'>Edit Contract</strong>
-          <CotopiaIconButton className='text-black' onClick={onBack}>
+        <div className="flex flex-row items-center justify-between w-full border-b pb-4">
+          <strong className="text-xl">Edit Contract</strong>
+          <CotopiaIconButton className="text-black" onClick={onBack}>
             <X />
           </CotopiaIconButton>
         </div>
       )}
-      <div className='w-full grid grid-cols-2 gap-x-4 gap-y-4'>
+      <div className="w-full grid grid-cols-2 gap-x-4 gap-y-4">
         {!!!defaultContract && (
           <UserSelector
             label={false}
@@ -162,9 +162,9 @@ export default function PayrollCreateContract({
           selectedUser={selectedUser!}
         />
 
-        <div className='flex flex-1 flex-col gap-y-2'>
+        <div className="flex flex-1 flex-col gap-y-2">
           {state.contractIdError && (
-            <p className='font-medium text-sm text-gray-600'>
+            <p className="font-medium text-sm text-gray-600">
               {state.contractIdError}
             </p>
           )}
@@ -172,9 +172,9 @@ export default function PayrollCreateContract({
       </div>
 
       <CotopiaButton
-        type='submit'
+        type="submit"
         disabled={!isValid || loading}
-        className='w-full'
+        className="w-full"
         loading={loading}
       >
         {defaultContract ? "Edit contract" : "Create a new contract"}

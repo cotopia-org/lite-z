@@ -27,4 +27,5 @@ export interface UserContractType {
   user_sign_status: number;
   user_status: string;
   last_payment: PaymentType;
+  in_schedule: boolean;
 }

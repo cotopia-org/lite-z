@@ -105,7 +105,7 @@ export function ScheduleFillment({ userId }: { userId?: string | number }) {
   if (fulfillmentData === undefined) return <></>;
   return (
     <div className={"w-full"}>
-      <div className={"bg-slate-300 h-[30px] rounded-lg"}>
+      <div className={"bg-slate-300 h-[4px] rounded-lg"}>
         <div
           className="h-full bg-primary rounded-l-lg"
           style={{
