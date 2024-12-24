@@ -55,7 +55,7 @@ const RfUserTileContent = ({ meet }: Props) => {
         )}
         {trackContent}
       </div>
-      <RfUserTileActions />
+      {targetUser?.status !== 'afk' && <RfUserTileActions />}
     </div>
   )
 }

@@ -25,7 +25,7 @@ const UserCircle = ({ isDragging, meet }: Props) => {
         user={targetUser as WorkspaceUserType | UserMinimalType}
       >
         <WithConnectionQuality quality={quality}>
-          <VoiceAreaHearing isDragging={isDragging} />
+          {targetUser?.status !== 'afk' && <VoiceAreaHearing isDragging={isDragging} />}
           <div ref={ref} style={{ position: "relative" }} {...htmlProps}>
             <RfUserTileContent meet={meet} />
           </div>
