@@ -2,6 +2,7 @@ import Timer from "../timer";
 import ToolButton from "../../../tool-button";
 import { ClockIcon } from "@/components/icons";
 import { VARZ } from "@/const/varz";
+import { cn } from "@/lib/utils";
 
 type Props = {
   isLoading: boolean;
@@ -35,7 +36,7 @@ export default function TimeTrackingButton({
         id={VARZ.userTimeTrackerId}
         defaultStatus={stop ? "stopped" : "normal"}
       >
-        {(time) => <span className="min-w-[60px]">{time}</span>}
+        {(time) => <span className={cn('min-w-[60px]', stop ? 'text-red-500' : '')}>{time}</span>}
       </Timer>
     </ToolButton>
   );

@@ -3,14 +3,15 @@ import CotopiaTooltip from '@/components/shared-ui/c-tooltip'
 import { useLoading } from '@/hooks'
 import useSetting from '@/hooks/use-setting'
 import { cn } from '@/lib/utils'
-import { useSocket } from '@/routes/private-wrarpper'
 import { useAppDispatch } from '@/store'
 import { disableAfk, enableAfk } from '@/store/slices/setting-slice'
 import { thunkResHandler } from '@/utils/utils'
 import { useLocalParticipant } from '@livekit/components-react'
 import { Track } from 'livekit-client'
-import { Ear, EarOff } from 'lucide-react'
+import { PauseCircle, PlayCircle } from 'lucide-react'
 import { useRoomHolder } from '../../..'
+import {dispatch as busDispatch} from 'use-bus'
+import { __BUS } from '@/const/bus'
 
 export default function AfkButtonTool() {
 
@@ -45,6 +46,7 @@ export default function AfkButtonTool() {
                 stopLoading();
                 track?.unmute();
                 enableAudioAccess();
+                busDispatch(__BUS.startWorkTimer)
             }, () => {
                 stopLoading();
             })
@@ -54,6 +56,7 @@ export default function AfkButtonTool() {
                 stopLoading();
                 track?.mute();
                 disableAudioAccess();
+                busDispatch(__BUS.stopWorkTimer)
             }, ()=> {
                 stopLoading();
             })
@@ -64,7 +67,7 @@ export default function AfkButtonTool() {
   return (
     <CotopiaTooltip title={afk === false ? `Enable AFK` : `Disable AFK`}>
         <CotopiaIconButton className={cn('text-black !rounded-lg', afk === true ? '!bg-yellow-100' : '')} onClick={handleToggleAfk} loading={isLoading}>
-            {afk === true ? <EarOff /> : <Ear />}
+            {afk === true ? <PlayCircle /> : <PauseCircle />}
         </CotopiaIconButton>
     </CotopiaTooltip>
   )
