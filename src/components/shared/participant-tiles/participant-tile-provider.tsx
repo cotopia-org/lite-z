@@ -21,6 +21,7 @@ import { useRoomContext } from "../room/room-context"
 import { getUserFullname } from "@/lib/utils"
 import { ConnectionQuality, Track } from "livekit-client"
 import { UserMinimalType } from "@/types/user"
+import AfkLayer from "./afk"
 
 const UserParticipantTileContext = createContext<{
   ref: ForwardedRef<HTMLDivElement>
@@ -140,6 +141,7 @@ const ParticipantTileProvider = forwardRef<
             trackRef: trackReference,
           }}
         >
+          {targetUser?.status === 'afk' && <AfkLayer />}
           {children}
         </UserParticipantTileContext.Provider>
       </ParticipantContextIfNeeded>

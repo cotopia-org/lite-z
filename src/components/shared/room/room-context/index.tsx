@@ -131,6 +131,20 @@ export default function RoomContext({
     }))
   })
 
+  useSocket('userUpdated', (user) => {
+    setRoom(prev => {
+
+      let newRoom: WorkspaceRoomType = prev as WorkspaceRoomType
+
+      newRoom.participants = newRoom?.participants.map(item => {
+        if ( item.id === user.id) return user
+        return item
+      })
+
+      return newRoom
+    })
+  })
+
   const settings = useSetting()
 
   const { query } = useQueryParams()
@@ -307,6 +321,7 @@ export default function RoomContext({
         workspaceUsers,
         workspaceJobs: workpaceJobItems,
         workingUsers: workingUsers,
+        //@ts-ignore
         onlineUsers: onlineUsers,
         usersHaveJobs: usersHaveJobs,
         usersHaveInProgressJobs: usersHaveInProgressJobs,
