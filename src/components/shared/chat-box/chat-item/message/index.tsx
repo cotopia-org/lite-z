@@ -32,7 +32,7 @@ export default function Message({ item, isMine }: Props) {
       ([entry]) => {
         setIsVisible(entry.isIntersecting);
       },
-      { threshold: 0.5 } // Trigger when 50% of the element is visible
+      { threshold: 0.5 }, // Trigger when 50% of the element is visible
     );
 
     if (divRef.current) {
@@ -66,7 +66,7 @@ export default function Message({ item, isMine }: Props) {
   const linkElement = (
     attributes: { [attr: string]: any },
     content: string,
-    type: "mention" | "link"
+    type: "mention" | "link",
   ) => {
     let clss = "text-blue-600 whitespace-pre-wrap";
     if (type === "link") {
@@ -91,8 +91,8 @@ export default function Message({ item, isMine }: Props) {
 
   return (
     <div
-      className='text-wrap mb-3 w-full'
-      dir='auto'
+      className="text-wrap mb-3 w-full"
+      dir="auto"
       style={{ overflowWrap: "break-word" }}
       ref={divRef}
     >
