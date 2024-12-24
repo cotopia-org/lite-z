@@ -97,14 +97,16 @@ export default function ScheduleButton() {
 }
 
 export function ScheduleFillment({ userId }: { userId?: string | number }) {
-  const { data: fulfillment } = useApi<FetchDataType<FulFillmentType>>(
-    `/users/${userId}/scheduleFulfillment`,
-  );
+  const { data: fulfillment, isLoading } = useApi<
+    FetchDataType<FulFillmentType>
+  >(`/users/${userId}/scheduleFulfillment`);
 
   const fulfillmentData = fulfillment?.data;
   if (fulfillmentData === undefined) return <></>;
   return (
     <div className={"w-full"}>
+      {isLoading && <FullLoading />}
+      Last week schedule fillment
       <div className={"bg-slate-300 h-[4px] rounded-lg"}>
         <div
           className="h-full bg-primary rounded-l-lg"
