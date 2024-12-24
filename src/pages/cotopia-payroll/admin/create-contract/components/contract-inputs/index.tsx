@@ -181,32 +181,43 @@ export default function PayrollContractInputs({
         onSelect={(item) => setFieldValue("contractor_status", item.value)}
         triggerClassName="h-10"
       />
-
-      <CotopiaInput
-        {...getFieldProps("min_hours")}
-        placeholder="Enter minimum hours"
-        label="Min Hours"
-        type="number"
-        hasError={!!touched.min_hours && !!errors.min_hours}
-        helperText={
-          touched.min_hours && typeof errors.min_hours === "string"
-            ? errors.min_hours
-            : ""
-        }
+      <CotopiaSwitch
+        label="Has min hours and max hours?"
+        checked={values?.has_min_and_max}
+        onCheckedChange={(value) => {
+          setFieldValue("has_min_and_max", value === true);
+        }}
+        className="flex-col-reverse gap-y-4 [&_label]:font-bold [&_label]:text-base items-start"
       />
+      {values?.has_min_and_max === true && (
+        <>
+          <CotopiaInput
+            {...getFieldProps("min_hours")}
+            placeholder="Enter minimum hours"
+            label="Min Hours"
+            type="number"
+            hasError={!!touched.min_hours && !!errors.min_hours}
+            helperText={
+              touched.min_hours && typeof errors.min_hours === "string"
+                ? errors.min_hours
+                : ""
+            }
+          />
 
-      <CotopiaInput
-        {...getFieldProps("max_hours")}
-        placeholder="Enter maximum hours"
-        label="Max Hours"
-        type="number"
-        hasError={!!touched.max_hours && !!errors.max_hours}
-        helperText={
-          touched.max_hours && typeof errors.max_hours === "string"
-            ? errors.max_hours
-            : ""
-        }
-      />
+          <CotopiaInput
+            {...getFieldProps("max_hours")}
+            placeholder="Enter maximum hours"
+            label="Max Hours"
+            type="number"
+            hasError={!!touched.max_hours && !!errors.max_hours}
+            helperText={
+              touched.max_hours && typeof errors.max_hours === "string"
+                ? errors.max_hours
+                : ""
+            }
+          />
+        </>
+      )}
 
       <CotopiaDropdown
         items={[
@@ -271,7 +282,7 @@ export default function PayrollContractInputs({
       />
 
       <CotopiaSwitch
-        label="User must be online on schedule?"
+        label="Time just counted in schedule times?"
         checked={values?.in_schedule === 1}
         onCheckedChange={(value) => {
           setFieldValue("in_schedule", value === true ? 1 : 0);
