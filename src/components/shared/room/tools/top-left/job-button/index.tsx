@@ -129,7 +129,10 @@ export default function JobButton() {
                     user={user}
                     hasAction
                     items={suggestItems}
-                    onMutate={mutateSuggest}
+                    onMutate={() => {
+                      mutateSuggest();
+                      mutate();
+                    }}
                     suggested={true}
                     parentJobs={isUserAdmin(user) ? jobItems : suggestItems}
                   />
