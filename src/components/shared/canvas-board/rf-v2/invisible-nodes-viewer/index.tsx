@@ -9,6 +9,10 @@ export type InvisibleNodeType = {
   delta_x_prime: number
   delta_y_prime: number
   delta_y?: number
+  coverCenter: {
+    x: number
+    y: number
+  }
   coveringArea: {
     x: { from: number; to: number }
     y: { from: number; to: number }
@@ -24,7 +28,7 @@ type Props = {
 
 const InvisibleNodesViewer = ({ invisibleNodes }: Props) => {
   return (
-    <div className="viewport-overlay overflow-hidden top-[70px] left-[16px] right-[16px] bottom-[85px] absolute">
+    <div className="viewport-overlay overflow-hidden top-[0px] left-[16px] right-[16px] bottom-[0px] absolute">
       {invisibleNodes.map((n) => {
         return <InvisibleNode key={n.node.id} node={n} />
       })}

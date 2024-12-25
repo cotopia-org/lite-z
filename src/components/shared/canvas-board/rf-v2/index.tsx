@@ -34,7 +34,7 @@ import InvisibleNodesViewer, {
   InvisibleNodeType,
 } from "./invisible-nodes-viewer"
 
-const userNodeBound = 94
+const userNodeBound = 86
 
 enum RoomRfNodeType {
   shareScreenNode = "shareScreenNode",
@@ -537,6 +537,10 @@ export default function WithReactFlowV2() {
         x: { from: properX, to: properX + properWidth },
         y: { from: properY, to: properY + properHeight },
       }
+      const coverCenter = {
+        x: properX + properWidth / 2,
+        y: properY + properHeight / 2,
+      }
       if (!user) return
       const nodes = rf?.current?.getNodes() || []
       const user_nodes = nodes.filter(
@@ -580,7 +584,9 @@ export default function WithReactFlowV2() {
             )
             delta_y = Math.floor(itemPositionY - coveringArea.y.from)
           } else if (inTheTopSide) {
-            delta_x = Math.floor(itemPositionX - coveringArea.x.from)
+            delta_x = Math.floor(
+              itemPositionX + userNodeHeight - coveringArea.x.from
+            )
             delta_y = Math.floor(
               itemPositionY + userNodeHeight - coveringArea.y.from
             )
@@ -600,9 +606,11 @@ export default function WithReactFlowV2() {
             invisible_side: dir,
             delta_x,
             delta_y,
+            zoom: viewport.zoom,
             delta_x_prime,
             delta_y_prime,
             coveringArea,
+            coverCenter,
             itemPositionX,
             itemPositionY,
             nodeHeight: userNodeHeight,
