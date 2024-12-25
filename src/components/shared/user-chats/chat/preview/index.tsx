@@ -5,6 +5,13 @@ import UnSeenMessages from "./un-seen-messages";
 import { useChat } from "..";
 import useAuth from "@/hooks/auth";
 import MentionedMessages from "./mentioned-messages";
+import RightClickActions from "@/components/shared/chat-box-2/items/item/right-click-actions";
+import Reactions from "@/components/shared/chat-box-2/items/item/right-click-actions/reactions";
+import MenuItems from "@/components/shared/chat-box-2/items/item/right-click-actions/menu-items";
+import CotopiaContextMenu from "@/components/shared-ui/c-context-menu";
+import { cn } from "@/lib/utils";
+import ChatUserOverView from "@/components/shared/chat-box-2/items/item/user-overview";
+import ChatItemContent from "@/components/shared/chat-box-2/items/item/content";
 
 export default function ChatPreview() {
   const { user } = useAuth();
@@ -14,7 +21,7 @@ export default function ChatPreview() {
   const isDirectChat = chat.participants.length === 2;
 
   return (
-    <div className='flex flex-row items-center gap-x-2 w-full'>
+    <div className="flex flex-row items-center gap-x-2 w-full">
       <CotopiaAvatar
         src={
           isDirectChat
@@ -33,7 +40,8 @@ export default function ChatPreview() {
         }
         description={chat?.last_message?.text}
       />
-      <div className='flex flex-row gap-x-1 items-center absolute bottom-2 right-2'>
+
+      <div className="flex flex-row gap-x-1 items-center absolute bottom-2 right-2">
         <MentionedMessages />
         <UnSeenMessages />
       </div>

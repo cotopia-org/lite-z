@@ -58,7 +58,8 @@ function generateTempChat({
     is_delivered: false,
     is_rejected: false,
     is_pending: false,
-  }
+    translated_text: null,
+  };
 
   if (reply) {
     object["reply_to"] = reply;
@@ -81,7 +82,7 @@ export const useChat2 = (props?: {
   const socket = useSocket();
 
   const { chats, error, loading, currentChat } = useAppSelector(
-    (store) => store.chat
+    (store) => store.chat,
   );
 
   //current reply message
@@ -102,23 +103,21 @@ export const useChat2 = (props?: {
   const dispatch = useAppDispatch();
 
   useSocket("updateMessage", (data: Chat2ItemType) =>
-    console.log("data", data)
+    console.log("data", data),
   );
 
   const seenFn = async (message: Chat2ItemType, onSuccess?: () => void) => {
     const lastMessage = chats[message.chat_id].object.last_message;
 
-    await axiosInstance.get(`/messages/${message.id}/seen`)
+    await axiosInstance.get(`/messages/${message.id}/seen`);
 
     dispatch(
       seenMessage({
         chat_id: message.chat_id,
         nonce_id: message.nonce_id,
         user_id: (user as UserType)?.id,
-      })
+      }),
     );
-
-    
 
     if (
       message?.mentions?.length > 0 &&
@@ -129,12 +128,11 @@ export const useChat2 = (props?: {
 
     //Because seening the last message means you've seen all messages before
     if (message.id === lastMessage?.id) {
-      dispatch(seenAllMessages({ chat_id: message.chat_id,  user_id: user.id }));
+      dispatch(seenAllMessages({ chat_id: message.chat_id, user_id: user.id }));
     }
 
     if (onSuccess) onSuccess();
   };
-  
 
   const send = async (
     {
@@ -150,10 +148,9 @@ export const useChat2 = (props?: {
       seen?: boolean;
       reply?: Chat2ItemType;
     },
-    onSuccess?: () => void
+    onSuccess?: () => void,
   ) => {
-
-    if ( !text ) return
+    if (!text) return;
 
     const mentions = extractMentions(text);
     const currentChatMembers = currentChat?.participants ?? [];
@@ -170,7 +167,7 @@ export const useChat2 = (props?: {
       user_id: (user as UserType)?.id,
       text,
       reply,
-    })
+    });
 
     const sendObject = { ...message, mentions: properMentions, seen };
 
@@ -180,12 +177,21 @@ export const useChat2 = (props?: {
       sendObject["reply_to"] = reply;
     }
 
-    dispatch(addMessage({...sendObject, is_delivered: false, is_pending: true, is_rejected: false}));
+    dispatch(
+      addMessage({
+        ...sendObject,
+        is_delivered: false,
+        is_pending: true,
+        is_rejected: false,
+      }),
+    );
 
     //Clear reply message
     if (currentChat && reply) dispatch(clearReplyMessage(currentChat?.id));
 
-    const recievedMessageFromServerRes = await axiosInstance.post<FetchDataType<MessageType>>(`/messages`, {
+    const recievedMessageFromServerRes = await axiosInstance.post<
+      FetchDataType<MessageType>
+    >(`/messages`, {
       text: sendObject.text,
       chat_id: sendObject.chat_id,
       nonce_id: sendObject.nonce_id,
@@ -193,11 +199,18 @@ export const useChat2 = (props?: {
       links: sendObject.links,
       reply_to: sendObject?.reply_to,
       reply_id: sendObject?.reply_to?.id,
-    })
+    });
 
-    const recievedMessageFromServer = recievedMessageFromServerRes?.data?.data
+    const recievedMessageFromServer = recievedMessageFromServerRes?.data?.data;
 
-    dispatch(updateMessage({...recievedMessageFromServer, is_delivered: true, is_pending: false, is_rejected: false}))
+    dispatch(
+      updateMessage({
+        ...recievedMessageFromServer,
+        is_delivered: true,
+        is_pending: false,
+        is_rejected: false,
+      }),
+    );
 
     // socket?.emit(
     //   "sendMessage",
@@ -223,12 +236,11 @@ export const useChat2 = (props?: {
       text: string;
       links?: any[];
     },
-    onSuccess?: () => void
+    onSuccess?: () => void,
   ) => {
+    if (!editMessage) return;
 
-    if ( !editMessage)return
-
-    if ( !text ) return
+    if (!text) return;
 
     const mentions = extractMentions(text);
     const currentChatMembers = currentChat?.participants ?? [];
@@ -239,26 +251,33 @@ export const useChat2 = (props?: {
       model_id: currentChatMembers.find((a) => a.username === x.user)?.id,
     }));
 
+    const sendObject = { text, mentions: properMentions, links };
 
-    const sendObject = {text, mentions: properMentions, links}
-
-    const recievedMessageFromServerRes = await axiosInstance.put<FetchDataType<MessageType>>(`/messages/${editMessage?.id}`, {
+    const recievedMessageFromServerRes = await axiosInstance.put<
+      FetchDataType<MessageType>
+    >(`/messages/${editMessage?.id}`, {
       text: sendObject.text,
       mentions: sendObject.mentions,
       links: sendObject.links,
-    })
+    });
 
-    const recievedMessageFromServer = recievedMessageFromServerRes?.data?.data
+    const recievedMessageFromServer = recievedMessageFromServerRes?.data?.data;
 
-    dispatch(updateMessage({...recievedMessageFromServer, is_delivered: true, is_pending: false, is_rejected: false}))
+    dispatch(
+      updateMessage({
+        ...recievedMessageFromServer,
+        is_delivered: true,
+        is_pending: false,
+        is_rejected: false,
+      }),
+    );
 
-    dispatch(clearEditMessage(editMessage?.chat_id))
+    dispatch(clearEditMessage(editMessage?.chat_id));
 
     if (onSuccess) onSuccess();
 
     return recievedMessageFromServer;
-
-  }
+  };
 
   const deleteFn = (message: Chat2ItemType) => {
     socket?.emit(
@@ -266,7 +285,7 @@ export const useChat2 = (props?: {
       { chat_id: message.chat_id, nonce_id: message.nonce_id },
       () => {
         dispatch(deleteMessage(message));
-      }
+      },
     );
   };
 
@@ -276,7 +295,7 @@ export const useChat2 = (props?: {
     socket?.emit(
       "pinMessage",
       { chat_id: message.chat_id, nonce_id: message.nonce_id },
-      () => {}
+      () => {},
     );
   };
 
@@ -286,7 +305,7 @@ export const useChat2 = (props?: {
     socket?.emit(
       "pinMessage",
       { chat_id: message.chat_id, nonce_id: message.nonce_id },
-      () => {}
+      () => {},
     );
   };
 
@@ -296,7 +315,7 @@ export const useChat2 = (props?: {
     socket?.emit(
       "unPinMessage",
       { chat_id: message.chat_id, nonce_id: message.nonce_id },
-      () => {}
+      () => {},
     );
   };
 
@@ -319,10 +338,10 @@ export const useChat2 = (props?: {
           chat_id: data.chat_id,
           nonce_id: data.nonce_id,
           user_id: (user as UserType).id,
-        })
+        }),
       );
     },
-    [user?.id]
+    [user?.id],
   );
 
   const chatKeys = Object.keys(chats);

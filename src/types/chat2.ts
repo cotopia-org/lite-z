@@ -15,5 +15,6 @@ export type ChatType = {
   pinned_messages: MessageType[];
   title: string;
   unseens: number;
+  muted: boolean;
   workspace_id: string;
 };

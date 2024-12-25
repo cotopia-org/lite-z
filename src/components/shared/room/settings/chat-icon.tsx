@@ -7,6 +7,7 @@ import { useMemo } from "react";
 
 export default function ChatIcon() {
   const { chats: arrayChats } = useChat2();
+
   const hasMentionedChat = !!arrayChats.find((x) => x.mentioned_messages > 0);
 
   const { chats } = useAppSelector((store) => store.chat);
@@ -21,7 +22,9 @@ export default function ChatIcon() {
     for (let chatId of chatKeys) {
       const chat = chats[chatId];
 
-      sum += chat.object.unseens;
+      if (!chat.object.muted) {
+        sum += chat.object.unseens;
+      }
     }
 
     return sum;
