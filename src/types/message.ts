@@ -13,9 +13,10 @@ export type MessageType = {
   mentions: any[];
   nonce_id: number;
   reply_to: Chat2ItemType;
-  reply_id?: number
+  reply_id?: number;
   seens: number[];
   text: string;
+  translated_text?: string | null;
   updated_at: number;
   user: number;
   user_id?: number;

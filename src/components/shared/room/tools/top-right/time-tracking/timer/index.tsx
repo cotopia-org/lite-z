@@ -9,6 +9,7 @@ type Props = {
   id?: string;
   stop?: boolean;
   short?: boolean;
+  defaultStatus?: "normal" | "stopped";
 };
 
 export default function Timer({
@@ -17,8 +18,9 @@ export default function Timer({
   id,
   stop = false,
   short = false,
+  defaultStatus = "normal",
 }: Props) {
-  const [status, setStatus] = useState<"normal" | "stopped">("normal");
+  const [status, setStatus] = useState<"normal" | "stopped">(defaultStatus);
 
   let timer: NodeJS.Timeout;
 
@@ -44,26 +46,8 @@ export default function Timer({
     return () => stopTimer();
   }, [stop]);
 
-  useBus(
-    __BUS.stopWorkTimer,
-    (evt) => {
-      if (evt.id === id) stopTimer();
-      setStatus("stopped");
-    },
-    [id]
-  );
-
-  useBus(
-    __BUS.startWorkTimer,
-    (evt) => {
-      if (evt.id === id) startTimer();
-      setStatus("normal");
-    },
-    [id]
-  );
-
   return (
-    <span className={cn(status === "stopped" ? "text-red-600" : "")}>
+    <span className={cn(stop && status === "stopped" ? "text-red-600" : "")}>
       {children(convertMinutesToHHMMSS((seconds ?? 0) / 60, short))}
     </span>
   );

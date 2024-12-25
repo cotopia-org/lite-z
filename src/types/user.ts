@@ -48,6 +48,7 @@ export type UserMinimalType = {
   screenshare_size: null | string;
   schedule_hours_in_week?: number;
   total_minutes?: number;
+  status?: string
 };
 
 export type WorkspaceUserType = {

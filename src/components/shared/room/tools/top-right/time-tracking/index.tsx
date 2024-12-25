@@ -14,17 +14,25 @@ import UserJobList from "@/components/shared/room/participant-detail/details/job
 import { UserType } from "@/types/user"
 import CotopiaIconButton from "@/components/shared-ui/c-icon-button"
 import { ArrowLeft } from "lucide-react"
+import useBus from "use-bus"
+import { __BUS } from "@/const/bus"
 
 export default function TimeTrackingButtonTool() {
   const [seconds, setSeconds] = useState<undefined | number>()
+  const [stop, setStop] = useState<boolean>(false)
 
   const { startLoading, stopLoading, isLoading } = useLoading()
   const getActivityTime = () => {
     startLoading()
     axiosInstance
-      .get(urlWithQueryParams(`/users/activities`, { period: "today" }))
+      .get(
+        urlWithQueryParams(`/users/activities`, { period: "today", new: true })
+      )
       .then((res) => {
-        const mins = res.data.data
+        const mins = res.data.data.minutes
+        if (!res.data.data.time_count) {
+          setStop(true)
+        }
         setSeconds(mins * 60)
         stopLoading()
       })
@@ -35,6 +43,14 @@ export default function TimeTrackingButtonTool() {
   useEffect(() => {
     getActivityTime()
   }, [])
+
+  useBus(__BUS.stopWorkTimer, (evt) => {
+    setStop(true)
+  })
+
+  useBus(__BUS.startWorkTimer, (evt) => {
+    setStop(false)
+  })
 
   const { workspace_id, workspaceUsers } = useRoomContext()
 
@@ -92,6 +108,7 @@ export default function TimeTrackingButtonTool() {
           defaultSeconds={seconds ?? 0}
           onClick={open}
           isLoading={isLoading}
+          stop={stop}
         />
       )}
     >

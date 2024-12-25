@@ -7,6 +7,7 @@ import { VARZ } from "@/const/varz"
 import { UserMinimalType, WorkspaceUserType } from "@/types/user"
 import { useReactFlow } from "@xyflow/react"
 import { AudioTrack } from "./audio-track"
+import { useRoomContext } from "../../room/room-context"
 
 /** @public */
 export interface CanvasAudioRendererProps {
@@ -37,7 +38,10 @@ export interface CanvasAudioRendererProps {
 export function CanvasAudioRenderer() {
   const rf = useReactFlow()
 
+  const {room} = useRoomContext()
   const { user } = useAuth()
+
+  const userNode = room?.participants?.find(a => a.id === user?.id)
 
   const tracks = useTracks(
     [
@@ -65,6 +69,8 @@ export function CanvasAudioRenderer() {
 
         const trackOwner = rf.getNode(trackRef?.participant?.identity)
 
+        const trackUser = room?.participants?.find(a => a.username === trackRef?.participant?.identity)
+
         if (trackOwner === undefined) return
 
         const { meet } = doCirclesMeetRaw(
@@ -78,6 +84,8 @@ export function CanvasAudioRenderer() {
         let isMuted = !meet
 
         if (meet) volume = 1
+
+        if ( userNode?.status === 'afk' ) volume = 0 
 
         return (
           <AudioTrack

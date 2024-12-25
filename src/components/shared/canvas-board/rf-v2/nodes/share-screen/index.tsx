@@ -22,7 +22,6 @@ function ShareScreenNode({ data }: any) {
   const alltracks = useTracks()
 
   const targetTrack = alltracks.find((track) => {
-    console.log(track, data?.livekit?.track?.source, "inner track")
     return (
       track.source?.toLowerCase() ===
         data?.livekit?.track?.source?.toLowerCase() &&

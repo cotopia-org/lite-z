@@ -1,5 +1,6 @@
 import { VARZ } from "@/const/varz"
-import { Node } from "@xyflow/react"
+import { UserMinimalType } from "@/types/user"
+import { Node, Viewport } from "@xyflow/react"
 
 export const thunkResHandler = (
   thunkRes: Promise<any>,
@@ -14,6 +15,26 @@ export const thunkResHandler = (
       onError(res)
     }
   })
+}
+
+function doLinesIntersect(
+  p1: { x: number; y: number },
+  p2: { x: number; y: number },
+  p3: { x: number; y: number },
+  p4: { x: number; y: number }
+): boolean {
+  const orientation = (
+    a: { x: number; y: number },
+    b: { x: number; y: number },
+    c: { x: number; y: number }
+  ) => (b.y - a.y) * (c.x - b.x) - (b.x - a.x) * (c.y - b.y)
+
+  const o1 = orientation(p1, p2, p3)
+  const o2 = orientation(p1, p2, p4)
+  const o3 = orientation(p3, p4, p1)
+  const o4 = orientation(p3, p4, p2)
+
+  return o1 * o2 < 0 && o3 * o4 < 0
 }
 
 export const checkNodesCollision = (
@@ -124,7 +145,6 @@ export const checkNodesCollision = (
     const max_y = jail_y + jail_h
     const max_x = jail_x + jail_w
 
-    console.log(max_x, max_y, final_x, final_y)
     if (final_x <= jail_x) {
       final_x = jail_x + my_node_measure_w
       final_y = final_y + my_node_measure_w
@@ -144,4 +164,208 @@ export const checkNodesCollision = (
   }
 
   return { x_position: final_x, y_position: final_y, distance, has_collied }
+}
+
+function isLineIntersectingRectangle(
+  rect: Viewport & { width: number; height: number },
+  lineStart: { x: number; y: number },
+  lineEnd: { x: number; y: number }
+): boolean {
+  //define four sides of rectangle
+
+  const rectLines = [
+    {
+      start: { x: rect.x, y: rect.y },
+      end: { x: rect.x + rect.width, y: rect.y },
+    },
+    {
+      start: { x: rect.x, y: rect.y },
+      end: { x: rect.x, y: rect.y + rect.height },
+    },
+    {
+      start: { x: rect.x + rect.width, y: rect.y },
+      end: {
+        x: rect.x + rect.width,
+        y: rect.y + rect.height,
+      },
+    },
+    {
+      start: { x: rect.x, y: rect.y + rect.height },
+      end: {
+        x: rect.x + rect.width,
+        y: rect.y + rect.height,
+      },
+    },
+  ]
+
+  return rectLines.some(({ start, end }) => {
+    return doLinesIntersect(lineStart, lineEnd, start, end)
+  })
+}
+
+// function checkNodesInViewport(
+//   viewport: Viewport & { width: number; height: number },
+//   nodes: Node[]
+// ) {
+//   const viewportCenter = {
+//     x: viewport.x + viewport.width / 2,
+//     y: viewport.y + viewport.height / 2,
+//   }
+
+//   return nodes.map((node) => {
+//     const nodeCenter = {
+//       x: node.position.x + (node.measured?.width ?? 94) / 2,
+//       y: node.position.y + (node.measured?.height ?? 94) / 2,
+//     }
+
+//     const intersects = isLineIntersectingRectangle(
+//       viewport,
+//       viewportCenter,
+//       nodeCenter
+//     )
+
+//     return {
+//       node,
+//       isOutside: intersects,
+//     }
+//   })
+// }
+
+const checkNodesInViewport = () => {}
+
+const doesLineIntersectRectangle = (
+  rect: Viewport & { width: number; height: number },
+  lineStart: { x: number; y: number },
+  lineEnd: { x: number; y: number }
+) => {
+  const { x: rx, y: ry, width, height } = rect
+
+  // مختصات چهار ضلع مستطیل
+  const left = rx // ضلع چپ
+  const right = rx + width // ضلع راست
+  const top = ry // ضلع بالا
+  const bottom = ry + height // ضلع پایین
+
+  // تابع محاسبه y بر اساس x
+  const getY = (x: number, x1: number, y1: number, x2: number, y2: number) =>
+    y1 + ((y2 - y1) * (x - x1)) / (x2 - x1)
+
+  // تابع محاسبه x بر اساس y
+  const getX = (y: number, x1: number, y1: number, x2: number, y2: number) =>
+    x1 + ((x2 - x1) * (y - y1)) / (y2 - y1)
+
+  // بررسی تقاطع با اضلاع مستطیل
+  const intersectsTop = getX(
+    top,
+    lineStart.x,
+    lineStart.y,
+    lineEnd.x,
+    lineEnd.y
+  ) // تقاطع با ضلع بالا
+  const intersectsBottom = getX(
+    bottom,
+    lineStart.x,
+    lineStart.y,
+    lineEnd.x,
+    lineEnd.y
+  ) // تقاطع با ضلع پایین
+  const intersectsLeft = getY(
+    left,
+    lineStart.x,
+    lineStart.y,
+    lineEnd.x,
+    lineEnd.y
+  ) // تقاطع با ضلع چپ
+  const intersectsRight = getY(
+    right,
+    lineStart.x,
+    lineStart.y,
+    lineEnd.x,
+    lineEnd.y
+  ) // تقاطع با ضلع راست
+
+  // بررسی اینکه نقاط تقاطع در بازه اضلاع مستطیل قرار دارند یا نه
+  const topInBounds = intersectsTop >= left && intersectsTop <= right // داخل بازه ضلع بالا
+  const bottomInBounds = intersectsBottom >= left && intersectsBottom <= right // داخل بازه ضلع پایین
+  const leftInBounds = intersectsLeft >= top && intersectsLeft <= bottom // داخل بازه ضلع چپ
+  const rightInBounds = intersectsRight >= top && intersectsRight <= bottom // داخل بازه ضلع راست
+
+  // آیا خط با مستطیل برخورد دارد؟
+  return topInBounds || bottomInBounds || leftInBounds || rightInBounds
+}
+export const getExternalNodesFromViewport = (
+  user: UserMinimalType,
+  viewport: Viewport & { width: number; height: number },
+  nodes: Node[]
+) => {
+  let vx = viewport.x
+  let vy = viewport.y
+  let zoom = viewport.zoom
+  const v_mutable_x = Math.abs(vx)
+  const v_mutable_y = Math.abs(vy)
+
+  let final_nodes = nodes.map((n) => {
+    const is_my_account = n.id === user.username
+    //check applying scaling user that we setted 0.6 to user width and height if thats not my user
+    const z_width = n.measured?.width ?? 94 * zoom
+    const z_height = n.measured?.height ?? 94 * zoom
+    return {
+      ...n,
+      position: { x: n.position.x * zoom, y: n.position.y * zoom },
+      measured: {
+        width: !is_my_account ? z_width * 0.6 : z_width,
+        heigth: !is_my_account ? z_height * 0.6 : z_height,
+      },
+    }
+  })
+
+  let internal_nodes: Node[] = []
+
+  for (let node of final_nodes) {
+    const v_center = {
+      x: viewport.x + viewport.width / 2,
+      y: viewport.y + viewport.height / 2,
+    }
+    const target_center = {
+      x: node.position.x + node.measured.width / 2,
+      y: node.position.y + node.measured.heigth / 2,
+    }
+
+    console.log(
+      node.position.x,
+      node.measured.width,
+      v_mutable_x,
+      viewport.width,
+      v_mutable_x + viewport.width,
+      node.id,
+      "node_"
+    )
+
+    const outside_left = node.position.x + node.measured.width < v_mutable_x
+    const outside_right = node.position.x > v_mutable_x + viewport.width
+    const outside_top = node.position.y + node.measured.heigth < v_mutable_y
+    const outside_bottom = node.position.y > v_mutable_y + viewport.height
+
+    console.log(outside_bottom, outside_left, outside_top, outside_right)
+
+    if (!outside_left && !outside_right && !outside_top && !outside_bottom) {
+      internal_nodes.push(node)
+    }
+
+    // const has_collision = doesLineIntersectRectangle(
+    //   { ...viewport, x: mutable_x, y: mutable_y },
+    //   v_center,
+    //   target_center
+    // )
+    // if (has_collision) {
+    //   internal_nodes.push(node)
+    // }
+  }
+
+  return internal_nodes
+
+  // return checkNodesInViewport(
+  //   { ...viewport, x: mutable_x, y: mutable_y, zoom },
+  //   final_nodes
+  // )
 }

@@ -50,12 +50,12 @@ const RfUserTileContent = ({ meet }: Props) => {
           <CotopiaAvatar
             className="absolute top-0 left-0 w-full h-full z-[1]"
             src={targetUser?.avatar?.url ?? ""}
-            title={userFullName?.[0] ?? livekitIdentity?.[0]}
+            title={targetUser?.status === 'afk' ? "" : userFullName?.[0] ?? livekitIdentity?.[0]}
           />
         )}
         {trackContent}
       </div>
-      <RfUserTileActions />
+      {targetUser?.status !== 'afk' && <RfUserTileActions />}
     </div>
   )
 }

@@ -77,7 +77,6 @@ const GridRoomView = (props: Props) => {
   useBus(
     __BUS.initRoomParticipantsOnRf,
     (data: any) => {
-      console.log(data, "JOIN DATA")
       //update participants when somebody join into the room
       const participants: UserMinimalType[] = data?.participants || []
       setNodes(

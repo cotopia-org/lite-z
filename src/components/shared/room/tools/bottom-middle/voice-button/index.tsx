@@ -6,8 +6,13 @@ import StreamButton from "../stream-button"
 import { MicIcon, MicOffIcon } from "@/components/icons"
 import { useCallback, useEffect, useState } from "react"
 import { colors } from "@/const/varz"
+import useAuth from "@/hooks/auth"
+import { useSocket } from "@/routes/private-wrarpper"
 
 export default function VoiceButtonTool() {
+
+  const {user} = useAuth()
+
   const [navPermission, setNavPermission] = useState(true)
 
   const {
@@ -57,6 +62,17 @@ export default function VoiceButtonTool() {
     navPermission,
     track,
   ])
+
+  useSocket('userUpdated', (updatedUser) => {
+
+    if ( track === undefined) return
+
+    if ( updatedUser.id === user.id && updatedUser.status === 'afk' ) {
+      track.mute()
+      track.stop()
+      disableAudioAccess()
+    }
+  }, [track, user?.id])
 
   useEffect(() => {
     navigator.permissions.query({ name: "microphone" } as any).then((res) => {

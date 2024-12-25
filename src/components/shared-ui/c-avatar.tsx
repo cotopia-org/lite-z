@@ -14,7 +14,9 @@ export default function CotopiaAvatar({ title, src, ...rest }: Props) {
         className="object-cover object-center"
         src={src}
       />
-      <AvatarFallback className="uppercase">{title}</AvatarFallback>
+      <AvatarFallback className="avatar-fallback uppercase">
+        {title}
+      </AvatarFallback>
     </Avatar>
   )
 }
