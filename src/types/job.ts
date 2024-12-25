@@ -29,6 +29,7 @@ export type JobType = {
   job_id: number;
   level: number;
   old: boolean;
+  joinable: number;
   role?: string;
   total_minutes?: number;
 

@@ -18,6 +18,7 @@ import { MentionType } from "@/types/mention";
 import * as Yup from "yup";
 import { toast } from "sonner";
 import FullLoading from "@/components/shared/full-loading";
+import CotopiaSwitch from "@/components/shared-ui/c-switch";
 
 type Props = {
   workspace_id: string | undefined;
@@ -58,6 +59,7 @@ export default function CreateJob({
     estimate?: number;
     job_id?: number;
     mentions: MentionType[];
+    joinable: number;
   }>({
     enableReinitialize: true,
     initialValues: {
@@ -67,6 +69,7 @@ export default function CreateJob({
       estimate: 1,
       job_id: undefined,
       mentions: [],
+      joinable: 1,
     },
     validationSchema: Yup.object().shape({
       title: Yup.string().required("please enter job title"),
@@ -77,7 +80,13 @@ export default function CreateJob({
 
       try {
         let payload: {
-          [key: string]: string | number | undefined | number[] | MentionType[];
+          [key: string]:
+            | string
+            | number
+            | undefined
+            | number[]
+            | boolean
+            | MentionType[];
         } = {
           ...rest,
           workspace_id: workspace_id,
@@ -150,6 +159,7 @@ export default function CreateJob({
                   />
                 )}
               </TitleEl>
+
               <TitleEl title="Title">
                 <CotopiaInput
                   {...getFieldProps("title")}
@@ -197,7 +207,14 @@ export default function CreateJob({
                   }}
                 />
               </TitleEl>
-
+              <CotopiaSwitch
+                label="Parent Only? (No one can accept this job, it only can used as parent)"
+                checked={values?.joinable === 0}
+                onCheckedChange={(value) => {
+                  setFieldValue("joinable", value === true ? 0 : 1);
+                }}
+                className="flex-col-reverse gap-y-4 [&_label]:font-bold [&_label]:text-base items-start"
+              />
               <div className="flex flex-row justify-between w-full gap-x-8">
                 <div className="flex items-center w-full justify-end gap-x-2">
                   <CotopiaButton

@@ -40,6 +40,7 @@ import { useFormik } from "formik";
 import { MentionType } from "@/types/mention";
 import * as Yup from "yup";
 import { toast } from "sonner";
+import CotopiaSwitch from "@/components/shared-ui/c-switch";
 
 type Props = {
   job: JobType;
@@ -80,6 +81,7 @@ export default function EditJob({
     estimate?: number;
     job_id?: number;
     mentions: MentionType[];
+    joinable: number;
   }>({
     enableReinitialize: true,
     initialValues: {
@@ -89,6 +91,7 @@ export default function EditJob({
       estimate: job ? job.estimate : undefined,
       job_id: job ? job.parent?.id : undefined,
       mentions: job ? job.mentions : [],
+      joinable: job ? job.joinable : 1,
     },
     validationSchema: Yup.object().shape({
       title: Yup.string().required("please enter job title"),
@@ -212,7 +215,14 @@ export default function EditJob({
                   }}
                 />
               </TitleEl>
-
+              <CotopiaSwitch
+                label="Parent Only? (No one can accept this job, it only can used as parent)"
+                checked={values?.joinable === 0}
+                onCheckedChange={(value) => {
+                  setFieldValue("joinable", value === true ? 0 : 1);
+                }}
+                className="flex-col-reverse gap-y-4 [&_label]:font-bold [&_label]:text-base items-start"
+              />
               <div className="flex flex-row justify-between w-full gap-x-8">
                 <div className="flex items-center w-full justify-end gap-x-2">
                   <CotopiaButton
