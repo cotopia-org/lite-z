@@ -65,34 +65,11 @@ export default function Search({
 
   const result: SearchType[] = data !== undefined ? data?.data : [];
   return (
-    <div className={"w-full flex flex-col gap-y-2"}>
-      {selected.length > 0 && (
-        <div className={"flex flex-wrap gap-1"}>
-          {selected.map((item) => {
-            return (
-              <StatusBox
-                label={
-                  <div className={"flex flex-row gap-x-1 items-center"}>
-                    <span>{item.title}</span>
-
-                    <X
-                      onClick={() => {
-                        handleRemoveSelect(item);
-                      }}
-                      color={"red"}
-                      size={10}
-                    />
-                  </div>
-                }
-              />
-            );
-          })}
-        </div>
-      )}
+    <div className={"w-full flex flex-col gap-y-2 relative"}>
       {q.length >= 3 && (
         <div
           className={
-            "border border-black rounded flex   p-1 flex-col divide-y gap-y-2"
+            "border border-black rounded flex w-full   p-1 flex-col divide-y gap-y-2 absolute bottom-20 z-20 bg-white"
           }
         >
           {result.map((item) => {
@@ -125,6 +102,29 @@ export default function Search({
           placeholder="Search..."
         />
       </div>
+      {selected.length > 0 && (
+        <div className={"flex flex-wrap gap-1 "}>
+          {selected.map((item) => {
+            return (
+              <StatusBox
+                label={
+                  <div className={"flex flex-row gap-x-1 items-center"}>
+                    <span>{item.title}</span>
+
+                    <X
+                      onClick={() => {
+                        handleRemoveSelect(item);
+                      }}
+                      color={"red"}
+                      size={10}
+                    />
+                  </div>
+                }
+              />
+            );
+          })}
+        </div>
+      )}
     </div>
   );
 }

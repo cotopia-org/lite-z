@@ -61,8 +61,8 @@ export default function RoomSettings() {
 
     const targetChat = chatObjects?.[newMessage.chat_id]
 
-    if ( newMessage.user !== user.id)
-    dispatch(upcommingMessage({message: {...newMessage, is_delivered: true,is_pending: false, is_rejected: false}}))
+    if ( newMessage.user !== user.id && targetChat)
+      dispatch(upcommingMessage({message: {...newMessage, is_delivered: true,is_pending: false, is_rejected: false}}))
 
     if (newMessage?.mentions?.length > 0) {
         const myUserMentioned = !!newMessage.mentions.find(
@@ -80,7 +80,7 @@ export default function RoomSettings() {
       const chatMessagesRes = await axiosInstance.get<FetchDataType<MessageType[]>>(`/chats/${newMessage.chat_id}/messages`);
       const chatObject = chatObjectRes?.data?.data
       const chatObjectMessags = chatMessagesRes?.data?.data ?? []
-      dispatch(addNewChat(chatObject))
+      dispatch(addNewChat({...chatObject, unseens: 1}))
       dispatch(setChatMessages(chatObjectMessags.map(item => ({...item, is_delivered: true,is_pending: false, is_rejected: false}))))
 
     } else {

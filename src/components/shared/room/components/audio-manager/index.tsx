@@ -1,13 +1,10 @@
 import { useParticipants } from "@livekit/components-react";
 import { useRoomContext } from "../../room-context";
-import { UserMinimalType } from "@/types/user";
 import { useSocket } from "@/routes/private-wrarpper";
 import { __BUS } from "@/const/bus";
-import { Node, useReactFlow, XYPosition } from "@xyflow/react";
-import { useState } from "react";
+import {  useReactFlow, XYPosition } from "@xyflow/react";
 import { updateCoordinatesEvent } from "@/types/socket";
 import useAuth from "@/hooks/auth";
-import { getPositionFromStringCoordinates } from "@/lib/utils";
 import { VARZ } from "@/const/varz";
 
 const BOUNDRY_RADIUS = 50;
@@ -17,7 +14,6 @@ const LiveKitAudioManager = () => {
   const participants = useParticipants();
 
   const rf = useReactFlow();
-  const [nodes, setNodes] = useState<Node[]>([]);
 
   const { room } = useRoomContext();
 

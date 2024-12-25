@@ -3,16 +3,15 @@ import Time from "./time";
 
 type Props = {
   times: ScheduleType["days"][0]["times"];
-  onHide: () => void;
 };
 
-export default function TimeShower({ times, onHide }: Props) {
+export default function TimeShower({ times }: Props) {
   if (times.length === 0) return null;
 
   return (
     <>
       {times.map((x, index) => (
-        <Time key={index} time={x} onHide={onHide} />
+        <Time key={index} time={x} />
       ))}
     </>
   );

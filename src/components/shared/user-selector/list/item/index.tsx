@@ -52,7 +52,7 @@ export default function UserCardItem({ item, onPick, isSelected, isKeyboardSelec
     );
 
   return (
-    <div onClick={() => onPick && onPick(item)} className={clss}>
+    <div onClick={() => onPick && onPick(item as UserMinimalType)} className={clss}>
       {content}
     </div>
   );

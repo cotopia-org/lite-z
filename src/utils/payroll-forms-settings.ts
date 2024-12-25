@@ -6,7 +6,7 @@ export const validationSchemaPayments = Yup.object().shape({
     .required("Payment type is required.")
     .matches(
       /^[a-zA-Z0-9_\-]+$/,
-      "Payment type must be a valid text and can only contain letters, numbers, underscores (_), and dashes (-)."
+      "Payment type must be a valid text and can only contain letters, numbers, underscores (_), and dashes (-).",
     ),
   bonus: Yup.number()
     .required("Payment bonus is required.")
@@ -50,6 +50,7 @@ export const initialValueContract = {
   role: "",
   user_sign_status: 0,
   contractor_sign_status: 0,
+  in_schedule: 0,
   user_id: "",
 };
 
@@ -68,7 +69,7 @@ export const validationSchemaContract = Yup.object().shape({
     .required("Currency is required.")
     .oneOf(
       ["USDT", "USD", "EUR"],
-      "Currency must be one of the following: USDT, USD, EUR."
+      "Currency must be one of the following: USDT, USD, EUR.",
     ),
   // end_at: Yup.date()
   //   .required("End date is required.")
@@ -119,24 +120,24 @@ export const validationSchemaContract = Yup.object().shape({
     .required("Payment method is required.")
     .oneOf(
       ["trc20", "erc20", "paypal"],
-      "Payment method must be trc20, erc20, or paypal."
+      "Payment method must be trc20, erc20, or paypal.",
     ),
   payment_period: Yup.string()
     .required("Payment period is required.")
     .oneOf(
       ["weekly", "bi-weekly", "monthly"],
-      "Payment period must be weekly, bi-weekly, or monthly."
+      "Payment period must be weekly, bi-weekly, or monthly.",
     ),
   user_sign_status: Yup.number()
     .required("User sign status is required.")
     .oneOf(
       [0, 1],
-      "User sign status must be either 0 (unsigned) or 1 (signed)."
+      "User sign status must be either 0 (unsigned) or 1 (signed).",
     ),
   contractor_sign_status: Yup.number()
     .required("Contractor sign status is required.")
     .oneOf(
       [0, 1],
-      "Contractor sign status must be either 0 (unsigned) or 1 (signed)."
+      "Contractor sign status must be either 0 (unsigned) or 1 (signed).",
     ),
 });

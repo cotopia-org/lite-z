@@ -4,7 +4,7 @@ import {
   addToQueueAction,
   updateMessagesAction,
 } from "@/store/slices/room-slice";
-import { UserMinimalType } from "@/types/user";
+import { UserMinimalType, UserType } from "@/types/user";
 import { toast } from "sonner";
 import { RoomEnvironmentType } from "@/context/chat-room-context";
 import { AttachmentFileType } from "@/types/file";
@@ -81,7 +81,7 @@ function messageCreator({
 //id is always room id
 export const useChatSocket = (
   id: number,
-  user: UserMinimalType | null,
+  user: UserMinimalType | UserType | null,
   env: RoomEnvironmentType
 ) => {
   const appDispatch = useAppDispatch();

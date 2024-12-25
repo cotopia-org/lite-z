@@ -45,6 +45,7 @@ export default function Mentions({ value, onAdd }: Props) {
 
   // Determine if the last mention is valid and filter participants
   const searchText = value.split(" ").pop()?.replace("@", "").trim();
+  console.log('searchText', searchText);
   if (searchText) {
     currentChatParticipants = currentChatParticipants.filter((participant) =>
       participant.username.toLowerCase().includes(searchText.toLowerCase())

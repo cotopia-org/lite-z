@@ -3,6 +3,7 @@ import { WorkspaceRoomShortType } from "@/types/room";
 import RoomOptions from "./room-options";
 import { colors } from "@/const/varz";
 import { cn } from "@/lib/utils";
+import { LayoutGrid, SendToBack } from "lucide-react";
 
 interface Props {
   room: WorkspaceRoomShortType;
@@ -23,14 +24,18 @@ const RoomItem = ({ room, isSelected, joinRoomHandler }: Props) => {
     <div className={cn(clss, "[&_.room-options]:hover:opacity-100")}>
       <div
         onClick={joinRoomHandler}
-        className='flex w-full items-center gap-x-2 justify-start'
+        className="flex w-full items-center gap-x-2 justify-start"
       >
-        <SoundIcon size={20} color={colors.grayscale.grayscaleCaption} />
-        <span className='font-semibold text-grayscale-subtitle'>
+        {room.type === "flow" ? (
+          <SendToBack size={20} color={colors.grayscale.grayscaleCaption} />
+        ) : (
+          <LayoutGrid size={20} color={colors.grayscale.grayscaleCaption} />
+        )}
+        <span className="font-semibold text-grayscale-subtitle">
           {room.title}
         </span>
       </div>
-      <div className='opacity-0 transition-all room-options'>
+      <div className="opacity-0 transition-all room-options">
         <RoomOptions room={room} />
       </div>
     </div>
