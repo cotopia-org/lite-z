@@ -17,6 +17,7 @@ import { useFormik } from "formik";
 import { MentionType } from "@/types/mention";
 import * as Yup from "yup";
 import { toast } from "sonner";
+import FullLoading from "@/components/shared/full-loading";
 
 type Props = {
   workspace_id: string | undefined;
@@ -36,9 +37,9 @@ export default function CreateJob({
   onUpdate,
   setSelectedJob,
 }: Props) {
-  const { data: workspaceJobs } = useApi<FetchDataType<JobType[]>>(
-    "/workspaces/" + workspace_id + "/jobs",
-  );
+  const { data: workspaceJobs, isLoading: parentIsLoading } = useApi<
+    FetchDataType<JobType[]>
+  >("/workspaces/" + workspace_id + "/jobs");
   let allJobs = (workspaceJobs && workspaceJobs?.data) ?? [];
 
   const { isLoading, stopLoading, startLoading } = useLoading();
@@ -132,18 +133,22 @@ export default function CreateJob({
           <div className={"p-4 flex flex-col items-start gap-y-2 w-full"}>
             <form onSubmit={handleSubmit} className="flex flex-wrap gap-4">
               <TitleEl className={"w-1/2"} title="Parent">
-                <CSelect
-                  items={allJobs
-                    .filter((x) => !x.old)
-                    .map((x) => ({
-                      title: "- ".repeat(x.level) + x.title,
-                      value: x.id + "",
-                    }))}
-                  defaultValue={values.job_id + ""}
-                  onChange={(v) => {
-                    setFieldValue("job_id", +v);
-                  }}
-                />
+                {parentIsLoading ? (
+                  <FullLoading />
+                ) : (
+                  <CSelect
+                    items={allJobs
+                      .filter((x) => !x.old)
+                      .map((x) => ({
+                        title: "- ".repeat(x.level) + x.title,
+                        value: x.id + "",
+                      }))}
+                    defaultValue={values.job_id + ""}
+                    onChange={(v) => {
+                      setFieldValue("job_id", +v);
+                    }}
+                  />
+                )}
               </TitleEl>
               <TitleEl title="Title">
                 <CotopiaInput
