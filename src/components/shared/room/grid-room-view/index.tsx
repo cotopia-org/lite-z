@@ -158,7 +158,7 @@ const GridRoomView = (props: Props) => {
 
   return (
     <TracksContextProvider>
-      <div id="room-view" className="w-full h-full bg-black text-white">
+      <div id="room-view" className="w-full h-full bg-black">
         <MeetingWrapper>
           <MeetingRoom nodes={nodes} />
           <RoomAudioRenderer />

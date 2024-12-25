@@ -1,16 +1,16 @@
-import Timer from "../timer";
-import ToolButton from "../../../tool-button";
-import { ClockIcon } from "@/components/icons";
-import { VARZ } from "@/const/varz";
-import { cn } from "@/lib/utils";
+import Timer from "../timer"
+import ToolButton from "../../../tool-button"
+import { ClockIcon } from "@/components/icons"
+import { VARZ } from "@/const/varz"
+import { cn } from "@/lib/utils"
 
 type Props = {
-  isLoading: boolean;
-  onClick: () => void;
-  isOpen: boolean;
-  defaultSeconds: number;
-  stop: boolean;
-};
+  isLoading: boolean
+  onClick: () => void
+  isOpen: boolean
+  defaultSeconds: number
+  stop: boolean
+}
 
 export default function TimeTrackingButton({
   isLoading,
@@ -36,8 +36,12 @@ export default function TimeTrackingButton({
         id={VARZ.userTimeTrackerId}
         defaultStatus={stop ? "stopped" : "normal"}
       >
-        {(time) => <span className={cn('min-w-[60px]', stop ? 'text-red-500' : '')}>{time}</span>}
+        {(time) => (
+          <span className={cn("min-w-[60px]", stop ? "text-red-500" : "")}>
+            {time}
+          </span>
+        )}
       </Timer>
     </ToolButton>
-  );
+  )
 }
