@@ -26,6 +26,9 @@ export { default as EditIcon } from "./edit"
 export { default as TickIcon } from "./tick"
 export { default as MicIcon } from "./mic"
 export { default as MicOffIcon } from "./mic-off"
+export { default as GoldMedalIcon } from "./gold-medal"
+export { default as SilverMedalIcon } from "./silver-medal"
+export { default as BronzeMedalIcon } from "./bronze-medal"
 
 export const defaultColor = colors.black
 
