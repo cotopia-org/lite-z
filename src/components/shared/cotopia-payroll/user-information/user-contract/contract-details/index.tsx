@@ -1,19 +1,19 @@
-import { UserContractType } from "@/types/contract";
-import PayrollSectionTitle from "../sections-title";
-import CotopiaButton from "@/components/shared-ui/c-button";
-import { ChevronLeft } from "lucide-react";
-import SignContract from "./sign";
-import { useEffect, useState } from "react";
-import HintAddressContract from "@/components/shared/room/tools/top-right/payroll-button/hint-address-contract";
-import Markdown from "markdown-to-jsx";
-import TitleEl from "@/components/shared/title-el";
+import { UserContractType } from "@/types/contract"
+import PayrollSectionTitle from "../sections-title"
+import CotopiaButton from "@/components/shared-ui/c-button"
+import { ChevronLeft } from "lucide-react"
+import SignContract from "./sign"
+import { useEffect, useState } from "react"
+import HintAddressContract from "@/components/shared/room/tools/top-right/payroll-button/hint-address-contract"
+import Markdown from "markdown-to-jsx"
+import TitleEl from "@/components/shared/title-el"
 
 type Props = {
-  contract: UserContractType;
-  isLoading?: boolean;
-  onBack: () => void;
-  onUpdate?: (contract: UserContractType) => void;
-};
+  contract: UserContractType
+  isLoading?: boolean
+  onBack: () => void
+  onUpdate?: (contract: UserContractType) => void
+}
 
 export default function PayrollContractDetails({
   contract,
@@ -21,12 +21,10 @@ export default function PayrollContractDetails({
   onBack,
   onUpdate,
 }: Props) {
-  const [localContract, setLocalContract] = useState(contract);
+  const [localContract, setLocalContract] = useState(contract)
   useEffect(() => {
-    setLocalContract(contract);
-  }, [contract]);
-
-  console.log("localContract", localContract);
+    setLocalContract(contract)
+  }, [contract])
 
   // function formattedDate(contractDate: string) {
   //   const date = new Date(contractDate);
@@ -99,8 +97,8 @@ export default function PayrollContractDetails({
       <HintAddressContract
         contract={localContract}
         onUpdate={(contract) => {
-          if (onUpdate) onUpdate(contract);
-          setLocalContract(contract);
+          if (onUpdate) onUpdate(contract)
+          setLocalContract(contract)
         }}
       />
       <SignContract contract={localContract} onUpdate={setLocalContract} />
@@ -112,5 +110,5 @@ export default function PayrollContractDetails({
         Close Contract
       </CotopiaButton>
     </div>
-  );
+  )
 }
