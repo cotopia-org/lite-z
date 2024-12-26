@@ -228,6 +228,8 @@ const chatSlice = createSlice({
       state.chats[chat_id].object.last_message = message;
       state.chats[chat_id].object.unseens =
         state.chats[chat_id].object.unseens + 1;
+
+      state.chats[chat_id].object.last_seen_message = message;
     },
     updateMessage: (state, action: PayloadAction<Chat2ItemType>) => {
       const incoming_chat_message = action.payload;

@@ -80,8 +80,8 @@ export default function RoomSettings() {
 
       const chatType = targetChat.object.type;
 
-      if (newMessage.user.id !== user.id && targetChat)
-        if (currentChat?.id !== newMessage.chat_id || true) {
+      if (newMessage.user.id !== user.id && targetChat) {
+        if (currentChat?.id !== newMessage.chat_id) {
           toast(
             <div className={"flex gap-2 items-center"}>
               <CotopiaAvatar
@@ -111,24 +111,26 @@ export default function RoomSettings() {
             </div>,
           );
         }
-
-      dispatch(
-        upcommingMessage({
-          message: {
-            ...newMessage,
-            is_delivered: true,
-            is_pending: false,
-            is_rejected: false,
-          },
-        }),
-      );
-
-      if (newMessage?.mentions?.length > 0) {
-        const myUserMentioned = !!newMessage.mentions.find(
-          (x) => x?.type === "user" && x?.model_id === user.id,
+        // document.title = "New Message Received";
+        console.log(newMessage.user.id, user.id);
+        dispatch(
+          upcommingMessage({
+            message: {
+              ...newMessage,
+              is_delivered: true,
+              is_pending: false,
+              is_rejected: false,
+            },
+          }),
         );
-        if (myUserMentioned) {
-          dispatch(addMentionedMessages({ chat_id: newMessage.chat_id }));
+
+        if (newMessage?.mentions?.length > 0) {
+          const myUserMentioned = !!newMessage.mentions.find(
+            (x) => x?.type === "user" && x?.model_id === user.id,
+          );
+          if (myUserMentioned) {
+            dispatch(addMentionedMessages({ chat_id: newMessage.chat_id }));
+          }
         }
       }
 

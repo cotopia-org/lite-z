@@ -7,7 +7,7 @@ import FullLoading from "@/components/shared/full-loading";
 import { useAppDispatch, useAppSelector } from "@/store";
 import { getChatMessages, getPinMessags } from "@/store/slices/chat-slice";
 import ChatHeading from "./heading";
-import { dispatch as busDispatch } from "use-bus";
+import { dispatch, dispatch as busDispatch } from "use-bus";
 import { __BUS } from "@/const/bus";
 
 type Props = {
@@ -55,6 +55,11 @@ export default function ChatInnerHolder({ chat_id, onBack }: Props) {
 
   if (!currentChat?.id) return null;
 
+  // busDispatch({
+  //   type: __BUS.scrollToTargetMessage,
+  //   messageId: 1735252256000,
+  // });
+
   return (
     <div className="flex flex-col w-full h-[calc(100vh-72px)] overflow-hidden">
       <ChatHeading
@@ -65,6 +70,7 @@ export default function ChatInnerHolder({ chat_id, onBack }: Props) {
       />
       <Chat2
         chat_id={chat_id}
+        lastMessageUnseen={currentChat.last_seen_message?.id}
         addMessage={handleSendMessage}
         onGetVirtualizer={(vir) => (chatRef.current = vir)}
       />

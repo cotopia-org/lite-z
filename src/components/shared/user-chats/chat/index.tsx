@@ -103,13 +103,15 @@ export default function Chat({ chat }: Props) {
               {chat.muted ? "Unmute" : "Mute"}
             </ContextMenuItem>
 
-            <ContextMenuItem
-              onClick={handleDelete}
-              className="py-2 px-4 cursor-pointer !text-white bg-red-500 rounded-none gap-x-2"
-            >
-              <Trash />
-              Delete
-            </ContextMenuItem>
+            {chat.type !== "direct" && (
+              <ContextMenuItem
+                onClick={handleDelete}
+                className="py-2 px-4 cursor-pointer !text-white bg-red-500 rounded-none gap-x-2"
+              >
+                <Trash />
+                Delete
+              </ContextMenuItem>
+            )}
           </div>
         </div>
       </CotopiaContextMenu>

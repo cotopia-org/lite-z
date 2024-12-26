@@ -22,7 +22,7 @@ export default function ChatUserOverView({ chat, prev, next }: Props) {
 
   const showDateHeader = messageDate !== messageNextDate;
 
-  if (next !== null && next?.user === chat?.user && !showDateHeader)
+  if (next !== null && next?.user.id === chat?.user.id && !showDateHeader)
     return <div className="w-9"></div>;
 
   if (user === null || user === undefined) return null;

@@ -20,28 +20,39 @@ type Props = {
   chat_id: number;
   marginFetching?: number;
   onGetVirtualizer?: (vir: Virtualizer<HTMLDivElement, Element>) => void;
+  lastMessageUnseen: number;
 };
 
 export default function Items({
   chat_id,
   marginFetching = 1000,
   onGetVirtualizer,
+  lastMessageUnseen,
 }: Props) {
   const vlistRef = useRef<VListHandle | null>(null);
 
   const chatItemInit = useRef(false);
+  const { chatObjects, editMessage } = useChat2({ chat_id });
+
+  const items = chatObjects?.[chat_id]?.messages ?? [];
+
+  const itemIndex = items.findIndex((x) => x.id === lastMessageUnseen);
+
+  const rightIndex = items.length - (itemIndex + 1);
+
   useEffect(() => {
+    vlistRef.current?.scrollToIndex(rightIndex);
+
     const timeout = setTimeout(() => {
       chatItemInit.current = true;
     }, 1000);
     return () => clearInterval(timeout);
   }, []);
 
+  const [unseenIndex, setUnSeenIndex] = useState<number | null>(null);
+
   const dispatch = useAppDispatch();
 
-  const { chatObjects, editMessage } = useChat2({ chat_id });
-
-  const items = chatObjects?.[chat_id]?.messages ?? [];
   const loading = chatObjects?.[chat_id]?.loading ?? true;
   const chatPageLoading = chatObjects?.[chat_id]?.fetchPageLoading ?? false;
   const chatPage = chatObjects?.[chat_id]?.page ?? 1;
@@ -89,10 +100,12 @@ export default function Items({
   useBus(
     __BUS.scrollToTargetMessage,
     (data: any) => {
+      console.log(data, "YES");
       const messageId = data?.messageId;
 
       const itemIndex = items.findIndex((x) => +x.nonce_id === +messageId);
 
+      console.log(itemIndex, "index");
       if (itemIndex === -1) return;
 
       const rightIndex = items.length - (itemIndex + 1);
@@ -193,6 +206,11 @@ export default function Items({
           return (
             <div key={i}>
               {!!showDateHeader && <ChatDate date={messageDate} />}
+              {i === rightIndex && (
+                <div className="flex flex-col w-full text-blue-500 bg-black/5 text-sm items-center justify-center my-4 pointer-events-none">
+                  Unread messages
+                </div>
+              )}
               <ChatItem
                 item={message}
                 key={message.nonce_id}
