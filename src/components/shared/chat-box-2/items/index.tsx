@@ -41,7 +41,8 @@ export default function Items({
   const rightIndex = items.length - (itemIndex + 1);
 
   useEffect(() => {
-    vlistRef.current?.scrollToIndex(rightIndex);
+    //TODO: have to check this with mahdi
+    // vlistRef.current?.scrollToIndex(rightIndex);
 
     const timeout = setTimeout(() => {
       chatItemInit.current = true;
