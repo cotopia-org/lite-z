@@ -32,7 +32,7 @@ function generateTempChat({
   reply,
 }: {
   chat_id: number;
-  user: number;
+  user: UserType;
   user_id: number;
   text: string;
   reply?: Chat2ItemType;
@@ -53,7 +53,7 @@ function generateTempChat({
     seens: [],
     text,
     updated_at: nonce_id,
-    user: user,
+    user: user as UserMinimalType,
     user_id: user_id,
     is_delivered: false,
     is_rejected: false,
@@ -163,8 +163,8 @@ export const useChat2 = (props?: {
 
     const message = generateTempChat({
       chat_id: chat_id as number,
-      user: (user as UserType)?.id,
-      user_id: (user as UserType)?.id,
+      user: user,
+      user_id: user.id,
       text,
       reply,
     });

@@ -13,7 +13,7 @@ export default function ChatRepliedItem({ item }: Props) {
   const dispatch = useAppDispatch();
   const { getUser } = useChat2();
 
-  const user = getUser(item?.user_id ?? item?.user);
+  const user = item?.user;
 
   const handleGoToReplyMessage = () => {
     thunkResHandler(
@@ -25,16 +25,16 @@ export default function ChatRepliedItem({ item }: Props) {
           messageId: item.nonce_id,
         });
       },
-      () => {}
+      () => {},
     );
   };
 
   return (
     <div
-      className='border-l-4 p-2 cursor-pointer border-primary-border bg-muted rounded-md'
+      className="border-l-4 p-2 cursor-pointer border-primary-border bg-muted rounded-md"
       onClick={handleGoToReplyMessage}
     >
-      <strong className='text-primary'>{user?.name ?? "-"}</strong>
+      <strong className="text-primary">{user?.name ?? "-"}</strong>
       <p>{item.text}</p>
     </div>
   );

@@ -43,7 +43,7 @@ const MessageBox = forwardRef(
 
     if (isMessageEdited) {
       editLable = (
-        <span className='text-xs pointer-events-none text-gray-600'>
+        <span className="text-xs pointer-events-none text-gray-600">
           Edited
         </span>
       );
@@ -62,17 +62,18 @@ const MessageBox = forwardRef(
       <div
         ref={ref}
         data-id={`${item.id}`}
-        className='chat-item border-destructive overflow-hidden relative flex flex-col my-2 items-start gap-x-2 select-text'
+        className="chat-item border-destructive overflow-hidden relative flex flex-col my-2 items-start gap-x-2 select-text"
       >
         <div className={messageBoxClss}>
-          <div className='flex flex-col gap-y-2 w-full'>
+          <div className="flex flex-col gap-y-2 w-full">
             <div
-              className='flex flex-row items-center gap-x-2'
+              className="flex flex-row items-center gap-x-2"
               style={{ overflowWrap: "anywhere" }}
             >
               <Avatar
                 src={item?.user?.avatar?.url}
-                className='w-5 h-5'
+                date={item?.user?.created_at}
+                className="w-5 h-5"
                 title={getUserFullname(item?.user)?.[0]}
               />
               <Username username={item?.user?.username ?? ""} />
@@ -81,9 +82,9 @@ const MessageBox = forwardRef(
             <Message isMine={isMine} item={item} />
             <div className={footerClss}>
               {/**Reactions view should be here */}
-              <div className='flex items-center gap-x-2'>
+              <div className="flex items-center gap-x-2">
                 {editLable}
-                <div className='flex items-center gap-x-1'>
+                <div className="flex items-center gap-x-1">
                   <Time time={item.created_at} />
                   {seenModeNode}
                 </div>
@@ -93,7 +94,7 @@ const MessageBox = forwardRef(
         </div>
       </div>
     );
-  }
+  },
 );
 
 export default MessageBox;

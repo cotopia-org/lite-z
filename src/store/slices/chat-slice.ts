@@ -47,7 +47,7 @@ export const getChats = createAsyncThunk(
     const chats = res.data.data || [];
 
     return chats;
-  }
+  },
 );
 
 // Async thunk to fetch chat messages by page
@@ -59,23 +59,23 @@ export const getChatMessages = createAsyncThunk(
 
     if (page) {
       res = await axiosInstance.get(
-        urlWithQueryParams(`/chats/${chat_id}/messages`, { page })
+        urlWithQueryParams(`/chats/${chat_id}/messages`, { page }),
       );
     } else {
       const lastPageRes = await axiosInstance.get(
-        `/chats/${chat_id}/getLastUnSeenMessagePage`
+        `/chats/${chat_id}/getLastUnSeenMessagePage`,
       );
       const pageNumber = lastPageRes.data.data?.page_number;
       page_number = pageNumber;
       res = await axiosInstance.get(
-        urlWithQueryParams(`/chats/${chat_id}/messages`, { page: pageNumber })
+        urlWithQueryParams(`/chats/${chat_id}/messages`, { page: pageNumber }),
       );
     }
 
     const chats = res.data.data || [];
 
     return { items: chats, page_number: page_number ?? 1 };
-  }
+  },
 );
 
 export const getPrevMessages = createAsyncThunk(
@@ -84,13 +84,13 @@ export const getPrevMessages = createAsyncThunk(
     let res;
     let page_number = page;
     res = await axiosInstance.get(
-      urlWithQueryParams(`/chats/${chat_id}/messages`, { page })
+      urlWithQueryParams(`/chats/${chat_id}/messages`, { page }),
     );
 
     const chats = res.data.data || [];
 
     return { items: chats, page_number: page_number ?? 1 };
-  }
+  },
 );
 
 export const getNextMessages = createAsyncThunk(
@@ -99,13 +99,13 @@ export const getNextMessages = createAsyncThunk(
     let res;
     let page_number = page;
     res = await axiosInstance.get(
-      urlWithQueryParams(`/chats/${chat_id}/messages`, { page })
+      urlWithQueryParams(`/chats/${chat_id}/messages`, { page }),
     );
 
     const chats = res.data.data || [];
 
     return { items: [...[...chats]?.reverse()], page_number: page_number ?? 1 };
-  }
+  },
 );
 
 // Async thunk to fetch chat messages by page
@@ -117,7 +117,7 @@ export const getBeforeAndAfterMessages = createAsyncThunk(
     const chats = res.data.data || [];
 
     return chats;
-  }
+  },
 );
 
 // Async thunk to fetch chat messages by page
@@ -129,7 +129,7 @@ export const getPinMessags = createAsyncThunk(
     const messages = res.data.data || [];
 
     return messages;
-  }
+  },
 );
 
 const chatSlice = createSlice({
@@ -150,11 +150,24 @@ const chatSlice = createSlice({
         fetchPageLoading: false,
       };
     },
+    setMuteChat: (
+      state,
+      action: PayloadAction<{ chat_id: number; muted: number }>,
+    ) => {
+      const chatType = action.payload;
+
+      state.chats[chatType.chat_id].object.muted = chatType.muted;
+    },
     setCurrentChat: (state, action: PayloadAction<ChatType>) => {
       const chatType = action.payload;
 
       state.currentChat = chatType;
       state.chats[chatType.id].object.unseens = 0;
+    },
+    deleteChat: (state, action: PayloadAction<ChatType>) => {
+      const chat = action.payload;
+
+      delete state.chats[chat.id];
     },
     clearCurrentChat: (state) => {
       state.currentChat = undefined;
@@ -208,10 +221,10 @@ const chatSlice = createSlice({
       state,
       action: PayloadAction<{
         message: Chat2ItemType;
-      }>
+      }>,
     ) => {
-      const {  message } = action.payload;
-      const chat_id = message.chat_id
+      const { message } = action.payload;
+      const chat_id = message.chat_id;
       state.chats[chat_id].object.last_message = message;
       state.chats[chat_id].object.unseens =
         state.chats[chat_id].object.unseens + 1;
@@ -234,7 +247,7 @@ const chatSlice = createSlice({
         chat_id: number;
         nonce_id: number;
         user_id: number;
-      }>
+      }>,
     ) => {
       const chat_id = action.payload.chat_id;
       const nonce_id = action.payload.nonce_id;
@@ -286,7 +299,7 @@ const chatSlice = createSlice({
             }
 
             return m;
-          }
+          },
         );
     },
     unpinMessage: (state, action: PayloadAction<Chat2ItemType>) => {
@@ -299,22 +312,25 @@ const chatSlice = createSlice({
           currentIndex: 0,
           items:
             chatPin?.items?.filter(
-              (x) => x.nonce_id !== action.payload.nonce_id
+              (x) => x.nonce_id !== action.payload.nonce_id,
             ) ?? [],
         };
     },
-    seenAllMessages: (state, action: PayloadAction<{ chat_id: number, user_id: number }>) => {
+    seenAllMessages: (
+      state,
+      action: PayloadAction<{ chat_id: number; user_id: number }>,
+    ) => {
       const chat_id = action.payload.chat_id;
       state.chats[chat_id].object.unseens = 0;
       state.chats[chat_id].object.mentioned_messages = 0;
       state.chats[chat_id].messages.map((x) => {
-        x.seens = [...new Set([...x.seens, action.payload.user_id])]
+        x.seens = [...new Set([...x.seens, action.payload.user_id])];
         return x;
       });
     },
     addMentionedMessages: (
       state,
-      action: PayloadAction<{ chat_id: number }>
+      action: PayloadAction<{ chat_id: number }>,
     ) => {
       const chat_id = action.payload.chat_id;
       state.chats[chat_id].object.mentioned_messages =
@@ -322,7 +338,7 @@ const chatSlice = createSlice({
     },
     subtractMentionedMessages: (
       state,
-      action: PayloadAction<{ chat_id: number }>
+      action: PayloadAction<{ chat_id: number }>,
     ) => {
       const chat_id = action.payload.chat_id;
       state.chats[chat_id].object.mentioned_messages =
@@ -363,7 +379,7 @@ const chatSlice = createSlice({
           state.participants = uniqueById(allParticipants) as UserMinimalType[];
 
           state.loading = false;
-        }
+        },
       )
       .addCase(getChats.rejected, (state, action) => {
         state.error = action.error.message || "Failed to fetch messages";
@@ -381,7 +397,7 @@ const chatSlice = createSlice({
             page_number: number;
           }> & {
             meta: { [key: string]: any };
-          }
+          },
         ) => {
           const { chat_id } = action.meta.arg;
           const chatItems = action.payload.items;
@@ -392,7 +408,7 @@ const chatSlice = createSlice({
           state.chats[chat_id].firstPage = action.payload.page_number === 1;
 
           state.loading = false;
-        }
+        },
       )
       .addCase(getChatMessages.rejected, (state, action) => {
         state.error = action.error.message || "Failed to fetch messages";
@@ -411,7 +427,7 @@ const chatSlice = createSlice({
             page_number: number;
           }> & {
             meta: { [key: string]: any };
-          }
+          },
         ) => {
           const { chat_id, page } = action.meta.arg;
           const chatItems = action.payload.items;
@@ -428,7 +444,7 @@ const chatSlice = createSlice({
             state.chats[chat_id].page = action.payload.page_number;
           }
           state.chats[chat_id].fetchPageLoading = false;
-        }
+        },
       )
       .addCase(getPrevMessages.rejected, (state, action) => {
         state.error = action.error.message || "Failed to fetch messages";
@@ -448,7 +464,7 @@ const chatSlice = createSlice({
             page_number: number;
           }> & {
             meta: { [key: string]: any };
-          }
+          },
         ) => {
           const { chat_id } = action.meta.arg;
           const chatItems = action.payload.items;
@@ -462,7 +478,7 @@ const chatSlice = createSlice({
           if (chatItems.length === 0) state.chats[chat_id].lastPage = true;
 
           state.chats[chat_id].fetchPageLoading = false;
-        }
+        },
       )
       .addCase(getNextMessages.rejected, (state, action) => {
         const { chat_id } = action.meta.arg;
@@ -483,7 +499,7 @@ const chatSlice = createSlice({
               items: pinMessages,
             };
           state.loading = false;
-        }
+        },
       )
 
       .addCase(getPinMessags.rejected, (state, action) => {
@@ -510,7 +526,7 @@ const chatSlice = createSlice({
           } else {
             chat.pin.currentIndex = 0;
           }
-        }
+        },
       )
       .addCase(getBeforeAndAfterMessages.rejected, (state, action) => {});
   },
@@ -522,9 +538,11 @@ export const {
   seenMessage,
   seenAllMessages,
   setCurrentChat,
+  deleteChat,
   clearCurrentChat,
   addNewChat,
   setChatMessages,
+  setMuteChat,
   upcommingMessage,
   setReplyMessage,
   setEditMessage,

@@ -8,6 +8,7 @@ type Props = {
   src?: string;
   className?: string;
   wrapper?: React.ComponentType<any>;
+  date: number;
 };
 
 export default function UserAvatar({
@@ -15,14 +16,16 @@ export default function UserAvatar({
   toolTipTitle,
   src,
   className = "",
+  date,
   wrapper: Wrapper, // Rename it for consistency
 }: Props) {
   let content = (
     <CotopiaTooltip
       title={toolTipTitle ? toolTipTitle : title}
-      triggerClassName='flex'
+      triggerClassName="flex"
     >
       <CotopiaAvatar
+        date={date}
         className={`min-w-8 min-h-8 ${className}`}
         src={src}
         title={title ? title?.[0] : undefined}

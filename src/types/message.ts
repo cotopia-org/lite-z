@@ -1,5 +1,6 @@
 import { Chat2ItemType } from "./chat2";
 import { AttachmentFileType } from "./file";
+import { UserMinimalType } from "@/types/user";
 
 export type MessageType = {
   chat_id: number;
@@ -18,6 +19,6 @@ export type MessageType = {
   text: string;
   translated_text?: string | null;
   updated_at: number;
-  user: number;
+  user: UserMinimalType;
   user_id?: number;
 };

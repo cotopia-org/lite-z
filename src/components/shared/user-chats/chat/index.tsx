@@ -4,18 +4,27 @@ import ChatPreview from "./preview";
 import { useSlides } from "../../slide-pusher";
 import ChatInnerHolder from "./holder";
 import { useAppDispatch } from "@/store";
-import { clearCurrentChat, setCurrentChat } from "@/store/slices/chat-slice";
+import {
+  clearCurrentChat,
+  deleteChat,
+  setCurrentChat,
+  setMuteChat,
+} from "@/store/slices/chat-slice";
 import CotopiaContextMenu from "@/components/shared-ui/c-context-menu";
-import Reactions from "@/components/shared/chat-box-2/items/item/right-click-actions/reactions";
-import MenuItems from "@/components/shared/chat-box-2/items/item/right-click-actions/menu-items";
-import Reply from "@/components/shared/chat-box-2/items/item/right-click-actions/menu-items/reply";
-import Edit from "@/components/shared/chat-box-2/items/item/right-click-actions/menu-items/edit";
-import Pin from "@/components/shared/chat-box-2/items/item/right-click-actions/menu-items/pin";
-import CopyText from "@/components/shared/chat-box-2/items/item/right-click-actions/menu-items/copy";
-import Delete from "@/components/shared/chat-box-2/items/item/right-click-actions/menu-items/delete";
-import Translate from "@/components/shared/chat-box-2/items/item/right-click-actions/menu-items/translate";
+
 import { ContextMenuItem } from "@/components/ui/context-menu";
-import { BellOff, ReplyIcon, VolumeOff } from "lucide-react";
+import { Bell, BellOff, ReplyIcon, Trash, VolumeOff } from "lucide-react";
+import axiosInstance from "@/services/axios";
+import { toast } from "sonner";
+import { getRandomColor } from "@/lib/utils";
+import moment from "moment";
+import CDialog from "@/components/shared-ui/c-dialog";
+import CotopiaButton from "@/components/shared-ui/c-button";
+import { TrashIcon } from "@/components/icons";
+import { colors } from "@/const/varz";
+import CotopiaPromptContent from "@/components/shared-ui/c-prompt/content";
+import useLoading from "@/hooks/use-loading";
+import FullLoading from "@/components/shared/full-loading";
 
 type Props = {
   chat: ChatType;
@@ -41,6 +50,35 @@ export default function Chat({ chat }: Props) {
     push(<ChatInnerHolder onBack={handleBackChat} chat_id={chat?.id} />);
   };
 
+  const toggleMute = async () => {
+    await axiosInstance.get(`/chats/${chat.id}/toggleMute`);
+    appDispatch(
+      setMuteChat({ chat_id: chat.id, muted: chat.muted === 1 ? 0 : 1 }),
+    );
+    toast.success(`${chat.title} has been ${chat.muted ? "Unmuted" : "Muted"}`);
+  };
+
+  const { startLoading, stopLoading, isLoading } = useLoading();
+
+  const handleDelete = () => {
+    startLoading();
+    axiosInstance
+      .delete(`/chats/${chat.id}`)
+      .then((res) => {
+        toast.success(`"${chat.title}" chat has been deleted successfully`);
+        appDispatch(deleteChat(chat));
+        stopLoading();
+      })
+      .catch((err) => {
+        toast.error(err.data.message);
+
+        stopLoading();
+      });
+  };
+  if (isLoading) {
+    return <FullLoading />;
+  }
+
   return (
     <ChatContext.Provider value={{ chat }}>
       <CotopiaContextMenu
@@ -59,12 +97,18 @@ export default function Chat({ chat }: Props) {
           <div className="bg-gray-700 rounded-md py-2">
             <ContextMenuItem
               className="py-2 px-4 cursor-pointer !text-white rounded-none gap-x-2"
-              onClick={() => {
-                console.log("mute");
-              }}
+              onClick={toggleMute}
             >
-              <BellOff />
-              Mute Notifications
+              {chat.muted ? <Bell /> : <BellOff />}
+              {chat.muted ? "Unmute" : "Mute"}
+            </ContextMenuItem>
+
+            <ContextMenuItem
+              onClick={handleDelete}
+              className="py-2 px-4 cursor-pointer !text-white bg-red-500 rounded-none gap-x-2"
+            >
+              <Trash />
+              Delete
             </ContextMenuItem>
           </div>
         </div>

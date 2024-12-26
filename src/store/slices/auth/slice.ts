@@ -1,20 +1,20 @@
 // src/store/slices/authSlice.ts
 import { createSlice, PayloadAction, createAsyncThunk } from "@reduxjs/toolkit";
 import { RootState } from "../..";
-import { UserType } from "@/types/user";
+import { MeType } from "@/types/user";
 import axiosInstance from "@/services/axios";
 import { toast } from "sonner";
 
 // Define the initial state using a TypeScript interface
 interface AuthState {
-  user: UserType;
+  user: MeType;
   accessToken: string | null;
   isLoading: boolean;
   error: string | null;
 }
 
 // Define the login response type
-interface LoginResponse extends UserType {
+interface LoginResponse extends MeType {
   token: string;
 }
 
@@ -46,7 +46,7 @@ export const loginThunk = createAsyncThunk<
 
 // Async thunk for getting profile
 export const getProfileThunk = createAsyncThunk<
-  { data: UserType },
+  { data: MeType },
   undefined,
   { rejectValue: string }
 >("auth/login/get-profile", async (credentials, { rejectWithValue }) => {
@@ -116,7 +116,7 @@ const authSlice = createSlice({
           state.user = user;
           state.accessToken = token;
           state.isLoading = false;
-        }
+        },
       )
       .addCase(loginThunk.rejected, (state, action) => {
         state.isLoading = false;
@@ -131,10 +131,10 @@ const authSlice = createSlice({
       })
       .addCase(
         getProfileThunk.fulfilled,
-        (state, action: PayloadAction<{ data: UserType }>) => {
+        (state, action: PayloadAction<{ data: MeType }>) => {
           state.user = action.payload.data;
           state.isLoading = false;
-        }
+        },
       )
       .addCase(getProfileThunk.rejected, (state, action) => {
         state.isLoading = false;

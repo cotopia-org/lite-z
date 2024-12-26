@@ -16,9 +16,7 @@ type Props = {
 export default function ChatItemContent({ chat, next, prev }: Props) {
   const { user: myAccount } = useAuth();
 
-  const { getUser } = useChat2();
-
-  const user = getUser(chat.user);
+  const user = chat.user;
 
   const isMyUser = myAccount?.id === user?.id;
 

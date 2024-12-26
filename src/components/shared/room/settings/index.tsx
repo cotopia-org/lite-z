@@ -27,6 +27,7 @@ import { ChatType } from "@/types/chat2";
 import { dispatch as busDispatch } from "use-bus";
 import { __BUS } from "@/const/bus";
 import { toast } from "sonner";
+import CotopiaAvatar from "@/components/shared-ui/c-avatar";
 
 export default function RoomSettings() {
   const { workspace_id } = useRoomContext();
@@ -34,7 +35,7 @@ export default function RoomSettings() {
   const dispatch = useAppDispatch();
 
   useEffect(() => {
-    if (!workspace_id) return;
+    if (workspace_id === null || workspace_id === undefined) return;
 
     dispatch(getChats({ workspace_id: +workspace_id }));
   }, [workspace_id]);
@@ -42,7 +43,10 @@ export default function RoomSettings() {
   const { user } = useAuth();
 
   //@ts-ignore
-  const { chatObjects } = useChat2({ workspace_id: +workspace_id as number });
+  // @ts-ignore
+  const { chatObjects, currentChat } = useChat2({
+    workspace_id: workspace_id === undefined ? undefined : +workspace_id,
+  });
 
   useSocket(
     "messageSeen",
@@ -72,25 +76,52 @@ export default function RoomSettings() {
   useSocket(
     "newMessage",
     async (newMessage: MessageType) => {
-      toast.message(newMessage.user, {
-        description: newMessage.text,
-      });
-
-      console.log("newMessage", newMessage);
-
       const targetChat = chatObjects?.[newMessage.chat_id];
 
-      if (newMessage.user !== user.id && targetChat)
-        dispatch(
-          upcommingMessage({
-            message: {
-              ...newMessage,
-              is_delivered: true,
-              is_pending: false,
-              is_rejected: false,
-            },
-          }),
-        );
+      const chatType = targetChat.object.type;
+
+      if (newMessage.user.id !== user.id && targetChat)
+        if (currentChat?.id !== newMessage.chat_id || true) {
+          toast(
+            <div className={"flex gap-2 items-center"}>
+              <CotopiaAvatar
+                date={newMessage.user.created_at}
+                className={`w-16 h-16 text-3xl`}
+                src={newMessage.user.avatar?.url}
+                title={
+                  newMessage.user.username
+                    ? newMessage.user.username?.[0]
+                    : undefined
+                }
+              />
+              <div className={"flex flex-col"}>
+                <span className={"font-bold"}>
+                  {newMessage.user.username}{" "}
+                  {chatType !== "direct" && (
+                    <span>at {targetChat.object.title}</span>
+                  )}
+                </span>
+
+                <div>
+                  {newMessage.text.length > 70
+                    ? newMessage.text.slice(0, 70) + "... "
+                    : newMessage.text}
+                </div>
+              </div>
+            </div>,
+          );
+        }
+
+      dispatch(
+        upcommingMessage({
+          message: {
+            ...newMessage,
+            is_delivered: true,
+            is_pending: false,
+            is_rejected: false,
+          },
+        }),
+      );
 
       if (newMessage?.mentions?.length > 0) {
         const myUserMentioned = !!newMessage.mentions.find(
@@ -153,7 +184,7 @@ export default function RoomSettings() {
               is_rejected: false,
             }),
           );
-          if (user.id !== newMessage.user)
+          if (user.id !== newMessage.user.id)
             setTimeout(() => {
               busDispatch(__BUS.scrollEndChatBox);
             }, 10);

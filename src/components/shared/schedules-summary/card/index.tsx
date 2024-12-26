@@ -41,13 +41,13 @@ export default function Card({ schedule, onHide }: Props) {
   }
 
   return (
-    <div className="flex flex-row items-center gap-x-2 select-none">
+    <div className="flex flex-row items-center gap-x-2 select-none sepia">
       <ParticipantsWithPopover
         className="!pb-0"
         participants={[schedule.user]}
       />
       <div className="flex flex-col">
-        <span className="text-sm capitalize font-medium">{`${schedule.user.name}`}</span>
+        <span className="text-sm capitalize font-medium">{`${schedule.user.username}`}</span>
         <span className="text-xs text-black/70">
           <div className="flex flex-row items-center gap-x-1">
             <span className="text-xs">{icons[schedule.availability_type]}</span>

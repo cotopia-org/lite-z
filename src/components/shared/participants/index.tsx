@@ -1,6 +1,7 @@
 import { UserMinimalType, WorkspaceUserType } from "@/types/user";
 import Avatars, { MinimalParticipantType } from "../avatars";
 import { ReactNode } from "react";
+
 type ParticipantType = WorkspaceUserType | UserMinimalType;
 
 export type ParticipantsProps = {
@@ -27,6 +28,7 @@ export default function Participants({
           id: x?.id,
           src: x?.avatar?.url,
           title: x?.name ?? "",
+          date: x?.created_at ?? 0,
           toolTipTitle: customTitle !== undefined ? customTitle(x) : undefined,
           className: avatarClss,
           render,

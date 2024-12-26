@@ -19,10 +19,10 @@ export default function UserActionsAvatarButton({ size = "large" }: Props) {
 
   switch (size) {
     case "large":
-      avatarClss += ` w-[40px] h-[40px] border`;
+      avatarClss += ` w-[40px] h-[40px] border text-xl`;
       break;
     case "normal":
-      avatarClss += ` w-[32px] h-[32px] border`;
+      avatarClss += ` w-[32px] h-[32px] border text-lg`;
       break;
   }
 
@@ -30,13 +30,14 @@ export default function UserActionsAvatarButton({ size = "large" }: Props) {
     <FullModalBox
       trigger={(open) => (
         <CotopiaAvatar
+          date={user?.created_at}
           src={user?.avatar?.url ?? undefined}
           title={userFullName?.[0]}
           className={avatarClss}
           onClick={open}
         />
       )}
-      className='w-[640px]'
+      className="w-[640px]"
     >
       {(open, close) => <UserSettings />}
     </FullModalBox>

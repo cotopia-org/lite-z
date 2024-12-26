@@ -12,26 +12,25 @@ type Props = {
 export default function ReplyBox({ item }: Props) {
   const dispatch = useAppDispatch();
   const handleClearReaplyBox = () => dispatch(clearReplyMessage(item.chat_id));
-  const { getUser } = useChat2();
 
-  const user = getUser(item.user);
+  const user = item.user;
 
   return (
-    <div className='flex flex-row items-center justify-between px-4 py-2 border-b'>
-      <div className='flex flex-row items-center gap-x-4'>
+    <div className="flex flex-row items-center justify-between px-4 py-2 border-b">
+      <div className="flex flex-row items-center gap-x-4">
         <div>
-          <ReplyIcon className='text-primary' />
+          <ReplyIcon className="text-primary" />
         </div>
-        <div className='flex flex-col gap-y-1'>
-          <strong className='text-primary'>{`Reply to ${user?.name}`}</strong>
-          <span className='whitespace-nowrap text-ellipsis overflow-hidden max-w-[200px]'>
+        <div className="flex flex-col gap-y-1">
+          <strong className="text-primary">{`Reply to ${user?.name}`}</strong>
+          <span className="whitespace-nowrap text-ellipsis overflow-hidden max-w-[200px]">
             {item.text}
           </span>
         </div>
       </div>
       <div>
         <CotopiaIconButton
-          className='opacity-50 hover:opacity-100 text-black'
+          className="opacity-50 hover:opacity-100 text-black"
           onClick={handleClearReaplyBox}
         >
           <X />

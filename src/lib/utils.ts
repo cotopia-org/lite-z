@@ -4,7 +4,7 @@ import { UserContractType } from "@/types/contract";
 import { WorkspaceRoomShortType } from "@/types/room";
 import { UserType, WorkspaceUserType } from "@/types/user";
 import { TrackReferenceOrPlaceholder } from "@livekit/components-core";
-import { clsx, type ClassValue } from "clsx";
+import { type ClassValue, clsx } from "clsx";
 import { Track } from "livekit-client";
 import moment from "moment";
 import { twMerge } from "tailwind-merge";
@@ -372,7 +372,7 @@ export function getDateTime(
 
 export function isNowBetween(start: string, end: string) {
   const now = new Date();
-  // now.setHours(18, 0, 0, 0);
+  now.setHours(18, 0, 0, 0);
   const [startHour, startMinute] = start.split(":").map(Number);
   const [endHour, endMinute] = end.split(":").map(Number);
 
@@ -387,4 +387,30 @@ export function isNowBetween(start: string, end: string) {
   }
 
   return now >= startTime && now <= endTime;
+}
+
+export function getRandomColor(timestamp: any, darkness = 0.8) {
+  if (timestamp === undefined) return "#2091ff";
+  // Convert timestamp to a number (if it's a string).
+  const numericValue = Number(timestamp);
+
+  // Use a hashing function.
+  let hash = 0;
+  const timestampString = numericValue.toString();
+  for (let i = 0; i < timestampString.length; i++) {
+    hash = timestampString.charCodeAt(i) + ((hash << 5) - hash);
+  }
+
+  hash = Math.abs(hash);
+
+  let red = hash % 256;
+  let green = (hash * 3) % 256;
+  let blue = (hash * 7) % 256;
+
+  // Apply darkness factor
+  red = Math.floor(red * darkness);
+  green = Math.floor(green * darkness);
+  blue = Math.floor(blue * darkness);
+
+  return `#${(red | (1 << 8)).toString(16).slice(1)}${(green | (1 << 8)).toString(16).slice(1)}${(blue | (1 << 8)).toString(16).slice(1)}`;
 }
