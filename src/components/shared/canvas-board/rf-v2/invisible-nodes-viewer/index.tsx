@@ -1,5 +1,6 @@
 import { Node } from "@xyflow/react"
 import InvisibleNode from "./invisible-node"
+import { VARZ } from "@/const/varz"
 
 export type InvisibleNodeType = {
   node: Node
@@ -28,7 +29,16 @@ type Props = {
 
 const InvisibleNodesViewer = ({ invisibleNodes }: Props) => {
   return (
-    <div className="viewport-overlay overflow-hidden top-[0px] left-[16px] right-[16px] bottom-[0px] absolute">
+    <div
+      className="viewport-overlay overflow-hidden"
+      style={{
+        position: "absolute",
+        top: VARZ.invisibleArea.top,
+        bottom: VARZ.invisibleArea.bottom,
+        right: VARZ.invisibleArea.right,
+        left: VARZ.invisibleArea.left,
+      }}
+    >
       {invisibleNodes.map((n) => {
         return <InvisibleNode key={n.node.id} node={n} />
       })}

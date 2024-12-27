@@ -4,6 +4,7 @@ import { useRoomContext } from "@/components/shared/room/room-context"
 import useAuth from "@/hooks/auth"
 import MyNodeNavigator from "./my-node-navigator"
 import { UserMinimalType } from "@/types/user"
+import { VARZ } from "@/const/varz"
 
 const InvisibleNode = ({ node }: { node: InvisibleNodeType }) => {
   const { room } = useRoomContext()
@@ -25,13 +26,10 @@ const InvisibleNode = ({ node }: { node: InvisibleNodeType }) => {
       clss += is_my_node ? " right-[10px]" : " right-0"
       style["top"] = `${delta_y}px`
       if (delta_y < 0) {
-        style["top"] = `${delta_y}px`
+        // style["top"] = `${delta_y}px`
         clss += is_my_node ? " right-[10px] !top-[10px]" : " !top-0 !right-0"
       }
-      if (delta_y_prime - 85 < 0) {
-        style["bottom"] = 0
-        style["top"] = "initial"
-      }
+
       break
     case "left":
       clss += is_my_node ? " left-[10px]" : " left-0"
@@ -39,15 +37,12 @@ const InvisibleNode = ({ node }: { node: InvisibleNodeType }) => {
       if (delta_y < 0) {
         clss += is_my_node ? " !top-[10px] left-[10px]" : " !top-0 !left-0"
       }
-      if (delta_y_prime - 85 < 0) {
-        style["bottom"] = 0
-        style["top"] = "initial"
-      }
+
       break
     case "bottom":
       clss += " !bottom-0"
       style["left"] = `${delta_x}px`
-      if (delta_y_prime - 85 < 0) {
+      if (delta_y_prime < 0) {
         clss += " !bottom-0"
       }
       break

@@ -532,6 +532,8 @@ export default function WithReactFlowV2() {
       const properY = Math.abs(viewport.y)
       const properWidth = viewport.width
       const properHeight = viewport.height
+      let userNodeHeight = userNodeBound * viewport.zoom
+
       //Covering area will be from properX to properWidth + properX // properY to properHeight + properY
       const coveringArea = {
         x: { from: properX, to: properX + properWidth },
@@ -549,12 +551,48 @@ export default function WithReactFlowV2() {
           node.type !== VARZ.backgroundNodeType
       )
       const flatted_nodes = user_nodes
-        .map((item) => {
-          //Visible situation
-          //If item's left direction is less than viewport's x and viewport's y is less than item's y
+        .map((item, index) => {
           const itemPositionX = item.position.x * viewport.zoom
           const itemPositionY = item.position.y * viewport.zoom
-          let userNodeHeight = userNodeBound * viewport.zoom
+          const offsets = user_nodes
+            .filter((_, otherIndex) => otherIndex !== index) //remove current item from others
+            .map((otherNode) => {
+              const otherPositionX = otherNode.position.x * viewport.zoom
+              const otherPositionY = otherNode.position.y * viewport.zoom
+
+              const abs_deltaX = Math.abs(itemPositionX - otherPositionX)
+              const abs_deltaY = Math.abs(itemPositionY - otherPositionY)
+              const deltaX = itemPositionX - otherPositionX
+              const deltaY = itemPositionY - otherPositionY
+              let x_dir = 1
+              let y_dir = 1
+              if (deltaX < 0) {
+                x_dir = -1
+              }
+              if (deltaY < 0) {
+                y_dir = -1
+              }
+
+              const has_overlap =
+                abs_deltaX < userNodeHeight || abs_deltaY < userNodeHeight
+
+              const additional_margin = 20 // additional margin for more spacing from other node
+              if (has_overlap) {
+                return {
+                  id: item.id,
+                  offsetX:
+                    (abs_deltaX + userNodeBound + additional_margin) * x_dir,
+                  offsetY:
+                    (abs_deltaY + userNodeBound + additional_margin) * y_dir,
+                }
+              }
+              return null
+            })
+            .filter(Boolean)
+
+          //Visible situation
+          //If item's left direction is less than viewport's x and viewport's y is less than item's y
+
           const inTheRightSide = itemPositionX > coveringArea.x.to
           const inTheLeftSide =
             itemPositionX + userNodeHeight <= coveringArea.x.from
@@ -575,21 +613,13 @@ export default function WithReactFlowV2() {
             dir = "right"
             delta_x = Math.floor(itemPositionX - coveringArea.x.to)
             delta_y = Math.floor(itemPositionY - coveringArea.y.from)
-            delta_x_prime = coveringArea.x.to - itemPositionX
-            delta_y_prime = coveringArea.y.to - itemPositionY
           } else if (inTheLeftSide) {
             dir = "left"
-            delta_x = Math.floor(
-              itemPositionX + userNodeHeight - coveringArea.x.from
-            )
+            delta_x = Math.floor(itemPositionX - coveringArea.x.from)
             delta_y = Math.floor(itemPositionY - coveringArea.y.from)
           } else if (inTheTopSide) {
-            delta_x = Math.floor(
-              itemPositionX + userNodeHeight - coveringArea.x.from
-            )
-            delta_y = Math.floor(
-              itemPositionY + userNodeHeight - coveringArea.y.from
-            )
+            delta_x = Math.floor(itemPositionX - coveringArea.x.from)
+            delta_y = Math.floor(itemPositionY - coveringArea.y.from)
             dir = "top"
           } else if (inTheBottomSide) {
             delta_x = Math.floor(itemPositionX - coveringArea.x.from)
@@ -614,6 +644,7 @@ export default function WithReactFlowV2() {
             itemPositionX,
             itemPositionY,
             nodeHeight: userNodeHeight,
+            offsets,
           }
         })
         .filter((n) => !!n.invisible)

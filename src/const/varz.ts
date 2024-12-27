@@ -68,4 +68,12 @@ export const VARZ = {
   defaultPositionOfUserY: 400,
   teleportMargin: 40,
   userTimeTrackerId: "user-timer-tracker",
+  invisibleArea: {
+    top: 70,
+    bottom: 85,
+    right: 16,
+    left: 16,
+    myBulletSize: 48,
+    otherBulletSize: 26,
+  },
 }
