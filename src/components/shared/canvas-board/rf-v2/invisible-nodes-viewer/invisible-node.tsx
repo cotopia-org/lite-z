@@ -1,10 +1,14 @@
-import CotopiaAvatar from "@/components/shared-ui/c-avatar";
-import { InvisibleNodeType } from ".";
-import UserTeleportation from "@/components/shared/user-teleportation";
-import { useRoomContext } from "@/components/shared/room/room-context";
+import { InvisibleNodeType } from "."
+import { useRoomContext } from "@/components/shared/room/room-context"
+import useAuth from "@/hooks/auth"
+import { VARZ } from "@/const/varz"
+import UserNodeNavigator from "./user-node-navigator"
+import { useReactFlow } from "@xyflow/react"
 
 const InvisibleNode = ({ node }: { node: InvisibleNodeType }) => {
-  const { workspaceUsers } = useRoomContext();
+  const { room } = useRoomContext()
+  const { user: myAccount } = useAuth()
+  const rf = useReactFlow()
 
   const {
     node: rfNode,
@@ -12,71 +16,86 @@ const InvisibleNode = ({ node }: { node: InvisibleNodeType }) => {
     delta_x,
     delta_y,
     delta_y_prime,
-  } = node;
+    delta_x_prime,
+    nodeHeight,
+  } = node
 
-  if (!delta_x || !delta_y) return null;
-  let clss = "flex flex-col items-center gap-y-1 absolute z-[2]";
-  let style: { [key: string]: any } = {};
+  const is_my_node = myAccount.username === rfNode?.id
+  const participants = room?.participants || []
+  const current_user = participants.find((u) => u.username === rfNode.id)
+  const avatar = current_user?.avatar?.url
+
+  if (!delta_x || !delta_y) return null
+  let clss = " absolute z-[2]"
+  let style: { [key: string]: any } = {}
+
+  const node_radius = nodeHeight / 2
 
   switch (invisible_side) {
     case "right":
-      clss += " right-0";
-      style["top"] = `${delta_y}px`;
+      clss += " right-[15px]"
+      if (delta_y < 0) {
+        clss += " right-[15px] !top-[15px]"
+      } else if (delta_y_prime - nodeHeight / 2 < 0) {
+        clss += " !bottom-[15px] right-[15px]"
+      } else
+        style["top"] =
+          `${delta_y + (node_radius - VARZ.invisibleArea.margin)}px`
 
-      if (delta_y < 0) {
-        style["top"] = `${delta_y}px`;
-        clss += " !top-0 !right-0";
-      }
-      if (delta_y_prime < 0) {
-        style["bottom"] = 0;
-        style["top"] = "initial";
-      }
-      break;
+      break
     case "left":
-      clss += " left-0";
-      style["top"] = `${delta_y}px`;
+      clss += " left-[15px]"
+      style["top"] = `${delta_y + node_radius}px`
       if (delta_y < 0) {
-        clss += " !top-0 !left-0";
+        clss += " !top-[15px] left-[15px]"
       }
       if (delta_y_prime < 0) {
-        style["bottom"] = 0;
-        style["top"] = "initial";
+        clss += " !bottom-[15px] left-[15px]"
+        style["top"] = "initial"
       }
-      break;
-    case "bottom":
-      clss += " !bottom-0";
-      style["left"] = `${delta_x}px`;
-      if (delta_y_prime < 0) {
-        clss += " !bottom-0";
-      }
-      break;
+      break
     case "top":
-      clss += " top-0";
-      style["left"] = `${delta_x}px`;
-      break;
+      clss += " top-[15px]"
+      style["left"] = `${delta_x + (node_radius - VARZ.invisibleArea.margin)}px`
+      if (delta_x < 0) {
+        style["left"] = `${delta_x + nodeHeight}px`
+      }
+      if (delta_x_prime < -(nodeHeight / 2 - VARZ.invisibleArea.margin)) {
+        style["left"] = `${delta_x - node_radius}px`
+      }
+      break
+    case "bottom":
+      clss += " bottom-[15px]"
+      if (delta_x_prime < 0) {
+        clss += " !right-[15px] !bottom-[15px]"
+      } else if (delta_x < -(nodeHeight / 2 - VARZ.invisibleArea.margin)) {
+        clss += " !left-[15px] !bottom-[15px]"
+      } else {
+        style["left"] = `${delta_x + node_radius}px`
+      }
+      if (delta_y_prime < 0) {
+        clss += " !bottom-[15px]"
+      }
+
+      break
   }
 
-  const user = workspaceUsers.filter((user) => user.username === rfNode.id)[0];
-  if (user === undefined) return null;
+  const changeViewportHandler = () => {
+    const x_position = rfNode.position.x
+    const y_position = rfNode.position.y
+    rf.setCenter(x_position, y_position, { zoom: 1.5, duration: 1000 })
+  }
+
   return (
     <div style={style} className={clss}>
-      <span className="font-medium text-xs italic">{rfNode.id}</span>
-      <UserTeleportation
-        username={rfNode.id}
-        trigger={(navigateHandler) => {
-          return (
-            <CotopiaAvatar
-              onClick={() => navigateHandler()}
-              date={user.created_at}
-              src={user.avatar?.url}
-              className="w-7 h-7 [&_.avatar-fallback]:bg-blue-300 text-primary border-primary border cursor-pointer"
-              title={rfNode.id[0] ?? ""}
-            />
-          );
-        }}
+      <UserNodeNavigator
+        onClick={changeViewportHandler}
+        isMyNode={is_my_node}
+        node={node}
+        avatar={avatar}
       />
     </div>
-  );
-};
+  )
+}
 
-export default InvisibleNode;
+export default InvisibleNode

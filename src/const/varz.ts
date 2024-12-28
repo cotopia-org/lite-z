@@ -54,6 +54,7 @@ export const VARZ = {
   forgetPasswordPage: `/auth/forget-password`,
   signOutApiPage: `/api/auth/sign-out`,
   collisionMargin: 70,
+
   voiceAreaRadius: 200,
   defaultPositionOfUserX: 400,
   jailWidth: 3800,
@@ -68,4 +69,13 @@ export const VARZ = {
   defaultPositionOfUserY: 400,
   teleportMargin: 40,
   userTimeTrackerId: "user-timer-tracker",
+  invisibleArea: {
+    top: 70,
+    bottom: 85,
+    right: 16,
+    margin: 25,
+    left: 16,
+    myBulletSize: 48,
+    otherBulletSize: 26,
+  },
 }
