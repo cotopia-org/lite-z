@@ -63,7 +63,9 @@ function LiveKitConnectionStatus() {
 
     if (room.state === ConnectionState.Connected) return;
 
-    room.connect(VARZ.serverUrl, livekit_token);
+    room.connect(VARZ.serverUrl, livekit_token, {
+      autoSubscribe: false,
+    });
   };
 
   if (connectionStatus == RoomEvent.Disconnected)
