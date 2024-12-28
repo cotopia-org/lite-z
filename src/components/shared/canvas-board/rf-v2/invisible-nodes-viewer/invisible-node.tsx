@@ -1,13 +1,14 @@
-import CotopiaAvatar from "@/components/shared-ui/c-avatar"
 import { InvisibleNodeType } from "."
 import { useRoomContext } from "@/components/shared/room/room-context"
 import useAuth from "@/hooks/auth"
 import { VARZ } from "@/const/varz"
 import UserNodeNavigator from "./user-node-navigator"
+import { useReactFlow } from "@xyflow/react"
 
 const InvisibleNode = ({ node }: { node: InvisibleNodeType }) => {
   const { room } = useRoomContext()
   const { user: myAccount } = useAuth()
+  const rf = useReactFlow()
 
   const {
     node: rfNode,
@@ -79,26 +80,20 @@ const InvisibleNode = ({ node }: { node: InvisibleNodeType }) => {
       break
   }
 
-  // let view = (
-  //   <CotopiaAvatar
-  //     src={avatar}
-  //     className="w-7 h-7 text-primary border-primary border cursor-pointer"
-  //     title={rfNode.id[0] ?? ""}
-  //   />
-  // )
-
-  // if (is_my_node) {
-  //   view = (
-  //     <>
-  //       <MyNodeNavigator node={node} avatar={avatar} />
-  //     </>
-  //   )
-  // }
+  const changeViewportHandler = () => {
+    const x_position = rfNode.position.x
+    const y_position = rfNode.position.y
+    rf.setCenter(x_position, y_position, { zoom: 1.5, duration: 1000 })
+  }
 
   return (
     <div style={style} className={clss}>
-      <UserNodeNavigator isMyNode={is_my_node} node={node} avatar={avatar} />
-      {/* {view} */}
+      <UserNodeNavigator
+        onClick={changeViewportHandler}
+        isMyNode={is_my_node}
+        node={node}
+        avatar={avatar}
+      />
     </div>
   )
 }

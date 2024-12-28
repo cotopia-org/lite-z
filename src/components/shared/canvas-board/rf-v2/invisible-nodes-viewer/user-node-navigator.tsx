@@ -6,9 +6,15 @@ type Props = {
   node: InvisibleNodeType
   isMyNode?: boolean
   avatar?: string
+  onClick?: () => void
 }
 
-const UserNodeNavigator = ({ node, avatar, isMyNode = false }: Props) => {
+const UserNodeNavigator = ({
+  node,
+  avatar,
+  isMyNode = false,
+  onClick,
+}: Props) => {
   let nav_clss = `relative rounded-full z-[2]`
   let avatar_clss =
     "absolute left-1 top-1 z-[2] text-primary border-primary border cursor-pointer"
@@ -39,6 +45,7 @@ const UserNodeNavigator = ({ node, avatar, isMyNode = false }: Props) => {
         {/* arrow content */}
       </div>
       <CotopiaAvatar
+        onClick={onClick}
         src={avatar}
         className={avatar_clss}
         title={node.node.id[0] ?? ""}
