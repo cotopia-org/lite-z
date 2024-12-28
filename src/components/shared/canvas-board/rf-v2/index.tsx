@@ -605,9 +605,11 @@ export default function WithReactFlowV2() {
           let delta_x = undefined
           let delta_y = undefined
           //calc distance between end of covering height and  client y
-          let delta_y_prime = coveringArea.y.to - itemPositionY
+          let delta_y_prime =
+            coveringArea.y.to - (itemPositionY + userNodeHeight)
           //calc distance between end covering width and client x
-          let delta_x_prime = coveringArea.x.to - itemPositionX
+          let delta_x_prime =
+            coveringArea.x.to - (itemPositionX + userNodeHeight)
 
           if (inTheRightSide) {
             dir = "right"

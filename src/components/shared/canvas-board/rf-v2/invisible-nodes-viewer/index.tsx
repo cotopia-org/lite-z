@@ -33,10 +33,10 @@ const InvisibleNodesViewer = ({ invisibleNodes }: Props) => {
       className="viewport-overlay overflow-hidden"
       style={{
         position: "absolute",
-        top: VARZ.invisibleArea.top,
-        bottom: VARZ.invisibleArea.bottom,
-        right: VARZ.invisibleArea.right,
-        left: VARZ.invisibleArea.left,
+        top: 0,
+        bottom: 0,
+        right: 0,
+        left: 0,
       }}
     >
       {invisibleNodes.map((n) => {

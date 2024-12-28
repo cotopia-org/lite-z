@@ -10,7 +10,15 @@ const InvisibleNode = ({ node }: { node: InvisibleNodeType }) => {
   const { room } = useRoomContext()
   const { user: myAccount } = useAuth()
 
-  const { node: rfNode, invisible_side, delta_x, delta_y, delta_y_prime } = node
+  const {
+    node: rfNode,
+    invisible_side,
+    delta_x,
+    delta_y,
+    delta_y_prime,
+    delta_x_prime,
+    nodeHeight,
+  } = node
 
   const is_my_node = myAccount.username === rfNode?.id
   const participants = room?.participants || []
@@ -21,34 +29,54 @@ const InvisibleNode = ({ node }: { node: InvisibleNodeType }) => {
   let clss = " absolute z-[2]"
   let style: { [key: string]: any } = {}
 
+  const node_radius = nodeHeight / 2
+
   switch (invisible_side) {
     case "right":
-      clss += is_my_node ? " right-[10px]" : " right-0"
-      style["top"] = `${delta_y}px`
+      clss += " right-[15px]"
       if (delta_y < 0) {
-        // style["top"] = `${delta_y}px`
-        clss += is_my_node ? " right-[10px] !top-[10px]" : " !top-0 !right-0"
-      }
+        clss += " right-[15px] !top-[15px]"
+      } else if (delta_y_prime - nodeHeight / 2 < 0) {
+        clss += " !bottom-[15px] right-[15px]"
+      } else
+        style["top"] =
+          `${delta_y + (node_radius - VARZ.invisibleArea.margin)}px`
 
       break
     case "left":
-      clss += is_my_node ? " left-[10px]" : " left-0"
-      style["top"] = `${delta_y}px`
+      clss += " left-[15px]"
+      style["top"] = `${delta_y + node_radius}px`
       if (delta_y < 0) {
-        clss += is_my_node ? " !top-[10px] left-[10px]" : " !top-0 !left-0"
+        clss += " !top-[15px] left-[15px]"
       }
-
-      break
-    case "bottom":
-      clss += " !bottom-0"
-      style["left"] = `${delta_x}px`
       if (delta_y_prime < 0) {
-        clss += " !bottom-0"
+        clss += " !bottom-[15px] left-[15px]"
+        style["top"] = "initial"
       }
       break
     case "top":
-      clss += is_my_node ? " top-[10px]" : " top-0"
-      style["left"] = `${delta_x}px`
+      clss += " top-[15px]"
+      style["left"] = `${delta_x + (node_radius - VARZ.invisibleArea.margin)}px`
+      if (delta_x < 0) {
+        style["left"] = `${delta_x + nodeHeight}px`
+      }
+      if (delta_x_prime < -(nodeHeight / 2 - VARZ.invisibleArea.margin)) {
+        style["left"] = `${delta_x - node_radius}px`
+      }
+      break
+    case "bottom":
+      clss += " bottom-[15px]"
+      if (delta_x_prime < 0) {
+        clss += " !right-[15px] !bottom-[15px]"
+      } else if (delta_x < -(nodeHeight / 2 - VARZ.invisibleArea.margin)) {
+        clss += " !left-[15px] !bottom-[15px]"
+      } else {
+        style["left"] = `${delta_x + node_radius}px`
+      }
+      if (delta_y_prime < 0) {
+        clss += " !bottom-[15px]"
+      }
+
       break
   }
 
@@ -61,7 +89,11 @@ const InvisibleNode = ({ node }: { node: InvisibleNodeType }) => {
   )
 
   if (is_my_node) {
-    view = <MyNodeNavigator node={node} avatar={avatar} />
+    view = (
+      <>
+        <MyNodeNavigator node={node} avatar={avatar} />
+      </>
+    )
   }
 
   return (
