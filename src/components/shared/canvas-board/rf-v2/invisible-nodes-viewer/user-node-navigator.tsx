@@ -1,6 +1,8 @@
 import { getNodePositionFromCenter } from "@/lib/utils"
 import { InvisibleNodeType } from "."
 import CotopiaAvatar from "@/components/shared-ui/c-avatar"
+import { useMemo } from "react"
+import { useRoomContext } from "@/components/shared/room/room-context"
 
 type Props = {
   node: InvisibleNodeType
@@ -15,6 +17,9 @@ const UserNodeNavigator = ({
   isMyNode = false,
   onClick,
 }: Props) => {
+
+  const {workspaceUsers} = useRoomContext()
+
   let nav_clss = `relative rounded-full z-[2]`
   let avatar_clss =
     "absolute left-1 top-1 z-[2] text-primary border-primary border cursor-pointer"
@@ -37,6 +42,10 @@ const UserNodeNavigator = ({
     { x: itemPositionX, y: itemPositionY }
   )
 
+  const user = useMemo(() => {
+    return workspaceUsers.find(a => a.username === node.node.id)
+  }, [node.node.id, workspaceUsers])
+
   return (
     <>
       <div style={{ transform: `rotate(${-degree}deg)` }} className={nav_clss}>
@@ -48,7 +57,7 @@ const UserNodeNavigator = ({
         onClick={onClick}
         src={avatar}
         className={avatar_clss}
-        title={node.node.id[0] ?? ""}
+        title={user?.username ? user.name?.[0] : node.node.id[0]}
       />
     </>
   )

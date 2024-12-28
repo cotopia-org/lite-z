@@ -28,6 +28,9 @@ type Props = {
 }
 
 const InvisibleNodesViewer = ({ invisibleNodes }: Props) => {
+
+  console.log('invisibleNodes', invisibleNodes);
+
   return (
     <div
       className="viewport-overlay overflow-hidden"
@@ -39,7 +42,7 @@ const InvisibleNodesViewer = ({ invisibleNodes }: Props) => {
         left: 0,
       }}
     >
-      {invisibleNodes.map((n) => {
+      {invisibleNodes.filter(n => n.node.type !== "shareScreenNode").map((n) => {
         return <InvisibleNode key={n.node.id} node={n} />
       })}
     </div>
