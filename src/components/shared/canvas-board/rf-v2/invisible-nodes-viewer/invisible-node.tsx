@@ -2,9 +2,8 @@ import CotopiaAvatar from "@/components/shared-ui/c-avatar"
 import { InvisibleNodeType } from "."
 import { useRoomContext } from "@/components/shared/room/room-context"
 import useAuth from "@/hooks/auth"
-import MyNodeNavigator from "./my-node-navigator"
-import { UserMinimalType } from "@/types/user"
 import { VARZ } from "@/const/varz"
+import UserNodeNavigator from "./user-node-navigator"
 
 const InvisibleNode = ({ node }: { node: InvisibleNodeType }) => {
   const { room } = useRoomContext()
@@ -80,25 +79,26 @@ const InvisibleNode = ({ node }: { node: InvisibleNodeType }) => {
       break
   }
 
-  let view = (
-    <CotopiaAvatar
-      src={avatar}
-      className="w-7 h-7 text-primary border-primary border cursor-pointer"
-      title={rfNode.id[0] ?? ""}
-    />
-  )
+  // let view = (
+  //   <CotopiaAvatar
+  //     src={avatar}
+  //     className="w-7 h-7 text-primary border-primary border cursor-pointer"
+  //     title={rfNode.id[0] ?? ""}
+  //   />
+  // )
 
-  if (is_my_node) {
-    view = (
-      <>
-        <MyNodeNavigator node={node} avatar={avatar} />
-      </>
-    )
-  }
+  // if (is_my_node) {
+  //   view = (
+  //     <>
+  //       <MyNodeNavigator node={node} avatar={avatar} />
+  //     </>
+  //   )
+  // }
 
   return (
     <div style={style} className={clss}>
-      {view}
+      <UserNodeNavigator isMyNode={is_my_node} node={node} avatar={avatar} />
+      {/* {view} */}
     </div>
   )
 }
