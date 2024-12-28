@@ -10,6 +10,7 @@ import { ChatItemType } from "@/types/chat";
 import { Chat2ItemType } from "@/types/chat2";
 import { ReactNode } from "react";
 import { useSocket } from "@/routes/private-wrarpper";
+import { toast } from "sonner";
 
 type Props = {
   children: ReactNode;
@@ -29,16 +30,16 @@ export default function ChatWrapper({ children }: Props) {
       appDispatch(
         updateMessagesAction({
           message: data,
-        })
+        }),
       );
       appDispatch(
         unreadMessagesAction({
           message: data,
           messageType: isDirect ? "direct" : "room",
-        })
+        }),
       );
     },
-    [settings.sounds.messageIncoming]
+    [settings.sounds.messageIncoming],
   );
 
   useSocket("messageSeen", (data) => {
@@ -47,7 +48,7 @@ export default function ChatWrapper({ children }: Props) {
     appDispatch(
       updateMessagesAction({
         message: convertedMessage,
-      })
+      }),
     );
   });
 

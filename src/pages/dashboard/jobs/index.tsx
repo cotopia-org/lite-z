@@ -11,6 +11,8 @@ import CPagination from "@/components/shared-ui/c-pagination";
 import Job from "@/pages/dashboard/jobs/single";
 import EditJob from "@/pages/dashboard/jobs/edit";
 import JobStatus from "@/components/shared/room/tools/top-left/job-button/shapes/job-list/job-item/job-status";
+import { Pencil, Plus } from "lucide-react";
+import CreateJob from "@/pages/dashboard/jobs/create";
 
 type Props = {
   isAll?: boolean;
@@ -22,11 +24,13 @@ export default function Jobs({ isAll = true }: Props) {
   const [previousJob, setPreviousJob] = useState<JobType>();
   const [selectedEdit, setSelectedEdit] = useState<JobType>();
 
+  const [creating, setCreating] = useState<boolean>(false);
+
   const { workspaceUsers, workspace_id } = useRoomContext();
 
   const [page, setPage] = useState(1);
 
-  const { data, mutate } = useApi(
+  const { data, isLoading, mutate } = useApi(
     `/workspaces/${workspace_id}/jobs?page=${page}&status=${selectStatus}`,
   );
   const jobs: JobType[] = data !== undefined ? data?.data : [];
@@ -128,6 +132,18 @@ export default function Jobs({ isAll = true }: Props) {
     return items;
   }, [isAll]);
 
+  if (creating) {
+    return (
+      <CreateJob
+        onBack={() => {
+          setCreating(false);
+        }}
+        workspace_id={workspace_id}
+        setSelectedJob={setSelectedJob}
+        onUpdate={mutate}
+      />
+    );
+  }
   if (selectedEdit)
     return (
       <EditJob
@@ -164,8 +180,8 @@ export default function Jobs({ isAll = true }: Props) {
     );
 
   return (
-    <>
-      <div className="flex flex-row items-center gap-x-4">
+    <div className={"p-4"}>
+      <div className="flex flex-row items-center gap-x-4 justify-between">
         <CotopiaDropdown
           label="Job Status"
           items={[
@@ -180,15 +196,29 @@ export default function Jobs({ isAll = true }: Props) {
           defaultValue={selectStatus}
           onSelect={(item) => setSelectStatus(item.value)}
         />
+
+        <CotopiaButton
+          variant={"default"}
+          startIcon={<Plus />}
+          onClick={() => {
+            setCreating(true);
+          }}
+        >
+          New Job
+        </CotopiaButton>
       </div>
 
-      <CotopiaTable items={finalJobs} tableHeadItems={tableHeadItems} />
+      <CotopiaTable
+        loading={isLoading}
+        items={finalJobs}
+        tableHeadItems={tableHeadItems}
+      />
       <CPagination
         totalItems={jobsMeta.total}
         currentPage={page}
         onPageChange={setPage}
         perPage={10}
       />
-    </>
+    </div>
   );
 }

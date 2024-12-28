@@ -24,7 +24,7 @@ type Props = {
 
 const InvisibleNodesViewer = ({ invisibleNodes }: Props) => {
   return (
-    <div className="viewport-overlay overflow-hidden top-[16px] left-[16px] right-[16px] bottom-[16px] absolute">
+    <div className="viewport-overlay overflow-hidden top-[70px] left-[16px] right-[16px] bottom-[85px] absolute">
       {invisibleNodes.map((n) => {
         return <InvisibleNode key={n.node.id} node={n} />
       })}

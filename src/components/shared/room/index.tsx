@@ -234,22 +234,36 @@ export default function RoomHolder({
 
   const socket = useSocket();
 
-  const handleReTry = () => {
-    console.log("retry to connect!");
+  const handleReTry = async (tries = 0, max_tries = 20) => {
+    if (tries + 1 === max_tries) {
+      toast.error("Couldn't join to the room!");
+      dispatch({ type: "STOP_LOADING" });
+    } else {
+      await new Promise((r) => setTimeout(r, 1500));
+      handleJoin(tries + 1);
+    }
   };
 
-  const handleJoin = useCallback(async () => {
-    axiosInstance
-      .get<FetchDataType<WorkspaceRoomJoinType>>(`/rooms/${room_id}/join`)
-      .then((res) => {
-        setPermissionChecked(true);
-        //Setting token in redux for livekit
-        reduxDispatch(setToken(res.data.data.token));
-      })
-      .catch((err) => {
-        toast.error("Couldn't join to the room!");
-      });
-  }, [room_id]);
+  const handleJoin = useCallback(
+    async (tries = 0) => {
+      dispatch({ type: "START_LOADING" });
+
+      axiosInstance
+        .get<FetchDataType<WorkspaceRoomJoinType>>(`/rooms/${room_id}/join`)
+        .then((res) => {
+          setPermissionChecked(true);
+          //Setting token in redux for livekit
+          reduxDispatch(setToken(res.data.data.token));
+          dispatch({ type: "STOP_LOADING" });
+        })
+        .catch((err) => {
+          handleReTry(tries);
+
+          // toast.error("Couldn't join to the room!");
+        });
+    },
+    [room_id],
+  );
 
   const handlePassed =
     permissionChecked === false && !isReConnecting && !isSwitching;
@@ -261,7 +275,7 @@ export default function RoomHolder({
         handleJoin();
       }
     },
-    [permissionChecked, isSwitching, isReConnecting]
+    [permissionChecked, isSwitching, isReConnecting],
   );
 
   content = (

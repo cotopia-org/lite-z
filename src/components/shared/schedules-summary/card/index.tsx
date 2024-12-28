@@ -1,60 +1,60 @@
-import {AvailabiltyType, ScheduleType} from "@/types/calendar";
+import { AvailabiltyType, ScheduleType } from "@/types/calendar";
 import moment from "moment";
-import {useCallback, useMemo, useState} from "react";
-import {Mic, Pencil, Video} from "lucide-react";
+import { useCallback, useMemo, useState } from "react";
+import { Mic, Pencil, Video } from "lucide-react";
 import TimeShower from "./time-shower";
 import ParticipantsWithPopover from "../../participants/with-popover";
+import { isNowBetween } from "@/lib/utils";
 
 type Props = {
-    schedule: ScheduleType;
-    onHide: () => void;
+  schedule: ScheduleType;
+  onHide: () => void;
 };
-export default function Card({schedule, onHide}: Props) {
-    const [isHide, setIsHide] = useState(false);
+export default function Card({ schedule, onHide }: Props) {
+  const today = moment();
 
-    const handleHide = useCallback(() => {
-        setIsHide(true);
-        if (onHide) onHide();
-    }, [onHide]);
+  const timeToday = useMemo(() => {
+    const dayTarget = schedule.days.find((x) => x.day === today.day());
 
-    const today = moment();
+    if (dayTarget) {
+      return dayTarget;
+    }
 
-    const timeToday = useMemo(() => {
-        const dayTarget = schedule.days.find((x) => x.day === today.day());
+    return undefined;
+  }, [schedule, today.day()]);
 
-        if (dayTarget) {
-            return dayTarget;
-        }
+  if (timeToday === undefined) return null;
 
-        return undefined;
-    }, [schedule, today.day()]);
+  const nowTimes = timeToday.times.filter((time) => {
+    return isNowBetween(time.start, time.end);
+  });
 
-    if (timeToday === undefined) return null;
+  let icons = {
+    [AvailabiltyType.Text]: <Pencil size={12} />,
+    [AvailabiltyType.Video]: <Video size={12} />,
+    [AvailabiltyType.Voice]: <Mic size={12} />,
+  };
 
-    let icons = {
-        [AvailabiltyType.Text]: <Pencil size={12}/>,
-        [AvailabiltyType.Video]: <Video size={12}/>,
-        [AvailabiltyType.Voice]: <Mic size={12}/>,
-    };
+  if (nowTimes.length < 1) {
+    onHide();
+    return null;
+  }
 
-    if (isHide) return null;
-
-    return (
-        <div className='flex flex-row items-center gap-x-2 select-none'>
-
-
-            <ParticipantsWithPopover className='!pb-0' participants={[schedule.user]}/>
-            <div className='flex flex-col'>
-                <span className='text-sm capitalize font-medium'>{`${schedule.user.name}`}</span>
-                <span className='text-xs text-black/70'>
-              <div className='flex flex-row items-center gap-x-1'>
-                     <span className='text-xs'>{icons[schedule.availability_type]}</span>
-                  <TimeShower times={timeToday.times} onHide={handleHide}/>
-              </div>
+  return (
+    <div className="flex flex-row items-center gap-x-2 select-none sepia">
+      <ParticipantsWithPopover
+        className="!pb-0"
+        participants={[schedule.user]}
+      />
+      <div className="flex flex-col">
+        <span className="text-sm capitalize font-medium">{`${schedule.user.username}`}</span>
+        <span className="text-xs text-black/70">
+          <div className="flex flex-row items-center gap-x-1">
+            <span className="text-xs">{icons[schedule.availability_type]}</span>
+            <TimeShower times={nowTimes} />
+          </div>
         </span>
-            </div>
-
-
-        </div>
-    );
+      </div>
+    </div>
+  );
 }

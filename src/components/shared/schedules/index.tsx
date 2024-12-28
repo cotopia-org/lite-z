@@ -11,13 +11,13 @@ export default function Schedules({ items, onDelete, justView = true }: Props) {
   if (items.length === 0)
     return (
       <NotFound
-        title='There is no schedule for this user yet!'
-        className='py-6'
+        title="There is no schedule for this user yet!"
+        className="py-6"
       />
     );
 
   return (
-    <div className='mb-6 flex flex-col gap-y-2'>
+    <div className="mb-6 flex flex-col gap-y-2">
       {items.map((x) => (
         <ScheduleItem
           schedule={x}

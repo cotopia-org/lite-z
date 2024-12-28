@@ -31,12 +31,22 @@ export default function JobButton() {
 
   const { data: suggestionsJobs, mutate: mutateSuggest } = useApi<
     FetchDataType<JobType[]>
-  >("/users/mentionedJobs", undefined, {
+  >("/users/mentionedJobs?suggests=true", undefined, {
     isPaused: () => workspace_id === undefined,
   });
 
+  const { data: parentJobs } = useApi<FetchDataType<JobType[]>>(
+    "/users/mentionedJobs",
+    undefined,
+    {
+      isPaused: () => workspace_id === undefined,
+    },
+  );
+
   let jobItems = (data && data?.data) ?? [];
   let suggestItems = (suggestionsJobs && suggestionsJobs?.data) ?? [];
+  let parentItems = (parentJobs && parentJobs?.data) ?? [];
+
   let job_label = "Create job";
   const active_job = user?.active_job;
 
@@ -119,7 +129,10 @@ export default function JobButton() {
                     user={user}
                     hasAction
                     items={suggestItems}
-                    onMutate={mutateSuggest}
+                    onMutate={() => {
+                      mutateSuggest();
+                      mutate();
+                    }}
                     suggested={true}
                     parentJobs={isUserAdmin(user) ? jobItems : suggestItems}
                   />
@@ -144,7 +157,6 @@ export default function JobButton() {
           >
             <div className="flex w-full flex-col gap-y-6 items-end">
               {content}
-
               <div
                 className={"w-full flex flex-row items-center justify-between"}
               >
@@ -163,7 +175,7 @@ export default function JobButton() {
                   }}
                 </CFullDialog>
                 <AddJobHandler
-                  parentJobs={isUserAdmin(user) ? jobItems : suggestItems}
+                  parentJobs={parentItems}
                   workspaceId={workspace_id}
                   onCreated={mutate}
                 />

@@ -15,25 +15,26 @@ export default function PayrollSideBarHeader() {
       trigger={(open) => (
         <div
           onClick={open}
-          className='w-full p-3 flex items-center justify-between border-b border-border'
+          className="w-full p-3 flex items-center justify-between border-b border-border"
         >
-          <div className='flex items-center gap-x-2'>
+          <div className="flex items-center gap-x-2">
             <UserAvatar
+              date={user?.created_at}
               src={user?.avatar?.url}
               title={user?.username!}
-              className='w-10 h-10'
+              className="w-10 h-10"
             />
-            <h1 className='text-base font-semibold'>{user?.username}</h1>
+            <h1 className="text-base font-semibold">{user?.username}</h1>
           </div>
 
           {isAdmin ? (
-            <p className='text-sm font-semibold text-gray-600'>Admin</p>
+            <p className="text-sm font-semibold text-gray-600">Admin</p>
           ) : (
-            <p className='text-sm font-semibold text-gray-600'>User</p>
+            <p className="text-sm font-semibold text-gray-600">User</p>
           )}
         </div>
       )}
-      className='w-[640px]'
+      className="w-[640px]"
     >
       {(open, close) => <PayrollUserSettings />}
     </FullModalBox>

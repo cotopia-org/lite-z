@@ -1,35 +1,35 @@
-import { colors } from "@/const/varz"
-import { TrashIcon } from "@/components/icons"
-import CotopiaButton from "@/components/shared-ui/c-button"
-import CDialog from "@/components/shared-ui/c-dialog"
-import CotopiaPromptContent from "@/components/shared-ui/c-prompt/content"
-import useLoading from "@/hooks/use-loading"
-import axiosInstance from "@/services/axios"
-import { WorkspaceRoomShortType } from "@/types/room"
-import { toast } from "sonner"
+import { colors } from "@/const/varz";
+import { TrashIcon } from "@/components/icons";
+import CotopiaButton from "@/components/shared-ui/c-button";
+import CDialog from "@/components/shared-ui/c-dialog";
+import CotopiaPromptContent from "@/components/shared-ui/c-prompt/content";
+import useLoading from "@/hooks/use-loading";
+import axiosInstance from "@/services/axios";
+import { WorkspaceRoomShortType } from "@/types/room";
+import { toast } from "sonner";
 
 type Props = {
-  room: WorkspaceRoomShortType
-  onDelete?: () => void
-}
+  room: WorkspaceRoomShortType;
+  onDelete?: () => void;
+};
 
 export default function DeleteRoom({ room, onDelete }: Props) {
-  const { startLoading, stopLoading, isLoading } = useLoading()
+  const { startLoading, stopLoading, isLoading } = useLoading();
 
   const handleDelete = (onClose?: () => void) => {
-    startLoading()
+    startLoading();
     axiosInstance
       .delete(`/rooms/${room.id}`)
       .then((res) => {
-        toast.success(`"${room.title}" room has been deleted successfully`)
-        stopLoading()
-        if (onClose) onClose()
-        if (onDelete) onDelete()
+        toast.success(`"${room.title}" room has been deleted successfully`);
+        stopLoading();
+        if (onClose) onClose();
+        if (onDelete) onDelete();
       })
       .catch((err) => {
-        stopLoading()
-      })
-  }
+        stopLoading();
+      });
+  };
 
   return (
     <CDialog
@@ -56,5 +56,5 @@ export default function DeleteRoom({ room, onDelete }: Props) {
         />
       )}
     </CDialog>
-  )
+  );
 }

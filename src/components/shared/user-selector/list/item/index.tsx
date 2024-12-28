@@ -10,7 +10,13 @@ type Props = {
   env?: "simple" | "detailed";
 };
 
-export default function UserCardItem({ item, onPick, isSelected, isKeyboardSelected, env }: Props) {
+export default function UserCardItem({
+  item,
+  onPick,
+  isSelected,
+  isKeyboardSelected,
+  env,
+}: Props) {
   const userFullname = getUserFullname(item);
   const username = item?.username;
 
@@ -21,16 +27,16 @@ export default function UserCardItem({ item, onPick, isSelected, isKeyboardSelec
   } else {
     clss += ` hover:bg-black/[.03]`;
   }
-  
 
   //detailed by default
   let content = (
     <>
       <CotopiaAvatar
+        date={item.created_at}
         src={item.avatar?.url ?? undefined}
         title={userFullname?.[0]}
       />
-      <div className='flex items-start flex-col'>
+      <div className="flex items-start flex-col">
         <strong>{userFullname}</strong>
         <span>{username}</span>
       </div>
@@ -41,18 +47,22 @@ export default function UserCardItem({ item, onPick, isSelected, isKeyboardSelec
     content = (
       <>
         <CotopiaAvatar
+          date={item.created_at}
           src={item.avatar?.url ?? undefined}
           title={userFullname?.[0]}
-          className='w-10 h-10'
+          className="w-10 h-10"
         />
-        <div className='flex items-start flex-col'>
+        <div className="flex items-start flex-col">
           <strong>{userFullname}</strong>
         </div>
       </>
     );
 
   return (
-    <div onClick={() => onPick && onPick(item)} className={clss}>
+    <div
+      onClick={() => onPick && onPick(item as UserMinimalType)}
+      className={clss}
+    >
       {content}
     </div>
   );

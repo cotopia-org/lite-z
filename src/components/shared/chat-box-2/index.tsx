@@ -5,26 +5,37 @@ import { Virtualizer } from "@tanstack/react-virtual";
 import PinMessages from "./pins";
 import { useChat2 } from "@/hooks/chat/use-chat-2";
 import { cn } from "@/lib/utils";
+import { __BUS } from "@/const/bus";
 
 type Props = {
   chat_id: number;
   addMessage?: (text: string) => void;
   onGetVirtualizer?: (vir: Virtualizer<HTMLDivElement, Element>) => void;
+  lastMessageUnseen: number;
 };
 
-const Chat2: React.FC<Props> = ({ chat_id, addMessage, onGetVirtualizer }) => {
+const Chat2: React.FC<Props> = ({
+  chat_id,
+  addMessage,
+  onGetVirtualizer,
+  lastMessageUnseen,
+}) => {
   const { currentChatPins } = useChat2();
 
   let content = (
     <div
       className={cn(
         "flex flex-col h-full bg-black/[.04] relative",
-        currentChatPins ? "pt-16" : ""
+        currentChatPins ? "pt-16" : "",
       )}
     >
       <PinMessages />
       {/* Chat message list */}
-      <Items chat_id={chat_id} onGetVirtualizer={onGetVirtualizer} />
+      <Items
+        chat_id={chat_id}
+        lastMessageUnseen={lastMessageUnseen}
+        onGetVirtualizer={onGetVirtualizer}
+      />
       {/* Chat input */}
     </div>
   );

@@ -6,5 +6,11 @@ export default function UnSeenMessages() {
   //Getting locale chat item context
   const { chat } = useChat();
 
-  return <CBadge count={chat.unseens} size='normal' />;
+  return (
+    <CBadge
+      count={chat.unseens}
+      type={chat.muted ? "normal" : "important"}
+      size="normal"
+    />
+  );
 }

@@ -20,30 +20,40 @@ type Props = {
   chat_id: number;
   marginFetching?: number;
   onGetVirtualizer?: (vir: Virtualizer<HTMLDivElement, Element>) => void;
+  lastMessageUnseen: number;
 };
 
 export default function Items({
   chat_id,
   marginFetching = 1000,
   onGetVirtualizer,
+  lastMessageUnseen,
 }: Props) {
-
   const vlistRef = useRef<VListHandle | null>(null);
 
-
   const chatItemInit = useRef(false);
-  useEffect(() => {
-    const timeout = setTimeout(() => {
-      chatItemInit.current = true
-    }, 1000)
-    return () => clearInterval(timeout)
-  }, [])
-
-  const dispatch = useAppDispatch();
-
   const { chatObjects, editMessage } = useChat2({ chat_id });
 
   const items = chatObjects?.[chat_id]?.messages ?? [];
+
+  const itemIndex = items.findIndex((x) => x.id === lastMessageUnseen);
+
+  const rightIndex = items.length - (itemIndex + 1);
+
+  useEffect(() => {
+    //TODO: have to check this with mahdi
+    // vlistRef.current?.scrollToIndex(rightIndex);
+
+    const timeout = setTimeout(() => {
+      chatItemInit.current = true;
+    }, 1000);
+    return () => clearInterval(timeout);
+  }, []);
+
+  const [unseenIndex, setUnSeenIndex] = useState<number | null>(null);
+
+  const dispatch = useAppDispatch();
+
   const loading = chatObjects?.[chat_id]?.loading ?? true;
   const chatPageLoading = chatObjects?.[chat_id]?.fetchPageLoading ?? false;
   const chatPage = chatObjects?.[chat_id]?.page ?? 1;
@@ -82,19 +92,21 @@ export default function Items({
   useBus(
     __BUS.scrollEndChatBox,
     () => {
-      if (items.length === 0 ) return
+      if (items.length === 0) return;
       vlistRef.current?.scrollToIndex(items.length - 1);
     },
-    [items, vlistRef.current]
+    [items, vlistRef.current],
   );
 
   useBus(
     __BUS.scrollToTargetMessage,
     (data: any) => {
+      console.log(data, "YES");
       const messageId = data?.messageId;
 
       const itemIndex = items.findIndex((x) => +x.nonce_id === +messageId);
 
+      console.log(itemIndex, "index");
       if (itemIndex === -1) return;
 
       const rightIndex = items.length - (itemIndex + 1);
@@ -102,7 +114,7 @@ export default function Items({
       rowVirtualizer.scrollToIndex(rightIndex);
 
       const messageEl: HTMLDivElement | null = document.querySelector(
-        `.chat-item[data-index="${rightIndex}"]`
+        `.chat-item[data-index="${rightIndex}"]`,
       );
 
       if (!messageEl || !messageEl) return;
@@ -115,19 +127,18 @@ export default function Items({
         messageEl?.classList?.remove("[&]:animate-pulse");
       }, 1500);
     },
-    [items]
+    [items],
   );
 
   useEffect(() => {
     if (!rowVirtualizer) return;
 
     if (onGetVirtualizer) onGetVirtualizer(rowVirtualizer);
-  }, [onGetVirtualizer, rowVirtualizer]);  
+  }, [onGetVirtualizer, rowVirtualizer]);
 
   const handleScroll = () => {
+    if (chatItemInit.current === false) return;
 
-    if ( chatItemInit.current === false) return
-    
     if (!vlistRef.current) return;
 
     if (chatPageLoading) return;
@@ -145,17 +156,16 @@ export default function Items({
 
           vlistRef.current?.scrollToIndex(newItems.length);
         },
-        () => {}
+        () => {},
       );
     }
-    
   };
 
   useEffect(() => {
     if (!!!latestMessage.current) return;
 
     const itemIndex = items.findIndex(
-      (x) => x.id === latestMessage.current?.id
+      (x) => x.id === latestMessage.current?.id,
     );
 
     if (itemIndex === -1) return;
@@ -167,40 +177,45 @@ export default function Items({
     setIsFetching(false);
   }, [items.length, rowVirtualizer]);
 
-  
   const initScrollEnd = useRef(false);
 
   useEffect(() => {
-    
-    if (items.length === 0 ) return
-    if (initScrollEnd.current === true) return
+    if (items.length === 0) return;
+    if (initScrollEnd.current === true) return;
 
     vlistRef.current?.scrollToIndex(items.length - 1);
-    initScrollEnd.current = true
-  }, [items, initScrollEnd.current])
+    initScrollEnd.current = true;
+  }, [items, initScrollEnd.current]);
 
   let content = (
     <>
       {!!isFetching && <FetchingProgress />}
-      <VList className='h-full' ref={vlistRef} onScroll={handleScroll}>
+      <VList className="h-full" ref={vlistRef} onScroll={handleScroll}>
         {messages.map((message, i) => {
           const messageDate = moment(
-            message?.created_at ? message?.created_at * 1000 : message?.nonce_id
+            message?.created_at
+              ? message?.created_at * 1000
+              : message?.nonce_id,
           ).format("dddd, MMMM D, YYYY");
           const messagePrevDate = moment(
             messages[i - 1]?.created_at
               ? messages[i - 1]?.created_at * 1000
-              : messages[i - 1]?.nonce_id
+              : messages[i - 1]?.nonce_id,
           ).format("dddd, MMMM D, YYYY");
           const showDateHeader = messageDate !== messagePrevDate;
 
           return (
             <div key={i}>
               {!!showDateHeader && <ChatDate date={messageDate} />}
+              {i === rightIndex && (
+                <div className="flex flex-col w-full text-blue-500 bg-black/5 text-sm items-center justify-center my-4 pointer-events-none">
+                  Unread messages
+                </div>
+              )}
               <ChatItem
                 item={message}
                 key={message.nonce_id}
-                isMine={message?.user === profile?.id}
+                isMine={message?.user.id === profile?.id}
                 index={i}
               />
             </div>
@@ -221,13 +236,13 @@ export default function Items({
       </div>
     );
 
-  if (loading) content = <FullLoading className='py-8' />;
+  if (loading) content = <FullLoading className="py-8" />;
 
   return (
-    <div className='flex-grow relative'>
+    <div className="flex-grow relative">
       <div
         ref={parentRef}
-        className='relative flex-grow overflow-y-auto mb-4 space-y-2'
+        className="relative flex-grow overflow-y-auto mb-4 space-y-2"
         style={{ contain: "strict", height: "100%" }}
       >
         {content}

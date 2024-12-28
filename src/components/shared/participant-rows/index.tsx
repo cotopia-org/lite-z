@@ -11,6 +11,7 @@ import useAuth from "@/hooks/auth";
 import { cn, isUserAdmin } from "@/lib/utils";
 import ParticipantBadge from "./participant-badges";
 import { Crown, Shield } from "lucide-react";
+import ParticipantDetails from "../room/participant-detail";
 
 interface Props {
   participants: WorkspaceUserType[];
@@ -74,7 +75,8 @@ const ParticipantRows = ({ participants }: Props) => {
                     : false;
 
                   return (
-                    <div className="relative">
+                    <ParticipantDetails user={user as WorkspaceUserType} roomId={room_id}>
+                      <div className="relative">
                       {!!isOwner && (
                         <div className="absolute top-[-4px] right-[-4px] z-10 bg-muted rounded-full text-primary">
                           <Crown size={16} />
@@ -87,6 +89,7 @@ const ParticipantRows = ({ participants }: Props) => {
                       )}
                       {content}
                     </div>
+                    </ParticipantDetails>
                   );
                 }}
               />

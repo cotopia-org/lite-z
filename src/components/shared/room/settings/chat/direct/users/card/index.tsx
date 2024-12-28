@@ -1,50 +1,50 @@
-import CotopiaAvatar from "@/components/shared-ui/c-avatar"
-import { UserMinimalType } from "@/types/user"
-import Username from "./username"
-import Message from "./message"
+import CotopiaAvatar from "@/components/shared-ui/c-avatar";
+import { UserMinimalType } from "@/types/user";
+import Username from "./username";
+import Message from "./message";
 
-import { ChatItemType } from "@/types/chat"
-import { DirectType } from "@/types/direct"
-import { useAppSelector } from "@/store"
+import { ChatItemType } from "@/types/chat";
+import { DirectType } from "@/types/direct";
+import { useAppSelector } from "@/store";
 
 type Props = {
-  user: UserMinimalType
-  defaultLatest?: ChatItemType
-  direct: DirectType
-  onClick: () => void
-}
+  user: UserMinimalType;
+  defaultLatest?: ChatItemType;
+  direct: DirectType;
+  onClick: () => void;
+};
 export default function UserCard({
   user,
   direct,
   onClick,
   defaultLatest,
 }: Props) {
-  if (!user) return null
+  if (!user) return null;
 
   // const roomSlice = useAppSelector((state) => state.room)
-  const roomSlice: any = undefined
+  const roomSlice: any = undefined;
 
-  const chatRoom = roomSlice?.chatRoom ?? {}
+  const chatRoom = roomSlice?.chatRoom ?? {};
 
-  const directMessages = chatRoom?.[direct.id]?.messages ?? []
+  const directMessages = chatRoom?.[direct.id]?.messages ?? [];
 
-  let latestMessage: ChatItemType | undefined = defaultLatest
+  let latestMessage: ChatItemType | undefined = defaultLatest;
 
   if (directMessages.length > 0) {
-    latestMessage = directMessages[0]
+    latestMessage = directMessages[0];
   }
 
-  let msgUnseen = latestMessage?.seen === false
-  let isMineMsg = user?.id !== latestMessage?.user?.id
+  let msgUnseen = latestMessage?.seen === false;
+  let isMineMsg = user?.id !== latestMessage?.user?.id;
 
-  let isMsgUnseen = msgUnseen && !isMineMsg
+  let isMsgUnseen = msgUnseen && !isMineMsg;
 
-  let userNameClss = ""
-  let lastMsgClss = ""
+  let userNameClss = "";
+  let lastMsgClss = "";
 
   if (isMsgUnseen) {
-    userNameClss += " !text-black"
-    lastMsgClss += " !font-semibold !text-black/[0.78]"
+    userNameClss += " !text-black";
+    lastMsgClss += " !font-semibold !text-black/[0.78]";
   }
 
   return (
@@ -57,6 +57,7 @@ export default function UserCard({
           <div className="rounded-full w-[10px] h-[10px] z-[2] absolute bg-red-500 top-0 right-0"></div>
         ) : null}
         <CotopiaAvatar
+          date={user?.created_at}
           src={user?.avatar?.url ?? undefined}
           title={(user?.name || user?.username)?.[0] ?? undefined}
         />
@@ -72,5 +73,5 @@ export default function UserCard({
         )}
       </div>
     </div>
-  )
+  );
 }

@@ -15,7 +15,13 @@ const employeesColDefs: ColDef<EmployeesRowData>[] = [
   {
     headerName: "User Avatar",
     field: "avatar",
-    cellRenderer: (params: any) => <TableAvatar avatarUrl={params.value?.url} userName={params.data?.username} />,
+    cellRenderer: (params: any) => (
+      <TableAvatar
+        avatarUrl={params.value?.url}
+        date={params.data?.created_at}
+        userName={params.data?.username}
+      />
+    ),
     flex: 1,
     minWidth: 120,
   },
@@ -23,7 +29,12 @@ const employeesColDefs: ColDef<EmployeesRowData>[] = [
   { headerName: "Last Login", field: "last_login" },
   { headerName: "Active Job", field: "active_job.title" },
   {
-    headerName: "User Contract", field: "user_contract", cellRenderer: (params: { data: EmployeesRowData }) => <MembersContract userId={Number(params.data.id)} />, flex: 1,
+    headerName: "User Contract",
+    field: "user_contract",
+    cellRenderer: (params: { data: EmployeesRowData }) => (
+      <MembersContract userId={Number(params.data.id)} />
+    ),
+    flex: 1,
     minWidth: 220,
   },
 ];
@@ -35,7 +46,7 @@ export default function Employees() {
   useEffect(() => {
     async function fetchEmployees() {
       try {
-        const data = await fetchEmployeesData(userData.accessToken!)
+        const data = await fetchEmployeesData(userData.accessToken!);
 
         const normalizedData = data.map((employee: any) => ({
           id: employee.id?.toString(),
@@ -46,7 +57,7 @@ export default function Employees() {
           last_login: new Date(employee.last_login).toLocaleDateString(),
           active_job: employee.active_job || { title: "No Active Job" },
           avatar: employee.avatar,
-          user_contract: "Show contract"
+          user_contract: "Show contract",
         }));
 
         setEmployees(normalizedData);
@@ -59,7 +70,9 @@ export default function Employees() {
   }, [userData.accessToken]);
 
   return (
-    <PayrollTable<EmployeesRowData> rowData={employees} colData={employeesColDefs} />
+    <PayrollTable<EmployeesRowData>
+      rowData={employees}
+      colData={employeesColDefs}
+    />
   );
 }
-

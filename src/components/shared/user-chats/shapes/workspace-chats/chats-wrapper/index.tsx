@@ -1,6 +1,6 @@
 import { useRoomContext } from "@/components/shared/room/room-context";
 import { useChat2 } from "@/hooks/chat/use-chat-2";
-import {  useMemo } from "react";
+import { useMemo } from "react";
 import Chat from "../../../chat";
 import FullLoading from "@/components/shared/full-loading";
 import useBus from "use-bus";
@@ -14,21 +14,20 @@ import { MessageType } from "@/types/message";
 import useAuth from "@/hooks/auth";
 
 export default function ChatsWrapper() {
+  const { user } = useAuth();
 
-  const {user} = useAuth()
-
-  const dispatch = useAppDispatch()
+  const dispatch = useAppDispatch();
 
   const { workspace_id } = useRoomContext();
 
   const { push, back } = useSlides();
 
   //@ts-ignore
-  const { chats, chatObjects, loading } = useChat2({ workspace_id })
+  const { chats, chatObjects, loading } = useChat2({ workspace_id });
 
   const chatSortedByLastMessage = useMemo(() => {
     return chats.sort(
-      (a, b) => b?.last_message?.created_at - a?.last_message?.created_at
+      (a, b) => b?.last_message?.created_at - a?.last_message?.created_at,
     );
   }, [chats]);
 
@@ -41,7 +40,7 @@ export default function ChatsWrapper() {
   });
 
   let content = (
-    <div className='w-full chats-holder flex flex-col gap-y-0 overflow-y-auto h-[calc(100vh-80px)] pb-20'>
+    <div className="w-full chats-holder flex flex-col gap-y-0 overflow-y-auto h-[calc(100vh-80px)] pb-20">
       {chatSortedByLastMessage.map((chat) => (
         <Chat chat={chat} key={chat?.id} />
       ))}

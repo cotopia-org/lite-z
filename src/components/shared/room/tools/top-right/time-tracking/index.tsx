@@ -14,17 +14,25 @@ import UserJobList from "@/components/shared/room/participant-detail/details/job
 import { UserType } from "@/types/user";
 import CotopiaIconButton from "@/components/shared-ui/c-icon-button";
 import { ArrowLeft } from "lucide-react";
+import useBus from "use-bus";
+import { __BUS } from "@/const/bus";
 
 export default function TimeTrackingButtonTool() {
   const [seconds, setSeconds] = useState<undefined | number>();
+  const [stop, setStop] = useState<boolean>(false);
 
   const { startLoading, stopLoading, isLoading } = useLoading();
   const getActivityTime = () => {
     startLoading();
     axiosInstance
-      .get(urlWithQueryParams(`/users/activities`, { period: "today" }))
+      .get(
+        urlWithQueryParams(`/users/activities`, { period: "today", new: true }),
+      )
       .then((res) => {
-        const mins = res.data.data;
+        const mins = res.data.data.minutes;
+        if (!res.data.data.time_count) {
+          setStop(true);
+        }
         setSeconds(mins * 60);
         stopLoading();
       })
@@ -35,6 +43,14 @@ export default function TimeTrackingButtonTool() {
   useEffect(() => {
     getActivityTime();
   }, []);
+
+  useBus(__BUS.stopWorkTimer, (evt) => {
+    setStop(true);
+  });
+
+  useBus(__BUS.startWorkTimer, (evt) => {
+    setStop(false);
+  });
 
   const { workspace_id, workspaceUsers } = useRoomContext();
 
@@ -48,19 +64,27 @@ export default function TimeTrackingButtonTool() {
 
   let header = <>Leaderboard</>;
   let content = (
-    <>
-      <div className="flex flex-col items-end w-full">
-        <div className={"flex flex-row gap-x-2  mb-4"}>
-          <span className={"text-xs w-[40px]"}>Jobs</span>
-          <span className={"text-xs w-[40px] text-yellow-600"}>Idle</span>
-        </div>
+    <div className="flex flex-col gap-y-3 w-full items-end">
+      <div className={"flex flex-row gap-x-2 px-3 w-full justify-end"}>
+        <span
+          className={
+            "text-xs text-grayscale-paragraph font-medium text-center w-[40px]"
+          }
+        >
+          Jobs
+        </span>
+        <span
+          className={"text-xs text-center w-[40px] font-medium text-yellow-600"}
+        >
+          Idle
+        </span>
       </div>
       <TimeTrackingDetails
         leaderboard={leaderboard}
         workspaceUsers={workspaceUsers}
         setSelectedUser={setSelectedUser}
       />
-    </>
+    </div>
   );
 
   if (selectedUser !== null) {
@@ -70,7 +94,11 @@ export default function TimeTrackingButtonTool() {
     )?.avatar;
     header = (
       <div className="flex flex-row items-center gap-x-2">
-        <UserAvatar title={selectedUser.name} src={userAvatar?.url} />
+        <UserAvatar
+          title={selectedUser.name}
+          date={selectedUser?.created_at}
+          src={userAvatar?.url}
+        />
         <span className="text-xs">{selectedUser.name ?? "-"}</span>
       </div>
     );
@@ -84,6 +112,7 @@ export default function TimeTrackingButtonTool() {
           defaultSeconds={seconds ?? 0}
           onClick={open}
           isLoading={isLoading}
+          stop={stop}
         />
       )}
     >
@@ -91,10 +120,11 @@ export default function TimeTrackingButtonTool() {
         return (
           <PopupBoxChild
             {...style}
-            left={style.left - style.width - (selectedUser === null ? 28 : 28)}
+            left={style.left - (352 - style.width)}
             onClose={close}
             title={header}
-            width={selectedUser === null ? 300 : 300}
+            width={352}
+            className="p-0 [&_.box-header]:p-4 overflow-hidden [&_.box-children]:w-full [&_.box-header]:pb-0"
             button={
               selectedUser && (
                 <CotopiaIconButton

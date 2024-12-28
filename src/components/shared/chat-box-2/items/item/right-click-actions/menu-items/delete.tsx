@@ -8,11 +8,11 @@ export default function Delete() {
 
   const { showDeletePrompt, item } = useChatItem();
 
-  if (user?.id !== item.user) return null;
+  if (user?.id !== item.user.id) return null;
 
   return (
     <ContextMenuItem
-      className='py-2 px-4 cursor-pointer !text-white rounded-none gap-x-2'
+      className="py-2 px-4 cursor-pointer !text-white rounded-none gap-x-2"
       onClick={() => showDeletePrompt(true)}
     >
       <Trash />

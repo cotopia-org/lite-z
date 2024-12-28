@@ -27,8 +27,36 @@ export type UserType = {
   voice_status: null | string;
   active_contract?: UserContractType;
   active_job?: JobType;
+  created_at: number;
 };
 
+export type MeType = {
+  active: null | 0 | 1;
+  avatar: AttachmentFileType | null;
+  bio: null | string;
+  coordinates: null | string;
+  email: string;
+  workspaces: {
+    id: number;
+    role: string;
+    title: string;
+  }[];
+  id: number;
+  name: string;
+  room_id: number;
+  workspace_id: number;
+  screenshare_coordinates: null | string;
+  screenshare_size: null | string;
+  status: null | string;
+  username: string;
+  video_coordinates: null | string;
+  video_size: null | string;
+  video_status: null | string;
+  voice_status: null | string;
+  active_contract?: UserContractType;
+  active_job?: JobType;
+  created_at: number;
+};
 export type UserMinimalTypeScheduleType = {
   hours: string;
   minutes: number;
@@ -48,9 +76,13 @@ export type UserMinimalType = {
   screenshare_size: null | string;
   schedule_hours_in_week?: number;
   total_minutes?: number;
+  status?: string;
+  created_at?: number;
 };
 
 export type WorkspaceUserType = {
+  created_at?: number;
+
   active_job: JobType | null;
   active_contract?: UserContractType;
   avatar: AttachmentFileType;

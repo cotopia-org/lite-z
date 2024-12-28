@@ -14,6 +14,7 @@ export default function UserJob({ user }: { user: UserJobType }) {
       >
         <div className={"flex gap-2 items-center"}>
           <CotopiaAvatar
+            date={0}
             className={`min-w-8 min-h-8`}
             src={user.avatar?.url}
             title={user.username ? user.username?.[0] : undefined}

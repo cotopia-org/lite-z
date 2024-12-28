@@ -41,13 +41,14 @@ export default function Mentions({ value, onAdd }: Props) {
 
   // Extract the last word after the last "@" for mentions
   const mentions = extractMentions(value);
-  const lastMention = mentions.length > 0 ? mentions[mentions.length - 1] : null;
+  const lastMention =
+    mentions.length > 0 ? mentions[mentions.length - 1] : null;
 
   // Determine if the last mention is valid and filter participants
   const searchText = value.split(" ").pop()?.replace("@", "").trim();
   if (searchText) {
     currentChatParticipants = currentChatParticipants.filter((participant) =>
-      participant.username.toLowerCase().includes(searchText.toLowerCase())
+      participant.username.toLowerCase().includes(searchText.toLowerCase()),
     );
   }
 

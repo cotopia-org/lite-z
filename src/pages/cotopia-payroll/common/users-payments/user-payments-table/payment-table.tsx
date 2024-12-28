@@ -12,10 +12,17 @@ const usersPaymentsColDefs: ColDef<UsersPaymentsRowData>[] = [
   {
     headerName: "User Avatar",
     field: "avatar",
-    cellRenderer: (params: any) => <TableAvatar avatarUrl={params.value} userName={params.data?.username} />,
+    cellRenderer: (params: any) => (
+      <TableAvatar
+        avatarUrl={params.value}
+        date={params.data?.created_at}
+        userName={params.data?.username}
+      />
+    ),
     flex: 1,
     minWidth: 120,
-  }, { headerName: "Total hours", field: "totalHours" },
+  },
+  { headerName: "Total hours", field: "totalHours" },
   { headerName: "Bonus", field: "bonus" },
   { headerName: "Round", field: "round" },
   { headerName: "Amount", field: "amount" },
@@ -26,18 +33,19 @@ export default function UsersPayments() {
   const [payments, setPayments] = useState<UsersPaymentsRowData[]>([]);
   const userData = useAppSelector((store) => store.auth);
 
-
   useEffect(() => {
     async function fetchPayments() {
       try {
-        const response = await axios.get(`${process.env.REACT_APP_PUBLIC_API_URL}/payments/`, {
-          headers: {
-            Authorization: `Bearer ${userData.accessToken}`,
+        const response = await axios.get(
+          `${process.env.REACT_APP_PUBLIC_API_URL}/payments/`,
+          {
+            headers: {
+              Authorization: `Bearer ${userData.accessToken}`,
+            },
           },
-        });
+        );
 
         const data = response.data.data;
-
 
         const filteredData = data
           .filter((item: paymentType) => item.type !== "advance")
@@ -62,6 +70,9 @@ export default function UsersPayments() {
   }, [userData.accessToken]);
 
   return (
-    <PayrollTable<UsersPaymentsRowData> rowData={payments} colData={usersPaymentsColDefs} />
+    <PayrollTable<UsersPaymentsRowData>
+      rowData={payments}
+      colData={usersPaymentsColDefs}
+    />
   );
 }

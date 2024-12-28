@@ -9,6 +9,7 @@ export type CBadgeProps = {
   postfix?: string;
   prefix?: string;
   hideCount?: boolean;
+  type?: "normal" | "important";
 };
 
 let timeout: any = undefined;
@@ -21,6 +22,7 @@ export default function CBadge({
   postfix,
   prefix,
   hideCount,
+  type = "important",
 }: CBadgeProps) {
   const [hasAnimate, setHasAnimate] = useState(false);
 
@@ -60,9 +62,15 @@ export default function CBadge({
 
   if (count !== undefined && count <= 0) return null;
 
+  if (type === "normal") {
+    clss += ` bg-secondary text-black`;
+  } else {
+    clss += ` bg-destructive text-white`;
+  }
+
   return (
     <div
-      className={`rounded-full bg-destructive text-white flex items-center justify-center ${
+      className={`rounded-full  flex items-center justify-center ${
         hasAnimate ? "animate-scale-custom" : ""
       } ${clss}`}
     >

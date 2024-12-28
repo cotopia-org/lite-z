@@ -5,12 +5,9 @@ import { useChat2 } from "@/hooks/chat/use-chat-2";
 import { Virtualizer } from "@tanstack/react-virtual";
 import FullLoading from "@/components/shared/full-loading";
 import { useAppDispatch, useAppSelector } from "@/store";
-import {
-  getChatMessages,
-  getPinMessags,
-} from "@/store/slices/chat-slice";
+import { getChatMessages, getPinMessags } from "@/store/slices/chat-slice";
 import ChatHeading from "./heading";
-import {dispatch as busDispatch} from 'use-bus'
+import { dispatch, dispatch as busDispatch } from "use-bus";
 import { __BUS } from "@/const/bus";
 
 type Props = {
@@ -23,25 +20,26 @@ export default function ChatInnerHolder({ chat_id, onBack }: Props) {
 
   const chatDetails = useAppSelector((store) => store.chat);
 
-  const { chatObjects, send, edit, currentChat, editMessage } = useChat2({ chat_id });
+  const { chatObjects, send, edit, currentChat, editMessage, loading } =
+    useChat2({
+      chat_id,
+    });
 
   const reply =
     chatDetails?.chats?.[(chatDetails?.currentChat as ChatType)?.id]
       ?.replyMessage;
 
   const handleSendMessage = useCallback(
-   async (text: string) => {
-
+    async (text: string) => {
       if (!chatDetails?.currentChat?.id) return;
-      if ( editMessage ) {
-        await edit({text})
+      if (editMessage) {
+        await edit({ text });
       } else {
-        busDispatch(__BUS.scrollEndChatBox)
+        busDispatch(__BUS.scrollEndChatBox);
         await send({ text, seen: true, reply });
       }
-      
     },
-    [reply, chatDetails, send, editMessage]
+    [reply, chatDetails, send, editMessage],
   );
 
   const dispatch = useAppDispatch();
@@ -53,21 +51,26 @@ export default function ChatInnerHolder({ chat_id, onBack }: Props) {
     }
   }, [currentChat?.id]);
 
-  const { loading } = useChat2();
-
   if (loading) return <FullLoading />;
 
   if (!currentChat?.id) return null;
 
+  // busDispatch({
+  //   type: __BUS.scrollToTargetMessage,
+  //   messageId: 1735252256000,
+  // });
+
   return (
-    <div className='flex flex-col w-full h-[calc(100vh-72px)] overflow-hidden'>
+    <div className="flex flex-col w-full h-[calc(100vh-72px)] overflow-hidden">
       <ChatHeading
         title={chatObjects?.[currentChat?.id]?.object?.title ?? ""}
         onBack={onBack}
+        type={currentChat.type}
         loading={chatObjects?.[currentChat?.id]?.fetchPageLoading ?? false}
       />
       <Chat2
         chat_id={chat_id}
+        lastMessageUnseen={currentChat.last_seen_message?.id}
         addMessage={handleSendMessage}
         onGetVirtualizer={(vir) => (chatRef.current = vir)}
       />

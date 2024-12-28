@@ -8,8 +8,7 @@ import { EditIcon } from "lucide-react";
 import useAuth from "@/hooks/auth";
 
 export default function Edit() {
-
-  const {user} = useAuth()
+  const { user } = useAuth();
 
   const { item } = useChatItem();
   const dispatch = useAppDispatch();
@@ -19,11 +18,11 @@ export default function Edit() {
     busDispatch(__BUS.chatInputFocus);
   };
 
-  if ( user.id !== item.user ) return null
+  if (user.id !== item.user.id) return null;
 
   return (
     <ContextMenuItem
-      className='py-2 px-4 cursor-pointer !text-white rounded-none gap-x-2'
+      className="py-2 px-4 cursor-pointer !text-white rounded-none gap-x-2"
       onClick={handleEditMessage}
     >
       <EditIcon />
