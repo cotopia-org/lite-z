@@ -67,6 +67,7 @@ export default function ChatInnerHolder({ chat_id, onBack }: Props) {
         onBack={onBack}
         type={currentChat.type}
         loading={chatObjects?.[currentChat?.id]?.fetchPageLoading ?? false}
+        muted={currentChat.muted}
       />
       <Chat2
         chat_id={chat_id}

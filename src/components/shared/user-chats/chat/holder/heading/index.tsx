@@ -8,13 +8,20 @@ type Props = {
   onBack: () => void;
   loading: boolean;
   type: string;
+  muted: number;
 };
 
-export default function ChatHeading({ title, onBack, loading, type }: Props) {
+export default function ChatHeading({
+  title,
+  onBack,
+  loading,
+  type,
+  muted,
+}: Props) {
   return (
     <div className="flex flex-row items-center gap-x-2 py-2 px-4 relative">
       <BackHolder onClick={onBack} />
-      <ChatDetails title={title} type={type} />
+      <ChatDetails muted={muted} title={title} type={type} />
       {!!loading && (
         <div className="absolute bottom-0 left-0 w-full z-10">
           <Loading />

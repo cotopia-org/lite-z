@@ -29,7 +29,7 @@ export default function CotopiaAvatar({
           src={src}
         />
         <AvatarFallback
-          className={`avatar-fallback uppercase text-white`}
+          className={`avatar-fallback uppercase text-white bg-gradient-to-b from-[rgba(255,255,255,0.4)] to-[rgba(0,0,0,0.1)]`}
           style={{ backgroundColor: getRandomColor(date) }}
         >
           {title}
@@ -43,17 +43,6 @@ export default function CotopiaAvatar({
             }
           >
             {status}
-          </div>
-        </div>
-      )}
-      {icon && (
-        <div className={"relative"}>
-          <div
-            className={
-              "absolute bottom-0 left-0 border-2 border-white bg-white text-black w-4 h-4  rounded-full flex justify-center items-center"
-            }
-          >
-            {icon}
           </div>
         </div>
       )}

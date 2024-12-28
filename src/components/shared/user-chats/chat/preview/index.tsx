@@ -38,7 +38,6 @@ export default function ChatPreview() {
         date={chat.created_at}
         title={chat?.title?.slice(0, 1)}
         className={`w-12 h-12 text-2xl`}
-        icon={chat.muted === 1 && <BellOff size={12} />}
         status={
           isDirectChat && (
             <div
@@ -53,6 +52,7 @@ export default function ChatPreview() {
       <ChatDetails
         title={chat?.title}
         type={chat.type}
+        muted={chat.muted}
         sub_title={
           chat?.last_message?.updated_at
             ? moment(chat?.last_message?.updated_at * 1000).format("HH:mm")

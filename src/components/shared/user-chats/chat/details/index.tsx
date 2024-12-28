@@ -6,18 +6,21 @@ type Props = {
   sub_title?: string;
   description?: ReactNode;
   type: string;
+  muted: number;
 };
 export default function ChatDetails({
   title,
   sub_title,
   description,
   type,
+  muted,
 }: Props) {
   return (
     <div className="flex flex-col gap-y-1 flex-1 w-full">
       <div className="flex flex-row items-center justify-between">
         <div className={"flex flex-row items-center gap-1"}>
           {type !== "direct" && <UsersRound size={16} color={"black"} />}
+          {muted === 1 && <BellOff size={16} />}
           <strong>{title}</strong>
         </div>
 
