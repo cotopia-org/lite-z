@@ -46,7 +46,7 @@ export default function HintScheduleContract({ contract, onUpdate }: Props) {
       <AlertCircle className="h-4 w-4" />
       <AlertTitle>Warning</AlertTitle>
       <AlertDescription className="mb-2">
-        You didn't set a payment address for this contract!
+        You should add schedule to this contract!
       </AlertDescription>
       <InsertButton contract={localContract} onUpdate={onUpdate} />
     </Alert>
