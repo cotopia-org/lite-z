@@ -103,9 +103,9 @@ export default function PayrollContractDetails({
           {localContract.payment_address}
         </TitleEl>
       )}
-      <TitleEl title="User must be online on schedules?">
+      {/* <TitleEl title="User must be online on schedules?">
         {localContract.in_schedule ? 'Yes' : 'No'}
-      </TitleEl>
+      </TitleEl> */}
       <HintAddressContract
         contract={localContract}
         onUpdate={(contract) => {
