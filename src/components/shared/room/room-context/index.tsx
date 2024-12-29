@@ -88,6 +88,8 @@ export default function RoomContext({
   room_id,
   workspace_id,
 }: Props) {
+  Notification.requestPermission();
+
   const [myPayments, setPayments] = useState<PaymentType[]>([]);
   useEffect(() => {
     async function getPayments() {
