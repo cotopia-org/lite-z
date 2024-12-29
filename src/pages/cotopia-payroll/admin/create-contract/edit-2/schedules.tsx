@@ -13,7 +13,7 @@ export default function Schedules() {
   return (
     <div>
       <ScheduleSelector
-        items={scheduled}
+        items={scheduled.filter((a) => a.user.id === user.id)}
         onPick={(item) => {
           formik?.setFieldValue('schedule_id', item.id);
           formik?.setFieldValue('schedule', item);
