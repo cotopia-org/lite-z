@@ -1,21 +1,22 @@
-import CotopiaButton from "@/components/shared-ui/c-button";
-import { useAppSelector } from "@/store";
-import { useFormik } from "formik";
-import { useEffect, useCallback, useReducer, useState } from "react";
+import CotopiaButton from '@/components/shared-ui/c-button';
+import { useAppSelector } from '@/store';
+import { useFormik } from 'formik';
+import { useEffect, useCallback, useReducer, useState } from 'react';
 import {
   initialValueContract,
   validationSchemaContract,
-} from "@/utils/payroll-forms-settings";
-import PayrollContractInputs from "./components/contract-inputs";
-import { fetchEmployeesData, fetchUserContract } from "@/utils/payroll";
-import { PayrollInitialState, payrollReducer } from "../create-payments/state";
-import useCreateContract from "@/hooks/use-create-contract";
-import UserSelector from "@/components/shared/user-selector";
-import { UserMinimalType } from "@/types/user";
-import { UserContractType } from "@/types/contract";
-import CotopiaIconButton from "@/components/shared-ui/c-icon-button";
-import { X } from "lucide-react";
-import moment from "moment";
+} from '@/utils/payroll-forms-settings';
+import PayrollContractInputs from './components/contract-inputs';
+import { fetchEmployeesData, fetchUserContract } from '@/utils/payroll';
+import { PayrollInitialState, payrollReducer } from '../create-payments/state';
+import useCreateContract from '@/hooks/use-create-contract';
+import UserSelector from '@/components/shared/user-selector';
+import { UserMinimalType } from '@/types/user';
+import { UserContractType } from '@/types/contract';
+import CotopiaIconButton from '@/components/shared-ui/c-icon-button';
+import { X } from 'lucide-react';
+import moment from 'moment';
+import EditContract2 from './edit-2';
 
 type Props = {
   defaultContract?: UserContractType;
@@ -40,14 +41,14 @@ export default function PayrollCreateContract({
 
         const normalizedData = data.map((employee: any) => ({
           id: employee.id?.toString(),
-          name: employee.name || "no name",
+          name: employee.name || 'no name',
           username: employee.username,
-          avatar: employee.avatar || { url: "" },
+          avatar: employee.avatar || { url: '' },
         }));
 
-        dispatch({ type: "SET_EMPLOYEES", payload: normalizedData });
+        dispatch({ type: 'SET_EMPLOYEES', payload: normalizedData });
       } catch (error) {
-        console.error("Error fetching employees data:", error);
+        console.error('Error fetching employees data:', error);
       }
     };
 
@@ -63,17 +64,17 @@ export default function PayrollCreateContract({
 
         if (contract) {
           dispatch({
-            type: "SET_CONTRACT_ID_ERROR",
-            payload: "User does have a contract.",
+            type: 'SET_CONTRACT_ID_ERROR',
+            payload: 'User does have a contract.',
           });
-          dispatch({ type: "SET_USER_CONTRACT", payload: contract });
+          dispatch({ type: 'SET_USER_CONTRACT', payload: contract });
         } else {
-          dispatch({ type: "SET_CONTRACT_ID_ERROR", payload: null });
-          dispatch({ type: "SET_USER_CONTRACT", payload: null });
+          dispatch({ type: 'SET_CONTRACT_ID_ERROR', payload: null });
+          dispatch({ type: 'SET_USER_CONTRACT', payload: null });
         }
       } catch (error) {
-        console.error("Error fetching user contract:", error);
-        dispatch({ type: "SET_USER_CONTRACT", payload: null });
+        console.error('Error fetching user contract:', error);
+        dispatch({ type: 'SET_USER_CONTRACT', payload: null });
       }
     },
     [userData.accessToken],
@@ -83,12 +84,12 @@ export default function PayrollCreateContract({
     async (id: string) => {
       const employee = state.employees.find((emp) => emp.id === id);
       if (!employee) {
-        dispatch({ type: "SET_USER_ID_ERROR", payload: "User ID not found" });
-        dispatch({ type: "SET_SELECTED_EMPLOYEE", payload: null });
-        dispatch({ type: "SET_USER_CONTRACT", payload: null });
+        dispatch({ type: 'SET_USER_ID_ERROR', payload: 'User ID not found' });
+        dispatch({ type: 'SET_SELECTED_EMPLOYEE', payload: null });
+        dispatch({ type: 'SET_USER_CONTRACT', payload: null });
       } else {
-        dispatch({ type: "SET_USER_ID_ERROR", payload: null });
-        dispatch({ type: "SET_SELECTED_EMPLOYEE", payload: employee });
+        dispatch({ type: 'SET_USER_ID_ERROR', payload: null });
+        dispatch({ type: 'SET_SELECTED_EMPLOYEE', payload: employee });
         getUserContract(+id);
       }
     },
@@ -100,8 +101,8 @@ export default function PayrollCreateContract({
     initialValues: defaultContract
       ? {
           ...defaultContract,
-          end_at: moment(defaultContract.end_at).format("YYYY-MM-DD"),
-          start_at: moment(defaultContract.start_at).format("YYYY-MM-DD"),
+          end_at: moment(defaultContract.end_at).format('YYYY-MM-DD'),
+          start_at: moment(defaultContract.start_at).format('YYYY-MM-DD'),
         }
       : initialValueContract,
     validationSchema: validationSchemaContract,
@@ -128,7 +129,10 @@ export default function PayrollCreateContract({
     isValid,
   } = formik;
 
-  console.log("errors", errors);
+  console.log('errors', errors);
+
+  if (defaultContract)
+    return <EditContract2 onBack={onBack} defaultContract={defaultContract} />;
 
   return (
     <form
@@ -177,7 +181,7 @@ export default function PayrollCreateContract({
         className="w-full"
         loading={loading}
       >
-        {defaultContract ? "Edit contract" : "Create a new contract"}
+        {defaultContract ? 'Edit contract' : 'Create a new contract'}
       </CotopiaButton>
     </form>
   );

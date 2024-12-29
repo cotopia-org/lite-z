@@ -1,4 +1,4 @@
-import { useCallback, useMemo, useState } from "react"
+import { ReactNode, useCallback, useMemo, useState } from "react"
 
 import "@xyflow/react/dist/style.css"
 
@@ -39,6 +39,7 @@ type Props = {
   translateExtent?: CoordinateExtent
   onInit?: (rf: ReactFlowInstance<Node, Edge>) => void
   hasJail?: boolean
+  children?: ReactNode
 }
 
 let timeout: NodeJS.Timeout
@@ -54,6 +55,7 @@ export default function ReactFlowV2({
   translateExtent,
   onInit,
   hasJail = false,
+  children
 }: Props) {
   let defaultViewport = { x: 0, y: 0, zoom: 1.5 }
 
@@ -120,8 +122,7 @@ export default function ReactFlowV2({
       attributionPosition="bottom-left"
       onInit={onInit}
     >
-      {/* <MiniMap nodeColor={minimapNodeColor} />
-      <Controls /> */}
+      {children}
       <Toolbar
         topLeft={<TopLeftTools />}
         topRight={<TopRightTools />}

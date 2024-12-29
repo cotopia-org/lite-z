@@ -656,7 +656,7 @@ export default function WithReactFlowV2() {
   )
 
   return (
-    <div className="w-full h-screen relative">
+    <div className="w-full h-screen relative z-[10]">
       <InvisibleNodesViewer invisibleNodes={invisibleNodes} />
       <ReactFlowV2
         nodeTypes={{

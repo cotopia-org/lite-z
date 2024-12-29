@@ -1,15 +1,16 @@
-import { useApi } from "@/hooks/swr";
-import { UserMinimalType } from "@/types/user";
-import UserList from "./list";
-import { ReactNode, useEffect, useState } from "react";
-import CotopiaInput from "@/components/shared-ui/c-input";
-import FullLoading from "../full-loading";
-import { FetchDataType } from "@/services/axios";
+import { useApi } from '@/hooks/swr';
+import { UserMinimalType } from '@/types/user';
+import UserList from './list';
+import { ReactNode, useEffect, useState } from 'react';
+import CotopiaInput from '@/components/shared-ui/c-input';
+import FullLoading from '../full-loading';
+import { FetchDataType } from '@/services/axios';
 
 type Props = {
   onPick?: (item: UserMinimalType) => void;
   afterTitle?: ReactNode;
   defaultSelectedId?: number;
+  defaultUser?: UserMinimalType;
   label?: boolean;
   disabled?: boolean;
 };
@@ -18,32 +19,32 @@ export default function UserSelector({
   onPick,
   afterTitle,
   defaultSelectedId,
+  defaultUser,
   label,
   disabled,
 }: Props) {
   const [selected, setSelected] = useState<UserMinimalType | null>(null);
-  const [search, setSearch] = useState("");
-
   useEffect(() => {
-    if (defaultSelectedId === undefined) setSelected(null);
-  }, [defaultSelectedId]);
+    if (defaultUser !== undefined) setSelected(defaultUser);
+  }, [defaultUser]);
+  const [search, setSearch] = useState('');
 
   const { data, isLoading } = useApi<FetchDataType<UserMinimalType[]>>(
     `/users/search`,
     {
-      method: "POST",
+      method: 'POST',
       data: {
         search,
       },
       key: `/users/search/${search}`,
-      isFetch: search !== "",
-    }
+      isFetch: search !== '',
+    },
   );
 
   const items = data?.data || [];
 
   const handlePick = (item: UserMinimalType) => {
-    setSearch("");
+    setSearch('');
     setSelected(item);
     if (onPick) onPick(item);
   };
@@ -61,8 +62,8 @@ export default function UserSelector({
 
   if (items.length === 0 && data !== undefined)
     content = (
-      <strong className='p-4 shadow-md rounded-lg text-sm'>{`Could not find a Cotopia account ${
-        search ? `matching "${search}"` : ""
+      <strong className="p-4 shadow-md rounded-lg text-sm">{`Could not find a Cotopia account ${
+        search ? `matching "${search}"` : ''
       }`}</strong>
     );
 
@@ -74,16 +75,14 @@ export default function UserSelector({
   };
 
   return (
-    <div className='flex flex-col gap-y-4'>
+    <div className="flex flex-col gap-y-4">
       {label && (
-        <p className='text-black/60'>Search by username, full name, or email</p>
+        <p className="text-black/60">Search by username, full name, or email</p>
       )}
-
       {!!afterTitle && afterTitle}
-
       <CotopiaInput
-        label={!label ? "Select User" : ""}
-        placeholder={selected ? "Selected user" : "Find people"}
+        label={!label ? 'Select User' : ''}
+        placeholder={selected ? 'Selected user' : 'Find people'}
         value={selected ? selected.name : search}
         onChange={handleChange}
         disabled={disabled}

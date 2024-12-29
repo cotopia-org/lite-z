@@ -1,19 +1,19 @@
-import { UserContractType } from "@/types/contract"
-import PayrollSectionTitle from "../sections-title"
-import CotopiaButton from "@/components/shared-ui/c-button"
-import { ChevronLeft } from "lucide-react"
-import SignContract from "./sign"
-import { useEffect, useState } from "react"
-import HintAddressContract from "@/components/shared/room/tools/top-right/payroll-button/hint-address-contract"
-import Markdown from "markdown-to-jsx"
-import TitleEl from "@/components/shared/title-el"
+import { UserContractType } from '@/types/contract';
+import PayrollSectionTitle from '../sections-title';
+import CotopiaButton from '@/components/shared-ui/c-button';
+import { ChevronLeft } from 'lucide-react';
+import SignContract from './sign';
+import { useEffect, useState } from 'react';
+import HintAddressContract from '@/components/shared/room/tools/top-right/payroll-button/hint-address-contract';
+import Markdown from 'markdown-to-jsx';
+import TitleEl from '@/components/shared/title-el';
 
 type Props = {
-  contract: UserContractType
-  isLoading?: boolean
-  onBack: () => void
-  onUpdate?: (contract: UserContractType) => void
-}
+  contract: UserContractType;
+  isLoading?: boolean;
+  onBack: () => void;
+  onUpdate?: (contract: UserContractType) => void;
+};
 
 export default function PayrollContractDetails({
   contract,
@@ -21,10 +21,10 @@ export default function PayrollContractDetails({
   onBack,
   onUpdate,
 }: Props) {
-  const [localContract, setLocalContract] = useState(contract)
+  const [localContract, setLocalContract] = useState(contract);
   useEffect(() => {
-    setLocalContract(contract)
-  }, [contract])
+    setLocalContract(contract);
+  }, [contract]);
 
   // function formattedDate(contractDate: string) {
   //   const date = new Date(contractDate);
@@ -59,10 +59,19 @@ export default function PayrollContractDetails({
           Loading contract details...
         </p>
       ) : contract ? (
-        <>
-          <Markdown className="[&_h1]:text-xl [&_h1]:mb-4 [&_h1]:font-bold [&_ol]:ml-4 [&_li]:mb-4 [&_li]:list-decimal">{`${
-            contract.text ?? ""
-          }`}</Markdown>
+        <div className="flex flex-col gap-y-4">
+          {contract.text?.map((item, i) => (
+            <div className="flex flex-col gap-y-2">
+              {Object.keys(item).map((key) => {
+                return item[key].map((x) => (
+                  <Markdown className="[&_h1]:text-xl [&_h1]:mb-4 [&_h1]:font-bold [&_ol]:ml-4 [&_li]:mb-4 [&_li]:list-decimal">{`${
+                    x
+                  }`}</Markdown>
+                ));
+              })}
+            </div>
+          ))}
+
           {/* <ul className='grid grid-cols-12 gap-4 w-full'> */}
           {/* {contractDetails.map((contractDetail, index) => (
             <li
@@ -80,7 +89,7 @@ export default function PayrollContractDetails({
             </li>
           ))} */}
           {/* </ul> */}
-        </>
+        </div>
       ) : (
         <p className="text-gray-400 text-xl font-semibold text-center">
           You don't have any contract yet.
@@ -92,23 +101,23 @@ export default function PayrollContractDetails({
         </TitleEl>
       )}
       <TitleEl title="User must be online on schedules?">
-        {localContract.in_schedule ? "Yes" : "No"}
+        {localContract.in_schedule ? 'Yes' : 'No'}
       </TitleEl>
       <HintAddressContract
         contract={localContract}
         onUpdate={(contract) => {
-          if (onUpdate) onUpdate(contract)
-          setLocalContract(contract)
+          if (onUpdate) onUpdate(contract);
+          setLocalContract(contract);
         }}
       />
       <SignContract contract={localContract} onUpdate={setLocalContract} />
       <CotopiaButton
-        variant={"link"}
+        variant={'link'}
         startIcon={<ChevronLeft />}
         onClick={onBack}
       >
         Close Contract
       </CotopiaButton>
     </div>
-  )
+  );
 }

@@ -1,20 +1,20 @@
-import ChatItem from "./item";
-import { useEffect, useRef, useState } from "react";
-import { useVirtualizer, Virtualizer } from "@tanstack/react-virtual";
-import { Chat2ItemType } from "@/types/chat2";
-import FetchingProgress from "./fetching-progress";
-import useBus from "use-bus";
-import UnSeenHandlers from "./un-seen-handlers";
-import useAuth from "@/hooks/auth";
-import { __BUS } from "@/const/bus";
-import { VList, VListHandle } from "virtua";
-import { useChat2 } from "@/hooks/chat/use-chat-2";
-import FullLoading from "../../full-loading";
-import { useAppDispatch } from "@/store";
-import { getNextMessages, getPrevMessages } from "@/store/slices/chat-slice";
-import { thunkResHandler } from "@/utils/utils";
-import moment from "moment";
-import ChatDate from "./date";
+import ChatItem from './item';
+import { useEffect, useRef, useState } from 'react';
+import { useVirtualizer, Virtualizer } from '@tanstack/react-virtual';
+import { Chat2ItemType } from '@/types/chat2';
+import FetchingProgress from './fetching-progress';
+import useBus from 'use-bus';
+import UnSeenHandlers from './un-seen-handlers';
+import useAuth from '@/hooks/auth';
+import { __BUS } from '@/const/bus';
+import { VList, VListHandle } from 'virtua';
+import { useChat2 } from '@/hooks/chat/use-chat-2';
+import FullLoading from '../../full-loading';
+import { useAppDispatch } from '@/store';
+import { getNextMessages, getPrevMessages } from '@/store/slices/chat-slice';
+import { thunkResHandler } from '@/utils/utils';
+import moment from 'moment';
+import ChatDate from './date';
 
 type Props = {
   chat_id: number;
@@ -40,15 +40,10 @@ export default function Items({
 
   const rightIndex = items.length - (itemIndex + 1);
 
-  useEffect(() => {
-    //TODO: have to check this with mahdi
-    // vlistRef.current?.scrollToIndex(rightIndex);
-
-    const timeout = setTimeout(() => {
-      chatItemInit.current = true;
-    }, 1000);
-    return () => clearInterval(timeout);
-  }, []);
+  // useEffect(() => {
+  //   //TODO: have to check this with mahdi
+  //   vlistRef.current?.scrollToIndex(rightIndex);
+  // }, [rightIndex]);
 
   const [unseenIndex, setUnSeenIndex] = useState<number | null>(null);
 
@@ -101,12 +96,12 @@ export default function Items({
   useBus(
     __BUS.scrollToTargetMessage,
     (data: any) => {
-      console.log(data, "YES");
+      console.log(data, 'YES');
       const messageId = data?.messageId;
 
       const itemIndex = items.findIndex((x) => +x.nonce_id === +messageId);
 
-      console.log(itemIndex, "index");
+      console.log(itemIndex, 'index');
       if (itemIndex === -1) return;
 
       const rightIndex = items.length - (itemIndex + 1);
@@ -119,12 +114,12 @@ export default function Items({
 
       if (!messageEl || !messageEl) return;
 
-      messageEl?.classList?.add("[&]:!bg-blue-500/20");
-      messageEl?.classList?.add("[&]:animate-pulse");
+      messageEl?.classList?.add('[&]:!bg-blue-500/20');
+      messageEl?.classList?.add('[&]:animate-pulse');
 
       setTimeout(() => {
-        messageEl?.classList?.remove("[&]:!bg-blue-500/20");
-        messageEl?.classList?.remove("[&]:animate-pulse");
+        messageEl?.classList?.remove('[&]:!bg-blue-500/20');
+        messageEl?.classList?.remove('[&]:animate-pulse');
       }, 1500);
     },
     [items],
@@ -150,7 +145,7 @@ export default function Items({
       const prevPage = chatPage + 1;
       thunkResHandler(
         dispatch(getPrevMessages({ chat_id, page: prevPage })),
-        "chat/getPrevMessages",
+        'chat/getPrevMessages',
         (res) => {
           const newItems = res?.payload?.items ?? [];
 
@@ -171,7 +166,7 @@ export default function Items({
     if (itemIndex === -1) return;
 
     rowVirtualizer.scrollToIndex(items.length - (itemIndex + 1), {
-      align: "start",
+      align: 'start',
     });
 
     setIsFetching(false);
@@ -196,12 +191,12 @@ export default function Items({
             message?.created_at
               ? message?.created_at * 1000
               : message?.nonce_id,
-          ).format("dddd, MMMM D, YYYY");
+          ).format('dddd, MMMM D, YYYY');
           const messagePrevDate = moment(
             messages[i - 1]?.created_at
               ? messages[i - 1]?.created_at * 1000
               : messages[i - 1]?.nonce_id,
-          ).format("dddd, MMMM D, YYYY");
+          ).format('dddd, MMMM D, YYYY');
           const showDateHeader = messageDate !== messagePrevDate;
 
           return (
@@ -229,7 +224,7 @@ export default function Items({
     content = (
       <div
         className={
-          "flex text-center items-center justify-center m-auto h-full w-full"
+          'flex text-center items-center justify-center m-auto h-full w-full'
         }
       >
         <span>There's no messages yet 😢</span>
@@ -243,7 +238,7 @@ export default function Items({
       <div
         ref={parentRef}
         className="relative flex-grow overflow-y-auto mb-4 space-y-2"
-        style={{ contain: "strict", height: "100%" }}
+        style={{ contain: 'strict', height: '100%' }}
       >
         {content}
       </div>

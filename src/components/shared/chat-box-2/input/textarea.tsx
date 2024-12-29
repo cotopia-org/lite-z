@@ -91,8 +91,7 @@ const MultilineTextarea: React.FC<Props> = ({
   });
 
   return (
-    <div className="relative w-full">
-      
+    <div className="relative w-full">      
       <textarea
         ref={textareaRef}
         value={text}

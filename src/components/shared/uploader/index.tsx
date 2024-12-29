@@ -22,7 +22,9 @@ type Props = {
   hasWatermark?: boolean;
   uploaderClass?: string;
   resetAfterUpload?: boolean;
+  customIcon?: React.ReactNode; // Add custom icon prop
 };
+
 export default function Uploader({
   label,
   defaultMedia,
@@ -34,6 +36,7 @@ export default function Uploader({
   hasWatermark = true,
   uploaderClass,
   resetAfterUpload = false,
+  customIcon, // Receive custom icon here
 }: Props) {
   const [fileUploaded, setFileUploaded] = useState<AttachmentFileType | null>(
     null
@@ -41,6 +44,7 @@ export default function Uploader({
   useEffect(() => {
     setFileUploaded(defaultMedia ?? null);
   }, [defaultMedia]);
+
   const handleDelete = useCallback(
     async (e: any) => {
       e.preventDefault();
@@ -92,7 +96,7 @@ export default function Uploader({
     if (e.target.files === null) return;
 
     if (e.target.files.length > 1) {
-      //Means it is array
+      // Means it is an array
       startLoading();
       let files: AttachmentFileType[] = [];
       try {
@@ -118,7 +122,7 @@ export default function Uploader({
       const res = await handleUploadFile(targetFile);
 
       if (onUpload && res) {
-        toast.success("File has been uploaded succesfully!");
+        toast.success("File has been uploaded successfully!");
         onUpload(res.data.data);
       }
     } catch (e) {}
@@ -129,7 +133,8 @@ export default function Uploader({
       className={`uploader-content relative w-full h-[120px] flex flex-col items-center justify-center rounded-full bg-black/[.05] hover:bg-black/10 cursor-pointer ${uploaderClass}`}
     >
       <div className='flex flex-col gap-y-4 items-center'>
-        <Upload />
+        {/* Render custom icon if provided, otherwise use default */}
+        {customIcon || <Upload />}
         {!!upload_text && <span>{upload_text}</span>}
       </div>
       <input

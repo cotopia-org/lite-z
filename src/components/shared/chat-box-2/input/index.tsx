@@ -1,6 +1,5 @@
 import React, {
   FormEvent,
-  FormEventHandler,
   useCallback,
   useState,
 } from "react";
@@ -8,11 +7,11 @@ import EmojiHandlerButton from "./emoji";
 import SendHandlerButton from "./send";
 import MultilineTextarea from "./textarea";
 import Mentions from "./mentions";
-import { UserMinimalType } from "@/types/user";
 import ReplyBox from "./reply";
 import { useChat2 } from "@/hooks/chat/use-chat-2";
 import EditBox from "./edit";
 import { CheckIcon } from "lucide-react";
+import UploadAttachment from "./send/upload";
 
 type ChatInputProps = {
   addMessage: (message: string) => void;
@@ -58,8 +57,9 @@ const ChatInput: React.FC<ChatInputProps> = ({ addMessage }) => {
       {editMessage && <EditBox item={editMessage} />}
       <form
         onSubmit={handleSend}
-        className='flex items-end space-x-2 rounded-lg px-4 py-2 bg-white'
+        className='flex items-end space-x-2 rounded-lg px-2 py-2 bg-white'
       >
+        <UploadAttachment />
         <MultilineTextarea
           defaultValue={inputValue}
           onChange={setInputValue}
