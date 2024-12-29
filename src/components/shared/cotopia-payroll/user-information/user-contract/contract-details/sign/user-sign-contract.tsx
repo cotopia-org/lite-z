@@ -1,16 +1,16 @@
-import CotopiaButton from "@/components/shared-ui/c-button";
-import { useRoomContext } from "@/components/shared/room/room-context";
-import TitleEl from "@/components/shared/title-el";
-import { useLoading } from "@/hooks";
-import useAuth from "@/hooks/auth";
-import { isUserAdmin } from "@/lib/utils";
-import axiosInstance from "@/services/axios";
-import { useAppDispatch } from "@/store";
-import { getProfileThunk } from "@/store/slices/auth/slice";
-import { UserContractType } from "@/types/contract";
-import { Shield } from "lucide-react";
-import { useEffect, useState } from "react";
-import { toast } from "sonner";
+import CotopiaButton from '@/components/shared-ui/c-button';
+import { useRoomContext } from '@/components/shared/room/room-context';
+import TitleEl from '@/components/shared/title-el';
+import { useLoading } from '@/hooks';
+import useAuth from '@/hooks/auth';
+import { isUserAdmin } from '@/lib/utils';
+import axiosInstance from '@/services/axios';
+import { useAppDispatch } from '@/store';
+import { getProfileThunk } from '@/store/slices/auth/slice';
+import { UserContractType } from '@/types/contract';
+import { Shield } from 'lucide-react';
+import { useEffect, useState } from 'react';
+import { toast } from 'sonner';
 
 type Props = {
   contract: UserContractType;
@@ -31,9 +31,11 @@ export default function UsreSign({ contract, onUpdate }: Props) {
 
     startLoading();
     axiosInstance
-      .put(`/contracts/${contract.id}`, {
-        user_sign_status: newStatus,
-      })
+      .get(
+        isSigned
+          ? `/contracts/${contract.id}/userRevoke`
+          : `/contracts/${contract.id}/userSign`,
+      )
       .then((res) => {
         setIsSigned(newStatus);
         stopLoading();
@@ -45,12 +47,12 @@ export default function UsreSign({ contract, onUpdate }: Props) {
       });
   };
 
-  let buttonText = isSigned ? "Revoke as User" : "Sign as User";
+  let buttonText = isSigned ? 'Revoke as User' : 'Sign as User';
 
   const belongToMe = user?.id === contract.user_id;
 
   if (!belongToMe)
-    buttonText = isSigned ? "User signed" : "Awaiting user signing";
+    buttonText = isSigned ? 'User signed' : 'Awaiting user signing';
 
   return (
     <CotopiaButton

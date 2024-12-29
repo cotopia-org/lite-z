@@ -17,16 +17,19 @@ import { initialValueContract } from '@/utils/payroll-forms-settings';
 import moment from 'moment';
 import { Switch } from '@/components/ui/switch';
 import Period from './period';
-import MinMaxHours from './min-max-hours';
 import PaymentDetails from './payment-details';
 import Schedules from './schedules';
 import Extensions from './extensions';
 import Policies from './policies';
 import axiosInstance from '@/services/axios';
 import { toast } from 'sonner';
+import { useApi } from '@/hooks/use-api';
+import MinHours from './min-hours';
+import MaxHours from './max-hours';
+import { useRoomContext } from '@/components/shared/room/room-context';
 
 type Props = {
-  defaultContract: UserContractType;
+  defaultContract?: UserContractType;
   onBack?: () => void;
 };
 
@@ -36,7 +39,9 @@ const EditContractFormik = createContext<{ formik?: FormikProps<any> }>({
 
 export const useContractFormik = () => useContext(EditContractFormik);
 
-export default function EditContract2({ defaultContract, onBack }: Props) {
+export default function ManageContract({ defaultContract, onBack }: Props) {
+  const { workspace_id } = useRoomContext();
+
   const { startLoading, stopLoading, isLoading } = useLoading();
 
   const formik = useFormik({
@@ -49,20 +54,32 @@ export default function EditContract2({ defaultContract, onBack }: Props) {
         }
       : initialValueContract,
     validationSchema: Yup.object().shape({}),
-    onSubmit: (values) => {
-      const payload: { [key: string]: any } = { ...values };
+    onSubmit: (values: any) => {
+      let payload: { [key: string]: any } = {
+        ...values,
+        user_id: values?.user?.id,
+        workspace_id,
+      };
+
       if (payload.schedule) delete payload.schedule;
       if (payload.text) delete payload.text;
+      if (payload.user) delete payload.user;
+      if (payload.schedule) payload['schedule_id'] = payload.schedule.id;
 
       startLoading();
       axiosInstance({
-        method: 'put',
-        url: `/contracts/${defaultContract.id}`,
+        method: defaultContract ? 'put' : 'post',
+        url: !defaultContract
+          ? `/contracts`
+          : `/contracts/${defaultContract.id}`,
         data: payload,
       })
         .then((res) => {
           stopLoading();
-          toast.success('Contract has been updated.');
+          toast.success(
+            `Contract has been ${defaultContract ? 'updated' : 'created'}.`,
+          );
+          if (onBack && !defaultContract) onBack();
         })
         .catch((res) => {
           stopLoading();
@@ -70,17 +87,17 @@ export default function EditContract2({ defaultContract, onBack }: Props) {
     },
   });
 
-  const { values, touched, errors, isValid, setFieldValue, handleSubmit } =
-    formik;
+  const { values, isValid, setFieldValue, handleSubmit } = formik;
 
   const StaticItems: { title: string; content: ReactNode }[] = [
     { title: 'Parties', content: <ContractParties /> },
     { title: 'Period', content: <Period /> },
-    { title: 'Min & Max Hours', content: <MinMaxHours /> },
+    { title: 'Min', content: <MinHours /> },
+    { title: 'Max', content: <MaxHours /> },
     { title: 'Payment Details', content: <PaymentDetails /> },
+    { title: 'Renewal', content: <Extensions /> },
     { title: 'Schedule(s)', content: <Schedules /> },
-    { title: 'Extensions', content: <Extensions /> },
-    { title: 'Policies', content: <Policies /> },
+    { title: 'Disclosure', content: <Policies /> },
   ];
 
   const handleToggleContentAvailbility = (
@@ -93,13 +110,16 @@ export default function EditContract2({ defaultContract, onBack }: Props) {
       setFieldValue('content', [...new Set([...prevContent, index])]);
     } else {
       setFieldValue('content', [
-        ...new Set(prevContent?.filter((item) => item !== index)),
+        ...new Set(prevContent?.filter((item: any) => item !== index)),
       ]);
     }
   };
 
   return (
-    <BoxHolder title="Edit Contract" onClose={onBack}>
+    <BoxHolder
+      title={defaultContract ? `Edit Contract` : `Create Contract`}
+      onClose={onBack}
+    >
       <EditContractFormik.Provider value={{ formik }}>
         <form onSubmit={handleSubmit}>
           <Accordion type="single" collapsible className="w-full">
@@ -110,9 +130,8 @@ export default function EditContract2({ defaultContract, onBack }: Props) {
 
               return (
                 <AccordionItem value={`item-${properIndex}`} key={properIndex}>
-                  <AccordionTrigger>{item.title}</AccordionTrigger>
-                  <AccordionContent className="px-1 flex flex-col gap-y-4">
-                    <div className="flex flex-row items-center gap-4">
+                  <AccordionTrigger>
+                    <div className="flex flex-row items-center gap-x-2">
                       <Switch
                         id={`enable-item-${index}`}
                         checked={clauseEnabled}
@@ -120,9 +139,11 @@ export default function EditContract2({ defaultContract, onBack }: Props) {
                           handleToggleContentAvailbility(properIndex, value)
                         }
                       />
-                      <span>{`${clauseEnabled ? 'Disable' : 'Enable'} this clause`}</span>
+                      {item.title}
                     </div>
-                    {item.content}
+                  </AccordionTrigger>
+                  <AccordionContent className="px-1 flex flex-col gap-y-4">
+                    {!!clauseEnabled && item.content}
                   </AccordionContent>
                 </AccordionItem>
               );

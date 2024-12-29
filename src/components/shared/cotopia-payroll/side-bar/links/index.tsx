@@ -7,13 +7,13 @@ import {
   UserRoundPen,
   Users,
   X,
-} from "lucide-react";
-import CotopiaButton from "@/components/shared-ui/c-button";
-import { PayrollPage, usePayroll } from "@/pages/cotopia-payroll/user/payroll";
-import { ReactNode } from "react";
-import { cn, isUserAdmin } from "@/lib/utils";
-import useAuth from "@/hooks/auth";
-import { useRoomContext } from "@/components/shared/room/room-context";
+} from 'lucide-react';
+import CotopiaButton from '@/components/shared-ui/c-button';
+import { PayrollPage, usePayroll } from '@/pages/cotopia-payroll/user/payroll';
+import { ReactNode } from 'react';
+import { cn, isUserAdmin } from '@/lib/utils';
+import useAuth from '@/hooks/auth';
+import { useRoomContext } from '@/components/shared/room/room-context';
 
 export default function PayrollSideBarLink() {
   const { onClose, changePage, page } = usePayroll();
@@ -29,16 +29,16 @@ export default function PayrollSideBarLink() {
   }[] = isAdmin
     ? [
         {
-          title: "All Contracts",
-          page: "all-user-contract",
+          title: 'All Contracts',
+          page: 'all-user-contract',
           icon: <User />,
         },
         {
-          title: "All Payments",
-          page: "all-payments",
+          title: 'All Payments',
+          page: 'all-payments',
           icon: <Coins />,
         },
-       
+
         // {
         //   title: "Members",
         //   page: "all-members",
@@ -50,57 +50,62 @@ export default function PayrollSideBarLink() {
         //   icon: <CircleDollarSign />,
         // },
         {
-          title: "Create Contract",
-          page: "create-contract",
+          title: 'Create Contract',
+          page: 'create-contract',
           icon: <UserRoundPen />,
         },
         {
-          title: "Create Payments",
-          page: "create-payments",
+          title: 'Create Payments',
+          page: 'create-payments',
           icon: <HandCoins />,
         },
-        
+
         {
-          title: "My contracts",
-          page: "user-contract",
+          title: 'My contracts',
+          page: 'user-contract',
           icon: <User />,
         },
         {
-          title: "My Payments",
-          page: "payments",
+          title: 'My Payments',
+          page: 'payments',
           icon: <Coins />,
         },
       ]
     : [
         {
-          title: "My contracts",
-          page: "user-contract",
+          title: 'My contracts',
+          page: 'user-contract',
           icon: <User />,
         },
         {
-          title: "Users Payments",
-          page: "all-payment",
+          title: 'All Payments',
+          page: 'all-payments',
           icon: <Grid />,
         },
         {
-          title: "My Payments",
-          page: "payments",
+          title: 'Users Payments',
+          page: 'all-payment',
+          icon: <Grid />,
+        },
+        {
+          title: 'My Payments',
+          page: 'payments',
           icon: <Coins />,
         },
       ];
 
   return (
-    <ul className='p-3 mt-4 flex flex-col gap-y-2'>
+    <ul className="p-3 mt-4 flex flex-col gap-y-2">
       {links.map((link) => (
         <li key={link.title}>
           <CotopiaButton
             startIcon={link.icon}
             onClick={() => changePage(link.page)}
             className={cn(
-              "w-full justify-start text-lg",
-              link.page === page ? "bg-primary text-white" : "hover:bg-black/5"
+              'w-full justify-start text-lg',
+              link.page === page ? 'bg-primary text-white' : 'hover:bg-black/5',
             )}
-            variant={"ghost"}
+            variant={'ghost'}
           >
             {link.title}
           </CotopiaButton>
@@ -110,8 +115,8 @@ export default function PayrollSideBarLink() {
         <CotopiaButton
           startIcon={<X />}
           onClick={onClose}
-          className='w-full justify-start text-lg hover:bg-primary hover:text-white'
-          variant={"ghost"}
+          className="w-full justify-start text-lg hover:bg-primary hover:text-white"
+          variant={'ghost'}
         >
           Close
         </CotopiaButton>

@@ -29,4 +29,5 @@ export interface UserContractType {
   last_payment: PaymentType;
   in_schedule: boolean;
   content: number[];
+  status: 'waiting_admin_sign' | 'waiting_user_sign' | 'signed' | 'draft';
 }

@@ -1,13 +1,13 @@
-import { Loader } from "lucide-react"
-import { Button, ButtonProps } from "../ui/button"
-import { MouseEvent, ReactNode } from "react"
+import { Loader } from 'lucide-react';
+import { Button, ButtonProps } from '../ui/button';
+import { MouseEvent, ReactNode } from 'react';
 
 export type CotopiaButtonProps = ButtonProps & {
-  loading?: boolean
-  startIcon?: ReactNode
-  endIcon?: ReactNode
-  onClick?: (e: MouseEvent<HTMLButtonElement>) => void
-}
+  loading?: boolean;
+  startIcon?: ReactNode;
+  endIcon?: ReactNode;
+  onClick?: (e: MouseEvent<HTMLButtonElement>) => void;
+};
 
 export default function CotopiaButton({
   loading,
@@ -16,9 +16,9 @@ export default function CotopiaButton({
   onClick,
   ...rest
 }: CotopiaButtonProps) {
-  const isDisabled = rest?.disabled ?? loading ?? false
-  let clss = rest?.className ?? ""
-  clss += ` gap-x-2 px-2`
+  const isDisabled = rest?.disabled ?? loading ?? false;
+  let clss = rest?.className ?? '';
+  clss += ` gap-x-2 px-2`;
 
   return (
     <Button
@@ -40,5 +40,5 @@ export default function CotopiaButton({
         </>
       )}
     </Button>
-  )
+  );
 }

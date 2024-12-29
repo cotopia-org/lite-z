@@ -7,6 +7,7 @@ import { useEffect, useState } from 'react';
 import HintAddressContract from '@/components/shared/room/tools/top-right/payroll-button/hint-address-contract';
 import Markdown from 'markdown-to-jsx';
 import TitleEl from '@/components/shared/title-el';
+import EditContract from '@/components/shared/room/tools/top-right/payroll-button/edit-contract';
 
 type Props = {
   contract: UserContractType;
@@ -111,6 +112,7 @@ export default function PayrollContractDetails({
         }}
       />
       <SignContract contract={localContract} onUpdate={setLocalContract} />
+      <EditContract contract={localContract} />
       <CotopiaButton
         variant={'link'}
         startIcon={<ChevronLeft />}

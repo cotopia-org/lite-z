@@ -1,13 +1,19 @@
-import { ScheduleType } from "@/types/calendar";
-import ScheduleItem from "../room/tools/top-left/schedule-button/shapes/handler/schedule-item";
-import NotFound from "../layouts/not-found";
+import { ScheduleType } from '@/types/calendar';
+import ScheduleItem from '../room/tools/top-left/schedule-button/shapes/handler/schedule-item';
+import NotFound from '../layouts/not-found';
 
 type Props = {
   items: ScheduleType[];
   onDelete?: () => void;
+  onUpdate?: (item: ScheduleType) => void;
   justView?: boolean;
 };
-export default function Schedules({ items, onDelete, justView = true }: Props) {
+export default function Schedules({
+  items,
+  onDelete,
+  onUpdate,
+  justView = true,
+}: Props) {
   if (items.length === 0)
     return (
       <NotFound
@@ -23,6 +29,7 @@ export default function Schedules({ items, onDelete, justView = true }: Props) {
           schedule={x}
           key={x.id}
           onDelete={onDelete}
+          onUpdate={onUpdate}
           justView={justView}
         />
       ))}

@@ -1,20 +1,28 @@
-import CotopiaSwitch from "@/components/shared-ui/c-switch";
-import { useLoading } from "@/hooks";
-import axiosInstance from "@/services/axios";
-import { PaymentType } from "@/types/payment";
-import { useEffect, useState } from "react";
+import CotopiaSwitch from '@/components/shared-ui/c-switch';
+import { useRoomContext } from '@/components/shared/room/room-context';
+import { useLoading } from '@/hooks';
+import useAuth from '@/hooks/auth';
+import { isUserAdmin } from '@/lib/utils';
+import axiosInstance from '@/services/axios';
+import { PaymentType } from '@/types/payment';
+import { useEffect, useState } from 'react';
 
 type Props = {
   payment: PaymentType;
-  onChange: () => void
+  onChange: () => void;
 };
 
 enum PaymentStatusEnum {
-  Paid = "paid",
-  Pending = "pending",
+  Paid = 'paid',
+  Pending = 'pending',
 }
 
 export default function PaymentStatus({ payment, onChange }: Props) {
+  const { workspace_id } = useRoomContext();
+
+  const { user } = useAuth();
+  const isAdmin = isUserAdmin(user, workspace_id ? +workspace_id : undefined);
+
   const [status, setStatus] = useState<string>();
   useEffect(() => {
     if (payment?.status) setStatus(payment.status);
@@ -30,10 +38,10 @@ export default function PaymentStatus({ payment, onChange }: Props) {
       })
       .then((res) => {
         setStatus(
-          value === true ? PaymentStatusEnum.Paid : PaymentStatusEnum.Pending
+          value === true ? PaymentStatusEnum.Paid : PaymentStatusEnum.Pending,
         );
         stopLoading();
-        if ( onChange ) onChange()
+        if (onChange) onChange();
       })
       .catch((err) => {
         stopLoading();
@@ -42,10 +50,10 @@ export default function PaymentStatus({ payment, onChange }: Props) {
 
   return (
     <CotopiaSwitch
-      label={status === PaymentStatusEnum.Paid ? "Paid" : "Pending"}
+      label={status === PaymentStatusEnum.Paid ? 'Paid' : 'Pending'}
       checked={status === PaymentStatusEnum.Paid}
       onCheckedChange={(value) => updateStatus(value)}
-      disabled={isLoading}
+      disabled={isLoading || !isAdmin}
     />
   );
 }

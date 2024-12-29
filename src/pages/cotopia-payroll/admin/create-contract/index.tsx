@@ -16,7 +16,7 @@ import { UserContractType } from '@/types/contract';
 import CotopiaIconButton from '@/components/shared-ui/c-icon-button';
 import { X } from 'lucide-react';
 import moment from 'moment';
-import EditContract2 from './edit-2';
+import ManageContract from './edit-2';
 
 type Props = {
   defaultContract?: UserContractType;
@@ -132,7 +132,9 @@ export default function PayrollCreateContract({
   console.log('errors', errors);
 
   if (defaultContract)
-    return <EditContract2 onBack={onBack} defaultContract={defaultContract} />;
+    return <ManageContract onBack={onBack} defaultContract={defaultContract} />;
+
+  return <ManageContract />;
 
   return (
     <form

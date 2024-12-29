@@ -317,9 +317,6 @@ export default function WithReactFlowV2() {
   };
 
   const s = useSocket('updateCoordinates', (data: updateCoordinatesEvent) => {
-    console.log('updateCoordinates', data);
-    console.log('node', rf.current?.getNode(data.username));
-
     const coordsSplitted = data.coordinates.split(',');
 
     if (coordsSplitted.length !== 2) return;
@@ -337,8 +334,6 @@ export default function WithReactFlowV2() {
 
     rf.current?.updateNode(data.username, { position });
   });
-
-  console.log('sooooocket', s);
 
   useSocket(
     'livekitEvent',
