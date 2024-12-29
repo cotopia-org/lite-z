@@ -372,7 +372,7 @@ export function getDateTime(
 
 export function isNowBetween(start: string, end: string) {
   const now = new Date();
-  now.setHours(18, 0, 0, 0);
+  // now.setHours(18, 0, 0, 0);
   const [startHour, startMinute] = start.split(":").map(Number);
   const [endHour, endMinute] = end.split(":").map(Number);
 

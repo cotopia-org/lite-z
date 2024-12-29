@@ -35,7 +35,7 @@ export default function ChatPreview() {
             ? chat.participants.find((x) => x.id !== user?.id)?.avatar?.url
             : ""
         }
-        date={chat.created_at}
+        date={isDirectChat ? chatUser?.created_at : chat.created_at}
         title={chat?.title?.slice(0, 1)}
         className={`w-12 h-12 text-2xl`}
         status={
@@ -59,8 +59,8 @@ export default function ChatPreview() {
             : undefined
         }
         description={
-          <div>
-            <span className={"text-blue-500 capitalize"}>
+          <div className={"text-sm"}>
+            <span className={"text-blue-500 text-sm capitalize"}>
               {chat.last_message?.user.username}:{" "}
             </span>
             <span>{chat.last_message?.text}</span>
