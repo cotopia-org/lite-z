@@ -1,6 +1,6 @@
-import { UserContractType } from "./contract";
-import { AttachmentFileType } from "./file";
-import { JobType } from "./job";
+import { UserContractType } from './contract';
+import { AttachmentFileType } from './file';
+import { JobType } from './job';
 
 export type UserType = {
   active: null | 0 | 1;
@@ -19,6 +19,8 @@ export type UserType = {
   workspace_id: null | number;
   screenshare_coordinates: null | string;
   screenshare_size: null | string;
+  last_login: string;
+
   status: null | string;
   username: string;
   video_coordinates: null | string;
@@ -30,7 +32,7 @@ export type UserType = {
   created_at: number;
 };
 
-export type MeType = {
+export interface MeType extends UserType {
   active: null | 0 | 1;
   avatar: AttachmentFileType | null;
   bio: null | string;
@@ -56,7 +58,7 @@ export type MeType = {
   active_contract?: UserContractType;
   active_job?: JobType;
   created_at: number;
-};
+}
 export type UserMinimalTypeScheduleType = {
   hours: string;
   minutes: number;

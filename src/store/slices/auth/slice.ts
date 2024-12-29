@@ -1,9 +1,9 @@
 // src/store/slices/authSlice.ts
-import { createSlice, PayloadAction, createAsyncThunk } from "@reduxjs/toolkit";
-import { RootState } from "../..";
-import { MeType } from "@/types/user";
-import axiosInstance from "@/services/axios";
-import { toast } from "sonner";
+import { createSlice, PayloadAction, createAsyncThunk } from '@reduxjs/toolkit';
+import { RootState } from '../..';
+import { MeType } from '@/types/user';
+import axiosInstance from '@/services/axios';
+import { toast } from 'sonner';
 
 // Define the initial state using a TypeScript interface
 interface AuthState {
@@ -32,15 +32,35 @@ export const loginThunk = createAsyncThunk<
   { data: LoginResponse },
   { username: string; password: string },
   { rejectValue: string }
->("auth/login/password", async (credentials, { rejectWithValue }) => {
+>('auth/login/password', async (credentials, { rejectWithValue }) => {
   try {
-    const response = await axiosInstance.post("/auth/login", {
+    const response = await axiosInstance.post('/auth/login', {
       ...credentials,
     });
-    toast.success("You logged in successfully.");
+    toast.success('You logged in successfully.');
     return response.data;
   } catch (error) {
     return rejectWithValue("Something wen't wrong");
+  }
+});
+
+export const registerThunk = createAsyncThunk<
+  { data: LoginResponse },
+  { username: string; password: string; email: string },
+  { rejectValue: string }
+>('auth/login/register', async (credentials, { rejectWithValue }) => {
+  try {
+    const response = await axiosInstance.post('/auth/register', {
+      ...credentials,
+    });
+    toast.success('You registered successfully.');
+    return response.data;
+  } catch (error) {
+    // @ts-ignore
+    toast.success(error.response.data.meta.message);
+    // @ts-ignore
+
+    return rejectWithValue(error.response.data.meta.message);
   }
 });
 
@@ -49,9 +69,9 @@ export const getProfileThunk = createAsyncThunk<
   { data: MeType },
   undefined,
   { rejectValue: string }
->("auth/login/get-profile", async (credentials, { rejectWithValue }) => {
+>('auth/login/get-profile', async (credentials, { rejectWithValue }) => {
   try {
-    const response = await axiosInstance.get("/users/me");
+    const response = await axiosInstance.get('/users/me');
     return response.data;
   } catch (error) {
     return rejectWithValue("Something wen't wrong");
@@ -90,7 +110,7 @@ export const getProfileThunk = createAsyncThunk<
 
 // Define the auth slice
 const authSlice = createSlice({
-  name: "auth",
+  name: 'auth',
   initialState,
   reducers: {
     logout: (state) => {
@@ -102,6 +122,27 @@ const authSlice = createSlice({
     },
   },
   extraReducers: (builder) => {
+    builder
+      // Login actions
+      .addCase(registerThunk.pending, (state) => {
+        state.isLoading = true;
+        state.error = null;
+      })
+      .addCase(
+        registerThunk.fulfilled,
+        (state, action: PayloadAction<{ data: LoginResponse }>) => {
+          const { token, ...user } = action.payload.data;
+
+          state.user = user;
+          state.accessToken = token;
+          state.isLoading = false;
+        },
+      )
+      .addCase(registerThunk.rejected, (state, action) => {
+        state.isLoading = false;
+        state.error = action.payload || 'Failed to register';
+        toast.error(action.payload || 'Failed to register');
+      });
     builder
       // Login actions
       .addCase(loginThunk.pending, (state) => {
@@ -120,8 +161,8 @@ const authSlice = createSlice({
       )
       .addCase(loginThunk.rejected, (state, action) => {
         state.isLoading = false;
-        state.error = action.payload || "Failed to login";
-        toast.error(action.payload || "Failed to login");
+        state.error = action.payload || 'Failed to login';
+        toast.error(action.payload || 'Failed to login');
       });
     builder
       // Login actions
@@ -138,8 +179,8 @@ const authSlice = createSlice({
       )
       .addCase(getProfileThunk.rejected, (state, action) => {
         state.isLoading = false;
-        state.error = action.payload || "Failed to login";
-        toast.error(action.payload || "Failed to login");
+        state.error = action.payload || 'Failed to login';
+        toast.error(action.payload || 'Failed to login');
       });
   },
 });

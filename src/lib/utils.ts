@@ -1,22 +1,22 @@
-import { mergePropsMain } from "@/components/shared/canvas-board/canvas-audio-rendrer/use-media-track-by-source-or-name/merge-props";
-import { ScheduleType } from "@/types/calendar";
-import { UserContractType } from "@/types/contract";
-import { WorkspaceRoomShortType } from "@/types/room";
-import { UserType, WorkspaceUserType } from "@/types/user";
-import { TrackReferenceOrPlaceholder } from "@livekit/components-core";
-import { type ClassValue, clsx } from "clsx";
-import { Track } from "livekit-client";
-import moment from "moment";
-import { twMerge } from "tailwind-merge";
+import { mergePropsMain } from '@/components/shared/canvas-board/canvas-audio-rendrer/use-media-track-by-source-or-name/merge-props';
+import { ScheduleType } from '@/types/calendar';
+import { UserContractType } from '@/types/contract';
+import { WorkspaceRoomShortType } from '@/types/room';
+import { MeType, UserType, WorkspaceUserType } from '@/types/user';
+import { TrackReferenceOrPlaceholder } from '@livekit/components-core';
+import { type ClassValue, clsx } from 'clsx';
+import { Track } from 'livekit-client';
+import moment from 'moment';
+import { twMerge } from 'tailwind-merge';
 
-const querystring = require("querystring");
+const querystring = require('querystring');
 
 export const getQueryParams = (obj: object) => querystring.stringify(obj);
 
 export function urlWithQueryParams(url: string, object: any) {
-  if (typeof object !== "object") return "";
+  if (typeof object !== 'object') return '';
 
-  if (!url) return "";
+  if (!url) return '';
 
   const params = getQueryParams(object);
   const hasParams = Object.keys(params).length > 0;
@@ -32,12 +32,12 @@ export const getTimeFormat = (
   const minutes = Math.floor((seconds % 3600) / 60);
   const remainingSeconds = seconds % 60;
 
-  const formattedHours = hours.toString().padStart(2, "0");
-  const formattedMinutes = minutes.toString().padStart(2, "0");
+  const formattedHours = hours.toString().padStart(2, '0');
+  const formattedMinutes = minutes.toString().padStart(2, '0');
   const formattedSeconds = remainingSeconds
     .toFixed(0)
     .toString()
-    .padStart(2, "0");
+    .padStart(2, '0');
 
   if (hasHours) return `${formattedHours}h ${formattedMinutes}m`;
 
@@ -45,8 +45,8 @@ export const getTimeFormat = (
 };
 
 export function persianToEnglishNumbers(inputStr: string): string {
-  const persianNumbers = ["۰", "۱", "۲", "۳", "۴", "۵", "۶", "۷", "۸", "۹"];
-  const englishNumbers = ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9"];
+  const persianNumbers = ['۰', '۱', '۲', '۳', '۴', '۵', '۶', '۷', '۸', '۹'];
+  const englishNumbers = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9'];
 
   const translationMap: { [key: string]: string } = {};
   persianNumbers.forEach((persian, index) => {
@@ -61,11 +61,11 @@ export function cn(...inputs: ClassValue[]) {
 }
 
 export function routeResolver(...args: string[]) {
-  return `/${args.join("/")}`;
+  return `/${args.join('/')}`;
 }
 
 export function rawRouteResolver(...args: string[]) {
-  return `${args.join("/")}`;
+  return `${args.join('/')}`;
 }
 
 type Item = {
@@ -92,19 +92,19 @@ export const getUserFullname = (user: any) => {
 
 export function getDay(index: number) {
   const days: { [key: number]: string } = {
-    0: "Sunday",
-    1: "Monday",
-    2: "Tuesday",
-    3: "Wednesday",
-    4: "Thursday",
-    5: "Friday",
-    6: "Saturday",
+    0: 'Sunday',
+    1: 'Monday',
+    2: 'Tuesday',
+    3: 'Wednesday',
+    4: 'Thursday',
+    5: 'Friday',
+    6: 'Saturday',
   };
   return days[index];
 }
 
 export const timeStringToMoment = (time: string) => {
-  const timesArray = time.split(":");
+  const timesArray = time.split(':');
 
   const hour = timesArray[0];
   const minutues = timesArray[1];
@@ -127,9 +127,9 @@ export function convertMinutesToHHMMSS(
   const mins = Math.floor(minutes % 60);
   const secs = Math.floor((minutes * 60) % 60);
 
-  const formattedHours = String(hours).padStart(2, "0");
-  const formattedMinutes = String(mins).padStart(2, "0");
-  const formattedSeconds = String(secs).padStart(2, "0");
+  const formattedHours = String(hours).padStart(2, '0');
+  const formattedMinutes = String(mins).padStart(2, '0');
+  const formattedSeconds = String(secs).padStart(2, '0');
   if (short) {
     return `${formattedHours} h`;
   }
@@ -147,7 +147,7 @@ export const estimateTotalHoursBySchedules = (schedules: ScheduleType[]) => {
         const startMoment = timeStringToMoment(time.start);
         const endMoment = timeStringToMoment(time.end);
 
-        const diffMinutes = endMoment.diff(startMoment, "minutes");
+        const diffMinutes = endMoment.diff(startMoment, 'minutes');
         const diffHours = Math.round(diffMinutes / 60);
 
         hours += diffHours;
@@ -160,7 +160,7 @@ export const estimateTotalHoursBySchedules = (schedules: ScheduleType[]) => {
 
 export const limitChar = (inputString: string, maxLength: number) => {
   if (inputString.length > maxLength) {
-    return inputString.substring(0, maxLength) + "...";
+    return inputString.substring(0, maxLength) + '...';
   }
   return inputString;
 };
@@ -241,7 +241,7 @@ export const getFocusedMessage = ({
 };
 
 export const getTwelveClockFormat = (time: string) => {
-  return moment(time, "HH:mm").format("hh:mmA");
+  return moment(time, 'HH:mm').format('hh:mmA');
 };
 
 export function extractMentions(
@@ -264,7 +264,7 @@ export function extractMentions(
 export function getPositionFromStringCoordinates(coords: string) {
   if (!coords) return null;
 
-  const splittedCoords = coords.split(",");
+  const splittedCoords = coords.split(',');
 
   if (splittedCoords.length !== 2) return null;
 
@@ -278,10 +278,10 @@ export function getPositionFromStringCoordinates(coords: string) {
 
 export function compactNumber(value: number, decimals: number = 1): string {
   if (value === null || value === undefined || isNaN(value)) {
-    throw new Error("Invalid number input");
+    throw new Error('Invalid number input');
   }
 
-  const suffixes = ["", "K", "M", "B", "T", "P"];
+  const suffixes = ['', 'K', 'M', 'B', 'T', 'P'];
   const factor = 1000;
 
   let index = 0;
@@ -291,11 +291,11 @@ export function compactNumber(value: number, decimals: number = 1): string {
     index++;
   }
 
-  return `${value.toFixed(decimals).replace(/\.0+$/, "")}${suffixes[index]}`;
+  return `${value.toFixed(decimals).replace(/\.0+$/, '')}${suffixes[index]}`;
 }
 
 export function isUserAdmin(
-  user: UserType | WorkspaceUserType | null,
+  user: UserType | WorkspaceUserType | null | MeType,
   workspace_id?: number,
 ) {
   if (workspace_id === undefined) return false;
@@ -309,8 +309,8 @@ export function isUserAdmin(
   );
 
   return (
-    userInTargetWorkspace?.role === "super-admin" ||
-    userInTargetWorkspace?.role === "owner"
+    userInTargetWorkspace?.role === 'super-admin' ||
+    userInTargetWorkspace?.role === 'owner'
   );
 }
 
@@ -334,18 +334,18 @@ export function formatTime(totalMinutes: number): string {
     adjustedHours += 1;
   }
 
-  return `${String(adjustedHours).padStart(2, "0")}:${String(adjustedMinutes).padStart(2, "0")}:${String(adjustedSeconds).padStart(2, "0")}`;
+  return `${String(adjustedHours).padStart(2, '0')}:${String(adjustedMinutes).padStart(2, '0')}:${String(adjustedSeconds).padStart(2, '0')}`;
 }
 
 export function getContractStatus(contract: UserContractType) {
   if (contract.user_sign_status === 1 && contract.contractor_sign_status === 1)
-    return "Signed";
+    return 'Signed';
 
-  if (contract.user_sign_status === 0) return "Awaiting user signing";
+  if (contract.user_sign_status === 0) return 'Awaiting user signing';
 
-  if (contract.contractor_sign_status === 0) return "Awaiting admin signing";
+  if (contract.contractor_sign_status === 0) return 'Awaiting admin signing';
 
-  return "UnSigned";
+  return 'UnSigned';
 }
 
 export const roomSeparatorByType = (rooms: WorkspaceRoomShortType[]) => {
@@ -353,7 +353,7 @@ export const roomSeparatorByType = (rooms: WorkspaceRoomShortType[]) => {
   let gridRooms: WorkspaceRoomShortType[] = [];
 
   for (let room of rooms) {
-    if (room?.type === "flow") {
+    if (room?.type === 'flow') {
       flowRooms.push(room);
     } else {
       gridRooms.push(room);
@@ -365,7 +365,7 @@ export const roomSeparatorByType = (rooms: WorkspaceRoomShortType[]) => {
 
 export function getDateTime(
   date: string,
-  format: string = "YYYY/MM/DD HH:mm:ss",
+  format: string = 'YYYY/MM/DD HH:mm:ss',
 ) {
   return moment(date).format(format);
 }
@@ -373,8 +373,8 @@ export function getDateTime(
 export function isNowBetween(start: string, end: string) {
   const now = new Date();
   // now.setHours(18, 0, 0, 0);
-  const [startHour, startMinute] = start.split(":").map(Number);
-  const [endHour, endMinute] = end.split(":").map(Number);
+  const [startHour, startMinute] = start.split(':').map(Number);
+  const [endHour, endMinute] = end.split(':').map(Number);
 
   const startTime = new Date(now);
   startTime.setHours(startHour, startMinute, 0, 0);
@@ -440,13 +440,13 @@ export const getNodePositionFromCenter = (
 export function getRandomColor(timestamp: any, darkness = 0.9) {
   const normalizedTimestamp = (timestamp % 1000) / 1000;
   const colors = [
-    "#D45246", // Original Red
-    "#F68136", // Original Orange
-    "#6C61DF", // Original Violet
-    "#46BA43", // Original Green
-    "#359AD4", // Original Cyan
-    "#408ACF", // Original Blue
-    "#D95574", // Original Pink
+    '#D45246', // Original Red
+    '#F68136', // Original Orange
+    '#6C61DF', // Original Violet
+    '#46BA43', // Original Green
+    '#359AD4', // Original Cyan
+    '#408ACF', // Original Blue
+    '#D95574', // Original Pink
   ];
 
   const colorInterval = 10; // Adjust this value to control color change frequency
