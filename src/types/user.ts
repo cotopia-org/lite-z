@@ -59,6 +59,7 @@ export interface MeType extends UserType {
   active_job?: JobType;
   created_at: number;
 }
+
 export type UserMinimalTypeScheduleType = {
   hours: string;
   minutes: number;
