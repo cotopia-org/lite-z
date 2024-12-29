@@ -1,23 +1,23 @@
-import { JobType } from "@/types/job";
-import EditJobButton from "./edit";
-import { limitChar } from "@/lib/utils";
-import JobStatus from "./job-status";
-import JobActions from "./job-actions";
-import JobEstimate from "./estimate";
-import JobParent from "./parent";
-import JobTag from "./tag";
-import { UserRoundCheck, UserRoundX } from "lucide-react";
-import moment from "moment/moment";
-import CotopiaTooltip from "@/components/shared-ui/c-tooltip";
-import CotopiaIconButton from "@/components/shared-ui/c-icon-button";
-import { colors } from "@/const/varz";
-import useLoading from "@/hooks/use-loading";
-import axiosInstance from "@/services/axios";
-import { toast } from "sonner";
-import { UserType } from "@/types/user";
-import { __BUS } from "@/const/bus";
-import { useChat2 } from "@/hooks/chat/use-chat-2";
-import { dispatch } from "use-bus";
+import { JobType } from '@/types/job';
+import EditJobButton from './edit';
+import { limitChar } from '@/lib/utils';
+import JobStatus from './job-status';
+import JobActions from './job-actions';
+import JobEstimate from './estimate';
+import JobParent from './parent';
+import JobTag from './tag';
+import { UserRoundCheck, UserRoundX } from 'lucide-react';
+import moment from 'moment/moment';
+import CotopiaTooltip from '@/components/shared-ui/c-tooltip';
+import CotopiaIconButton from '@/components/shared-ui/c-icon-button';
+import { colors } from '@/const/varz';
+import useLoading from '@/hooks/use-loading';
+import axiosInstance from '@/services/axios';
+import { toast } from 'sonner';
+import { UserType } from '@/types/user';
+import { __BUS } from '@/const/bus';
+import { useChat2 } from '@/hooks/chat/use-chat-2';
+import { dispatch } from 'use-bus';
 
 interface Props {
   item: JobType;
@@ -43,7 +43,7 @@ const JobItem = ({
     axiosInstance
       .get(`/jobs/${jobId}/accept`)
       .then((res) => {
-        toast.success("Job has been accepted and started");
+        toast.success('Job has been accepted and started');
         stopLoading();
         if (mutate) {
           mutate();
@@ -58,7 +58,7 @@ const JobItem = ({
     axiosInstance
       .get(`/jobs/${jobId}/dismiss`)
       .then((res) => {
-        toast.success("Job has been dismissed");
+        toast.success('Job has been dismissed');
         stopLoading();
         if (mutate) {
           mutate();
@@ -73,7 +73,6 @@ const JobItem = ({
   const chat = chats[0];
 
   const handleOpenChat = () => {
-    console.log("Open CHat");
     dispatch({
       type: __BUS.selectChat,
       chat,
@@ -83,17 +82,17 @@ const JobItem = ({
   return (
     <div className="flex flex-col gap-y-4 items-start w-full py-4 px-6 border border-grayscale-border rounded-2xl shadow-app-bar">
       <div className="flex w-full justify-between flex-row items-center gap-x-2">
-        <div className={"flex flex-col justify-center"}>
+        <div className={'flex flex-col justify-center'}>
           <span className="text-lg text-grayscale-paragraph text-ellipsis whitespace-pre-wrap">
             <CotopiaTooltip
-              triggerClassName={"truncate max-w-48"}
+              triggerClassName={'truncate max-w-48'}
               title={item.title}
             >
               {item.title}
             </CotopiaTooltip>
           </span>
 
-          <small className={"text-xs text-slate-400"}>
+          <small className={'text-xs text-slate-400'}>
             {moment(item.created_at).fromNow()}
           </small>
         </div>
@@ -109,7 +108,7 @@ const JobItem = ({
               openChat={handleOpenChat}
             />
 
-            {item.role === "owner" && (
+            {item.role === 'owner' && (
               <EditJobButton
                 job={item}
                 parentJobs={parentJobs}
@@ -146,8 +145,8 @@ const JobItem = ({
         {limitChar(item.description, 100)}
       </p>
 
-      <div className={"flex flex-col gap-y-2 w-full"}>
-        <div className={"flex flex-row gap-4"}>
+      <div className={'flex flex-col gap-y-2 w-full'}>
+        <div className={'flex flex-row gap-4'}>
           {!suggested && (
             <>
               <div>
@@ -161,7 +160,7 @@ const JobItem = ({
           <div>{item.parent && <JobParent job={item} />}</div>
         </div>
         {item.mentions.length > 0 && (
-          <div className={"w-fit"}>
+          <div className={'w-fit'}>
             <JobTag job={item} />
           </div>
         )}

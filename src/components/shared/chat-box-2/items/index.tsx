@@ -96,12 +96,10 @@ export default function Items({
   useBus(
     __BUS.scrollToTargetMessage,
     (data: any) => {
-      console.log(data, 'YES');
       const messageId = data?.messageId;
 
       const itemIndex = items.findIndex((x) => +x.nonce_id === +messageId);
 
-      console.log(itemIndex, 'index');
       if (itemIndex === -1) return;
 
       const rightIndex = items.length - (itemIndex + 1);

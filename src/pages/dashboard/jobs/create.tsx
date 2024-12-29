@@ -1,24 +1,24 @@
-import CotopiaButton from "@/components/shared-ui/c-button";
-import { useApi } from "@/hooks/swr";
-import { ChevronLeft, ChevronRight, Pencil, Plus, Save, X } from "lucide-react";
+import CotopiaButton from '@/components/shared-ui/c-button';
+import { useApi } from '@/hooks/swr';
+import { ChevronLeft, ChevronRight, Pencil, Plus, Save, X } from 'lucide-react';
 
-import TitleEl from "@/components/shared/title-el";
-import { JobStatusType, JobType, UserJobType } from "@/types/job";
-import CotopiaDropdown from "@/components/shared-ui/c-dropdown";
-import JobStatus from "@/components/shared/room/tools/top-left/job-button/shapes/job-list/job-item/job-status";
-import CSelect from "@/components/shared-ui/c-select";
-import axiosInstance, { FetchDataType } from "@/services/axios";
-import Page from "@/pages/dashboard/Page";
-import CotopiaInput from "@/components/shared-ui/c-input";
-import CotopiaTextarea from "@/components/shared-ui/c-textarea";
-import Search from "@/components/shared/search";
-import useLoading from "@/hooks/use-loading";
-import { useFormik } from "formik";
-import { MentionType } from "@/types/mention";
-import * as Yup from "yup";
-import { toast } from "sonner";
-import FullLoading from "@/components/shared/full-loading";
-import CotopiaSwitch from "@/components/shared-ui/c-switch";
+import TitleEl from '@/components/shared/title-el';
+import { JobStatusType, JobType, UserJobType } from '@/types/job';
+import CotopiaDropdown from '@/components/shared-ui/c-dropdown';
+import JobStatus from '@/components/shared/room/tools/top-left/job-button/shapes/job-list/job-item/job-status';
+import CSelect from '@/components/shared-ui/c-select';
+import axiosInstance, { FetchDataType } from '@/services/axios';
+import Page from '@/pages/dashboard/Page';
+import CotopiaInput from '@/components/shared-ui/c-input';
+import CotopiaTextarea from '@/components/shared-ui/c-textarea';
+import Search from '@/components/shared/search';
+import useLoading from '@/hooks/use-loading';
+import { useFormik } from 'formik';
+import { MentionType } from '@/types/mention';
+import * as Yup from 'yup';
+import { toast } from 'sonner';
+import FullLoading from '@/components/shared/full-loading';
+import CotopiaSwitch from '@/components/shared-ui/c-switch';
 
 type Props = {
   workspace_id: string | undefined;
@@ -27,10 +27,10 @@ type Props = {
   onUpdate?: () => void;
 };
 const dropdownItems = [
-  { title: "In Progress", value: "in_progress" },
-  { title: "Completed", value: "completed" },
-  { title: "Paused", value: "paused" },
-  { title: "Started", value: "started" },
+  { title: 'In Progress', value: 'in_progress' },
+  { title: 'Completed', value: 'completed' },
+  { title: 'Paused', value: 'paused' },
+  { title: 'Started', value: 'started' },
 ];
 export default function CreateJob({
   workspace_id,
@@ -40,7 +40,7 @@ export default function CreateJob({
 }: Props) {
   const { data: workspaceJobs, isLoading: parentIsLoading } = useApi<
     FetchDataType<JobType[]>
-  >("/workspaces/" + workspace_id + "/jobs");
+  >('/workspaces/' + workspace_id + '/jobs');
   let allJobs = (workspaceJobs && workspaceJobs?.data) ?? [];
 
   const { isLoading, stopLoading, startLoading } = useLoading();
@@ -63,17 +63,17 @@ export default function CreateJob({
   }>({
     enableReinitialize: true,
     initialValues: {
-      title: "",
-      description: "",
-      status: "in_progress",
+      title: '',
+      description: '',
+      status: 'in_progress',
       estimate: 1,
       job_id: undefined,
       mentions: [],
       joinable: 1,
     },
     validationSchema: Yup.object().shape({
-      title: Yup.string().required("please enter job title"),
-      description: Yup.string().required("please enter job description"),
+      title: Yup.string().required('please enter job title'),
+      description: Yup.string().required('please enter job description'),
     }),
     onSubmit: async (values) => {
       const { ...rest } = values;
@@ -95,16 +95,15 @@ export default function CreateJob({
         startLoading();
         const data = await axiosInstance({
           url: `/jobs/`,
-          method: "POST",
+          method: 'POST',
           data: payload,
         });
-        toast.success("Job has been created successfully");
+        toast.success('Job has been created successfully');
         if (onUpdate) {
           onUpdate();
           onBack();
         }
         if (setSelectedJob) {
-          console.log(data.data.data);
           setSelectedJob(data.data.data);
         }
         stopLoading();
@@ -118,16 +117,16 @@ export default function CreateJob({
     <Page
       header={
         <>
-          <div className={"flex gap-2 items-center"}>
+          <div className={'flex gap-2 items-center'}>
             <small>Create Job</small>
-            <h1 className={"font-bold text-lg"}>{values.title}</h1>
+            <h1 className={'font-bold text-lg'}>{values.title}</h1>
 
             <JobStatus status={values.status} />
           </div>
-          <div className={"flex items-center"}>
+          <div className={'flex items-center'}>
             {!!onBack && (
               <CotopiaButton
-                variant={"link"}
+                variant={'link'}
                 startIcon={<ChevronLeft />}
                 onClick={onBack}
               >
@@ -139,9 +138,9 @@ export default function CreateJob({
       }
       main={
         <>
-          <div className={"p-4 flex flex-col items-start gap-y-2 w-full"}>
+          <div className={'p-4 flex flex-col items-start gap-y-2 w-full'}>
             <form onSubmit={handleSubmit} className="flex flex-wrap gap-4">
-              <TitleEl className={"w-1/2"} title="Parent">
+              <TitleEl className={'w-1/2'} title="Parent">
                 {parentIsLoading ? (
                   <FullLoading />
                 ) : (
@@ -149,12 +148,12 @@ export default function CreateJob({
                     items={allJobs
                       .filter((x) => !x.old)
                       .map((x) => ({
-                        title: "- ".repeat(x.level) + x.title,
-                        value: x.id + "",
+                        title: '- '.repeat(x.level) + x.title,
+                        value: x.id + '',
                       }))}
-                    defaultValue={values.job_id + ""}
+                    defaultValue={values.job_id + ''}
                     onChange={(v) => {
-                      setFieldValue("job_id", +v);
+                      setFieldValue('job_id', +v);
                     }}
                   />
                 )}
@@ -162,16 +161,16 @@ export default function CreateJob({
 
               <TitleEl title="Title">
                 <CotopiaInput
-                  {...getFieldProps("title")}
+                  {...getFieldProps('title')}
                   hasError={!!touched.title && !!errors.title}
                   helperText={!!touched.title && errors.title}
                   placeholder="Enter Job Title"
                 />
               </TitleEl>
 
-              <TitleEl className={"w-full"} title="Description">
+              <TitleEl className={'w-full'} title="Description">
                 <CotopiaTextarea
-                  {...getFieldProps("description")}
+                  {...getFieldProps('description')}
                   hasError={!!touched.description && !!errors.description}
                   helperText={!!touched.description && errors.description}
                   placeholder="Enter job Description"
@@ -183,7 +182,7 @@ export default function CreateJob({
               <TitleEl title="Estimate Time (Hours)">
                 <div className="flex items-center gap-x-4 justify-between">
                   <CotopiaInput
-                    {...getFieldProps("estimate")}
+                    {...getFieldProps('estimate')}
                     hasError={!!touched.estimate && !!errors.estimate}
                     helperText={!!touched.estimate && errors.estimate}
                     placeholder="Estimate time"
@@ -192,18 +191,18 @@ export default function CreateJob({
               </TitleEl>
               <TitleEl title="Status">
                 <CotopiaDropdown
-                  onSelect={(item) => setFieldValue("status", item.value)}
+                  onSelect={(item) => setFieldValue('status', item.value)}
                   defaultValue={
                     dropdownItems.find((x) => x.value === values?.status)?.title
                   }
                   items={dropdownItems}
                 />
               </TitleEl>
-              <TitleEl className={"w-full"} title="Open to">
+              <TitleEl className={'w-full'} title="Open to">
                 <Search
                   defaultSelected={values.mentions}
                   onChange={(items) => {
-                    setFieldValue("mentions", items);
+                    setFieldValue('mentions', items);
                   }}
                 />
               </TitleEl>
@@ -211,7 +210,7 @@ export default function CreateJob({
                 label="Parent Only? (No one can accept this job, it only can used as parent)"
                 checked={values?.joinable === 0}
                 onCheckedChange={(value) => {
-                  setFieldValue("joinable", value === true ? 0 : 1);
+                  setFieldValue('joinable', value === true ? 0 : 1);
                 }}
                 className="flex-col-reverse gap-y-4 [&_label]:font-bold [&_label]:text-base items-start"
               />
