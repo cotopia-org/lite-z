@@ -318,6 +318,7 @@ export default function WithReactFlowV2() {
 
   useSocket('updateCoordinates', (data: updateCoordinatesEvent) => {
     console.log('updateCoordinates', data);
+    console.log('node', rf.current?.getNode(data.username));
 
     const coordsSplitted = data.coordinates.split(',');
 
