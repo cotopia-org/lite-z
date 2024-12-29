@@ -64,15 +64,17 @@ export default function PayrollContractDetails({
       ) : contract ? (
         <div className="flex flex-col gap-y-4">
           {contract.text?.map((item, i) => (
-            <div className="flex flex-col gap-y-2">
+            <ul className="flex flex-col gap-y-2">
               {Object.keys(item).map((key) => {
                 return item[key].map((x) => (
-                  <Markdown className="[&_h1]:text-xl [&_h1]:mb-4 [&_h1]:font-bold [&_ol]:ml-4 [&_li]:mb-4 [&_li]:list-decimal">{`${
-                    x
-                  }`}</Markdown>
+                  <li className="list-disc">
+                    <Markdown className="[&_h1]:text-xl [&_h1]:mb-4 [&_h1]:font-bold [&_ol]:ml-4 [&_li]:mb-4 [&_li]:list-decimal">{`${
+                      x
+                    }`}</Markdown>
+                  </li>
                 ));
               })}
-            </div>
+            </ul>
           ))}
 
           {/* <ul className='grid grid-cols-12 gap-4 w-full'> */}
