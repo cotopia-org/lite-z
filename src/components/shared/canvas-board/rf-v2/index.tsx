@@ -316,7 +316,7 @@ export default function WithReactFlowV2() {
     return meet;
   };
 
-  useSocket('updateCoordinates', (data: updateCoordinatesEvent) => {
+  const s = useSocket('updateCoordinates', (data: updateCoordinatesEvent) => {
     console.log('updateCoordinates', data);
     console.log('node', rf.current?.getNode(data.username));
 
@@ -337,6 +337,8 @@ export default function WithReactFlowV2() {
 
     rf.current?.updateNode(data.username, { position });
   });
+
+  console.log('sooooocket', s);
 
   useSocket(
     'livekitEvent',
