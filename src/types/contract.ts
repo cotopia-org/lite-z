@@ -1,3 +1,4 @@
+import { ScheduleType } from './calendar';
 import { PaymentType } from './payment';
 
 export interface UserContractType {
@@ -27,7 +28,8 @@ export interface UserContractType {
   user_sign_status: number;
   user_status: string;
   last_payment: PaymentType;
-  in_schedule: boolean;
+  in_schedule: 1 | 0 | boolean;
+  schedule?: ScheduleType;
   content: number[];
   status: 'waiting_admin_sign' | 'waiting_user_sign' | 'signed' | 'draft';
 }

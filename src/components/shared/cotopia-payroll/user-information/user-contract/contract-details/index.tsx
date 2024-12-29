@@ -8,6 +8,8 @@ import HintAddressContract from '@/components/shared/room/tools/top-right/payrol
 import Markdown from 'markdown-to-jsx';
 import TitleEl from '@/components/shared/title-el';
 import EditContract from '@/components/shared/room/tools/top-right/payroll-button/edit-contract';
+import HintScheduleContract from '@/components/shared/room/tools/top-right/payroll-button/hint-schedule-contract';
+import Schedules from '@/components/shared/schedules';
 
 type Props = {
   contract: UserContractType;
@@ -111,6 +113,19 @@ export default function PayrollContractDetails({
           setLocalContract(contract);
         }}
       />
+      {!!localContract?.in_schedule ? (
+        !localContract?.schedule ? (
+          <HintScheduleContract
+            contract={localContract}
+            onUpdate={(contract) => {
+              if (onUpdate) onUpdate(contract);
+              setLocalContract(contract);
+            }}
+          />
+        ) : (
+          <Schedules justView items={[localContract?.schedule]} />
+        )
+      ) : null}
       <SignContract contract={localContract} onUpdate={setLocalContract} />
       <EditContract contract={localContract} />
       <CotopiaButton
