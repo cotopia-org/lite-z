@@ -1,4 +1,4 @@
-import React, { useRef } from "react";
+import React, { useRef } from 'react';
 
 interface UploadButtonProps {
   icon: React.ReactNode;
@@ -22,7 +22,7 @@ const UploadButton: React.FC<UploadButtonProps> = ({
     onSelect(file);
 
     if (fileInputRef.current) {
-      fileInputRef.current.value = ''; 
+      fileInputRef.current.value = '';
     }
 
     if (onChange) onChange(event);
@@ -31,8 +31,10 @@ const UploadButton: React.FC<UploadButtonProps> = ({
   return (
     <div
       onClick={onClick}
-      className={`flex items-center p-2 bg-transparent rounded-lg ${
-        disabled ? "bg-gray-300 cursor-not-allowed pointer-events-none" : "cursor-pointer"
+      className={`flex items-center p-2 bg-transparent rounded-lg relative ${
+        disabled
+          ? 'bg-gray-300 cursor-not-allowed pointer-events-none'
+          : 'cursor-pointer'
       } text-black/60 hover:text-black`}
     >
       <input
