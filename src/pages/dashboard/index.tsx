@@ -1,12 +1,12 @@
-import { ScrollArea } from "@/components/ui/scroll-area";
-import { ReactNode, useState } from "react";
-import Sidebar from "@/pages/dashboard/sidebar";
-import useAuth from "@/hooks/auth";
-import { useRoomContext } from "@/components/shared/room/room-context";
-import { isUserAdmin } from "@/lib/utils";
-import Jobs from "@/pages/dashboard/jobs";
-import { LayoutDashboard } from "lucide-react";
-import { BriefcaseIcon } from "@/components/icons";
+import { ScrollArea } from '@/components/ui/scroll-area';
+import { ReactNode, useState } from 'react';
+import Sidebar from '@/pages/dashboard/sidebar';
+import useAuth from '@/hooks/auth';
+import { useRoomContext } from '@/components/shared/room/room-context';
+import { isUserAdmin } from '@/lib/utils';
+import Jobs from '@/pages/dashboard/jobs';
+import { Briefcase, LayoutDashboard, Users as UsersIcon } from 'lucide-react';
+import Users from '@/pages/dashboard/users';
 
 interface Props {
   children?: ReactNode;
@@ -21,7 +21,7 @@ function DashboardPage() {
 export default function Dashboard({
   children,
   onClose,
-  defaultPage = "dashboard",
+  defaultPage = 'dashboard',
 }: Props) {
   const links: {
     title: string;
@@ -30,16 +30,22 @@ export default function Dashboard({
     content: ReactNode;
   }[] = [
     {
-      title: "Dashboard",
-      page: "dashboard",
+      title: 'Dashboard',
+      page: 'dashboard',
       content: <DashboardPage />,
-      icon: <LayoutDashboard />,
+      icon: <LayoutDashboard size={16} />,
     },
     {
-      title: "Jobs",
-      page: "jobs",
+      title: 'Users',
+      page: 'users',
+      content: <Users />,
+      icon: <UsersIcon size={16} />,
+    },
+    {
+      title: 'Jobs',
+      page: 'jobs',
       content: <Jobs />,
-      icon: <BriefcaseIcon />,
+      icon: <Briefcase size={16} />,
     },
   ];
 
@@ -54,7 +60,7 @@ export default function Dashboard({
   // const isAdmin = isUserAdmin(user, workspace_id ? +workspace_id : undefined);
 
   return (
-    <main className="w-full min-h-screen flex gap-x-2">
+    <main className="w-full min-h-full  flex gap-x-2">
       <Sidebar
         links={links}
         handleChange={handleChange}

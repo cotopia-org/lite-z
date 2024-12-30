@@ -80,6 +80,10 @@ export default function RoomSettings() {
 
       if (newMessage.user.id !== user.id && targetChat) {
         if (currentChat?.id !== newMessage.chat_id) {
+          new Notification(
+            `- New chat message from \n ${newMessage.user.username}`,
+            { body: newMessage.text, icon: newMessage.user.avatar?.url },
+          );
           toast(
             <div className={'flex gap-2 items-center'}>
               <CotopiaAvatar

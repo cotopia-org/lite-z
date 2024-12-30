@@ -1,25 +1,25 @@
-import CotopiaButton from "@/components/shared-ui/c-button";
-import CotopiaTable from "@/components/shared-ui/c-table";
-import ContractDetailsById from "@/components/shared/cotopia-payroll/user-information/user-contract/contract-details/view-by-id";
-import ParticipantsWithPopover from "@/components/shared/participants/with-popover";
-import { useRoomContext } from "@/components/shared/room/room-context";
-import { useApi } from "@/hooks/swr";
-import { useEffect, useMemo, useState } from "react";
-import { JobType } from "@/types/job";
-import CotopiaDropdown from "@/components/shared-ui/c-dropdown";
-import CPagination from "@/components/shared-ui/c-pagination";
-import Job from "@/pages/dashboard/jobs/single";
-import EditJob from "@/pages/dashboard/jobs/edit";
-import JobStatus from "@/components/shared/room/tools/top-left/job-button/shapes/job-list/job-item/job-status";
-import { Pencil, Plus } from "lucide-react";
-import CreateJob from "@/pages/dashboard/jobs/create";
+import CotopiaButton from '@/components/shared-ui/c-button';
+import CotopiaTable from '@/components/shared-ui/c-table';
+import ContractDetailsById from '@/components/shared/cotopia-payroll/user-information/user-contract/contract-details/view-by-id';
+import ParticipantsWithPopover from '@/components/shared/participants/with-popover';
+import { useRoomContext } from '@/components/shared/room/room-context';
+import { useApi } from '@/hooks/swr';
+import { useEffect, useMemo, useState } from 'react';
+import { JobType } from '@/types/job';
+import CotopiaDropdown from '@/components/shared-ui/c-dropdown';
+import CPagination from '@/components/shared-ui/c-pagination';
+import Job from '@/pages/dashboard/jobs/single';
+import EditJob from '@/pages/dashboard/jobs/edit';
+import JobStatus from '@/components/shared/room/tools/top-left/job-button/shapes/job-list/job-item/job-status';
+import { Pencil, Plus } from 'lucide-react';
+import CreateJob from '@/pages/dashboard/jobs/create';
 
 type Props = {
   isAll?: boolean;
 };
 
 export default function Jobs({ isAll = true }: Props) {
-  const [selectStatus, setSelectStatus] = useState<string>("all");
+  const [selectStatus, setSelectStatus] = useState<string>('all');
   const [selectedJob, setSelectedJob] = useState<JobType>();
   const [previousJob, setPreviousJob] = useState<JobType>();
   const [selectedEdit, setSelectedEdit] = useState<JobType>();
@@ -41,7 +41,7 @@ export default function Jobs({ isAll = true }: Props) {
 
   useEffect(() => {
     if (selectedJob === undefined) {
-      console.log("Reset");
+      console.log('Reset');
       setPreviousJob(undefined);
     }
   }, [selectedJob]);
@@ -49,13 +49,13 @@ export default function Jobs({ isAll = true }: Props) {
   const tableHeadItems = useMemo(() => {
     const items = [
       {
-        title: "#",
+        title: '#',
         render: (item: JobType) => {
           return item.id;
         },
       },
       {
-        title: "User",
+        title: 'User',
         render: (item: JobType) => {
           return (
             <ParticipantsWithPopover
@@ -69,11 +69,11 @@ export default function Jobs({ isAll = true }: Props) {
       },
 
       {
-        title: "Title",
+        title: 'Title',
         render: (item: JobType) => {
           return (
             <CotopiaButton
-              variant={"link"}
+              variant={'link'}
               onClick={() => setSelectedJob(item)}
             >
               {item.title}
@@ -83,46 +83,32 @@ export default function Jobs({ isAll = true }: Props) {
       },
 
       {
-        title: "Parent",
+        title: 'Parent',
         render: (item: JobType) => {
           if (item.parent !== undefined && item.parent !== null) {
             return (
               <CotopiaButton
-                variant={"link"}
+                variant={'link'}
                 onClick={() => setSelectedJob(item.parent)}
               >
                 {item.parent.title}
               </CotopiaButton>
             );
           } else {
-            return "No Parent";
+            return 'No Parent';
           }
         },
       },
       {
-        title: "Total Hours",
+        title: 'Total Hours',
         render: (item: JobType) =>
           (
             item.members.reduce((sum, a) => sum + a.total_minutes, 0) / 60
-          ).toFixed(2) + " hrs",
+          ).toFixed(2) + ' hrs',
       },
-      //
-      // {
-      //   title: "Payment",
-      //   render: (item: PaymentType) => {
-      //     return (
-      //       <CotopiaButton
-      //         variant={"link"}
-      //         endIcon={<ChevronRight />}
-      //         onClick={() => setSelectedPayment(item)}
-      //       >
-      //         Details
-      //       </CotopiaButton>
-      //     );
-      //   },
-      // },
+
       {
-        title: "Status",
+        title: 'Status',
         render: (item: JobType) => {
           return <JobStatus status={item.status} />;
         },
@@ -161,7 +147,7 @@ export default function Jobs({ isAll = true }: Props) {
       <Job
         onBack={() => {
           console.log(
-            "p",
+            'p',
             previousJob === undefined || previousJob.id === selectedJob.id
               ? undefined
               : previousJob,
@@ -180,25 +166,25 @@ export default function Jobs({ isAll = true }: Props) {
     );
 
   return (
-    <div className={"p-4"}>
+    <div className={'p-4'}>
       <div className="flex flex-row items-center gap-x-4 justify-between">
         <CotopiaDropdown
           label="Job Status"
           items={[
-            { title: "All", value: "all" },
-            { title: "In Progress", value: "in_progress" },
+            { title: 'All', value: 'all' },
+            { title: 'In Progress', value: 'in_progress' },
             {
-              title: "Paused",
-              value: "paused",
+              title: 'Paused',
+              value: 'paused',
             },
-            { title: "Completed", value: "completed" },
+            { title: 'Completed', value: 'completed' },
           ]}
           defaultValue={selectStatus}
           onSelect={(item) => setSelectStatus(item.value)}
         />
 
         <CotopiaButton
-          variant={"default"}
+          variant={'default'}
           startIcon={<Plus />}
           onClick={() => {
             setCreating(true);

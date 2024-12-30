@@ -1,25 +1,25 @@
-import { useApi } from "@/hooks/swr";
-import useLoading from "@/hooks/use-loading";
-import useQueryParams from "@/hooks/use-query-params";
-import useSetting from "@/hooks/use-setting";
-import { playSoundEffect } from "@/lib/sound-effects";
-import { useSocket } from "@/routes/private-wrarpper";
-import axiosInstance, { FetchDataType } from "@/services/axios";
-import { ScheduleType } from "@/types/calendar";
-import { JobType } from "@/types/job";
-import { LeaderboardType } from "@/types/leaderboard";
-import { PaymentType } from "@/types/payment";
-import { WorkspaceRoomJoinType, WorkspaceRoomType } from "@/types/room";
+import { useApi } from '@/hooks/swr';
+import useLoading from '@/hooks/use-loading';
+import useQueryParams from '@/hooks/use-query-params';
+import useSetting from '@/hooks/use-setting';
+import { playSoundEffect } from '@/lib/sound-effects';
+import { useSocket } from '@/routes/private-wrarpper';
+import axiosInstance, { FetchDataType } from '@/services/axios';
+import { ScheduleType } from '@/types/calendar';
+import { JobType } from '@/types/job';
+import { LeaderboardType } from '@/types/leaderboard';
+import { PaymentType } from '@/types/payment';
+import { WorkspaceRoomJoinType, WorkspaceRoomType } from '@/types/room';
 
-import { UserMinimalType, WorkspaceUserType } from "@/types/user";
+import { UserMinimalType, WorkspaceUserType } from '@/types/user';
 import {
   createContext,
   ReactNode,
   useContext,
   useEffect,
   useState,
-} from "react";
-import { useNavigate } from "react-router-dom";
+} from 'react';
+import { useNavigate } from 'react-router-dom';
 
 type LeftJoinType = { room_id: number; user: UserMinimalType };
 
@@ -45,7 +45,7 @@ const RoomCtx = createContext<{
   sidebar?: ReactNode;
   videoState: boolean;
   audioState: boolean;
-  changePermissionState: (key: "video" | "audio", newValue: boolean) => void;
+  changePermissionState: (key: 'video' | 'audio', newValue: boolean) => void;
   joinRoom: () => void;
   leaderboard: LeaderboardType[];
   scheduled: ScheduleType[];
@@ -90,6 +90,8 @@ export default function RoomContext({
 }: Props) {
   const [myPayments, setPayments] = useState<PaymentType[]>([]);
   useEffect(() => {
+    Notification.requestPermission();
+
     async function getPayments() {
       axiosInstance
         .get(`/users/me/payments`)
@@ -119,19 +121,19 @@ export default function RoomContext({
     fetchRoom(room_id);
   }, [room_id]);
 
-  useSocket("roomUpdated", (data) => {
+  useSocket('roomUpdated', (data) => {
     setRoom(data);
   });
 
   //Update room object when background changed
-  useSocket("roomBackgroundChanged", (data: WorkspaceRoomType) => {
+  useSocket('roomBackgroundChanged', (data: WorkspaceRoomType) => {
     setRoom((prev) => ({
       ...((prev ?? {}) as WorkspaceRoomType),
       background: data.background,
     }));
   });
 
-  useSocket("userUpdated", (user) => {
+  useSocket('userUpdated', (user) => {
     setRoom((prev) => {
       let newRoom: WorkspaceRoomType = prev as WorkspaceRoomType;
 
@@ -158,9 +160,9 @@ export default function RoomContext({
       .get<FetchDataType<WorkspaceRoomJoinType>>(`/rooms/${room_id}/join`)
       .then((res) => {
         const livekitToken = res.data.data.token; //Getting livekit token from joinObject
-
+        mutateWorkspaceUsers();
         if (livekitToken) {
-          if (settings.sounds.userJoinLeft) playSoundEffect("joined");
+          if (settings.sounds.userJoinLeft) playSoundEffect('joined');
           router(
             `/workspaces/${workspace_id}/rooms/${room_id}?token=${livekitToken}`,
           );
@@ -174,7 +176,7 @@ export default function RoomContext({
     video: true,
   });
 
-  const changePermissionState = (key: "video" | "audio", newValue: boolean) => {
+  const changePermissionState = (key: 'video' | 'audio', newValue: boolean) => {
     setPermissionState((prev) => ({ ...prev, [key]: newValue }));
   };
 
@@ -207,7 +209,7 @@ export default function RoomContext({
       username: participants[participant_index].username,
     };
 
-    socket?.emit("updateCoordinates", sendingObject);
+    socket?.emit('updateCoordinates', sendingObject);
   };
 
   const [sidebar, setSidebar] = useState<ReactNode>(<></>);
@@ -233,7 +235,7 @@ export default function RoomContext({
     workspaceUsersData !== undefined ? workspaceUsersData?.data : [];
 
   useSocket(
-    "userLeftFromRoom",
+    'userLeftFromRoom',
     (data: LeftJoinType) => {
       mutateWorkspaceUsers();
 
@@ -253,7 +255,7 @@ export default function RoomContext({
   );
 
   useSocket(
-    "userJoinedToRoom",
+    'userJoinedToRoom',
     (data: LeftJoinType) => {
       mutateWorkspaceUsers();
 
@@ -279,14 +281,14 @@ export default function RoomContext({
   const usersHaveInProgressJobs: UserMinimalType[] = [];
 
   const workingUsers = workspaceUsers.filter(
-    (x) => x.active_job !== null && x.status === "online",
+    (x) => x.active_job !== null && x.status === 'online',
   );
 
   const onlineUsers = leaderboardUsers
     .filter(
       (x) =>
         x.user.active === 1 &&
-        x.user.status === "online" &&
+        x.user.status === 'online' &&
         x.user.workspace_id === +(workspace_id as string),
     )
     .map((x) => x.user);
