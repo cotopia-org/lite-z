@@ -1,8 +1,8 @@
 // Canvas.tsx
-import React from "react"
-import WithReactFlowV2 from "./rf-v2"
-import { CanvasAudioRenderer } from "./canvas-audio-rendrer"
-import { TracksContextProvider } from "../room/sessions/context"
+import React from 'react';
+import WithReactFlowV2 from './rf-v2';
+import { CanvasAudioRenderer } from './canvas-audio-rendrer';
+import { TracksContextProvider } from '../room/sessions/context';
 
 const Canvas: React.FC = () => {
   return (
@@ -12,7 +12,7 @@ const Canvas: React.FC = () => {
         <CanvasAudioRenderer />
       </TracksContextProvider>
     </div>
-  )
-}
+  );
+};
 
-export default Canvas
+export default Canvas;

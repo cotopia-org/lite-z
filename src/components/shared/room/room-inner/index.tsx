@@ -1,46 +1,46 @@
-import { useEffect } from "react"
-import { useRoomContext as useLocalRoomContext } from "../room-context"
-import RoomSidebar from "../sidebar"
-import RoomSettings from "../settings"
-import LiveKitAudioManager from "../components/audio-manager"
-import InitRoom from "./init-room"
-import CanvasBoard from "../../canvas-board"
-import { useAppSelector } from "@/store"
-import { useRoomContext } from "@livekit/components-react"
-import { VARZ } from "@/const/varz"
-import { useRoomContext as localUseRoomContext } from "./../room-context"
-import GridRoomView from "../grid-room-view"
-import FullLoading from "../../full-loading"
+import { useEffect } from 'react';
+import { useRoomContext as useLocalRoomContext } from '../room-context';
+import RoomSidebar from '../sidebar';
+import RoomSettings from '../settings';
+import LiveKitAudioManager from '../components/audio-manager';
+import InitRoom from './init-room';
+import CanvasBoard from '../../canvas-board';
+import { useAppSelector } from '@/store';
+import { useRoomContext } from '@livekit/components-react';
+import { VARZ } from '@/const/varz';
+import { useRoomContext as localUseRoomContext } from './../room-context';
+import GridRoomView from '../grid-room-view';
+import FullLoading from '../../full-loading';
 
 export default function RoomInner() {
-  const { disconnect, connect } = useRoomContext()
-  const { room, roomLoading } = localUseRoomContext()
+  const { disconnect, connect } = useRoomContext();
+  const { room, roomLoading } = localUseRoomContext();
 
-  let is_grid_view = room?.type === "grid"
-  let is_flow_view = room?.type === "flow"
+  let is_grid_view = room?.type === 'grid';
+  let is_flow_view = room?.type === 'flow';
 
-  const { token } = useAppSelector((store) => store.livekit)
+  const { token } = useAppSelector((store) => store.livekit);
   useEffect(() => {
     if (token) {
-      disconnect()
-      connect(VARZ.serverUrl as string, token)
+      disconnect();
+      connect(VARZ.serverUrl as string, token);
     }
-  }, [token])
+  }, [token]);
 
-  const { sidebar } = useLocalRoomContext()
+  const { sidebar } = useLocalRoomContext();
 
-  let mainRoomHolderClss = "main-room-holder w-full h-screen overflow-hidden"
-  if (sidebar) mainRoomHolderClss += " pr-[376px]"
+  let mainRoomHolderClss = 'main-room-holder w-full h-screen overflow-hidden';
+  if (sidebar) mainRoomHolderClss += ' pr-[376px]';
 
-  let view = null
+  let view = null;
   if (is_grid_view && !roomLoading) {
-    view = <GridRoomView />
+    view = <GridRoomView />;
   }
   if (is_flow_view && !roomLoading) {
-    view = <CanvasBoard />
+    view = <CanvasBoard />;
   }
   if (roomLoading) {
-    view = <FullLoading />
+    view = <FullLoading />;
   }
 
   return (
@@ -58,5 +58,5 @@ export default function RoomInner() {
         <LiveKitAudioManager />
       </div>
     </>
-  )
+  );
 }

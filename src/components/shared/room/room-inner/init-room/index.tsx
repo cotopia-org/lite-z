@@ -1,5 +1,5 @@
-import VideoInit from "./video-init";
-import AudioInit from "./audio-init";
+import VideoInit from './video-init';
+import AudioInit from './audio-init';
 
 export default function InitRoom() {
   return (

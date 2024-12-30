@@ -1,8 +1,8 @@
-import { VARZ } from "@/const/varz";
-import { useAppSelector } from "@/store";
-import { LiveKitRoom } from "@livekit/components-react";
-import { ReactNode } from "react";
-import { useRoomHolder } from "../room";
+import { VARZ } from '@/const/varz';
+import { useAppSelector } from '@/store';
+import { LiveKitRoom } from '@livekit/components-react';
+import { ReactNode } from 'react';
+import { useRoomHolder } from '../room';
 
 type Props = {
   children: ReactNode;
@@ -22,7 +22,7 @@ export default function LivekitRefactored({ children }: Props) {
       audio={mediaPermissions.audio}
       options={{
         adaptiveStream: {
-          pixelDensity: "screen",
+          pixelDensity: 'screen',
         },
         publishDefaults: {
           screenShareEncoding: {
