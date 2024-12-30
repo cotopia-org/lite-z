@@ -24,7 +24,7 @@ export default function InsertButton({ contract, onUpdate }: Props) {
         <AddScheduleButton
           onCreated={(item: ScheduleType) => {
             axiosInstance
-              .put(`/contract/${contract.id}`, { schedule_id: item.id })
+              .put(`/contracts/${contract.id}`, { schedule_id: item.id })
               .then((res) => {
                 if (onUpdate) onUpdate(res.data?.data);
               })

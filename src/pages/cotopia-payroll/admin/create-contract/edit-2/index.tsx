@@ -31,6 +31,7 @@ import { useRoomContext } from '@/components/shared/room/room-context';
 type Props = {
   defaultContract?: UserContractType;
   onBack?: () => void;
+  onUpdate?: (contract: UserContractType) => void;
 };
 
 const EditContractFormik = createContext<{ formik?: FormikProps<any> }>({
@@ -39,7 +40,11 @@ const EditContractFormik = createContext<{ formik?: FormikProps<any> }>({
 
 export const useContractFormik = () => useContext(EditContractFormik);
 
-export default function ManageContract({ defaultContract, onBack }: Props) {
+export default function ManageContract({
+  defaultContract,
+  onBack,
+  onUpdate,
+}: Props) {
   const { workspace_id } = useRoomContext();
 
   const { startLoading, stopLoading, isLoading } = useLoading();
@@ -80,6 +85,12 @@ export default function ManageContract({ defaultContract, onBack }: Props) {
             `Contract has been ${defaultContract ? 'updated' : 'created'}.`,
           );
           if (onBack && !defaultContract) onBack();
+          if (defaultContract) {
+            if (onUpdate) {
+              console.log(res.data.data);
+              onUpdate(res.data.data);
+            }
+          }
         })
         .catch((res) => {
           stopLoading();

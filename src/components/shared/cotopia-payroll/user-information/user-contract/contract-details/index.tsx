@@ -53,7 +53,6 @@ export default function PayrollContractDetails({
   //   { key: "Contract id", value: localContract?.id },
   //   { key: "Payment address", value: localContract?.payment_address },
   // ];
-
   return (
     <div className="flex flex-col gap-y-4">
       <PayrollSectionTitle title="User Contract" />
@@ -129,7 +128,7 @@ export default function PayrollContractDetails({
         )
       ) : null}
       <SignContract contract={localContract} onUpdate={setLocalContract} />
-      <EditContract contract={localContract} />
+      <EditContract contract={localContract} onUpdate={setLocalContract} />
       <CotopiaButton
         variant={'link'}
         startIcon={<ChevronLeft />}

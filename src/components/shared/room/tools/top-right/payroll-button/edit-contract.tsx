@@ -9,9 +9,10 @@ import { useRoomContext } from '../../../room-context';
 
 type Props = {
   contract: UserContractType;
+  onUpdate?: (contract: UserContractType) => void;
 };
 
-export default function EditContract({ contract }: Props) {
+export default function EditContract({ contract, onUpdate }: Props) {
   // const { workspace_id } = useRoomContext();
   //
   // const { user } = useAuth();
@@ -34,7 +35,11 @@ export default function EditContract({ contract }: Props) {
       dialogContentCss="w-[800px] max-w-full max-h-screen md:max-h-[calc(100vh-64px)] overflow-y-auto"
     >
       {(close) => (
-        <PayrollCreateContract defaultContract={contract} onBack={close} />
+        <PayrollCreateContract
+          defaultContract={contract}
+          onUpdate={onUpdate}
+          onBack={close}
+        />
       )}
     </CDialog>
   );
