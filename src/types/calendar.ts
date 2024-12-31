@@ -19,4 +19,5 @@ export type ScheduleType = {
   user: WorkspaceUserType;
   workspace_id: number;
   contract_id?: number;
+  hours: number;
 };

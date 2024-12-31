@@ -55,6 +55,10 @@ export default function ScheduleItem({
           <span className="font-medium text-grayscale-subtitle">
             {schedule.timezone}
           </span>
+
+          <div className="font-medium text-grayscale-subtitle">
+            <small>({schedule.hours} hrs in total)</small>
+          </div>
         </div>
         <div className="flex flex-row items-center gap-x-2">
           {!!!justView && (
