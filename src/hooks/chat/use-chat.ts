@@ -8,18 +8,18 @@ import {
   subtractMentionedMessages,
   unpinMessage,
   updateMessage,
-} from "@/store/slices/chat-slice";
-import { useAppDispatch, useAppSelector } from "@/store";
-import { Chat2ItemType } from "@/types/chat2";
-import { UserMinimalType, UserType } from "@/types/user";
-import moment from "moment";
-import { RefObject, useMemo } from "react";
-import { dispatch as busDispatch } from "use-bus";
-import useAuth from "../auth";
+} from '@/store/slices/chat-slice';
+import { useAppDispatch, useAppSelector } from '@/store';
+import { Chat2ItemType } from '@/types/chat2';
+import { UserMinimalType, UserType } from '@/types/user';
+import moment from 'moment';
+import { RefObject, useMemo } from 'react';
+import { dispatch as busDispatch } from 'use-bus';
+import useAuth from '../auth';
 //@ts-ignore
-import { useSocket } from "@/routes/private-wrarpper";
-import { __BUS } from "@/const/bus";
-import { extractMentions, uniqueById } from "@/lib/utils";
+import { useSocket } from '@/routes/private-wrarpper';
+import { __BUS } from '@/const/bus';
+import { extractMentions, uniqueById } from '@/lib/utils';
 
 function generateTempChat({
   chat_id,
@@ -55,8 +55,8 @@ function generateTempChat({
   } as Chat2ItemType;
 
   if (reply) {
-    object["reply_to"] = reply;
-    object["reply_id"] = reply.id;
+    object['reply_to'] = reply;
+    object['reply_id'] = reply.id;
   }
 
   return object;
@@ -75,7 +75,7 @@ export const useChat2 = (props?: {
   const socket = useSocket();
 
   const { chats, error, loading, currentChat } = useAppSelector(
-    (store) => store.chat
+    (store) => store.chat,
   );
 
   //current reply message
@@ -90,14 +90,14 @@ export const useChat2 = (props?: {
 
   const dispatch = useAppDispatch();
 
-  useSocket("updateMessage", (data: Chat2ItemType) =>
-    console.log("data", data)
+  useSocket('updateMessage', (data: Chat2ItemType) =>
+    console.log('data', data),
   );
 
   const seenFn = (message: Chat2ItemType, onSuccess?: () => void) => {
     const lastMessage = chats[message.chat_id].object.last_message;
 
-    socket?.emit("seenMessage", {
+    socket?.emit('seenMessage', {
       chat_id: message.chat_id,
       nonce_id: message.nonce_id,
     });
@@ -108,7 +108,7 @@ export const useChat2 = (props?: {
         chat_id: message.chat_id,
         nonce_id: message.nonce_id,
         user_id: (user as UserType)?.id,
-      })
+      }),
     );
 
     if (
@@ -140,15 +140,15 @@ export const useChat2 = (props?: {
       seen?: boolean;
       reply?: Chat2ItemType;
     },
-    onSuccess?: () => void
+    onSuccess?: () => void,
   ) => {
     const mentions = extractMentions(text);
     const currentChatMembers = currentChat?.participants ?? [];
 
     const properMentions = mentions.map((x) => ({
       start_position: x.start_position,
-      model_type: "user",
-      model_id: currentChatMembers.find((a) => a.username === x.user)?.id,
+      model_type: 'user',
+      model_id: currentChatMembers?.find((a) => a.username === x.user)?.id,
     }));
 
     const message = generateTempChat({
@@ -158,12 +158,12 @@ export const useChat2 = (props?: {
       reply,
     });
 
-    const sendObject = { ...message, mentions: properMentions, seen };
+    const sendObject = { ...message, mentions: properMentions, seen, files };
 
     if (reply) {
       //@ts-ignore
-      sendObject["reply_id"] = reply.id;
-      sendObject["reply_to"] = reply;
+      sendObject['reply_id'] = reply.id;
+      sendObject['reply_to'] = reply;
     }
 
     dispatch(addMessage(sendObject));
@@ -172,11 +172,11 @@ export const useChat2 = (props?: {
     if (currentChat && reply) dispatch(clearReplyMessage(currentChat?.id));
 
     socket?.emit(
-      "sendMessage",
+      'sendMessage',
       { ...message, mentions: properMentions },
       (data: any) => {
         if (seen === true) seenMessage(data);
-      }
+      },
     );
 
     if (onSuccess) onSuccess();
@@ -189,11 +189,11 @@ export const useChat2 = (props?: {
 
   const deleteFn = (message: Chat2ItemType) => {
     socket?.emit(
-      "deleteMessage",
+      'deleteMessage',
       { chat_id: message.chat_id, nonce_id: message.nonce_id },
       () => {
         dispatch(deleteMessage(message));
-      }
+      },
     );
   };
 
@@ -201,9 +201,9 @@ export const useChat2 = (props?: {
     dispatch(pinMessage(message));
 
     socket?.emit(
-      "pinMessage",
+      'pinMessage',
       { chat_id: message.chat_id, nonce_id: message.nonce_id },
-      () => {}
+      () => {},
     );
   };
 
@@ -211,9 +211,9 @@ export const useChat2 = (props?: {
     dispatch(pinMessage(message));
 
     socket?.emit(
-      "pinMessage",
+      'pinMessage',
       { chat_id: message.chat_id, nonce_id: message.nonce_id },
-      () => {}
+      () => {},
     );
   };
 
@@ -221,9 +221,9 @@ export const useChat2 = (props?: {
     dispatch(unpinMessage(message));
 
     socket?.emit(
-      "unPinMessage",
+      'unPinMessage',
       { chat_id: message.chat_id, nonce_id: message.nonce_id },
-      () => {}
+      () => {},
     );
   };
 
@@ -233,23 +233,23 @@ export const useChat2 = (props?: {
   };
 
   const update = (message: Chat2ItemType, onSuccess?: () => void) => {
-    socket?.emit("sendMessage", message, (data: any) => {});
+    socket?.emit('sendMessage', message, (data: any) => {});
     dispatch(updateMessage(message));
     if (onSuccess) onSuccess();
   };
 
   useSocket(
-    "messageSeen",
+    'messageSeen',
     (data: Chat2ItemType) => {
       dispatch(
         seenMessage({
           chat_id: data.chat_id,
           nonce_id: data.nonce_id,
           user_id: (user as UserType).id,
-        })
+        }),
       );
     },
-    [user?.id]
+    [user?.id],
   );
 
   const chatKeys = Object.keys(chats);

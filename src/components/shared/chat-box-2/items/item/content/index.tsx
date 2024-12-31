@@ -1,12 +1,13 @@
-import { Chat2ItemType } from "@/types/chat2";
-import ChatDate from "./date";
-import Linkify from "linkify-react";
-import useAuth from "@/hooks/auth";
-import ChatRepliedItem from "./replied-item";
-import { useChat2 } from "@/hooks/chat/use-chat-2";
-import MessageDeliveredState from "./delievered";
-import { cn } from "@/lib/utils";
-import Edited from "./edited";
+import { Chat2ItemType } from '@/types/chat2';
+import ChatDate from './date';
+import Linkify from 'linkify-react';
+import useAuth from '@/hooks/auth';
+import ChatRepliedItem from './replied-item';
+import { useChat2 } from '@/hooks/chat/use-chat-2';
+import MessageDeliveredState from './delievered';
+import { cn } from '@/lib/utils';
+import Edited from './edited';
+import AttachmentRenderer from './attachments';
 
 type Props = {
   chat: Chat2ItemType;
@@ -23,11 +24,11 @@ export default function ChatItemContent({ chat, next, prev }: Props) {
   const linkElement = (
     attributes: { [attr: string]: any },
     content: string,
-    type: "mention" | "link",
+    type: 'mention' | 'link',
   ) => {
-    let clss = "text-blue-600 whitespace-pre-wrap";
-    if (type === "link") {
-      clss += " hover:underline";
+    let clss = 'text-blue-600 whitespace-pre-wrap';
+    if (type === 'link') {
+      clss += ' hover:underline';
     }
 
     let view = content;
@@ -36,9 +37,9 @@ export default function ChatItemContent({ chat, next, prev }: Props) {
       <a
         className={clss}
         style={{
-          overflowWrap: "break-word",
+          overflowWrap: 'break-word',
         }}
-        target={type === "link" ? "_blank" : "_self"}
+        target={type === 'link' ? '_blank' : '_self'}
         {...attributes}
       >
         {view}
@@ -51,8 +52,8 @@ export default function ChatItemContent({ chat, next, prev }: Props) {
   return (
     <div
       className={cn(
-        "flex flex-col gap-y-2 bg-black/5 rounded-xl rounded-bl-none p-2 max-w-full w-auto min-w-[120px]",
-        prevBelongToMe ? "rounded-tl-sm" : "",
+        'flex flex-col gap-y-2 bg-black/5 rounded-xl rounded-bl-none p-2 max-w-full w-auto min-w-[120px]',
+        prevBelongToMe ? 'rounded-tl-sm' : '',
       )}
     >
       {/* HEADER */}
@@ -65,27 +66,28 @@ export default function ChatItemContent({ chat, next, prev }: Props) {
         )
       )}
       {/* HEADER */}
+      <AttachmentRenderer item={chat} />
       <p
         className="text-wrap mb-3 w-full"
         dir="auto"
         style={{
-          overflowWrap: "break-word",
-          wordBreak: "break-word",
-          whiteSpace: "normal",
+          overflowWrap: 'break-word',
+          wordBreak: 'break-word',
+          whiteSpace: 'normal',
         }}
       >
-        {chat.text.split("\n").map((line: string, index) => (
+        {chat.text.split('\n').map((line: string, index) => (
           <Linkify
             options={{
               nl2br: true,
               render: {
                 url: ({ attributes, content }) =>
-                  linkElement(attributes, content, "link"),
+                  linkElement(attributes, content, 'link'),
                 mention: ({ attributes, content }) =>
-                  linkElement(attributes, content, "mention"),
+                  linkElement(attributes, content, 'mention'),
               },
               formatHref: {
-                mention: () => "#",
+                mention: () => '#',
               },
             }}
           >
@@ -99,22 +101,22 @@ export default function ChatItemContent({ chat, next, prev }: Props) {
         {chat.translated_text !== null && (
           <>
             <div
-              className={"w-full my-2 border-t-2 border-black border-dotted"}
+              className={'w-full my-2 border-t-2 border-black border-dotted'}
             ></div>
             Translated:
             <br />
-            {chat.translated_text?.split("\n").map((line: string, index) => (
+            {chat.translated_text?.split('\n').map((line: string, index) => (
               <Linkify
                 options={{
                   nl2br: true,
                   render: {
                     url: ({ attributes, content }) =>
-                      linkElement(attributes, content, "link"),
+                      linkElement(attributes, content, 'link'),
                     mention: ({ attributes, content }) =>
-                      linkElement(attributes, content, "mention"),
+                      linkElement(attributes, content, 'mention'),
                   },
                   formatHref: {
-                    mention: () => "#",
+                    mention: () => '#',
                   },
                 }}
               >

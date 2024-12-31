@@ -1,6 +1,6 @@
-import { Chat2ItemType } from "@/types/chat2";
-import ChatUserOverView from "./user-overview";
-import ChatItemContent from "./content";
+import { Chat2ItemType } from '@/types/chat2';
+import ChatUserOverView from './user-overview';
+import ChatItemContent from './content';
 import {
   createContext,
   useContext,
@@ -8,13 +8,13 @@ import {
   useMemo,
   useRef,
   useState,
-} from "react";
-import { useChat2 } from "@/hooks/chat/use-chat-2";
-import CotopiaContextMenu from "@/components/shared-ui/c-context-menu";
-import RightClickActions from "./right-click-actions";
-import DeletePrompt from "./content/delete-prompt";
-import useAuth from "@/hooks/auth";
-import { cn } from "@/lib/utils";
+} from 'react';
+import { useChat2 } from '@/hooks/chat/use-chat-2';
+import CotopiaContextMenu from '@/components/shared-ui/c-context-menu';
+import RightClickActions from './right-click-actions';
+import DeletePrompt from './content/delete-prompt';
+import useAuth from '@/hooks/auth';
+import { cn } from '@/lib/utils';
 
 type Props = {
   item: Chat2ItemType;
@@ -50,7 +50,7 @@ export default function ChatItem({ item, isMine, index }: Props) {
         if (entry.isIntersecting) {
           if (user?.id === null) return;
 
-          const isMeSeen = item.seens.includes(user.id);
+          const isMeSeen = item?.seens?.includes(user.id);
 
           //Should remove item.nonce_id !== 0 in the feuture (just for legacy messages)
           if (isMeSeen === false && item.nonce_id !== 0 && !isMine) {
@@ -126,10 +126,10 @@ export default function ChatItem({ item, isMine, index }: Props) {
             <div
               ref={divRef}
               className={cn(
-                "message-item py-[2px] px-4 flex flex-row items-end gap-x-2",
-                nextMessage?.user.id !== item?.user.id ? "mb-4" : "",
-                isLastMessage ? "pb-4" : "",
-                isFirstMessage ? "mt-4" : "",
+                'message-item py-[2px] px-4 flex flex-row items-end gap-x-2',
+                nextMessage?.user.id !== item?.user.id ? 'mb-4' : '',
+                isLastMessage ? 'pb-4' : '',
+                isFirstMessage ? 'mt-4' : '',
               )}
             >
               <div className="w-9">

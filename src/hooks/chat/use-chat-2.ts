@@ -9,20 +9,21 @@ import {
   subtractMentionedMessages,
   unpinMessage,
   updateMessage,
-} from "@/store/slices/chat-slice";
-import { useAppDispatch, useAppSelector } from "@/store";
-import { Chat2ItemType } from "@/types/chat2";
-import { UserMinimalType, UserType } from "@/types/user";
-import moment from "moment";
-import { RefObject, useMemo } from "react";
-import { dispatch as busDispatch } from "use-bus";
-import useAuth from "../auth";
+} from '@/store/slices/chat-slice';
+import { useAppDispatch, useAppSelector } from '@/store';
+import { Chat2ItemType } from '@/types/chat2';
+import { UserMinimalType, UserType } from '@/types/user';
+import moment from 'moment';
+import { RefObject, useMemo } from 'react';
+import { dispatch as busDispatch } from 'use-bus';
+import useAuth from '../auth';
 //@ts-ignore
-import { useSocket } from "@/routes/private-wrarpper";
-import { __BUS } from "@/const/bus";
-import { extractMentions, uniqueById } from "@/lib/utils";
-import axiosInstance, { FetchDataType } from "@/services/axios";
-import { MessageType } from "@/types/message";
+import { useSocket } from '@/routes/private-wrarpper';
+import { __BUS } from '@/const/bus';
+import { extractMentions, uniqueById } from '@/lib/utils';
+import axiosInstance, { FetchDataType } from '@/services/axios';
+import { MessageType } from '@/types/message';
+import { AttachmentFileType } from '@/types/file';
 
 function generateTempChat({
   chat_id,
@@ -62,8 +63,8 @@ function generateTempChat({
   };
 
   if (reply) {
-    object["reply_to"] = reply;
-    object["reply_id"] = reply.id;
+    object['reply_to'] = reply;
+    object['reply_id'] = reply.id;
   }
 
   return object;
@@ -102,8 +103,8 @@ export const useChat2 = (props?: {
 
   const dispatch = useAppDispatch();
 
-  useSocket("updateMessage", (data: Chat2ItemType) =>
-    console.log("data", data),
+  useSocket('updateMessage', (data: Chat2ItemType) =>
+    console.log('data', data),
   );
 
   const seenFn = async (message: Chat2ItemType, onSuccess?: () => void) => {
@@ -144,7 +145,7 @@ export const useChat2 = (props?: {
     }: {
       text: string;
       links?: any[];
-      files?: number[];
+      files?: AttachmentFileType[];
       seen?: boolean;
       reply?: Chat2ItemType;
     },
@@ -157,7 +158,7 @@ export const useChat2 = (props?: {
 
     const properMentions = mentions.map((x) => ({
       start_position: x.start_position,
-      model_type: "user",
+      model_type: 'user',
       model_id: currentChatMembers.find((a) => a.username === x.user)?.id,
     }));
 
@@ -173,8 +174,8 @@ export const useChat2 = (props?: {
 
     if (reply) {
       //@ts-ignore
-      sendObject["reply_id"] = reply.id;
-      sendObject["reply_to"] = reply;
+      sendObject['reply_id'] = reply.id;
+      sendObject['reply_to'] = reply;
     }
 
     dispatch(
@@ -183,6 +184,7 @@ export const useChat2 = (props?: {
         is_delivered: false,
         is_pending: true,
         is_rejected: false,
+        files: files ?? [],
       }),
     );
 
@@ -199,6 +201,7 @@ export const useChat2 = (props?: {
       links: sendObject.links,
       reply_to: sendObject?.reply_to,
       reply_id: sendObject?.reply_to?.id,
+      files: files?.map((a) => a.id),
     });
 
     const recievedMessageFromServer = recievedMessageFromServerRes?.data?.data;
@@ -247,7 +250,7 @@ export const useChat2 = (props?: {
 
     const properMentions = mentions.map((x) => ({
       start_position: x.start_position,
-      model_type: "user",
+      model_type: 'user',
       model_id: currentChatMembers.find((a) => a.username === x.user)?.id,
     }));
 
@@ -281,7 +284,7 @@ export const useChat2 = (props?: {
 
   const deleteFn = (message: Chat2ItemType) => {
     socket?.emit(
-      "deleteMessage",
+      'deleteMessage',
       { chat_id: message.chat_id, nonce_id: message.nonce_id },
       () => {
         dispatch(deleteMessage(message));
@@ -293,7 +296,7 @@ export const useChat2 = (props?: {
     dispatch(pinMessage(message));
 
     socket?.emit(
-      "pinMessage",
+      'pinMessage',
       { chat_id: message.chat_id, nonce_id: message.nonce_id },
       () => {},
     );
@@ -303,7 +306,7 @@ export const useChat2 = (props?: {
     dispatch(pinMessage(message));
 
     socket?.emit(
-      "pinMessage",
+      'pinMessage',
       { chat_id: message.chat_id, nonce_id: message.nonce_id },
       () => {},
     );
@@ -313,7 +316,7 @@ export const useChat2 = (props?: {
     dispatch(unpinMessage(message));
 
     socket?.emit(
-      "unPinMessage",
+      'unPinMessage',
       { chat_id: message.chat_id, nonce_id: message.nonce_id },
       () => {},
     );
@@ -324,14 +327,48 @@ export const useChat2 = (props?: {
     if (onSuccess) onSuccess();
   };
 
+  const addSimple = (
+    {
+      text,
+      links,
+      files = [],
+      seen = false,
+      reply,
+    }: {
+      text: string;
+      links?: any[];
+      files?: File[];
+      seen?: boolean;
+      reply?: Chat2ItemType;
+    },
+    onSuccess?: () => void,
+  ) => {
+    //@ts-ignore
+    const tempMessage = generateTempChat({ text, chat_id, user, reply });
+
+    dispatch(
+      addMessage({
+        ...tempMessage,
+        files: files?.map((a) => ({
+          id: Math.random() * 10000000000,
+          path: URL.createObjectURL(a),
+          url: URL.createObjectURL(a),
+          mime_type: a.type,
+          owner: user,
+        })),
+      }),
+    );
+    if (onSuccess) onSuccess();
+  };
+
   const update = (message: Chat2ItemType, onSuccess?: () => void) => {
-    socket?.emit("sendMessage", message, (data: any) => {});
+    socket?.emit('sendMessage', message, (data: any) => {});
     dispatch(updateMessage(message));
     if (onSuccess) onSuccess();
   };
 
   useSocket(
-    "messageSeen",
+    'messageSeen',
     (data: Chat2ItemType) => {
       dispatch(
         seenMessage({
@@ -366,6 +403,7 @@ export const useChat2 = (props?: {
 
   return {
     add,
+    addSimple,
     send,
     edit,
     update,
