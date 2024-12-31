@@ -1,51 +1,51 @@
-import { useEffect, useRef, useState } from "react"
-import { useRoomContext } from "../room-context"
-import { TracksContextProvider } from "../sessions/context"
+import { useEffect, useRef, useState } from 'react';
+import { useRoomContext } from '../room-context';
+import { TracksContextProvider } from '../sessions/context';
 
-import MeetingWrapper from "./wrapper"
-import { UserMinimalType } from "@/types/user"
-import useBus from "use-bus"
-import { __BUS } from "@/const/bus"
-import { useAllTrackContext } from "../sessions/context/tracks-provider"
-import { isScreenShareExist } from "@/lib/utils"
-import { useSocket } from "@/routes/private-wrarpper"
-import { LivekitTrackPublishedType, UserLeftJoinType } from "@/types/socket"
-import MeetingRoom from "./meeting-room"
-import { RoomAudioRenderer } from "@livekit/components-react"
+import MeetingWrapper from './wrapper';
+import { UserMinimalType } from '@/types/user';
+import useBus from 'use-bus';
+import { __BUS } from '@/const/bus';
+import { useAllTrackContext } from '../sessions/context/tracks-provider';
+import { cn, isScreenShareExist } from '@/lib/utils';
+import { useSocket } from '@/routes/private-wrarpper';
+import { LivekitTrackPublishedType, UserLeftJoinType } from '@/types/socket';
+import MeetingRoom from './meeting-room';
+import { RoomAudioRenderer } from '@livekit/components-react';
 
 interface Props {}
 
 export enum MeetingTileType {
-  "UserTile" = "user",
-  "ShareScreenTile" = "screen_share",
+  'UserTile' = 'user',
+  'ShareScreenTile' = 'screen_share',
 }
 
 export type MeetingNodeType = {
-  id: string | number
-  type: MeetingTileType
-  participant: UserMinimalType
-}
+  id: string | number;
+  type: MeetingTileType;
+  participant: UserMinimalType;
+};
 
 const GridRoomView = (props: Props) => {
-  const { room } = useRoomContext()
-  const [nodes, setNodes] = useState<MeetingNodeType[]>([])
+  const { room, showSidebar } = useRoomContext();
+  const [nodes, setNodes] = useState<MeetingNodeType[]>([]);
 
-  const { tracks } = useAllTrackContext()
+  const { tracks } = useAllTrackContext();
 
-  const initRef = useRef(false)
-  const isInitShareScreen = useRef(false)
+  const initRef = useRef(false);
+  const isInitShareScreen = useRef(false);
 
-  const { hasShareScreen, shareScreenTrack } = isScreenShareExist(tracks)
+  const { hasShareScreen, shareScreenTrack } = isScreenShareExist(tracks);
 
   useEffect(() => {
-    const initParticipants = room?.participants || []
-    if (!hasShareScreen) return
-    if (!shareScreenTrack) return
-    if (isInitShareScreen.current === true) return
+    const initParticipants = room?.participants || [];
+    if (!hasShareScreen) return;
+    if (!shareScreenTrack) return;
+    if (isInitShareScreen.current === true) return;
 
     const targetParticipant = initParticipants.find(
-      (p) => p.username === shareScreenTrack.participant.identity
-    ) as UserMinimalType
+      (p) => p.username === shareScreenTrack.participant.identity,
+    ) as UserMinimalType;
 
     setNodes((crt) => {
       return [
@@ -55,51 +55,51 @@ const GridRoomView = (props: Props) => {
           type: MeetingTileType.ShareScreenTile,
           participant: targetParticipant,
         },
-      ]
-    })
-    isInitShareScreen.current = true
-  }, [hasShareScreen, shareScreenTrack, room?.participants])
+      ];
+    });
+    isInitShareScreen.current = true;
+  }, [hasShareScreen, shareScreenTrack, room?.participants]);
 
   useEffect(() => {
-    const initParticipants = room?.participants || []
-    if (initRef.current === true) return
-    if (initParticipants.length === 0) return
+    const initParticipants = room?.participants || [];
+    if (initRef.current === true) return;
+    if (initParticipants.length === 0) return;
     setNodes(
       initParticipants.map((p) => ({
         id: p.id,
         type: MeetingTileType.UserTile,
         participant: p,
-      }))
-    )
-    initRef.current = true
-  }, [room?.participants])
+      })),
+    );
+    initRef.current = true;
+  }, [room?.participants]);
 
   useBus(
     __BUS.initRoomParticipantsOnRf,
     (data: any) => {
       //update participants when somebody join into the room
-      const participants: UserMinimalType[] = data?.participants || []
+      const participants: UserMinimalType[] = data?.participants || [];
       setNodes(
         participants.map((p) => ({
           id: p.id,
           type: MeetingTileType.UserTile,
           participant: p,
-        }))
-      )
+        })),
+      );
     },
-    [nodes]
-  )
+    [nodes],
+  );
 
   useSocket(
-    "livekitEvent",
+    'livekitEvent',
     (data: LivekitTrackPublishedType) => {
       switch (data.event) {
-        case "track_published":
+        case 'track_published':
           switch (data.track.source) {
-            case "SCREEN_SHARE":
+            case 'SCREEN_SHARE':
               const target_user = nodes.find(
-                (n) => n.participant.username === data?.participant.identity
-              )?.participant
+                (n) => n.participant.username === data?.participant.identity,
+              )?.participant;
               setNodes((crt) => [
                 ...crt,
                 {
@@ -107,38 +107,38 @@ const GridRoomView = (props: Props) => {
                   type: MeetingTileType.ShareScreenTile,
                   participant: target_user as UserMinimalType,
                 },
-              ])
-              break
+              ]);
+              break;
           }
-          break
-        case "track_unpublished":
+          break;
+        case 'track_unpublished':
           switch (data.track.source) {
-            case "SCREEN_SHARE":
-              setNodes((crt) => crt.filter((n) => n.id !== data?.track.sid))
-              break
+            case 'SCREEN_SHARE':
+              setNodes((crt) => crt.filter((n) => n.id !== data?.track.sid));
+              break;
           }
-          break
+          break;
       }
     },
-    [nodes]
-  )
+    [nodes],
+  );
 
   useSocket(
-    "userLeftFromRoom",
+    'userLeftFromRoom',
     (data: UserLeftJoinType) => {
       if (data.room_id === room?.id) {
         setNodes((prev) => {
           return prev.filter(
-            (n) => n.participant.username !== data.user.username
-          )
-        })
+            (n) => n.participant.username !== data.user.username,
+          );
+        });
       }
     },
-    [room?.id]
-  )
+    [room?.id],
+  );
 
   useSocket(
-    "userJoinedToRoom",
+    'userJoinedToRoom',
     (data: UserLeftJoinType) => {
       if (data.room_id === room?.id) {
         setNodes((prev) => {
@@ -149,23 +149,29 @@ const GridRoomView = (props: Props) => {
               type: MeetingTileType.UserTile,
               participant: data.user,
             },
-          ]
-        })
+          ];
+        });
       }
     },
-    [room?.id]
-  )
+    [room?.id],
+  );
 
   return (
     <TracksContextProvider>
-      <div id="room-view" className="w-full h-full bg-black">
+      <div
+        id="room-view"
+        className={cn(
+          'w-full h-full bg-black  top-0 left-0',
+          !showSidebar ? 'fixed md:relative z-20' : '',
+        )}
+      >
         <MeetingWrapper>
           <MeetingRoom nodes={nodes} />
           <RoomAudioRenderer />
         </MeetingWrapper>
       </div>
     </TracksContextProvider>
-  )
-}
+  );
+};
 
-export default GridRoomView
+export default GridRoomView;

@@ -56,6 +56,9 @@ const RoomCtx = createContext<{
   usersHaveJobs: UserMinimalType[];
   usersHaveInProgressJobs: UserMinimalType[];
   payments: PaymentType[];
+  showSidebar: boolean;
+  showSidebarInMobile: () => void;
+  closeSidebarInMobile: () => void;
 }>({
   room: undefined,
   updateParticipants: (participants: UserMinimalType[]) => {},
@@ -79,6 +82,9 @@ const RoomCtx = createContext<{
   usersHaveJobs: [],
   usersHaveInProgressJobs: [],
   payments: [],
+  showSidebar: false,
+  showSidebarInMobile: () => {},
+  closeSidebarInMobile: () => {},
 });
 
 export const useRoomContext = () => useContext(RoomCtx);
@@ -88,6 +94,14 @@ export default function RoomContext({
   room_id,
   workspace_id,
 }: Props) {
+  const [showSidebar, setShowSidebar] = useState(false);
+  const showSidebarInMobile = () => {
+    setShowSidebar(true);
+  };
+  const closeSidebarInMobile = () => {
+    setShowSidebar(false);
+  };
+
   const [myPayments, setPayments] = useState<PaymentType[]>([]);
   useEffect(() => {
     Notification.requestPermission();
@@ -324,6 +338,9 @@ export default function RoomContext({
         usersHaveJobs: usersHaveJobs,
         usersHaveInProgressJobs: usersHaveInProgressJobs,
         payments: myPayments,
+        showSidebar,
+        showSidebarInMobile,
+        closeSidebarInMobile,
       }}
     >
       {children}

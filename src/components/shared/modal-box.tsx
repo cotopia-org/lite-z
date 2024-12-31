@@ -5,9 +5,9 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from "@/components/ui/dialog";
-import { X } from "lucide-react";
-import { ReactNode, useState } from "react";
+} from '@/components/ui/dialog';
+import { X } from 'lucide-react';
+import { ReactNode, useState } from 'react';
 
 type Props = {
   trigger: (open: () => void, isOpen: boolean) => ReactNode;
@@ -20,7 +20,7 @@ export default function ModalBox({
   trigger,
   children,
   className,
-  title = "",
+  title = '',
   hasClose = true,
 }: Props) {
   const [isOpen, setIsOpen] = useState(false);
@@ -32,14 +32,14 @@ export default function ModalBox({
     setIsOpen(true);
   };
 
-  let finalClassName = className ?? "";
+  let finalClassName = className ?? '';
 
   if (!hasClose) finalClassName += ` [&_.right-4]:hidden`;
 
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
       <DialogTrigger asChild>{trigger(handleOpen, isOpen)}</DialogTrigger>
-      <DialogContent className={finalClassName ?? ""}>
+      <DialogContent className={finalClassName ?? ''}>
         <DialogHeader className="dialog-header flex-row justify-between w-full  items-center">
           {title && (
             <DialogTitle className="dialog-title text-3xl font-medium">
@@ -60,7 +60,7 @@ export default function ModalBox({
 //Export full Modal
 export function FullModalBox({ ...props }: Props) {
   let clss =
-    "max-w-full max-h-[calc(100vh-50px)] overflow-y-auto z-[10] p-6 lg:rounded-[20px]";
+    'max-w-full max-h-[calc(100vh-50px)] overflow-y-auto z-[1000] p-6 lg:rounded-[20px]';
   if (props?.className) clss += ` ${props.className}`;
 
   return <ModalBox {...props} className={clss} />;

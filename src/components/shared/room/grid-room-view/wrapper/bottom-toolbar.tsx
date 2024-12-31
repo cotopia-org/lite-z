@@ -1,7 +1,7 @@
-import ToolbarBottomLeft from "../../toolbar/bottom-left"
-import ToolbarBottomMiddle from "../../toolbar/bottom-middle"
-import BottomLeftTools from "../../tools/bottom-left"
-import BottomMiddleTools from "../../tools/bottom-middle"
+import ToolbarBottomLeft from '../../toolbar/bottom-left';
+import ToolbarBottomMiddle from '../../toolbar/bottom-middle';
+import BottomLeftTools from '../../tools/bottom-left';
+import BottomMiddleTools from '../../tools/bottom-middle';
 
 interface Props {}
 
@@ -15,7 +15,7 @@ const BottomToolbar = (props: Props) => {
         <BottomLeftTools />
       </ToolbarBottomLeft>
     </div>
-  )
-}
+  );
+};
 
-export default BottomToolbar
+export default BottomToolbar;

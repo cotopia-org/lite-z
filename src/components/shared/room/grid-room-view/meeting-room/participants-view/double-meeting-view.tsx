@@ -1,24 +1,23 @@
-import { cn } from "@/lib/utils"
-import { MeetingNodeType } from "../.."
-import MeetingNode from "../meeting-node"
+import { cn } from '@/lib/utils';
+import { MeetingNodeType } from '../..';
+import MeetingNode from '../meeting-node';
 
 type Props = {
-  userNodes: MeetingNodeType[]
-}
+  userNodes: MeetingNodeType[];
+};
 
-const NORMAL_CAPACITY = 12
-const QUIET_CAPACITY = 5
+const NORMAL_CAPACITY = 12;
+const QUIET_CAPACITY = 5;
 
 const MultipleMeetingView = ({ userNodes }: Props) => {
+  let nodeClassName = 'node-col w-full';
 
-  let nodeClassName = "node-col w-full"        
-
-  if ( userNodes.length < QUIET_CAPACITY ) {
-    nodeClassName = cn(nodeClassName, 'xl:w-[calc(50%-16px)]')
-  } else if ( userNodes.length > NORMAL_CAPACITY ) {
-    nodeClassName = cn(nodeClassName, 'xl:w-[calc(33.3333%-16px)]')
+  if (userNodes.length < QUIET_CAPACITY) {
+    nodeClassName = cn(nodeClassName, 'xl:w-[calc(50%-16px)]');
+  } else if (userNodes.length > NORMAL_CAPACITY) {
+    nodeClassName = cn(nodeClassName, 'xl:w-[calc(33.3333%-16px)]');
   } else {
-    nodeClassName = cn(nodeClassName, 'xl:w-[calc(25%-16px)]')
+    nodeClassName = cn(nodeClassName, 'xl:w-[calc(25%-16px)]');
   }
 
   return (
@@ -28,10 +27,10 @@ const MultipleMeetingView = ({ userNodes }: Props) => {
           <div key={node.id} className={nodeClassName}>
             <MeetingNode node={node} />
           </div>
-        )
+        );
       })}
     </div>
-  )
-}
+  );
+};
 
-export default MultipleMeetingView
+export default MultipleMeetingView;

@@ -49,7 +49,7 @@ export default function RoomInner() {
       <div id="main-room-holder" className={mainRoomHolderClss}>
         <div className="w-full h-full relative">{view}</div>
         {!!sidebar && (
-          <div className="fixed right-0 top-0 bottom-0 w-[376px] bg-white h-screen overflow-y-auto">
+          <div className="fixed right-0 top-0 bottom-0 w-full md:w-[376px] bg-white h-screen overflow-y-auto z-10">
             <RoomSidebar>
               <RoomSettings />
             </RoomSidebar>
