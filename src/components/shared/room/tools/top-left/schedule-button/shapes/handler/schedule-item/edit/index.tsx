@@ -30,6 +30,7 @@ export default function EditButton({ schedule, onDelete, onUpdate }: Props) {
     return {
       availability_type: schedule.availability_type,
       days: finalDays,
+      contract_id: schedule.contract_id,
       is_recurrence: schedule.is_recurrence === 1,
       recurrence_start: schedule.recurrence_start_at ?? undefined,
       recurrence_end: schedule.recurrence_end_at ?? undefined,

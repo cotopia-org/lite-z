@@ -31,5 +31,10 @@ export interface UserContractType {
   in_schedule: 1 | 0 | boolean;
   schedule?: ScheduleType;
   content: number[];
-  status: 'waiting_admin_sign' | 'waiting_user_sign' | 'signed' | 'draft';
+  status:
+    | 'waiting_admin_sign'
+    | 'waiting_user_sign'
+    | 'signed'
+    | 'draft'
+    | 'expired';
 }

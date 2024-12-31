@@ -72,7 +72,7 @@ export default function ScheduleButton() {
         let content = null;
         if (schedules.length > 0)
           content = (
-            <Schedules justView={false} items={schedules} onDelete={mutate} />
+            <Schedules justView={true} items={schedules} onDelete={mutate} />
           );
         if (isLoading || data === undefined) return <FullLoading />;
         return (
@@ -82,12 +82,12 @@ export default function ScheduleButton() {
             zIndex={triggerPosition.zIndex}
             onClose={close}
             title={title_node}
-            width={500}
+            width={'auto'}
           >
             <div className="flex w-full flex-col gap-y-2 items-end max-h-[400px] overflow-y-auto">
               <ScheduleFillment userId={'me'} />
               {content}
-              <AddScheduleButton onDelete={mutate} onCreated={() => mutate()} />
+              {/*<AddScheduleButton onDelete={mutate} onCreated={() => mutate()} />*/}
             </div>
           </PopupBoxChild>
         );

@@ -31,11 +31,13 @@ type Props = {
     is_recurrence?: boolean;
     recurrence_start?: string;
     recurrence_end?: string;
+    contract_id?: number;
   };
   onDelete?: () => void;
   onUpdate?: (item: ScheduleType) => void;
   onCreated?: (item: ScheduleType) => void;
   user_id?: number;
+  contract_id?: number;
 };
 
 export default function AddScheduleContent({
@@ -46,44 +48,23 @@ export default function AddScheduleContent({
   onCreated,
   onUpdate,
   user_id,
+  contract_id,
 }: Props) {
   const { workspace_id } = useRoomContext();
 
   const isEdit = defaultValue !== undefined && defaultId !== undefined;
 
-  const [recurrenceDates, setRecurrenceDates] = useState<{
-    start_at?: string;
-    ends_at?: string;
-  }>();
-
-  const [isRecurrence, setIsRecurrence] = useState<boolean>(false);
-
-  const [availability, setAvailability] = useState<AvailabiltyType>(
-    AvailabiltyType.Voice,
-  );
-
   const [daysValue, setDaysValue] = useState<{
     [key: number]: ScheduleDayType;
   }>();
 
+  const [contractId, setContractId] = useState<number | undefined>(contract_id);
   useEffect(() => {
     if (defaultValue !== undefined) {
-      const { availability_type, days } = defaultValue;
+      const { days, contract_id } = defaultValue;
 
-      setAvailability(availability_type);
       setDaysValue(days);
-
-      setIsRecurrence(defaultValue?.is_recurrence ?? false);
-      if (defaultValue?.recurrence_end)
-        setRecurrenceDates((prev) => ({
-          ...prev,
-          ends_at: defaultValue?.recurrence_end,
-        }));
-      if (defaultValue?.recurrence_start)
-        setRecurrenceDates((prev) => ({
-          ...prev,
-          start_at: defaultValue?.recurrence_start,
-        }));
+      setContractId(contract_id);
     }
   }, [defaultValue]);
 
@@ -104,6 +85,8 @@ export default function AddScheduleContent({
   };
 
   const { startLoading, stopLoading, isLoading } = useLoading();
+  console.log('HERE', contractId);
+
   const handleSubmitEvent = () => {
     const userTimeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
 
@@ -111,18 +94,9 @@ export default function AddScheduleContent({
 
     startLoading();
     let payload: { [key: string]: any } = {
-      is_recurrence: isRecurrence,
       timezone: userTimeZone,
-      availability_type: availability,
       workspace_id,
     };
-
-    if (isRecurrence) {
-      if (recurrenceDates?.start_at)
-        payload['recurrence_start_at'] = recurrenceDates?.start_at;
-      if (recurrenceDates?.ends_at)
-        payload['recurrence_end_at'] = recurrenceDates?.ends_at;
-    }
 
     const daysArray = Object.keys(daysValue)
       .map((x) => ({ day: daysValue[+x], dayIndex: x }))
@@ -138,6 +112,7 @@ export default function AddScheduleContent({
     payload['days'] = daysArray;
 
     if (user_id) payload['user_id'] = user_id;
+    if (contractId) payload['contract_id'] = contractId;
 
     axiosInstance({
       url: isEdit ? `/schedules/${defaultId}` : `/schedules`,
@@ -146,13 +121,15 @@ export default function AddScheduleContent({
     })
       .then((res) => {
         toast.success(
-          isEdit ? 'Event has been updated' : 'Event has been created',
+          isEdit ? 'Schedule has been updated' : 'Schedule has been created',
         );
         if (!isEdit) {
           if (onCreated) onCreated(res.data?.data);
         } else {
           if (onUpdate) onUpdate(res.data?.data);
         }
+        if (onClose) onClose();
+
         stopLoading();
       })
       .catch(() => {
@@ -162,9 +139,6 @@ export default function AddScheduleContent({
 
   return (
     <div className="flex flex-col gap-y-8">
-      <TitleEl title="Availability Type">
-        <AvailabilityType value={availability} onChange={setAvailability} />
-      </TitleEl>
       <TitleEl title="Days">
         <div className="flex flex-col gap-y-6">
           {days.map((dayNumber, index) => {
@@ -182,49 +156,7 @@ export default function AddScheduleContent({
           })}
         </div>
       </TitleEl>
-      <TitleEl title="Times" className="flex flex-col gap-y-4">
-        <CotopiaSwitch
-          label="Is this event recurrence?"
-          checked={isRecurrence}
-          onCheckedChange={setIsRecurrence}
-        />
-        {isRecurrence && (
-          <>
-            <CDateInput
-              inputProps={{
-                label: 'Start at',
-              }}
-              defaultDate={
-                recurrenceDates?.start_at
-                  ? moment(recurrenceDates.start_at).toDate()
-                  : undefined
-              }
-              onChange={(date) =>
-                setRecurrenceDates((prev) => ({
-                  ...prev,
-                  start_at: moment(date).format('YYYY-MM-DD HH:mm:ss'),
-                }))
-              }
-            />
-            <CDateInput
-              inputProps={{
-                label: 'Ends at',
-              }}
-              defaultDate={
-                recurrenceDates?.ends_at
-                  ? moment(recurrenceDates.ends_at).toDate()
-                  : undefined
-              }
-              onChange={(date) =>
-                setRecurrenceDates((prev) => ({
-                  ...prev,
-                  ends_at: moment(date).format('YYYY-MM-DD HH:mm:ss'),
-                }))
-              }
-            />
-          </>
-        )}
-      </TitleEl>
+
       <div className="flex flex-row justify-end gap-x-2">
         <CotopiaButton
           variant={'outline'}
@@ -246,7 +178,7 @@ export default function AddScheduleContent({
           loading={isLoading}
           disabled={daysValue === undefined}
         >
-          {`${isEdit ? 'Update' : 'Create'} Event`}
+          {isEdit ? 'Update' : 'Create'}
         </CotopiaButton>
       </div>
     </div>

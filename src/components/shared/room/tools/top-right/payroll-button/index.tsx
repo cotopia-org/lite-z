@@ -33,7 +33,7 @@ export default function PayrollButton() {
       .reduce((prev, crt) => crt.amount + prev, 0);
   }, [payments]);
 
-  const { data, isLoading } = useApi(`/users/me/contracts`);
+  const { data, isLoading, mutate } = useApi(`/users/me/contracts`);
 
   const contracts: UserContractType[] = data !== undefined ? data?.data : [];
 
@@ -55,8 +55,6 @@ export default function PayrollButton() {
       )}
     >
       {(triggerPosition, open, close) => {
-        const hasContract = myUser?.active_contract;
-
         return (
           <PopupBoxChild
             onClose={close}
@@ -67,72 +65,69 @@ export default function PayrollButton() {
             left={triggerPosition.left - (box_width - triggerPosition.width)}
           >
             <div className="flex w-full flex-col gap-y-6 items-end">
-              {hasContract ? (
-                <CTabs
-                  defaultValue="active-contract"
-                  items={[
-                    {
-                      value: 'active-contract',
-                      title: 'Contract',
-                      content: (
-                        <div className="py-3">
-                          <div className="flex flex-col w-full my-4">
-                            <CotopiaTable
-                              loading={isLoading}
-                              items={contracts}
-                              tableHeadItems={[
-                                {
-                                  title: 'Times',
-                                  render: (item: UserContractType) => (
-                                    <div className="flex flex-col gap-y-2">
-                                      <span>
-                                        {moment(item.start_at).format(
-                                          'YYYY/MM/DD',
-                                        )}
-                                      </span>
-                                      <span>
-                                        {moment(item.end_at).format(
-                                          'YYYY/MM/DD',
-                                        )}
-                                      </span>
-                                    </div>
-                                  ),
+              <CTabs
+                defaultValue="active-contract"
+                items={[
+                  {
+                    value: 'active-contract',
+                    title: 'Contract',
+                    content: (
+                      <div className="py-3">
+                        <div className="flex flex-col w-full my-4">
+                          <CotopiaTable
+                            loading={isLoading}
+                            items={contracts}
+                            tableHeadItems={[
+                              {
+                                title: 'Times',
+                                render: (item: UserContractType) => (
+                                  <div className="flex flex-col gap-y-2">
+                                    <span>
+                                      {moment(item.start_at).format(
+                                        'YYYY/MM/DD',
+                                      )}
+                                    </span>
+                                    <span>
+                                      {moment(item.end_at).format('YYYY/MM/DD')}
+                                    </span>
+                                  </div>
+                                ),
+                              },
+                              {
+                                title: 'Per hour',
+                                render: (item: UserContractType) =>
+                                  `${item.amount} (${item.currency})`,
+                              },
+                              {
+                                title: 'Status',
+                                render: (item: UserContractType) => {
+                                  return <ContractStatus contract={item} />;
                                 },
-                                {
-                                  title: 'Per hour',
-                                  render: (item: UserContractType) =>
-                                    `${item.amount} (${item.currency})`,
-                                },
-                                {
-                                  title: 'Status',
-                                  render: (item: UserContractType) => {
-                                    return <ContractStatus contract={item} />;
-                                  },
-                                },
-                                {
-                                  title: '',
-                                  render: (item: UserContractType) => (
-                                    <div className="flex flex-row items-center gap-1">
-                                      <ContractDetails contract={item} />
-                                    </div>
-                                  ),
-                                },
-                              ]}
-                            />
-                          </div>
+                              },
+                              {
+                                title: '',
+                                render: (item: UserContractType) => (
+                                  <div className="flex flex-row items-center gap-1">
+                                    <ContractDetails
+                                      mutate={mutate}
+                                      contract={item}
+                                    />
+                                  </div>
+                                ),
+                              },
+                            ]}
+                          />
                         </div>
-                      ),
-                    },
-                    {
-                      title: 'Payments',
-                      value: 'payments',
-                      content: <UserPayments endpoint="/users/me/payments" />,
-                    },
-                  ]}
-                />
-              ) : (
-                <NotFound title="There is no contract!" className="w-full" />
-              )}
+                      </div>
+                    ),
+                  },
+                  {
+                    title: 'Payments',
+                    value: 'payments',
+                    content: <UserPayments endpoint="/users/me/payments" />,
+                  },
+                ]}
+              />
               <div className="w-full flex justify-end">
                 <CFullDialog
                   trigger={(open) => (

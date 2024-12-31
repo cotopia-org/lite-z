@@ -6,10 +6,11 @@ import { UserContractType } from '@/types/contract';
 import { useEffect, useState } from 'react';
 import { isUserAdmin } from '@/lib/utils';
 import { useRoomContext } from '@/components/shared/room/room-context';
+import { ScheduleType } from '@/types/calendar';
 
 type Props = {
   contract: UserContractType;
-  onUpdate?: (contract: UserContractType) => void;
+  onUpdate?: (schedule: ScheduleType) => void;
 };
 
 export default function HintScheduleContract({ contract, onUpdate }: Props) {
@@ -25,7 +26,7 @@ export default function HintScheduleContract({ contract, onUpdate }: Props) {
 
   if (!localContract) return null;
 
-  if (localContract?.payment_address) return null;
+  if (localContract?.schedule) return null;
 
   if (localContract?.user_id !== user?.id) {
     if (userIsAdmin)

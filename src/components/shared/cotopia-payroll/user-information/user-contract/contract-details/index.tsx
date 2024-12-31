@@ -29,6 +29,8 @@ export default function PayrollContractDetails({
     setLocalContract(contract);
   }, [contract]);
 
+  const [schedule, setSchedule] = useState(contract.schedule);
+
   // function formattedDate(contractDate: string) {
   //   const date = new Date(contractDate);
   //   return `${date.getFullYear()}-${(date.getMonth() + 1)
@@ -53,17 +55,18 @@ export default function PayrollContractDetails({
   //   { key: "Contract id", value: localContract?.id },
   //   { key: "Payment address", value: localContract?.payment_address },
   // ];
+
   return (
-    <div className="flex flex-col gap-y-4">
+    <div className="flex flex-col gap-y-4 p-4 ">
       <PayrollSectionTitle title="User Contract" />
       {isLoading ? (
         <p className="text-gray-400 text-xl font-semibold text-center">
           Loading contract details...
         </p>
       ) : contract ? (
-        <div className="flex flex-col gap-y-4">
+        <div className="flex flex-col gap-y-4 p-4 border border-black rounded">
           {contract.text?.map((item, i) => (
-            <ul className="flex flex-col gap-y-2">
+            <ul className="flex flex-col gap-y-2 p-4">
               {Object.keys(item).map((key) => {
                 return item[key].map((x) => (
                   <li className="list-disc">
@@ -110,21 +113,27 @@ export default function PayrollContractDetails({
       <HintAddressContract
         contract={localContract}
         onUpdate={(contract) => {
-          if (onUpdate) onUpdate(contract);
+          // if (onUpdate) onUpdate(contract);
           setLocalContract(contract);
         }}
       />
       {!!localContract?.in_schedule ? (
-        !localContract?.schedule ? (
+        schedule === null || schedule === undefined ? (
           <HintScheduleContract
             contract={localContract}
-            onUpdate={(contract) => {
-              if (onUpdate) onUpdate(contract);
-              setLocalContract(contract);
+            onUpdate={(s) => {
+              // if (onUpdate) onUpdate(contract);
+              setSchedule(s);
             }}
           />
         ) : (
-          <Schedules justView items={[localContract?.schedule]} />
+          <Schedules
+            justView={contract.status !== 'draft'}
+            onUpdate={(s) => {
+              setSchedule(s);
+            }}
+            items={[schedule]}
+          />
         )
       ) : null}
       <SignContract contract={localContract} onUpdate={setLocalContract} />
@@ -134,7 +143,7 @@ export default function PayrollContractDetails({
         startIcon={<ChevronLeft />}
         onClick={onBack}
       >
-        Close Contract
+        Close
       </CotopiaButton>
     </div>
   );
