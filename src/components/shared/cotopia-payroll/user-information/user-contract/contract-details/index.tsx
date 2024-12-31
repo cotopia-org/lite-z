@@ -66,14 +66,18 @@ export default function PayrollContractDetails({
       ) : contract ? (
         <div className="flex flex-col gap-y-4 p-4 border border-black rounded">
           {contract.text?.map((item, i) => (
-            <ul className="flex flex-col gap-y-2 p-4">
+            <ul className="flex flex-col gap-y-2 px-4 py-1">
               {Object.keys(item).map((key) => {
                 return item[key].map((x) => (
-                  <li className="list-disc">
-                    <Markdown className="[&_h1]:text-xl [&_h1]:mb-4 [&_h1]:font-bold [&_ol]:ml-4 [&_li]:mb-4 [&_li]:list-decimal">{`${
-                      x
-                    }`}</Markdown>
-                  </li>
+                  <div>
+                    <div className={'font-bold mb-2 underline'}>{key}</div>
+
+                    <li className="list-disc">
+                      <Markdown className="[&_h1]:text-xl [&_h1]:mb-4 [&_h1]:font-bold [&_ol]:ml-4 [&_li]:mb-4 [&_li]:list-decimal">{`${
+                        x
+                      }`}</Markdown>
+                    </li>
+                  </div>
                 ));
               })}
             </ul>

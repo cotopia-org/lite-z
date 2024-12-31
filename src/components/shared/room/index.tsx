@@ -1,9 +1,9 @@
-"use client";
+'use client';
 
-import { LiveKitRoom } from "@livekit/components-react";
-import RoomContext from "./room-context";
-import RoomInner from "./room-inner";
-import { WorkspaceRoomJoinType } from "@/types/room";
+import { LiveKitRoom } from '@livekit/components-react';
+import RoomContext from './room-context';
+import RoomInner from './room-inner';
+import { WorkspaceRoomJoinType } from '@/types/room';
 import {
   createContext,
   useCallback,
@@ -11,20 +11,22 @@ import {
   useEffect,
   useReducer,
   useState,
-} from "react";
-import LiveKitConnectionStatus from "./connection-status";
-import CheckPermissions2 from "./check-permissions-2";
-import ChatWrapper from "../chat-wrapper";
-import { ReactFlowProvider } from "@xyflow/react";
-import { toast } from "sonner";
-import useBus from "use-bus";
-import axiosInstance, { FetchDataType } from "@/services/axios";
-import { useSocket } from "@/routes/private-wrarpper";
-import { __BUS } from "@/const/bus";
-import Disconnected from "./connection-status/disconnected";
-import { useAppDispatch } from "@/store";
-import { setToken } from "@/store/slices/livekit-slice";
-import LivekitRefactored from "../livekit-refactored";
+} from 'react';
+import LiveKitConnectionStatus from './connection-status';
+import CheckPermissions2 from './check-permissions-2';
+import ChatWrapper from '../chat-wrapper';
+import { ReactFlowProvider } from '@xyflow/react';
+import { toast } from 'sonner';
+import useBus from 'use-bus';
+import axiosInstance, { FetchDataType } from '@/services/axios';
+import { useSocket } from '@/routes/private-wrarpper';
+import { __BUS } from '@/const/bus';
+import Disconnected from './connection-status/disconnected';
+import { useAppDispatch } from '@/store';
+import { setToken } from '@/store/slices/livekit-slice';
+import LivekitRefactored from '../livekit-refactored';
+import FullLoading from '@/components/shared/full-loading';
+import roomItem from '@/components/shared/workspaces/rooms/room/room-item';
 
 type MediaPermission = {
   audio: boolean;
@@ -48,7 +50,7 @@ const RoomHolderContext = createContext<{
   enableAudioAccess: () => void;
   disableVideoAccess: () => void;
   disableAudioAccess: () => void;
-  changeStreamState: (stream: MediaStream, type: "video" | "audio") => void;
+  changeStreamState: (stream: MediaStream, type: 'video' | 'audio') => void;
   stream: InitStreamType;
   stream_loading: boolean;
 }>({
@@ -80,21 +82,21 @@ type InitStreamType = {
 };
 
 type StreamActionType =
-  | { type: "CHANGE_PERMISSION"; payload: { audio: boolean; video: boolean } }
-  | { type: "START_LOADING" }
-  | { type: "STOP_LOADING" }
-  | { type: "CHANGE_VALUES"; payload: { [key: string]: any } };
+  | { type: 'CHANGE_PERMISSION'; payload: { audio: boolean; video: boolean } }
+  | { type: 'START_LOADING' }
+  | { type: 'STOP_LOADING' }
+  | { type: 'CHANGE_VALUES'; payload: { [key: string]: any } };
 
 const reducer = (state: InitStreamType, action: StreamActionType) => {
   switch (action.type) {
-    case "CHANGE_PERMISSION":
+    case 'CHANGE_PERMISSION':
       const permissions = action.payload;
       return { ...state, permissions };
-    case "CHANGE_VALUES":
+    case 'CHANGE_VALUES':
       return { ...state, ...action.payload };
-    case "START_LOADING":
+    case 'START_LOADING':
       return { ...state, loading: true };
-    case "STOP_LOADING":
+    case 'STOP_LOADING':
       return { ...state, loading: false };
     default:
       return state;
@@ -113,23 +115,24 @@ export default function RoomHolder({
   const [state, dispatch] = useReducer(reducer, initialState);
 
   const [permissionChecked, setPermissionChecked] = useState(false);
+  const [mustJoin, setMustJoin] = useState(false);
 
   const enableVideoAccess = async () => {
     const audioAccess = state.permissions.audio;
     const audioStream = state.audioStream;
     let perm_obj = { audio: !!(audioAccess && audioStream), video: true };
     try {
-      dispatch({ type: "START_LOADING" });
-      await axiosInstance.post("/settings", { key: "video", value: "on" });
+      dispatch({ type: 'START_LOADING' });
+      await axiosInstance.post('/settings', { key: 'video', value: 'on' });
       const stream = await navigator.mediaDevices.getUserMedia({ video: true });
       const obj_to_update = {
         loading: false,
         videoStream: stream,
         permissions: perm_obj,
       };
-      dispatch({ type: "CHANGE_VALUES", payload: obj_to_update });
+      dispatch({ type: 'CHANGE_VALUES', payload: obj_to_update });
     } catch (error) {
-      dispatch({ type: "STOP_LOADING" });
+      dispatch({ type: 'STOP_LOADING' });
     }
   };
   const disableVideoAccess = async () => {
@@ -139,8 +142,8 @@ export default function RoomHolder({
     if (!videoStream) return;
     let perm_obj = { audio: !!(audioAccess && audioStream), video: false };
     try {
-      dispatch({ type: "START_LOADING" });
-      await axiosInstance.post("/settings", { key: "video", value: "off" });
+      dispatch({ type: 'START_LOADING' });
+      await axiosInstance.post('/settings', { key: 'video', value: 'off' });
       const videoTracks = videoStream.getTracks();
       videoTracks.forEach((track) => {
         track.stop();
@@ -151,9 +154,9 @@ export default function RoomHolder({
         //@ts-ignore
         videoStream: null,
       };
-      dispatch({ type: "CHANGE_VALUES", payload: obj_to_update });
+      dispatch({ type: 'CHANGE_VALUES', payload: obj_to_update });
     } catch (error) {
-      dispatch({ type: "STOP_LOADING" });
+      dispatch({ type: 'STOP_LOADING' });
     }
   };
   const enableAudioAccess = async () => {
@@ -161,17 +164,17 @@ export default function RoomHolder({
     const videoStream = state.videoStream;
     let perm_obj = { video: !!(videoAccess && videoStream), audio: true };
     try {
-      dispatch({ type: "START_LOADING" });
-      await axiosInstance.post("/settings", { key: "audio", value: "on" });
+      dispatch({ type: 'START_LOADING' });
+      await axiosInstance.post('/settings', { key: 'audio', value: 'on' });
       const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
       const obj_to_update = {
         loading: false,
         permissions: perm_obj,
         audioStream: stream,
       };
-      dispatch({ type: "CHANGE_VALUES", payload: obj_to_update });
+      dispatch({ type: 'CHANGE_VALUES', payload: obj_to_update });
     } catch (error) {
-      dispatch({ type: "STOP_LOADING" });
+      dispatch({ type: 'STOP_LOADING' });
     }
   };
   const disableAudioAccess = async () => {
@@ -181,8 +184,8 @@ export default function RoomHolder({
     if (!audioStream) return;
     let perm_obj = { video: !!(videoAccess && videoStream), audio: false };
     try {
-      dispatch({ type: "START_LOADING" });
-      await axiosInstance.post("/settings", { key: "audio", value: "off" });
+      dispatch({ type: 'START_LOADING' });
+      await axiosInstance.post('/settings', { key: 'audio', value: 'off' });
       const audioTracks = audioStream.getAudioTracks();
       audioTracks.forEach((track) => {
         track.stop();
@@ -193,68 +196,73 @@ export default function RoomHolder({
         //@ts-ignore
         audioStream: null,
       };
-      dispatch({ type: "CHANGE_VALUES", payload: obj_to_update });
+      dispatch({ type: 'CHANGE_VALUES', payload: obj_to_update });
     } catch (error) {
-      dispatch({ type: "STOP_LOADING" });
+      dispatch({ type: 'STOP_LOADING' });
     }
   };
-  const changeStreamState = (stream: MediaStream, type: "video" | "audio") => {
-    let key = "";
-    if (type === "video") key = "videoStream";
-    if (type === "audio") key = "audioStream";
+  const changeStreamState = (stream: MediaStream, type: 'video' | 'audio') => {
+    let key = '';
+    if (type === 'video') key = 'videoStream';
+    if (type === 'audio') key = 'audioStream';
     if (!key) return;
-    dispatch({ type: "CHANGE_VALUES", payload: { [key]: stream } });
+    dispatch({ type: 'CHANGE_VALUES', payload: { [key]: stream } });
   };
 
+  const socket = useSocket();
+
   useEffect(() => {
-    const getSettings = async () => {
-      try {
-        dispatch({ type: "START_LOADING" });
-        const res = await axiosInstance.get("/users/settings");
-        const settings: { [key: string]: any }[] = res.data.data ?? [];
-        let videoAccess = settings.find((x) => x.key === "video");
-        let audioAccess = settings.find((y) => y.key === "audio");
-        let video = videoAccess?.value === "on" ? true : false;
-        let audio = audioAccess?.value === "on" ? true : false;
-        dispatch({
-          type: "CHANGE_VALUES",
-          payload: {
-            loading: false,
-            permissions: { video, audio },
-          },
-        });
-      } catch (error) {
-        dispatch({ type: "STOP_LOADING" });
-      }
-    };
-    getSettings();
-  }, []);
+    // const getSettings = async () => {
+    //   try {
+    //     dispatch({ type: "START_LOADING" });
+    //     const res = await axiosInstance.get("/users/settings");
+    //     const settings: { [key: string]: any }[] = res.data.data ?? [];
+    //     let videoAccess = settings.find((x) => x.key === "video");
+    //     let audioAccess = settings.find((y) => y.key === "audio");
+    //     let video = videoAccess?.value === "on" ? true : false;
+    //     let audio = audioAccess?.value === "on" ? true : false;
+    //     dispatch({
+    //       type: "CHANGE_VALUES",
+    //       payload: {
+    //         loading: false,
+    //         permissions: { false, false },
+    //       },
+    //     });
+    //   } catch (error) {
+    //     dispatch({ type: "STOP_LOADING" });
+    //   }
+    // };
+    // getSettings();
+
+    if (socket && socket.connected) {
+      handleJoin();
+    }
+  }, [socket]);
 
   let content = null;
-
-  const socket = useSocket();
 
   const handleReTry = async (tries = 0, max_tries = 20) => {
     if (tries + 1 === max_tries) {
       toast.error("Couldn't join to the room!");
-      dispatch({ type: "STOP_LOADING" });
+      dispatch({ type: 'STOP_LOADING' });
     } else {
       await new Promise((r) => setTimeout(r, 1500));
-      handleJoin(tries + 1);
+      await handleJoin(tries + 1);
     }
   };
 
   const handleJoin = useCallback(
     async (tries = 0) => {
-      dispatch({ type: "START_LOADING" });
+      dispatch({ type: 'START_LOADING' });
 
       axiosInstance
         .get<FetchDataType<WorkspaceRoomJoinType>>(`/rooms/${room_id}/join`)
         .then((res) => {
           setPermissionChecked(true);
+          setMustJoin(true);
           //Setting token in redux for livekit
           reduxDispatch(setToken(res.data.data.token));
-          dispatch({ type: "STOP_LOADING" });
+          dispatch({ type: 'STOP_LOADING' });
         })
         .catch((err) => {
           handleReTry(tries);
@@ -265,8 +273,8 @@ export default function RoomHolder({
     [room_id],
   );
 
-  const handlePassed =
-    permissionChecked === false && !isReConnecting && !isSwitching;
+  // const handlePassed =
+  //   permissionChecked === false && !isReConnecting && !isSwitching;
 
   useBus(
     __BUS.rejoinRoom,
@@ -285,7 +293,17 @@ export default function RoomHolder({
     </>
   );
 
-  if (handlePassed) content = <CheckPermissions2 onChecked={handleJoin} />;
+  // if (!mustJoin) content = <CheckPermissions2 onChecked={handleJoin} />;
+  if (!mustJoin)
+    content = (
+      <div
+        className={
+          'items-center justify-center flex text-4xl text-muted bg-slate-400 h-full min-h-screen'
+        }
+      >
+        <p>Please wait...</p>
+      </div>
+    );
 
   return (
     <RoomHolderContext.Provider
