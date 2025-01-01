@@ -3,7 +3,6 @@ import ChatDate from './date';
 import Linkify from 'linkify-react';
 import useAuth from '@/hooks/auth';
 import ChatRepliedItem from './replied-item';
-import { useChat2 } from '@/hooks/chat/use-chat-2';
 import MessageDeliveredState from './delievered';
 import { cn } from '@/lib/utils';
 import Edited from './edited';
@@ -67,68 +66,70 @@ export default function ChatItemContent({ chat, next, prev }: Props) {
       )}
       {/* HEADER */}
       <AttachmentRenderer item={chat} />
-      <p
-        className="text-wrap mb-3 w-full"
-        dir="auto"
-        style={{
-          overflowWrap: 'break-word',
-          wordBreak: 'break-word',
-          whiteSpace: 'normal',
-        }}
-      >
-        {chat.text.split('\n').map((line: string, index) => (
-          <Linkify
-            options={{
-              nl2br: true,
-              render: {
-                url: ({ attributes, content }) =>
-                  linkElement(attributes, content, 'link'),
-                mention: ({ attributes, content }) =>
-                  linkElement(attributes, content, 'mention'),
-              },
-              formatHref: {
-                mention: () => '#',
-              },
-            }}
-          >
-            <span key={index}>
-              {line}
-              <br />
-            </span>
-          </Linkify>
-        ))}
+      {!!chat?.text && (
+        <p
+          className="text-wrap mb-3 w-full"
+          dir="auto"
+          style={{
+            overflowWrap: 'break-word',
+            wordBreak: 'break-word',
+            whiteSpace: 'normal',
+          }}
+        >
+          {chat.text.split('\n').map((line: string, index) => (
+            <Linkify
+              options={{
+                nl2br: true,
+                render: {
+                  url: ({ attributes, content }) =>
+                    linkElement(attributes, content, 'link'),
+                  mention: ({ attributes, content }) =>
+                    linkElement(attributes, content, 'mention'),
+                },
+                formatHref: {
+                  mention: () => '#',
+                },
+              }}
+            >
+              <span key={index}>
+                {line}
+                <br />
+              </span>
+            </Linkify>
+          ))}
 
-        {chat.translated_text !== null && (
-          <>
-            <div
-              className={'w-full my-2 border-t-2 border-black border-dotted'}
-            ></div>
-            Translated:
-            <br />
-            {chat.translated_text?.split('\n').map((line: string, index) => (
-              <Linkify
-                options={{
-                  nl2br: true,
-                  render: {
-                    url: ({ attributes, content }) =>
-                      linkElement(attributes, content, 'link'),
-                    mention: ({ attributes, content }) =>
-                      linkElement(attributes, content, 'mention'),
-                  },
-                  formatHref: {
-                    mention: () => '#',
-                  },
-                }}
-              >
-                <span key={index}>
-                  {line}
-                  <br />
-                </span>
-              </Linkify>
-            ))}
-          </>
-        )}
-      </p>
+          {chat.translated_text !== null && (
+            <>
+              <div
+                className={'w-full my-2 border-t-2 border-black border-dotted'}
+              ></div>
+              Translated:
+              <br />
+              {chat.translated_text?.split('\n').map((line: string, index) => (
+                <Linkify
+                  options={{
+                    nl2br: true,
+                    render: {
+                      url: ({ attributes, content }) =>
+                        linkElement(attributes, content, 'link'),
+                      mention: ({ attributes, content }) =>
+                        linkElement(attributes, content, 'mention'),
+                    },
+                    formatHref: {
+                      mention: () => '#',
+                    },
+                  }}
+                >
+                  <span key={index}>
+                    {line}
+                    <br />
+                  </span>
+                </Linkify>
+              ))}
+            </>
+          )}
+        </p>
+      )}
       <div className="flex flex-row items-center gap-x-2">
         {chat.is_edited && <Edited />}
         <ChatDate chat={chat} />

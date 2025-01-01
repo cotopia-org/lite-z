@@ -7,6 +7,8 @@ export type MessageType = {
   created_at: number;
   deleted_at: string | null;
   files: AttachmentFileType[];
+  voice_id?: number;
+  voice?: AttachmentFileType;
   id: number;
   is_edited: boolean | null;
   is_pinned: 0 | 1;
@@ -16,7 +18,7 @@ export type MessageType = {
   reply_to: Chat2ItemType;
   reply_id?: number;
   seens: number[];
-  text: string;
+  text?: string;
   translated_text?: string | null;
   updated_at: number;
   user: UserMinimalType;

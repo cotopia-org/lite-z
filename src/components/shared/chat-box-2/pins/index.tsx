@@ -46,11 +46,13 @@ export default function PinMessages() {
         {!!currentPintMessage && (
           <div className="flex flex-col">
             <strong className="text-primary">Pinned message</strong>
-            <span>
-              {currentPintMessage.text.length > 35
-                ? currentPintMessage.text.slice(0, 35) + '... '
-                : currentPintMessage.text}
-            </span>
+            {currentPintMessage?.text ? (
+              <span>
+                {currentPintMessage.text.length > 35
+                  ? currentPintMessage.text.slice(0, 35) + '... '
+                  : currentPintMessage.text}
+              </span>
+            ) : null}
           </div>
         )}
       </div>

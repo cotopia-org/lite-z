@@ -35,7 +35,7 @@ function generateTempChat({
   chat_id: number;
   user: UserType;
   user_id: number;
-  text: string;
+  text?: string;
   reply?: Chat2ItemType;
 }) {
   const nonce_id = moment().unix() * 1000;
@@ -78,13 +78,13 @@ export const useChat2 = (props?: {
 }) => {
   const { user } = useAuth();
 
-  const chat_id = props?.chat_id;
-
   const socket = useSocket();
 
   const { chats, error, loading, currentChat } = useAppSelector(
     (store) => store.chat,
   );
+
+  const chat_id = props?.chat_id ? props.chat_id : currentChat?.id;
 
   //current reply message
   const replyMessage = currentChat
@@ -140,20 +140,20 @@ export const useChat2 = (props?: {
       text,
       links,
       files,
+      voice_id,
       seen = false,
       reply,
     }: {
-      text: string;
+      text?: string;
       links?: any[];
       files?: AttachmentFileType[];
       seen?: boolean;
       reply?: Chat2ItemType;
+      voice_id?: number;
     },
     onSuccess?: () => void,
   ) => {
-    if (!text) return;
-
-    const mentions = extractMentions(text);
+    const mentions = extractMentions(text ? text : '');
     const currentChatMembers = currentChat?.participants ?? [];
 
     const properMentions = mentions.map((x) => ({
@@ -185,6 +185,7 @@ export const useChat2 = (props?: {
         is_pending: true,
         is_rejected: false,
         files: files ?? [],
+        voice_id,
       }),
     );
 
@@ -202,6 +203,7 @@ export const useChat2 = (props?: {
       reply_to: sendObject?.reply_to,
       reply_id: sendObject?.reply_to?.id,
       files: files?.map((a) => a.id),
+      voice_id,
     });
 
     const recievedMessageFromServer = recievedMessageFromServerRes?.data?.data;

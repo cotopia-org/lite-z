@@ -1,11 +1,37 @@
-import CotopiaIconButton from "@/components/shared-ui/c-icon-button";
-import { Mic } from "lucide-react";
-import React from "react";
+import { useChat2 } from '@/hooks/chat/use-chat-2';
+import VoiceRecorder from './voice-component';
+import useLoading from '@/hooks/use-loading';
+import axiosInstance from '@/services/axios';
+import { AttachmentFileType } from '@/types/file';
 
 export default function MicButtonHandler() {
+  const { startLoading, stopLoading, isLoading } = useLoading();
+
+  const { send } = useChat2();
+
+  const handleSendVoice = async (file: Blob) => {
+    console.log('file', file.type);
+
+    startLoading();
+
+    //Upload attachment
+    const formData = new FormData();
+    if (file) formData.append('file', file);
+
+    try {
+      const fileRes = await axiosInstance.post(`/files`, formData);
+
+      const attachment: AttachmentFileType = fileRes?.data?.data;
+
+      await send({ voice_id: attachment.id });
+
+      stopLoading();
+    } catch (e) {
+      stopLoading();
+    }
+  };
+
   return (
-    <CotopiaIconButton type='button' className='text-black/60'>
-      <Mic />
-    </CotopiaIconButton>
+    <VoiceRecorder disabled={isLoading} onRecordingComplete={handleSendVoice} />
   );
 }

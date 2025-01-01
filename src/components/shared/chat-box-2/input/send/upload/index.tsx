@@ -34,9 +34,7 @@ export default function UploadAttachment() {
     setFile(file);
   }, []);
 
-  const { currentChat } = useChat2();
-
-  const { send } = useChat2({ chat_id: currentChat?.id });
+  const { send } = useChat2();
 
   const handleSend = async () => {
     startLoading();
