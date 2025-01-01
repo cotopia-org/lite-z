@@ -1,6 +1,6 @@
-import { getDay } from "@/lib/utils";
-import { ScheduleType } from "@/types/calendar";
-import { useMemo } from "react";
+import { convertToTimezone, getDay } from '@/lib/utils';
+import { ScheduleType } from '@/types/calendar';
+import { useMemo } from 'react';
 
 type Props = {
   selectedDay: number;
@@ -18,7 +18,7 @@ export default function ScheduleOverview({ selectedDay, item }: Props) {
       for (let day of currentDay) {
         let index = 0;
         for (let time of day.times) {
-          output += ` ${time.start} - ${time.end}`;
+          output += ` ${convertToTimezone(time.start, item.timezone)} - ${convertToTimezone(time.end, item.timezone)}`;
           if (index < day.times.length - 1) output += `, `;
           index++;
         }
@@ -31,6 +31,6 @@ export default function ScheduleOverview({ selectedDay, item }: Props) {
   if (currentDay.length === 0) return null;
 
   return (
-    <div className='flex flex-row items-center text-xs'>{labelOutput}</div>
+    <div className="flex flex-row items-center text-xs">{labelOutput}</div>
   );
 }

@@ -1,10 +1,10 @@
-import { AvailabiltyType, ScheduleType } from "@/types/calendar";
-import moment from "moment";
-import { useCallback, useMemo, useState } from "react";
-import { Mic, Pencil, Video } from "lucide-react";
-import TimeShower from "./time-shower";
-import ParticipantsWithPopover from "../../participants/with-popover";
-import { isNowBetween } from "@/lib/utils";
+import { AvailabiltyType, ScheduleType } from '@/types/calendar';
+import moment from 'moment';
+import { useCallback, useMemo, useState } from 'react';
+import { Mic, Pencil, Video } from 'lucide-react';
+import TimeShower from './time-shower';
+import ParticipantsWithPopover from '../../participants/with-popover';
+import { isNowBetween } from '@/lib/utils';
 
 type Props = {
   schedule: ScheduleType;
@@ -26,7 +26,7 @@ export default function Card({ schedule, onHide }: Props) {
   if (timeToday === undefined) return null;
 
   const nowTimes = timeToday.times.filter((time) => {
-    return isNowBetween(time.start, time.end);
+    return isNowBetween(time.start, time.end, schedule.timezone);
   });
 
   let icons = {
