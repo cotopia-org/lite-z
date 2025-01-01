@@ -333,6 +333,7 @@ export default function RoomContext({
         workspaceUsers,
         workspaceJobs: workpaceJobItems,
         workingUsers: workingUsers,
+        mutateWorkspaceUsers,
         //@ts-ignore
         onlineUsers: onlineUsers,
         usersHaveJobs: usersHaveJobs,

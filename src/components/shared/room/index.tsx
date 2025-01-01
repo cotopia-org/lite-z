@@ -25,8 +25,6 @@ import Disconnected from './connection-status/disconnected';
 import { useAppDispatch } from '@/store';
 import { setToken } from '@/store/slices/livekit-slice';
 import LivekitRefactored from '../livekit-refactored';
-import FullLoading from '@/components/shared/full-loading';
-import roomItem from '@/components/shared/workspaces/rooms/room/room-item';
 
 type MediaPermission = {
   audio: boolean;
@@ -282,7 +280,7 @@ export default function RoomHolder({
     __BUS.rejoinRoom,
     () => {
       if (permissionChecked === true || isSwitching || isReConnecting) {
-        handleJoin();
+        handleJoin(0);
       }
     },
     [permissionChecked, isSwitching, isReConnecting],
@@ -296,8 +294,8 @@ export default function RoomHolder({
   );
 
   // if (!mustJoin) content = <CheckPermissions2 onChecked={handleJoin} />;
-  if (!mustJoin)
-    content = (
+  if (!mustJoin || state.loading)
+    return (
       <div
         className={
           'items-center justify-center flex text-4xl text-muted bg-slate-400 h-full min-h-screen'

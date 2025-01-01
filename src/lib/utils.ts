@@ -7,6 +7,7 @@ import { TrackReferenceOrPlaceholder } from '@livekit/components-core';
 import { type ClassValue, clsx } from 'clsx';
 import { Track } from 'livekit-client';
 import moment from 'moment';
+import momentTZ from 'moment-timezone';
 import { twMerge } from 'tailwind-merge';
 
 const querystring = require('querystring');
@@ -370,11 +371,24 @@ export function getDateTime(
   return moment(date).format(format);
 }
 
-export function isNowBetween(start: string, end: string) {
+export const convertToTimezone = (time: string, timezoneFrom: string) => {
+  const sourceTime = momentTZ.tz(time, 'HH:mm', timezoneFrom);
+  const currentTimezone = momentTZ.tz.guess();
+
+  const targetTime = sourceTime.clone().tz(currentTimezone);
+
+  return targetTime.format('HH:mm');
+};
+
+export function isNowBetween(start: string, end: string, timezone: string) {
   const now = new Date();
   // now.setHours(18, 0, 0, 0);
-  const [startHour, startMinute] = start.split(':').map(Number);
-  const [endHour, endMinute] = end.split(':').map(Number);
+  const [startHour, startMinute] = convertToTimezone(start, timezone)
+    .split(':')
+    .map(Number);
+  const [endHour, endMinute] = convertToTimezone(end, timezone)
+    .split(':')
+    .map(Number);
 
   const startTime = new Date(now);
   startTime.setHours(startHour, startMinute, 0, 0);
