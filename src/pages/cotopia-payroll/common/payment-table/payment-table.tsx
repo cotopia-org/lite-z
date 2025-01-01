@@ -13,6 +13,8 @@ import { getContractStatus } from '@/lib/utils';
 import PaymentTab from './payment-tab';
 import TitleEl from '@/components/shared/title-el';
 import ContractDetails from '@/components/shared/room/tools/top-right/payroll-button/contract-details';
+import ContractStatus from '@/components/shared/room/tools/top-right/payroll-button/contract-status';
+
 type Props = {
   isAll?: boolean;
 };
@@ -95,7 +97,7 @@ export default function Payments({ isAll = true }: Props) {
       {
         title: 'Contract Status',
         render: (item: PaymentType) => {
-          return <>{getContractStatus(item.contract)}</>;
+          return <ContractStatus contract={item.contract} />;
         },
       },
     ];
