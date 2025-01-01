@@ -5,6 +5,7 @@ import { useContractFormik } from '.';
 import CotopiaSwitch from '@/components/shared-ui/c-switch';
 import AddScheduleButton from '@/components/shared/room/tools/top-left/schedule-button/shapes/add-schedule';
 import Schedules from '@/components/shared/schedules';
+import { isUserAdmin } from '@/lib/utils';
 
 export default function ContractSchedules() {
   const { user } = useAuth();
@@ -19,6 +20,7 @@ export default function ContractSchedules() {
     <div className="grid grid-cols-12 gap-4">
       <div className="col-span-12">
         <CotopiaSwitch
+          disabled={!isUserAdmin(user)}
           label="In Schedule"
           checked={values?.in_schedule === 1}
           onCheckedChange={(value) => {
@@ -31,7 +33,9 @@ export default function ContractSchedules() {
         !!values?.schedule ? (
           <div className="col-span-12">
             <Schedules
-              justView={values?.status === 'signed'}
+              justView={
+                values?.status === 'signed' || values?.status === 'active'
+              }
               items={[values?.schedule]}
               onDelete={() => {
                 formik?.setFieldValue('schedule', undefined);

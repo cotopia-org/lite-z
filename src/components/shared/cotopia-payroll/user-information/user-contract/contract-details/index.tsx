@@ -132,7 +132,9 @@ export default function PayrollContractDetails({
           />
         ) : (
           <Schedules
-            justView={contract.status !== 'draft'}
+            justView={
+              contract.status === 'signed' || contract.status === 'active'
+            }
             onUpdate={(s) => {
               setSchedule(s);
             }}

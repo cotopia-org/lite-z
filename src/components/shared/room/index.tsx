@@ -247,7 +247,7 @@ export default function RoomHolder({
       dispatch({ type: 'STOP_LOADING' });
     } else {
       await new Promise((r) => setTimeout(r, 1500));
-      socket?.connect();
+      // socket?.connect();
 
       await handleJoin(tries + 1);
     }
@@ -268,7 +268,7 @@ export default function RoomHolder({
       .catch((err) => {
         handleReTry(tries);
 
-        socket?.disconnect();
+        // socket?.disconnect();
         // toast.error("Couldn't join to the room!");
       });
   };

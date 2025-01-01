@@ -1,5 +1,5 @@
-import { MessageType } from "./message";
-import { UserMinimalType } from "./user";
+import { MessageType } from './message';
+import { UserMinimalType } from './user';
 
 export type Chat2ItemType = MessageType & {
   is_delivered: boolean;
