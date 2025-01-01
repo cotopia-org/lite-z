@@ -120,7 +120,7 @@ export default function RoomHolder({
     const audioStream = state.audioStream;
     let perm_obj = { audio: !!(audioAccess && audioStream), video: true };
     try {
-      dispatch({ type: 'START_LOADING' });
+      // dispatch({ type: 'START_LOADING' });
       await axiosInstance.post('/settings', { key: 'video', value: 'on' });
       const stream = await navigator.mediaDevices.getUserMedia({ video: true });
       const obj_to_update = {
@@ -130,7 +130,7 @@ export default function RoomHolder({
       };
       dispatch({ type: 'CHANGE_VALUES', payload: obj_to_update });
     } catch (error) {
-      dispatch({ type: 'STOP_LOADING' });
+      // dispatch({ type: 'STOP_LOADING' });
     }
   };
   const disableVideoAccess = async () => {
@@ -140,7 +140,7 @@ export default function RoomHolder({
     if (!videoStream) return;
     let perm_obj = { audio: !!(audioAccess && audioStream), video: false };
     try {
-      dispatch({ type: 'START_LOADING' });
+      // dispatch({ type: 'START_LOADING' });
       await axiosInstance.post('/settings', { key: 'video', value: 'off' });
       const videoTracks = videoStream.getTracks();
       videoTracks.forEach((track) => {
@@ -154,7 +154,7 @@ export default function RoomHolder({
       };
       dispatch({ type: 'CHANGE_VALUES', payload: obj_to_update });
     } catch (error) {
-      dispatch({ type: 'STOP_LOADING' });
+      // dispatch({ type: 'STOP_LOADING' });
     }
   };
   const enableAudioAccess = async () => {
@@ -162,7 +162,7 @@ export default function RoomHolder({
     const videoStream = state.videoStream;
     let perm_obj = { video: !!(videoAccess && videoStream), audio: true };
     try {
-      dispatch({ type: 'START_LOADING' });
+      // dispatch({ type: 'START_LOADING' });
       await axiosInstance.post('/settings', { key: 'audio', value: 'on' });
       const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
       const obj_to_update = {
@@ -172,7 +172,7 @@ export default function RoomHolder({
       };
       dispatch({ type: 'CHANGE_VALUES', payload: obj_to_update });
     } catch (error) {
-      dispatch({ type: 'STOP_LOADING' });
+      // dispatch({ type: 'STOP_LOADING' });
     }
   };
   const disableAudioAccess = async () => {
@@ -182,7 +182,7 @@ export default function RoomHolder({
     if (!audioStream) return;
     let perm_obj = { video: !!(videoAccess && videoStream), audio: false };
     try {
-      dispatch({ type: 'START_LOADING' });
+      // dispatch({ type: 'START_LOADING' });
       await axiosInstance.post('/settings', { key: 'audio', value: 'off' });
       const audioTracks = audioStream.getAudioTracks();
       audioTracks.forEach((track) => {
@@ -196,7 +196,7 @@ export default function RoomHolder({
       };
       dispatch({ type: 'CHANGE_VALUES', payload: obj_to_update });
     } catch (error) {
-      dispatch({ type: 'STOP_LOADING' });
+      // dispatch({ type: 'STOP_LOADING' });
     }
   };
   const changeStreamState = (stream: MediaStream, type: 'video' | 'audio') => {
