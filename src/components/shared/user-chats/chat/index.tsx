@@ -1,30 +1,23 @@
-import { ChatType } from "@/types/chat2";
-import { createContext, useContext } from "react";
-import ChatPreview from "./preview";
-import { useSlides } from "../../slide-pusher";
-import ChatInnerHolder from "./holder";
-import { useAppDispatch } from "@/store";
+import { ChatType } from '@/types/chat2';
+import { createContext, useContext } from 'react';
+import ChatPreview from './preview';
+import { useSlides } from '../../slide-pusher';
+import ChatInnerHolder from './holder';
+import { useAppDispatch } from '@/store';
 import {
   clearCurrentChat,
   deleteChat,
   setCurrentChat,
   setMuteChat,
-} from "@/store/slices/chat-slice";
-import CotopiaContextMenu from "@/components/shared-ui/c-context-menu";
+} from '@/store/slices/chat-slice';
+import CotopiaContextMenu from '@/components/shared-ui/c-context-menu';
 
-import { ContextMenuItem } from "@/components/ui/context-menu";
-import { Bell, BellOff, ReplyIcon, Trash, VolumeOff } from "lucide-react";
-import axiosInstance from "@/services/axios";
-import { toast } from "sonner";
-import { getRandomColor } from "@/lib/utils";
-import moment from "moment";
-import CDialog from "@/components/shared-ui/c-dialog";
-import CotopiaButton from "@/components/shared-ui/c-button";
-import { TrashIcon } from "@/components/icons";
-import { colors } from "@/const/varz";
-import CotopiaPromptContent from "@/components/shared-ui/c-prompt/content";
-import useLoading from "@/hooks/use-loading";
-import FullLoading from "@/components/shared/full-loading";
+import { ContextMenuItem } from '@/components/ui/context-menu';
+import { Bell, BellOff, Trash } from 'lucide-react';
+import axiosInstance from '@/services/axios';
+import { toast } from 'sonner';
+import useLoading from '@/hooks/use-loading';
+import FullLoading from '@/components/shared/full-loading';
 
 type Props = {
   chat: ChatType;
@@ -55,7 +48,7 @@ export default function Chat({ chat }: Props) {
     appDispatch(
       setMuteChat({ chat_id: chat.id, muted: chat.muted === 1 ? 0 : 1 }),
     );
-    toast.success(`${chat.title} has been ${chat.muted ? "Unmuted" : "Muted"}`);
+    toast.success(`${chat.title} has been ${chat.muted ? 'Unmuted' : 'Muted'}`);
   };
 
   const { startLoading, stopLoading, isLoading } = useLoading();
@@ -100,10 +93,10 @@ export default function Chat({ chat }: Props) {
               onClick={toggleMute}
             >
               {chat.muted ? <Bell /> : <BellOff />}
-              {chat.muted ? "Unmute" : "Mute"}
+              {chat.muted ? 'Unmute' : 'Mute'}
             </ContextMenuItem>
 
-            {chat.type !== "direct" && (
+            {chat.type !== 'direct' && (
               <ContextMenuItem
                 onClick={handleDelete}
                 className="py-2 px-4 cursor-pointer !text-white bg-red-500 rounded-none gap-x-2"

@@ -454,3 +454,17 @@ export function getRandomColor(timestamp: any, darkness = 0.9) {
   const intervalIndex = Math.floor(timestamp / colorInterval);
   return colors[intervalIndex % colors.length];
 }
+
+export function calculatePercentage(
+  part: number,
+  total: number,
+  precision?: number,
+): number {
+  // if (total === 0) {
+  //   throw new Error('Total cannot be zero.');
+  // }
+  const percentage = (part / total) * 100;
+  return precision !== undefined
+    ? parseFloat(percentage.toFixed(precision))
+    : percentage;
+}

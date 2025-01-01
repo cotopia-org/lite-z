@@ -104,11 +104,13 @@ export default function RoomSettings() {
                   )}
                 </span>
 
-                <div>
-                  {newMessage.text.length > 70
-                    ? newMessage.text.slice(0, 70) + '... '
-                    : newMessage.text}
-                </div>
+                {newMessage?.text ? (
+                  <div>
+                    {newMessage?.text?.length > 70
+                      ? newMessage?.text.slice(0, 70) + '... '
+                      : newMessage.text}
+                  </div>
+                ) : null}
               </div>
             </div>,
           );
