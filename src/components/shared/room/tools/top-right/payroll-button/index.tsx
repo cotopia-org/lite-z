@@ -6,7 +6,7 @@ import ExpectedPayments from './expected-payments';
 import CTabs from '@/components/shared-ui/c-tabs';
 import CFullDialog from '@/components/shared-ui/c-dialog/full-dialog';
 import PayrollPage from '@/pages/cotopia-payroll/user/payroll';
-import { Coins } from 'lucide-react';
+import { Check, Coins } from 'lucide-react';
 import useAuth from '@/hooks/auth';
 import { useRoomContext } from '../../../room-context';
 import CotopiaTable from '@/components/shared-ui/c-table';
@@ -104,6 +104,7 @@ export default function PayrollButton() {
                                   return <ContractStatus contract={item} />;
                                 },
                               },
+
                               {
                                 title: '',
                                 render: (item: UserContractType) => (

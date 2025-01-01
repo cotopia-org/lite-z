@@ -1,22 +1,23 @@
-import useAuth from "@/hooks/auth";
-import { createContext, useContext, useEffect, useState } from "react";
-import { Outlet, useNavigate } from "react-router-dom";
-import { paths } from "../paths";
-import { io, Socket } from "socket.io-client";
-import { VARZ } from "@/const/varz";
-import { toast } from "sonner";
-import { routeResolver } from "@/lib/utils";
-import { dispatch } from "use-bus";
-import { __BUS } from "@/const/bus";
-import { useAppDispatch } from "@/store";
-import { getProfileThunk } from "@/store/slices/auth/slice";
+import useAuth from '@/hooks/auth';
+import { createContext, useContext, useEffect, useState } from 'react';
+import { Outlet, useNavigate } from 'react-router-dom';
+import { paths } from '../paths';
+import { io, Socket } from 'socket.io-client';
+import { VARZ } from '@/const/varz';
+import { toast } from 'sonner';
+import { routeResolver } from '@/lib/utils';
+import { dispatch } from 'use-bus';
+import { __BUS } from '@/const/bus';
+import { useAppDispatch } from '@/store';
+import { getProfileThunk } from '@/store/slices/auth/slice';
 
 export const useSocket = (
   event?: string,
   cb?: (data: any) => void,
-  deps?: any[]
+  deps?: any[],
 ) => {
   const { socketState } = useProfile();
+
   useEffect(() => {
     if (!event) return;
     if (!cb) return;
@@ -68,10 +69,10 @@ export default function PrivateRoutes() {
       },
     });
 
-    if (socket?.id) localStorage.setItem("socket-id", socket.id);
+    if (socket?.id) localStorage.setItem('socket-id', socket.id);
 
-    socket.on("connect", () => {
-      toast.success("Socket connected");
+    socket.on('connect', () => {
+      toast.success('Socket connected');
       setSocketState(socket);
       dispatch(__BUS.rejoinRoom);
       dispatch({
@@ -80,9 +81,9 @@ export default function PrivateRoutes() {
       });
     });
 
-    socket.on("disconnect", () => {
+    socket.on('disconnect', () => {
       setSocketState(undefined);
-      toast.error("Socket disconnected");
+      toast.error('Socket disconnected');
       dispatch({
         type: __BUS.stopWorkTimer,
         id: VARZ.userTimeTrackerId,
@@ -91,7 +92,7 @@ export default function PrivateRoutes() {
 
     // Clean up the socket connection on unmount
     return () => {
-      toast.error("Socket disconnected");
+      toast.error('Socket disconnected');
       socket.disconnect();
     };
   }, [accessToken]);

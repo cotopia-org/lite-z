@@ -36,5 +36,6 @@ export interface UserContractType {
     | 'waiting_user_sign'
     | 'signed'
     | 'draft'
-    | 'expired';
+    | 'expired'
+    | 'active';
 }

@@ -12,6 +12,7 @@ import { useLoading } from '@/hooks';
 import FullLoading from '@/components/shared/full-loading';
 import axiosInstance from '@/services/axios';
 import { toast } from 'sonner';
+import ContractStatus from '@/components/shared/room/tools/top-right/payroll-button/contract-status';
 
 type Props = {
   items: UserContractType[];
@@ -89,6 +90,12 @@ export default function UserContracts({ items, loading, mutate }: Props) {
           title: 'Ends At',
           render: (item: UserContractType) =>
             moment(item.end_at).format('YYYY/MM/DD'),
+        },
+        {
+          title: 'Status',
+          render: (item: UserContractType) => (
+            <ContractStatus contract={item} />
+          ),
         },
         {
           title: '',
