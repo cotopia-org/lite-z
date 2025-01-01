@@ -245,59 +245,35 @@ export default function RoomHolder({
     if (tries + 1 === max_tries) {
       toast.error("Couldn't join to the room!");
       dispatch({ type: 'STOP_LOADING' });
+      window.location.reload();
     } else {
       await new Promise((r) => setTimeout(r, 1500));
-      // socket?.connect();
 
       await handleJoin(tries + 1);
     }
   };
 
-  const handleJoin = async (tries = 0) => {
-    dispatch({ type: 'START_LOADING' });
+  const handleJoin = useCallback(
+    async (tries = 0) => {
+      dispatch({ type: 'START_LOADING' });
 
-    axiosInstance
-      .get<FetchDataType<WorkspaceRoomJoinType>>(`/rooms/${room_id}/join`)
-      .then((res) => {
-        setPermissionChecked(true);
-        setMustJoin(true);
-        //Setting token in redux for livekit
-        reduxDispatch(setToken(res.data.data.token));
-        dispatch({ type: 'STOP_LOADING' });
-      })
-      .catch((err) => {
-        handleReTry(tries);
+      axiosInstance
+        .get<FetchDataType<WorkspaceRoomJoinType>>(`/rooms/${room_id}/join`)
+        .then((res) => {
+          setPermissionChecked(true);
+          setMustJoin(true);
+          //Setting token in redux for livekit
+          reduxDispatch(setToken(res.data.data.token));
+          dispatch({ type: 'STOP_LOADING' });
+        })
+        .catch((err) => {
+          handleReTry(tries);
 
-        // socket?.disconnect();
-        // toast.error("Couldn't join to the room!");
-      });
-  };
-  // const handleJoin = useCallback(
-  //   async (tries = 0) => {
-  //     if (!socket) {
-  //       toast.error('SOCKET NOT FOUND');
-  //       return;
-  //     }
-  //     dispatch({ type: 'START_LOADING' });
-  //
-  //     axiosInstance
-  //       .get<FetchDataType<WorkspaceRoomJoinType>>(`/rooms/${room_id}/join`)
-  //       .then((res) => {
-  //         setPermissionChecked(true);
-  //         setMustJoin(true);
-  //         //Setting token in redux for livekit
-  //         reduxDispatch(setToken(res.data.data.token));
-  //         dispatch({ type: 'STOP_LOADING' });
-  //       })
-  //       .catch((err) => {
-  //         // handleReTry(tries);
-  //
-  //         socket.connect();
-  //         // toast.error("Couldn't join to the room!");
-  //       });
-  //   },
-  //   [room_id],
-  // );
+          // toast.error("Couldn't join to the room!");
+        });
+    },
+    [room_id],
+  );
 
   // const handlePassed =
   //   permissionChecked === false && !isReConnecting && !isSwitching;
