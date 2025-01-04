@@ -55,7 +55,6 @@ export default function ScheduleItem({
           <span className="font-medium text-grayscale-subtitle">
             {schedule.timezone}
           </span>
-
           <div className="font-medium text-grayscale-subtitle">
             <small>({schedule.hours} hrs in total)</small>
           </div>

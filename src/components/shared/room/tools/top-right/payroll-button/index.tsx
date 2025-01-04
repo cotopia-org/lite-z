@@ -6,15 +6,13 @@ import ExpectedPayments from './expected-payments';
 import CTabs from '@/components/shared-ui/c-tabs';
 import CFullDialog from '@/components/shared-ui/c-dialog/full-dialog';
 import PayrollPage from '@/pages/cotopia-payroll/user/payroll';
-import { Check, Coins } from 'lucide-react';
-import useAuth from '@/hooks/auth';
+import { Coins } from 'lucide-react';
 import { useRoomContext } from '../../../room-context';
 import CotopiaTable from '@/components/shared-ui/c-table';
 import { UserContractType } from '@/types/contract';
 import moment from 'moment';
 import UserPayments from '@/components/shared/cotopia-payroll/payments';
 import { useMemo } from 'react';
-import NotFound from '@/components/shared/layouts/not-found';
 import ContractDetails from './contract-details';
 import { useApi } from '@/hooks/use-api';
 import ContractStatus from './contract-status';
@@ -22,10 +20,7 @@ import ContractStatus from './contract-status';
 const box_width = 506;
 
 export default function PayrollButton() {
-  const { user } = useAuth();
-  const { workspaceUsers, payments } = useRoomContext();
-
-  const myUser = workspaceUsers?.find((a) => a.id === user?.id);
+  const { payments } = useRoomContext();
 
   const totalPendingPaymentsAmount = useMemo(() => {
     return payments
@@ -104,7 +99,6 @@ export default function PayrollButton() {
                                   return <ContractStatus contract={item} />;
                                 },
                               },
-
                               {
                                 title: '',
                                 render: (item: UserContractType) => (
