@@ -1,5 +1,5 @@
-import Gallery from "./background/gallery";
-import { useRoomContext } from "@/components/shared/room/room-context";
+import Gallery from './background/gallery';
+import { useRoomContext } from '@/components/shared/room/room-context';
 
 export default function RoomSettings() {
   const { room_id, workspace_id } = useRoomContext();

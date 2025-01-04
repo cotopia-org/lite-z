@@ -66,7 +66,7 @@ export const useRoomHolder = () => useContext(RoomHolderContext);
 
 type Props = {
   token?: string;
-  workspace_id: string;
+  workspace_id: number;
   room_id: number;
   isReConnecting?: boolean;
   isSwitching?: boolean;

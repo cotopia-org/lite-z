@@ -1,13 +1,13 @@
-import CotopiaButton from "@/components/shared-ui/c-button";
-import { FullModalBox } from "@/components/shared/modal-box";
-import { Plus } from "lucide-react";
-import ManageJobContent from "./content";
-import { JobType } from "@/types/job";
+import CotopiaButton from '@/components/shared-ui/c-button';
+import { FullModalBox } from '@/components/shared/modal-box';
+import { Plus } from 'lucide-react';
+import ManageJobContent from './content';
+import { JobType } from '@/types/job';
 
 interface Props {
   onDelete?: () => void;
   onCreated?: () => void;
-  workspaceId?: string;
+  workspaceId: number;
   parentJobs: JobType[];
 }
 

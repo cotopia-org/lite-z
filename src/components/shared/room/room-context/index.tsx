@@ -26,7 +26,7 @@ type LeftJoinType = { room_id: number; user: UserMinimalType };
 type Props = {
   children: ReactNode;
   room_id: number;
-  workspace_id?: string;
+  workspace_id: number;
 };
 
 const RoomCtx = createContext<{
@@ -34,7 +34,7 @@ const RoomCtx = createContext<{
   updateParticipants: (participants: UserMinimalType[]) => void;
   room?: WorkspaceRoomType;
   roomLoading?: boolean;
-  workspace_id?: string;
+  workspace_id: number;
   livekit_token?: string;
   openSidebar: (node: ReactNode) => void;
   updateUserCoords: (
@@ -64,7 +64,7 @@ const RoomCtx = createContext<{
   updateParticipants: (participants: UserMinimalType[]) => {},
   livekit_token: undefined,
   room_id: 1,
-  workspace_id: undefined,
+  workspace_id: 1,
   sidebar: undefined,
   updateUserCoords: (username, position) => {},
   openSidebar: (item) => {},
@@ -303,7 +303,7 @@ export default function RoomContext({
       (x) =>
         x.user.active === 1 &&
         x.user.status === 'online' &&
-        x.user.workspace_id === +(workspace_id as string),
+        x.user.workspace_id === workspace_id,
     )
     .map((x) => x.user);
 

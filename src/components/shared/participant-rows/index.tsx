@@ -2,16 +2,16 @@ import {
   MicrophoneIcon,
   MirrorScreenIcon,
   VideoIcon,
-} from "@/components/icons";
-import { WorkspaceUserType } from "@/types/user";
-import { ReactNode } from "react";
-import ParticipantsWithPopover from "../participants/with-popover";
-import { useRoomContext } from "../room/room-context";
-import useAuth from "@/hooks/auth";
-import { cn, isUserAdmin } from "@/lib/utils";
-import ParticipantBadge from "./participant-badges";
-import { Crown, Shield } from "lucide-react";
-import ParticipantDetails from "../room/participant-detail";
+} from '@/components/icons';
+import { WorkspaceUserType } from '@/types/user';
+import { ReactNode } from 'react';
+import ParticipantsWithPopover from '../participants/with-popover';
+import { useRoomContext } from '../room/room-context';
+import useAuth from '@/hooks/auth';
+import { cn, isUserAdmin } from '@/lib/utils';
+import ParticipantBadge from './participant-badges';
+import { Crown, Shield } from 'lucide-react';
+import ParticipantDetails from '../room/participant-detail';
 
 interface Props {
   participants: WorkspaceUserType[];
@@ -46,10 +46,10 @@ const ParticipantRows = ({ participants }: Props) => {
 
         const is_mine = participant.username === user?.username;
 
-        const userActiveJob = participant.active_job?.title ?? "Idle";
+        const userActiveJob = participant.active_job?.title ?? 'Idle';
 
         const findWorkspace = participant?.workspaces?.find(
-          (a) => a.id == +(workspace_id as string),
+          (a) => a.id == workspace_id,
         );
 
         return (
@@ -66,29 +66,30 @@ const ParticipantRows = ({ participants }: Props) => {
                 render={(item, content) => {
                   const user = workspaceUsers.find((a) => a.id === item.id);
 
-                  const admin = user
-                    ? isUserAdmin(user, +(workspace_id as string))
-                    : false;
+                  const admin = user ? isUserAdmin(user, workspace_id) : false;
 
                   const isOwner = findWorkspace
-                    ? findWorkspace?.role === "owner"
+                    ? findWorkspace?.role === 'owner'
                     : false;
 
                   return (
-                    <ParticipantDetails user={user as WorkspaceUserType} roomId={room_id}>
+                    <ParticipantDetails
+                      user={user as WorkspaceUserType}
+                      roomId={room_id}
+                    >
                       <div className="relative">
-                      {!!isOwner && (
-                        <div className="absolute top-[-4px] right-[-4px] z-10 bg-muted rounded-full text-primary">
-                          <Crown size={16} />
-                        </div>
-                      )}
-                      {!!admin && !isOwner && (
-                        <div className="absolute top-[-4px] right-[-4px] z-10  bg-muted rounded-full text-primary">
-                          <Shield size={16} />
-                        </div>
-                      )}
-                      {content}
-                    </div>
+                        {!!isOwner && (
+                          <div className="absolute top-[-4px] right-[-4px] z-10 bg-muted rounded-full text-primary">
+                            <Crown size={16} />
+                          </div>
+                        )}
+                        {!!admin && !isOwner && (
+                          <div className="absolute top-[-4px] right-[-4px] z-10  bg-muted rounded-full text-primary">
+                            <Shield size={16} />
+                          </div>
+                        )}
+                        {content}
+                      </div>
                     </ParticipantDetails>
                   );
                 }}
@@ -102,12 +103,12 @@ const ParticipantRows = ({ participants }: Props) => {
                 </div>
                 <span
                   className={cn(
-                    userActiveJob === "Idle" ? "text-yellow-600" : "",
-                    "capitalize text-xs",
+                    userActiveJob === 'Idle' ? 'text-yellow-600' : '',
+                    'capitalize text-xs',
                   )}
                 >
                   {userActiveJob.length > 25
-                    ? userActiveJob.slice(0, 25) + "... "
+                    ? userActiveJob.slice(0, 25) + '... '
                     : userActiveJob}
                 </span>
               </div>

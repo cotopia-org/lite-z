@@ -21,7 +21,7 @@ import FullLoading from '@/components/shared/full-loading';
 import CotopiaSwitch from '@/components/shared-ui/c-switch';
 
 type Props = {
-  workspace_id: string | undefined;
+  workspace_id: number | undefined;
   onBack: () => void;
   setSelectedJob?: (job: JobType) => void;
   onUpdate?: () => void;
