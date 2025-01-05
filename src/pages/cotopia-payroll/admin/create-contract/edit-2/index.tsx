@@ -136,9 +136,7 @@ export default function ManageContract({
           <Accordion type="single" collapsible className="w-full">
             {StaticItems.map((item, index) => {
               const properIndex = index + 1;
-
               const clauseEnabled = values?.content?.includes(properIndex);
-
               return (
                 <AccordionItem value={`item-${properIndex}`} key={properIndex}>
                   <AccordionTrigger>
