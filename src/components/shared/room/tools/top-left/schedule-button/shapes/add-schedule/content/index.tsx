@@ -85,7 +85,6 @@ export default function AddScheduleContent({
   };
 
   const { startLoading, stopLoading, isLoading } = useLoading();
-  console.log('HERE', contractId);
 
   const handleSubmitEvent = () => {
     const userTimeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;

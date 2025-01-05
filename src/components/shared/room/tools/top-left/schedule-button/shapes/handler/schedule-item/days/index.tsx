@@ -71,7 +71,11 @@ export default function Days({
         return (
           <>
             {isSelected ? (
-              <CotopiaTooltip key={day} title={timeOfDayTooltip}>
+              <CotopiaTooltip
+                tooltipTriggerProps={{ onClick: (e) => e.preventDefault() }}
+                key={day}
+                title={timeOfDayTooltip}
+              >
                 {content}
               </CotopiaTooltip>
             ) : (
