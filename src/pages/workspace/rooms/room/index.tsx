@@ -7,7 +7,6 @@ export default function WorkspaceRoomPage() {
   const { workspace_id, room_id } = useParams();
 
   if (!workspace_id || !room_id) return null;
-
   return (
     <RoomSpatialWrapper
       token={token}

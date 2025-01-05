@@ -51,7 +51,7 @@ export default function ChatItemContent({ chat, next, prev }: Props) {
   return (
     <div
       className={cn(
-        'flex flex-col gap-y-2 bg-black/5 rounded-xl rounded-bl-none p-2 max-w-full w-auto min-w-[120px]',
+        'flex flex-col gap-y-2  rounded-xl rounded-bl-none p-2 max-w-full w-auto min-w-[120px] bg-white ',
         prevBelongToMe ? 'rounded-tl-sm' : '',
       )}
     >
@@ -68,7 +68,7 @@ export default function ChatItemContent({ chat, next, prev }: Props) {
       <AttachmentRenderer item={chat} />
       {!!chat?.text && (
         <p
-          className="text-wrap mb-3 w-full"
+          className="text-wrap mb-3 w-full persian-text text-sm"
           dir="auto"
           style={{
             overflowWrap: 'break-word',

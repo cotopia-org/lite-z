@@ -25,6 +25,7 @@ export default function PayrollContractDetails({
   onUpdate,
 }: Props) {
   const [localContract, setLocalContract] = useState(contract);
+
   useEffect(() => {
     setLocalContract(contract);
   }, [contract]);

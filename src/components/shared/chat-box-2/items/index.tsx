@@ -3,7 +3,7 @@ import { useEffect, useRef, useState } from 'react';
 import { useVirtualizer, Virtualizer } from '@tanstack/react-virtual';
 import { Chat2ItemType } from '@/types/chat2';
 import FetchingProgress from './fetching-progress';
-import useBus from 'use-bus';
+import useBus, { dispatch as busDispatch } from 'use-bus';
 import UnSeenHandlers from './un-seen-handlers';
 import useAuth from '@/hooks/auth';
 import { __BUS } from '@/const/bus';
@@ -14,7 +14,7 @@ import { useAppDispatch } from '@/store';
 import { getNextMessages, getPrevMessages } from '@/store/slices/chat-slice';
 import { thunkResHandler } from '@/utils/utils';
 import moment from 'moment';
-import ChatDate from './date';
+import { MessageType } from '@/types/message';
 
 type Props = {
   chat_id: number;
@@ -110,6 +110,8 @@ export default function Items({
         `.chat-item[data-index="${rightIndex}"]`,
       );
 
+      console.log(messageEl);
+
       if (!messageEl || !messageEl) return;
 
       messageEl?.classList?.add('[&]:!bg-blue-500/20');
@@ -147,11 +149,16 @@ export default function Items({
         (res) => {
           const newItems = res?.payload?.items ?? [];
 
-          vlistRef.current?.scrollToIndex(newItems.length);
+          // vlistRef.current?.scrollToIndex(newItems.length);
         },
         () => {},
       );
     }
+  };
+
+  const scrollToUnread = () => {
+    console.log(rightIndex);
+    vlistRef.current?.scrollToIndex(rightIndex);
   };
 
   useEffect(() => {
@@ -176,44 +183,47 @@ export default function Items({
     if (items.length === 0) return;
     if (initScrollEnd.current === true) return;
 
-    vlistRef.current?.scrollToIndex(items.length - 1);
-    initScrollEnd.current = true;
+    // vlistRef.current?.scrollToIndex(items.length - 1);
+
+    scrollToUnread();
+    // initScrollEnd.current = true;
   }, [items, initScrollEnd.current]);
 
+  function formatDate(timestamp: number) {
+    const date = new Date(timestamp * 1000);
+    const now = new Date();
+
+    const options = {
+      month: 'long',
+      day: '2-digit',
+    };
+    if (date.getFullYear() !== now.getFullYear()) {
+      // @ts-ignore
+      options.year = 'numeric';
+    }
+
+    // @ts-ignore
+    return date.toLocaleDateString('en-US', options);
+  }
+
+  // const groupedMessages = messages.reduce((acc: any, message) => {
+  //   const formattedDate = formatDate(message.created_at);
+  //   if (!acc[formattedDate]) {
+  //     acc[formattedDate] = [];
+  //   }
+  //   acc[formattedDate].push(message);
+  //   return acc;
+  // }, {});
+  //
+  // console.log(groupedMessages);
   let content = (
     <>
       {!!isFetching && <FetchingProgress />}
       <VList className="h-full" ref={vlistRef} onScroll={handleScroll}>
-        {messages.map((message, i) => {
-          const messageDate = moment(
-            message?.created_at
-              ? message?.created_at * 1000
-              : message?.nonce_id,
-          ).format('dddd, MMMM D, YYYY');
-          const messagePrevDate = moment(
-            messages[i - 1]?.created_at
-              ? messages[i - 1]?.created_at * 1000
-              : messages[i - 1]?.nonce_id,
-          ).format('dddd, MMMM D, YYYY');
-          const showDateHeader = messageDate !== messagePrevDate;
-
-          return (
-            <div key={i}>
-              {!!showDateHeader && <ChatDate date={messageDate} />}
-              {i === rightIndex && (
-                <div className="flex flex-col w-full text-blue-500 bg-black/5 text-sm items-center justify-center my-4 pointer-events-none">
-                  Unread messages
-                </div>
-              )}
-              <ChatItem
-                item={message}
-                key={message.nonce_id}
-                isMine={message?.user.id === profile?.id}
-                index={i}
-              />
-            </div>
-          );
-        })}
+        <div>Salam</div>
+        {/*{Object.keys(groupedMessages).map((date) => {*/}
+        {/*  return date;*/}
+        {/*})}*/}
       </VList>
     </>
   );
@@ -235,8 +245,13 @@ export default function Items({
     <div className="flex-grow relative">
       <div
         ref={parentRef}
-        className="relative flex-grow overflow-y-auto mb-4 space-y-2"
-        style={{ contain: 'strict', height: '100%' }}
+        className="relative flex-grow overflow-y-auto mb-4 space-y-2 "
+        style={{
+          contain: 'strict',
+          height: '100%',
+          backgroundImage: 'url(/assets/backgrounds/chat-bg-1.png',
+          backgroundSize: 'cover',
+        }}
       >
         {content}
       </div>

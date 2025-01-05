@@ -2,169 +2,211 @@
 @tailwind components;
 @tailwind utilities;
 
+
+@font-face {
+    font-family: 'Roboto'; /* Replace with your Google Font */
+    src: url('https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap');
+}
+
+@font-face {
+    font-family: 'IRANSansX';
+    src: url('/public/assets/fonts/iransans/IRANSansX-Regular.woff') format('woff');
+    font-weight: normal;
+    font-style: normal;
+    unicode-range: U+0600-06FF, U+0750-077F; /* Arabic and Persian Unicode range */
+}
+
+@font-face {
+    font-family: 'IRANSansX';
+    src: url('/public/assets/fonts/iransans/IRANSansX-Bold.woff') format('woff');
+    font-weight: bold;
+    font-style: normal;
+    unicode-range: U+0600-06FF, U+0750-077F;
+}
+
+@font-face {
+    font-family: 'IRANSansX';
+    src: url('/public/assets/fonts/iransans/IRANSansX-Light.woff') format('woff');
+    font-weight: 300;
+    font-style: normal;
+    unicode-range: U+0600-06FF, U+0750-077F;
+}
+
+.persian-text {
+    font-family: 'IRANSansX', 'Roboto', system-ui; /* Apply the font only for Arabic and Persian */
+    font-weight: normal; /* Adjust weight as needed */
+
+}
+
+* {
+    font-family: 'IRANSansX', 'Roboto', system-ui;
+}
+
 input[type="number"]::-webkit-inner-spin-button,
 input[type="number"]::-webkit-outer-spin-button {
-  -webkit-appearance: none;
-  -moz-appearance: none;
-  appearance: none;
-  margin: 0;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    margin: 0;
 }
 
 @layer base {
-  :root {
-    --background: #ffffff;
-    --foreground: #1c1c1e;
+    :root {
+        --background: #ffffff;
+        --foreground: #1c1c1e;
 
-    --card: #ffffff;
-    --card-foreground: #1c1c1e;
+        --card: #ffffff;
+        --card-foreground: #1c1c1e;
 
-    --popover: #ffffff;
-    --popover-foreground: #1c1c1e;
+        --popover: #ffffff;
+        --popover-foreground: #1c1c1e;
 
-    /*Primary*/
-    --primary: #1b5bff;
-    --primary-label: #0040e0;
-    --primary-foreground: #ffffff;
-    --primary-light: #d1deff;
-    --primary-body: #1b5bff;
-    --primary-background: #ebf0ff;
-    --primary-border: #1b5bff;
+        /*Primary*/
+        --primary: #1b5bff;
+        --primary-label: #0040e0;
+        --primary-foreground: #ffffff;
+        --primary-light: #d1deff;
+        --primary-body: #1b5bff;
+        --primary-background: #ebf0ff;
+        --primary-border: #1b5bff;
 
-    /*Secondary*/
-    --secondary: #d1e8ff;
-    --secondary-foreground: #1c1c2d;
+        /*Secondary*/
+        --secondary: #d1e8ff;
+        --secondary-foreground: #1c1c2d;
 
-    --muted: #d1e8ff;
-    --muted-foreground: #717882;
+        --muted: #d1e8ff;
+        --muted-foreground: #717882;
 
-    --accent: rgba(209, 232, 255, 0.2);
-    --accent-foreground: #1c1c2d;
+        --accent: rgba(209, 232, 255, 0.2);
+        --accent-foreground: #1c1c2d;
 
-    --destructive: #f75255;
-    --destructive-foreground: #d1e8ff;
+        --destructive: #f75255;
+        --destructive-foreground: #d1e8ff;
 
-    --border: #e4eaf0;
+        --border: #e4eaf0;
 
-    --input: #e4eaf0;
+        --input: #e4eaf0;
 
-    --ring: #1c1c1e;
+        --ring: #1c1c1e;
 
-    /*Grayscale */
+        /*Grayscale */
 
-    --grayscale: #333652;
-    --grayscale-light: #f2f2f2;
-    --grayscale-subtitle: #656b9f;
-    --grayscale-paragraph: #333652;
-    --grayscale-caption: #a4a7c6;
-    --grayscale-border: #babcd4;
-    --grayscale-title: #191b29;
-    --grayscale-subtle: #fdfdfd;
-    --grayscale-disabled: #e6e6e6;
+        --grayscale: #333652;
+        --grayscale-light: #f2f2f2;
+        --grayscale-subtitle: #656b9f;
+        --grayscale-paragraph: #333652;
+        --grayscale-caption: #a4a7c6;
+        --grayscale-border: #babcd4;
+        --grayscale-title: #191b29;
+        --grayscale-subtle: #fdfdfd;
+        --grayscale-disabled: #e6e6e6;
 
-    /*Error*/
+        /*Error*/
 
-    --error: #a80027;
-    --error-surface-default: #ffebef;
+        --error: #a80027;
+        --error-surface-default: #ffebef;
 
-    /*Warning*/
-    --warning: #ad9c00;
-    --warning-light: #fffad1;
-    /*Success*/
-    --success: #00ad26;
-    --success-surface-default: #ebffef;
+        /*Warning*/
+        --warning: #ad9c00;
+        --warning-light: #fffad1;
+        /*Success*/
+        --success: #00ad26;
+        --success-surface-default: #ebffef;
 
-    --radius: 8px;
-  }
+        --radius: 8px;
+    }
 
-  /* .dark {
-    --background: #1C1C1E;
-    --foreground: #D1E8FF;
+    /* .dark {
+      --background: #1C1C1E;
+      --foreground: #D1E8FF;
 
-    --card: #1C1C1E;
-    --card-foreground: #D1E8FF;
+      --card: #1C1C1E;
+      --card-foreground: #D1E8FF;
 
-    --popover: #1C1C1E;
-    --popover-foreground: #D1E8FF;
+      --popover: #1C1C1E;
+      --popover-foreground: #D1E8FF;
 
-    --primary: #D1E8FF;
-    --primary-foreground: #1C1C2D;
+      --primary: #D1E8FF;
+      --primary-foreground: #1C1C2D;
 
-    --secondary: #2D344A;
-    --secondary-foreground: #D1E8FF;
+      --secondary: #2D344A;
+      --secondary-foreground: #D1E8FF;
 
-    --muted: #2D344A;
-    --muted-foreground: #76829B;
+      --muted: #2D344A;
+      --muted-foreground: #76829B;
 
-    --accent: #2D344A;
-    --accent-foreground: #D1E8FF;
+      --accent: #2D344A;
+      --accent-foreground: #D1E8FF;
 
-    --destructive: #5A0D0F;
-    --destructive-foreground: #D1E8FF;
+      --destructive: #5A0D0F;
+      --destructive-foreground: #D1E8FF;
 
-    --border: #2D344A;
-    --input: #2D344A;
-    --ring: #495773;
-  } */
+      --border: #2D344A;
+      --input: #2D344A;
+      --ring: #495773;
+    } */
 }
 
 @layer base {
-  * {
-    @apply border-border;
-  }
-  body {
-    @apply bg-background text-foreground;
-  }
+    * {
+        @apply border-border;
+    }
+
+    body {
+        @apply bg-background text-foreground;
+    }
 }
 
 ::-webkit-scrollbar {
-  width: 10px;
+    width: 10px;
 }
 
 /* Track */
 ::-webkit-scrollbar-track {
-  background: #f1f1f1;
-  border-radius: 100vh;
+    background: #f1f1f1;
+    border-radius: 100vh;
 }
 
 /* Handle */
 ::-webkit-scrollbar-thumb {
-  background: #888;
-  border-radius: 100vh;
+    background: #888;
+    border-radius: 100vh;
 }
 
 /* Handle on hover */
 ::-webkit-scrollbar-thumb:hover {
-  background: #555;
+    background: #555;
 }
 
 .user-circle .lk-participant-media-video,
 .mirror-video {
-  transform: rotateY(180deg);
-  -webkit-transform: rotateY(180deg);
-  -moz-transform: rotateY(180deg);
+    transform: rotateY(180deg);
+    -webkit-transform: rotateY(180deg);
+    -moz-transform: rotateY(180deg);
 }
 
 .react-flow__node {
-  transition: 0.03s all;
+    transition: 0.03s all;
 }
 
 /* Hide scrollbar for all major browsers */
 * {
-  scrollbar-width: none; /* Firefox */
-  -ms-overflow-style: none; /* Internet Explorer 10+ */
+    scrollbar-width: none; /* Firefox */
+    -ms-overflow-style: none; /* Internet Explorer 10+ */
 }
 
 *::-webkit-scrollbar {
-  display: none; /* Safari and Chrome */
+    display: none; /* Safari and Chrome */
 }
 
 .react-flow__attribution.bottom {
-  display: none;
+    display: none;
 }
 
 .react-flow__node-shareScreenNode {
-  z-index: 99999 !important;
+    z-index: 99999 !important;
 }
+
 .react-flow__node-userNode {
-  z-index: 100000 !important;
+    z-index: 100000 !important;
 }

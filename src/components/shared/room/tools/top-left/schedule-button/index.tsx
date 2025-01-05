@@ -17,12 +17,12 @@ import { FetchDataType } from '@/services/axios';
 
 export type FulFillmentType = {
   percentage: number;
-  total_week_activities_in_schedules: number;
-  total_week_schedules: number;
+  total_month_activities_in_schedules: number;
+  total_month_schedule: number;
 };
 export default function ScheduleButton() {
   const { data, isLoading, mutate } =
-    useApi<FetchDataType<ScheduleType[]>>(`/users/me/schedules`);
+    useApi<FetchDataType<ScheduleType[]>>(`/users/1/schedules`);
 
   const schedules = data !== undefined ? data?.data : [];
 
@@ -85,7 +85,7 @@ export default function ScheduleButton() {
             width={'auto'}
           >
             <div className="flex w-full flex-col gap-y-2 items-end max-h-[400px] overflow-y-auto">
-              <ScheduleFillment userId={'me'} />
+              <ScheduleFillment userId={'1'} />
               {content}
               {/*<AddScheduleButton onDelete={mutate} onCreated={() => mutate()} />*/}
             </div>
@@ -103,21 +103,39 @@ export function ScheduleFillment({ userId }: { userId?: string | number }) {
 
   const fulfillmentData = fulfillment?.data;
   if (fulfillmentData === undefined) return <></>;
+
+  const percent = fulfillmentData.percentage;
+  const min = 50;
+  const max = 100;
+  const mid = 80;
+
+  let bg = 'bg-primary';
+  let text = 'text-primary';
+  if (percent <= min) {
+    bg = 'bg-red-500';
+    text = 'text-red-500';
+  }
+
+  if (percent >= mid) {
+    bg = 'bg-green-500';
+    text = 'text-green-500';
+  }
+
   return (
     <div className={'w-full'}>
       {isLoading && <FullLoading />}
-      Last week schedule fillment
-      <div className={'bg-slate-300 h-[4px] rounded-lg'}>
+      This month schedule commitment
+      <div className={'bg-slate-300 h-[5px] rounded-lg'}>
         <div
-          className="h-full bg-primary rounded-l-lg"
+          className={'h-full rounded-l-lg ' + bg}
           style={{
             width: fulfillmentData.percentage + '' + '%',
           }}
         />
       </div>
-      <p className={'text-center m-1 text-sm'}>
-        {formatTime(fulfillmentData.total_week_activities_in_schedules)} /{' '}
-        {formatTime(fulfillmentData.total_week_schedules)} (
+      <p className={'text-center m-1 text-sm font-bold ' + text}>
+        {formatTime(fulfillmentData.total_month_activities_in_schedules)} /{' '}
+        {formatTime(fulfillmentData.total_month_schedule)} (
         {fulfillmentData.percentage}%)
       </p>
     </div>

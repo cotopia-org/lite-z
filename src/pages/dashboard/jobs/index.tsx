@@ -13,6 +13,7 @@ import EditJob from '@/pages/dashboard/jobs/edit';
 import JobStatus from '@/components/shared/room/tools/top-left/job-button/shapes/job-list/job-item/job-status';
 import { Pencil, Plus } from 'lucide-react';
 import CreateJob from '@/pages/dashboard/jobs/create';
+import { useDashboard } from '@/pages/dashboard';
 
 type Props = {
   isAll?: boolean;
@@ -20,9 +21,8 @@ type Props = {
 
 export default function Jobs({ isAll = true }: Props) {
   const [selectStatus, setSelectStatus] = useState<string>('all');
-  const [selectedJob, setSelectedJob] = useState<JobType>();
-  const [previousJob, setPreviousJob] = useState<JobType>();
-  const [selectedEdit, setSelectedEdit] = useState<JobType>();
+
+  const { item, selectItem } = useDashboard();
 
   const [creating, setCreating] = useState<boolean>(false);
 
@@ -38,13 +38,6 @@ export default function Jobs({ isAll = true }: Props) {
   const jobsMeta = data !== undefined ? data?.meta : [];
 
   let finalJobs = jobs;
-
-  useEffect(() => {
-    if (selectedJob === undefined) {
-      console.log('Reset');
-      setPreviousJob(undefined);
-    }
-  }, [selectedJob]);
 
   const tableHeadItems = useMemo(() => {
     const items = [
@@ -74,7 +67,7 @@ export default function Jobs({ isAll = true }: Props) {
           return (
             <CotopiaButton
               variant={'link'}
-              onClick={() => setSelectedJob(item)}
+              onClick={() => selectItem(item, 'job')}
             >
               {item.title}
             </CotopiaButton>
@@ -89,7 +82,7 @@ export default function Jobs({ isAll = true }: Props) {
             return (
               <CotopiaButton
                 variant={'link'}
-                onClick={() => setSelectedJob(item.parent)}
+                onClick={() => selectItem(item.parent, 'job')}
               >
                 {item.parent.title}
               </CotopiaButton>
@@ -118,6 +111,16 @@ export default function Jobs({ isAll = true }: Props) {
     return items;
   }, [isAll]);
 
+  if (item && item.type === 'job' && !item.edit)
+    return (
+      <Job
+        onBack={() => {
+          selectItem(undefined);
+        }}
+        job={item.data}
+      />
+    );
+
   if (creating) {
     return (
       <CreateJob
@@ -125,43 +128,21 @@ export default function Jobs({ isAll = true }: Props) {
           setCreating(false);
         }}
         workspace_id={workspace_id}
-        setSelectedJob={setSelectedJob}
+        setSelectedJob={(item) => {
+          selectItem(item, 'job');
+        }}
         onUpdate={mutate}
       />
     );
   }
-  if (selectedEdit)
+
+  if (item && item.type === 'job' && item.edit)
     return (
       <EditJob
         onBack={() => {
-          setSelectedJob(selectedEdit);
-          setSelectedEdit(undefined);
+          selectItem(item.data, 'job');
         }}
-        job={selectedEdit}
-        setSelectedJob={setSelectedJob}
         onUpdate={mutate}
-      />
-    );
-  if (selectedJob)
-    return (
-      <Job
-        onBack={() => {
-          console.log(
-            'p',
-            previousJob === undefined || previousJob.id === selectedJob.id
-              ? undefined
-              : previousJob,
-          );
-          setSelectedJob(
-            previousJob === undefined || previousJob.id === selectedJob.id
-              ? undefined
-              : previousJob,
-          );
-        }}
-        job={selectedJob}
-        setSelectedJob={setSelectedJob}
-        setSelectedEdit={setSelectedEdit}
-        setPreviousJob={setPreviousJob}
       />
     );
 

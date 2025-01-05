@@ -41,11 +41,10 @@ import { MentionType } from '@/types/mention';
 import * as Yup from 'yup';
 import { toast } from 'sonner';
 import CotopiaSwitch from '@/components/shared-ui/c-switch';
+import { useDashboard } from '@/pages/dashboard';
 
 type Props = {
-  job: JobType;
   onBack: () => void;
-  setSelectedJob?: (job: JobType) => void;
   onUpdate?: () => void;
 };
 const dropdownItems = [
@@ -54,12 +53,10 @@ const dropdownItems = [
   { title: 'Paused', value: 'paused' },
   { title: 'Started', value: 'started' },
 ];
-export default function EditJob({
-  job,
-  onBack,
-  onUpdate,
-  setSelectedJob,
-}: Props) {
+export default function EditJob({ onBack, onUpdate }: Props) {
+  const { item, selectItem } = useDashboard();
+
+  const job = item.data;
   const { data: workspaceJobs } = useApi<FetchDataType<JobType[]>>(
     '/workspaces/' + job.workspace_id + '/jobs',
   );
@@ -118,9 +115,7 @@ export default function EditJob({
           onUpdate();
           onBack();
         }
-        if (setSelectedJob) {
-          setSelectedJob(data.data.data);
-        }
+        selectItem(data.data.data, 'job');
         stopLoading();
       } catch (error) {
         stopLoading();

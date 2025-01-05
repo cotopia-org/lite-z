@@ -1,11 +1,11 @@
-import Chat from "./chat";
-import useBus from "use-bus";
-import { __BUS } from "@/const/bus";
-import { useSlides } from "../slide-pusher";
-import { useAppDispatch } from "@/store";
-import { deleteChat, setCurrentChat } from "@/store/slices/chat-slice";
-import { useChat2 } from "@/hooks/chat/use-chat-2";
-import ChatInnerHolder from "./chat/holder";
+import Chat from './chat';
+import useBus from 'use-bus';
+import { __BUS } from '@/const/bus';
+import { useSlides } from '../slide-pusher';
+import { useAppDispatch } from '@/store';
+import { deleteChat, setCurrentChat } from '@/store/slices/chat-slice';
+import { useChat2 } from '@/hooks/chat/use-chat-2';
+import ChatInnerHolder from './chat/holder';
 
 type Props = {};
 export default function UserChatList() {
@@ -20,7 +20,6 @@ export default function UserChatList() {
     appDispatch(setCurrentChat(chat));
     push(<ChatInnerHolder onBack={back} chat_id={chat?.id} />);
   });
-
   return (
     <div className="w-full chats-holder flex flex-col gap-y-0 overflow-y-auto">
       {chats.map((chat) => (

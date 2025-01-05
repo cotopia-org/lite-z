@@ -1,6 +1,5 @@
 'use client';
 
-import { LiveKitRoom } from '@livekit/components-react';
 import RoomContext from './room-context';
 import RoomInner from './room-inner';
 import { WorkspaceRoomJoinType } from '@/types/room';
@@ -13,7 +12,7 @@ import {
   useState,
 } from 'react';
 import LiveKitConnectionStatus from './connection-status';
-import CheckPermissions2 from './check-permissions-2';
+// import CheckPermissions2 from './check-permissions-2';
 import ChatWrapper from '../chat-wrapper';
 import { ReactFlowProvider } from '@xyflow/react';
 import { toast } from 'sonner';
@@ -285,16 +284,7 @@ export default function RoomHolder({
     },
     [permissionChecked, isSwitching, isReConnecting],
   );
-
-  content = (
-    <>
-      <LiveKitConnectionStatus />
-      <RoomInner />
-    </>
-  );
-
-  // if (!mustJoin) content = <CheckPermissions2 onChecked={handleJoin} />;
-  if (!mustJoin || state.loading)
+  if (!mustJoin || state.loading) {
     return (
       <div
         className={
@@ -304,6 +294,16 @@ export default function RoomHolder({
         <p>Please wait...</p>
       </div>
     );
+  } else {
+    content = (
+      <>
+        <LiveKitConnectionStatus />
+        <RoomInner />
+      </>
+    );
+  }
+
+  // if (!mustJoin) content = <CheckPermissions2 onChecked={handleJoin} />;
 
   return (
     <RoomHolderContext.Provider

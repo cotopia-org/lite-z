@@ -7,11 +7,11 @@ import { UserType } from '@/types/user';
 import User from '@/pages/dashboard/users/single';
 import CotopiaAvatar from '@/components/shared-ui/c-avatar';
 import moment from 'moment';
+import { useDashboard } from '@/pages/dashboard';
 
 export default function Users() {
-  const [selectedUser, setSelectedUser] = useState<UserType>();
-
-  const { workspaceUsers, workspace_id } = useRoomContext();
+  const { selectItem, item } = useDashboard();
+  const { workspaceUsers } = useRoomContext();
 
   const tableHeadItems = useMemo(() => {
     return [
@@ -26,7 +26,7 @@ export default function Users() {
         render: (user: UserType) => {
           return (
             <div
-              onClick={() => setSelectedUser(user)}
+              onClick={() => selectItem(user, 'user')}
               className={
                 'flex gap-2 items-center w-auto cursor-pointer  rounded p-1'
               }
@@ -84,13 +84,13 @@ export default function Users() {
     ];
   }, []);
 
-  if (selectedUser)
+  if (item && item.type === 'user')
     return (
       <User
         onBack={() => {
-          setSelectedUser(undefined);
+          selectItem(undefined);
         }}
-        user={selectedUser}
+        user={item.data}
       />
     );
 

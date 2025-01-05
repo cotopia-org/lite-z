@@ -143,6 +143,7 @@ export default function JobButton() {
             ]}
           />
         );
+        const isAdmin = isUserAdmin(user, workspace_id);
 
         if (isLoading || data === undefined) content = <FullLoading />;
 
@@ -157,29 +158,34 @@ export default function JobButton() {
           >
             <div className="flex w-full flex-col gap-y-6 items-end">
               {content}
-              <div
-                className={'w-full flex flex-row items-center justify-between'}
-              >
-                <CFullDialog
-                  trigger={(open) => (
-                    <CotopiaButton
-                      className="min-w-[100px] !bg-primary"
-                      onClick={open}
-                    >
-                      Dashboard
-                    </CotopiaButton>
-                  )}
+
+              {isAdmin && (
+                <div
+                  className={
+                    'w-full flex flex-row items-center justify-between'
+                  }
                 >
-                  {(close) => {
-                    return <Dashboard onClose={close} defaultPage={'jobs'} />;
-                  }}
-                </CFullDialog>
-                <AddJobHandler
-                  parentJobs={parentItems}
-                  workspaceId={workspace_id}
-                  onCreated={mutate}
-                />
-              </div>
+                  <CFullDialog
+                    trigger={(open) => (
+                      <CotopiaButton
+                        className="min-w-[100px] !bg-primary"
+                        onClick={open}
+                      >
+                        Dashboard
+                      </CotopiaButton>
+                    )}
+                  >
+                    {(close) => {
+                      return <Dashboard onClose={close} defaultPage={'jobs'} />;
+                    }}
+                  </CFullDialog>
+                  <AddJobHandler
+                    parentJobs={parentItems}
+                    workspaceId={workspace_id}
+                    onCreated={mutate}
+                  />
+                </div>
+              )}
             </div>
           </PopupBoxChild>
         );
