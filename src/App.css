@@ -3,34 +3,34 @@
 @tailwind utilities;
 
 
-/*@font-face {*/
-/*    font-family: 'Roboto'; !* Replace with your Google Font *!*/
-/*    src: url('https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap');*/
-/*}*/
+@font-face {
+    font-family: 'Roboto'; /* Replace with your Google Font */
+    src: url('https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap');
+}
 
-/*@font-face {*/
-/*    font-family: 'IRANSansX';*/
-/*    src: url('/public/assets/fonts/iransans/IRANSansX-Regular.woff') format('woff');*/
-/*    font-weight: normal;*/
-/*    font-style: normal;*/
-/*    unicode-range: U+0600-06FF, U+0750-077F; !* Arabic and Persian Unicode range *!*/
-/*}*/
+@font-face {
+    font-family: 'IRANSansX';
+    src: url('/public/assets/fonts/iransans/IRANSansX-Regular.woff') format('woff');
+    font-weight: normal;
+    font-style: normal;
+    unicode-range: U+0600-06FF, U+0750-077F; /* Arabic and Persian Unicode range */
+}
 
-/*@font-face {*/
-/*    font-family: 'IRANSansX';*/
-/*    src: url('/public/assets/fonts/iransans/IRANSansX-Bold.woff') format('woff');*/
-/*    font-weight: bold;*/
-/*    font-style: normal;*/
-/*    unicode-range: U+0600-06FF, U+0750-077F;*/
-/*}*/
+@font-face {
+    font-family: 'IRANSansX';
+    src: url('/public/assets/fonts/iransans/IRANSansX-Bold.woff') format('woff');
+    font-weight: bold;
+    font-style: normal;
+    unicode-range: U+0600-06FF, U+0750-077F;
+}
 
-/*@font-face {*/
-/*    font-family: 'IRANSansX';*/
-/*    src: url('/public/assets/fonts/iransans/IRANSansX-Light.woff') format('woff');*/
-/*    font-weight: 300;*/
-/*    font-style: normal;*/
-/*    unicode-range: U+0600-06FF, U+0750-077F;*/
-/*}*/
+@font-face {
+    font-family: 'IRANSansX';
+    src: url('/public/assets/fonts/iransans/IRANSansX-Light.woff') format('woff');
+    font-weight: 300;
+    font-style: normal;
+    unicode-range: U+0600-06FF, U+0750-077F;
+}
 
 .persian-text {
     font-family: 'IRANSansX', 'Roboto', system-ui; /* Apply the font only for Arabic and Persian */
