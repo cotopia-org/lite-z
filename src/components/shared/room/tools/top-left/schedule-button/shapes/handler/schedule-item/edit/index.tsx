@@ -42,7 +42,10 @@ export default function EditButton({ schedule, onDelete, onUpdate }: Props) {
       trigger={(open) => (
         <CotopiaTooltip title="Edit schedule">
           <CotopiaIconButton
-            onClick={open}
+            onClick={(e) => {
+              e.preventDefault();
+              open();
+            }}
             className="text-black/60 hover:text-black w-6 h-6"
             type="button"
           >
@@ -52,18 +55,20 @@ export default function EditButton({ schedule, onDelete, onUpdate }: Props) {
       )}
       className="w-[640px]"
     >
-      {(open, close) => (
-        <AddScheduleContent
-          onClose={close}
-          defaultId={schedule.id}
-          defaultValue={defaultValue}
-          onUpdate={onUpdate}
-          onDelete={() => {
-            if (onDelete) onDelete();
-            close();
-          }}
-        />
-      )}
+      {(open, close) => {
+        return (
+          <AddScheduleContent
+            onClose={close}
+            defaultId={schedule.id}
+            defaultValue={defaultValue}
+            onUpdate={onUpdate}
+            onDelete={() => {
+              if (onDelete) onDelete();
+              close();
+            }}
+          />
+        );
+      }}
     </FullModalBox>
   );
 }
