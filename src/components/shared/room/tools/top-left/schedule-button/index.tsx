@@ -22,7 +22,7 @@ export type FulFillmentType = {
 };
 export default function ScheduleButton() {
   const { data, isLoading, mutate } =
-    useApi<FetchDataType<ScheduleType[]>>(`/users/1/schedules`);
+    useApi<FetchDataType<ScheduleType[]>>(`/users/me/schedules`);
 
   const schedules = data !== undefined ? data?.data : [];
 
@@ -85,7 +85,7 @@ export default function ScheduleButton() {
             width={'auto'}
           >
             <div className="flex w-full flex-col gap-y-2 items-end max-h-[400px] overflow-y-auto">
-              <ScheduleFillment userId={'1'} />
+              <ScheduleFillment userId={'me'} />
               {content}
               {/*<AddScheduleButton onDelete={mutate} onCreated={() => mutate()} />*/}
             </div>

@@ -15,6 +15,7 @@ import { getNextMessages, getPrevMessages } from '@/store/slices/chat-slice';
 import { thunkResHandler } from '@/utils/utils';
 import moment from 'moment';
 import { MessageType } from '@/types/message';
+import ChatDate from '@/components/shared/chat-box-2/items/date';
 
 type Props = {
   chat_id: number;
@@ -131,8 +132,9 @@ export default function Items({
     if (onGetVirtualizer) onGetVirtualizer(rowVirtualizer);
   }, [onGetVirtualizer, rowVirtualizer]);
 
+  const [isScrolling, setIsScrolling] = useState(false);
   const handleScroll = () => {
-    if (chatItemInit.current === false) return;
+    // if (chatItemInit.current === false) return;
 
     if (!vlistRef.current) return;
 
@@ -154,6 +156,10 @@ export default function Items({
         () => {},
       );
     }
+
+    // setInterval(() => {
+    //   setIsScrolling(false);
+    // }, 5000);
   };
 
   const scrollToUnread = () => {
@@ -206,24 +212,44 @@ export default function Items({
     return date.toLocaleDateString('en-US', options);
   }
 
-  // const groupedMessages = messages.reduce((acc: any, message) => {
-  //   const formattedDate = formatDate(message.created_at);
-  //   if (!acc[formattedDate]) {
-  //     acc[formattedDate] = [];
-  //   }
-  //   acc[formattedDate].push(message);
-  //   return acc;
-  // }, {});
-  //
-  // console.log(groupedMessages);
+  const groupedMessages = messages.reduce((acc: any, message) => {
+    const formattedDate = formatDate(message.created_at);
+    if (!acc[formattedDate]) {
+      acc[formattedDate] = [];
+    }
+    acc[formattedDate].push(message);
+    return acc;
+  }, {});
+
   let content = (
     <>
       {!!isFetching && <FetchingProgress />}
       <VList className="h-full" ref={vlistRef} onScroll={handleScroll}>
-        <div>Salam</div>
-        {/*{Object.keys(groupedMessages).map((date) => {*/}
-        {/*  return date;*/}
-        {/*})}*/}
+        {Object.keys(groupedMessages).map((date) => {
+          return (
+            <div>
+              <ChatDate date={date} />
+
+              {groupedMessages[date].map((message: any, i: number) => {
+                return (
+                  <div>
+                    <ChatItem
+                      item={message}
+                      key={message.nonce_id}
+                      isMine={message?.user.id === profile?.id}
+                      index={i}
+                    />
+                    {i === rightIndex && (
+                      <div className="flex flex-col w-full text-blue-500 bg-black/5 text-sm items-center justify-center my-4 pointer-events-none">
+                        Unread messages
+                      </div>
+                    )}
+                  </div>
+                );
+              })}
+            </div>
+          );
+        })}
       </VList>
     </>
   );
