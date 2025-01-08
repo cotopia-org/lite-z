@@ -1,10 +1,10 @@
-import { ChatItemType } from "@/types/chat";
-import { useEffect, useRef, useState } from "react";
-import { useReachTop } from "@/hooks/use-reach-top";
-import useBus from "use-bus";
+import { ChatItemType } from '@/types/chat';
+import { useEffect, useRef, useState } from 'react';
+import { useReachTop } from '@/hooks/use-reach-top';
+import useBus from 'use-bus';
 
-import NotFound from "../layouts/not-found";
-import { __BUS } from "@/const/bus";
+import NotFound from '../layouts/not-found';
+import { __BUS } from '@/const/bus';
 
 type Props = {
   items: ChatItemType[];
@@ -18,7 +18,7 @@ export default function ChatBox({
   items = [],
   observer_user_id,
   onLoadMessage,
-  className = "",
+  className = '',
   fetchNewMessage,
   isFetching,
 }: Props) {
@@ -28,7 +28,7 @@ export default function ChatBox({
 
   const [boxHasScroll, setBoxHasScroll] = useState(false);
   const [boxScrollHeight, setBoxScrollHeight] = useState(0);
-  const [scrollDirection, setScrollDirection] = useState<"top" | "down">("top");
+  const [scrollDirection, setScrollDirection] = useState<'top' | 'down'>('top');
 
   const isFirst = useRef(true);
 
@@ -79,11 +79,11 @@ export default function ChatBox({
         boxRef.current.scrollTo({
           top: boxRef.current.offsetTop + 500,
           //@ts-ignore
-          behavior: "instant",
+          behavior: 'instant',
         });
       }, 100);
     },
-    []
+    [],
   );
   useBus(
     __BUS.scrollToTargetMessage,
@@ -91,35 +91,35 @@ export default function ChatBox({
       const messageId = data?.messageId;
 
       const messageEl: HTMLDivElement | null = document.querySelector(
-        `.chat-item[data-id="${messageId}"]`
+        `.chat-item[data-id="${messageId}"]`,
       );
 
       if (!messageEl || !messageEl) return;
 
-      messageEl?.classList?.add("[&_.message-box]:!bg-blue-500/20");
-      messageEl?.classList?.add("[&_.message-box]:animate-pulse");
+      messageEl?.classList?.add('[&_.message-box]:!bg-blue-500/20');
+      messageEl?.classList?.add('[&_.message-box]:animate-pulse');
 
       boxRef.current?.scrollTo({
         top: messageEl.offsetTop - 200,
-        behavior: "smooth",
+        behavior: 'smooth',
       });
 
       setTimeout(() => {
-        messageEl?.classList?.remove("[&_.message-box]:!bg-blue-500/20");
-        messageEl?.classList?.remove("[&_.message-box]:animate-pulse");
+        messageEl?.classList?.remove('[&_.message-box]:!bg-blue-500/20');
+        messageEl?.classList?.remove('[&_.message-box]:animate-pulse');
       }, 1500);
     },
-    [boxRef.current]
+    [boxRef.current],
   );
 
   let clss =
-    "relative flex flex-col gap-y-4 max-h-full overflow-y-auto pb-8 px-2";
+    'relative flex flex-col gap-y-4 max-h-full overflow-y-auto pb-8 px-2';
 
   const { reachTop: isReachTop, diff } = useReachTop(boxRef?.current);
 
   const loadMoreMessages = () => {
     if (!boxRef.current) return;
-    if (scrollDirection === "down") return;
+    if (scrollDirection === 'down') return;
 
     if (onLoadMessage) {
       setBoxScrollHeight(boxRef?.current.scrollHeight);
@@ -161,12 +161,12 @@ export default function ChatBox({
       boxRef.current.scrollTo({ top: boxRef.current.scrollHeight });
     }
   }, [boxRef?.current]);
-  if (items.length === 0) content = <NotFound title='No messages found!' />;
+  if (items.length === 0) content = <NotFound title="No messages found!" />;
 
   return (
     <>
       {!!boxHasScroll && !isReachTop && (
-        <div className='absolute top-[32px] left-0 h-[32px] z-10 bg-gradient-to-b from-white to-transparent w-full flex'></div>
+        <div className="absolute top-[32px] left-0 h-[32px] z-10 bg-gradient-to-b from-white to-transparent w-full flex"></div>
       )}
       <div
         className={`${clss} ${className}`}
@@ -176,7 +176,7 @@ export default function ChatBox({
           boxRef.current = xref;
         }}
       >
-        <div className='flex flex-col-reverse w-full gap-y-4' dir='auto'>
+        <div className="flex flex-col-reverse w-full gap-y-4" dir="auto">
           {content}
         </div>
       </div>

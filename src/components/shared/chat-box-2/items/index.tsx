@@ -16,6 +16,7 @@ import { thunkResHandler } from '@/utils/utils';
 import moment from 'moment';
 import { MessageType } from '@/types/message';
 import ChatDate from '@/components/shared/chat-box-2/items/date';
+import axiosInstance from '@/services/axios';
 
 type Props = {
   chat_id: number;
@@ -36,6 +37,9 @@ export default function Items({
   const { chatObjects, editMessage } = useChat2({ chat_id });
 
   const items = chatObjects?.[chat_id]?.messages ?? [];
+  //
+  //
+  // const unreadMessages = axiosInstance.get(`/chats/${chat_id}/unreadMessages`);
 
   const itemIndex = items.findIndex((x) => x.id === lastMessageUnseen);
 
@@ -100,28 +104,30 @@ export default function Items({
       const messageId = data?.messageId;
 
       const itemIndex = items.findIndex((x) => +x.nonce_id === +messageId);
+      console.log('Here', messageId, itemIndex);
 
       if (itemIndex === -1) return;
 
-      const rightIndex = items.length - (itemIndex + 1);
+      // const rightIndex = items.length - (itemIndex + 1);
 
-      rowVirtualizer.scrollToIndex(rightIndex);
-
-      const messageEl: HTMLDivElement | null = document.querySelector(
-        `.chat-item[data-index="${rightIndex}"]`,
-      );
-
-      console.log(messageEl);
-
-      if (!messageEl || !messageEl) return;
-
-      messageEl?.classList?.add('[&]:!bg-blue-500/20');
-      messageEl?.classList?.add('[&]:animate-pulse');
-
-      setTimeout(() => {
-        messageEl?.classList?.remove('[&]:!bg-blue-500/20');
-        messageEl?.classList?.remove('[&]:animate-pulse');
-      }, 1500);
+      // vlistRef.current?.scrollToIndex(rightIndex);
+      // // rowVirtualizer.scrollToIndex(rightIndex);
+      //
+      // const messageEl: HTMLDivElement | null = document.querySelector(
+      //   `.chat-item[data-index="${messageId}"]`,
+      // );
+      //
+      // console.log(messageEl);
+      //
+      // if (!messageEl || !messageEl) return;
+      //
+      // messageEl?.classList?.add('[&]:!bg-blue-500/20');
+      // messageEl?.classList?.add('[&]:animate-pulse');
+      //
+      // setTimeout(() => {
+      //   messageEl?.classList?.remove('[&]:!bg-blue-500/20');
+      //   messageEl?.classList?.remove('[&]:animate-pulse');
+      // }, 1500);
     },
     [items],
   );
@@ -186,6 +192,7 @@ export default function Items({
   const initScrollEnd = useRef(false);
 
   useEffect(() => {
+    console.log('Here2');
     if (items.length === 0) return;
     if (initScrollEnd.current === true) return;
 
@@ -225,7 +232,7 @@ export default function Items({
     <>
       {!!isFetching && <FetchingProgress />}
       <VList className="h-full" ref={vlistRef} onScroll={handleScroll}>
-        {Object.keys(groupedMessages).map((date) => {
+        {Object.keys(groupedMessages).map((date, j) => {
           return (
             <div>
               <ChatDate date={date} />
@@ -237,13 +244,15 @@ export default function Items({
                       item={message}
                       key={message.nonce_id}
                       isMine={message?.user.id === profile?.id}
-                      index={i}
+                      index={messages.indexOf(message)}
                     />
-                    {i === rightIndex && (
-                      <div className="flex flex-col w-full text-blue-500 bg-black/5 text-sm items-center justify-center my-4 pointer-events-none">
-                        Unread messages
-                      </div>
-                    )}
+                    {messages.indexOf(message) === rightIndex &&
+                      messages.indexOf(message) !== messages.length - 1 && (
+                        <div className="flex flex-col w-full text-blue-500 h-6 bg-white text-sm items-center justify-center my-4 pointer-events-none">
+                          Unread messages
+                        </div>
+                      )}
+                    {messages.indexOf(message)}
                   </div>
                 );
               })}
