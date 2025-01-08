@@ -25,6 +25,7 @@ export type FulFillmentType = {
   total_days: number;
   mustWorkPerDay: number;
   totalDaysUntilNow: number;
+  minimumWork: number;
 };
 export default function ScheduleButton() {
   const { data, isLoading, mutate } =
@@ -131,6 +132,7 @@ export function CommitmentSection({
     </>
   );
 }
+
 export function ScheduleFillment({ userId }: { userId?: string | number }) {
   const { data: fulfillment, isLoading } = useApi<
     FetchDataType<FulFillmentType>
@@ -186,17 +188,22 @@ export function ScheduleFillment({ userId }: { userId?: string | number }) {
           label={'Remaining'}
         />
       </div>
-      <div className={'mt-1   '}>
-        If work{' '}
-        <span className={'font-bold'}>
-          +{formatTime(fulfillmentData.mustWorkPerDay, true)}
-        </span>{' '}
-        hour/day will touch commitment of total{' '}
-        <span className={'font-bold'}>
-          {formatTime(fulfillmentData.total_schedule, true)}
-        </span>{' '}
-        hrs
-      </div>
+
+      {fulfillmentData.mustWorkPerDay > 0 && (
+        <div className={'my-1   text-red-500'}>
+          Need{' '}
+          <span className={'font-bold'}>
+            +{formatTime(fulfillmentData.mustWorkPerDay)}
+          </span>{' '}
+          hour/day to touch commitment of total{' '}
+          <span className={'font-bold tex'}>
+            {formatTime(fulfillmentData.minimumWork, true)} (50% of{' '}
+            {formatTime(fulfillmentData.total_schedule, true)} total hours
+            scheduled)
+          </span>{' '}
+          hrs
+        </div>
+      )}
     </div>
   );
 }
