@@ -122,10 +122,10 @@ export function CommitmentSection({
         }}
       >
         <h2 className="w-full  text-center leading-border-text -mb-3 ">
-          <span className="bg-white text-sm p-1 font-medium">{label}</span>
+          <span className="bg-white text-xs p-1 font-medium">{label}</span>
         </h2>
         <div className={'py-2  text-center    ' + bg}>
-          <div className=" ">{data}</div>
+          <div className=" text-sm">{data}</div>
         </div>
       </div>
     </>
@@ -187,11 +187,11 @@ export function ScheduleFillment({ userId }: { userId?: string | number }) {
         />
       </div>
       <div className={'mt-1   '}>
-        If you work{' '}
+        If work{' '}
         <span className={'font-bold'}>
           +{formatTime(fulfillmentData.mustWorkPerDay, true)}
         </span>{' '}
-        hour/day you’ll touch your commitment of total{' '}
+        hour/day will touch commitment of total{' '}
         <span className={'font-bold'}>
           {formatTime(fulfillmentData.total_schedule, true)}
         </span>{' '}
