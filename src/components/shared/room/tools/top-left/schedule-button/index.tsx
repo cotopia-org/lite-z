@@ -118,9 +118,10 @@ export function CommitmentSection({
       <div
         style={{
           width: percentage + '' + '%',
+          minWidth: '130px',
         }}
       >
-        <h2 className="w-full text-center leading-border-text -mb-3 ">
+        <h2 className="w-full  text-center leading-border-text -mb-3 ">
           <span className="bg-white text-sm p-1 font-medium">{label}</span>
         </h2>
         <div className={'py-2  text-center    ' + bg}>
@@ -161,26 +162,26 @@ export function ScheduleFillment({ userId }: { userId?: string | number }) {
     (fulfillmentData.remaining / fulfillmentData.total_schedule) * 100;
 
   return (
-    <div className={'w-full'}>
+    <div className={'w-full '}>
       {isLoading && <FullLoading />}
       <div className={'mb-1 font-bold'}>This month schedule commitment</div>
       <div className={'flex flex-row items-center  w-full'}>
         <CommitmentSection
           bg={'border-green-500 border-t-2 border-b-2 border-l-2 rounded-l'}
-          data={formatTime(fulfillmentData.done)}
+          data={`${formatTime(fulfillmentData.done)} (${fulfillmentData.percentage.toFixed(2)}%)`}
           percentage={fulfillmentData.percentage}
           label={'Done'}
         />
 
         <CommitmentSection
           bg={'border-red-500 border-t-2 border-b-2'}
-          data={formatTime(fulfillmentData.missing)}
+          data={`${formatTime(fulfillmentData.missing)} (${missingPercent.toFixed(2)}%)`}
           percentage={missingPercent}
           label={'Missed'}
         />
         <CommitmentSection
           bg={'border-slate-500 border-t-2 border-b-2 border-r-2 rounded-r'}
-          data={formatTime(fulfillmentData.remaining)}
+          data={`${formatTime(fulfillmentData.remaining)} (${remainingPercent.toFixed(2)}%)`}
           percentage={remainingPercent}
           label={'Remaining'}
         />
