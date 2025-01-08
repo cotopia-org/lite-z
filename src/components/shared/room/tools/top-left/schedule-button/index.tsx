@@ -163,6 +163,10 @@ export function ScheduleFillment({ userId }: { userId?: string | number }) {
   const remainingPercent =
     (fulfillmentData.remaining / fulfillmentData.total_schedule) * 100;
 
+  if (fulfillmentData.total_schedule < 1) {
+    return null;
+  }
+
   return (
     <div className={'w-full '}>
       {isLoading && <FullLoading />}
