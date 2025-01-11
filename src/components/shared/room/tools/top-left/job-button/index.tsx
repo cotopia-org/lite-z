@@ -159,12 +159,10 @@ export default function JobButton() {
             <div className="flex w-full flex-col gap-y-6 items-end">
               {content}
 
-              {isAdmin && (
-                <div
-                  className={
-                    'w-full flex flex-row items-center justify-between'
-                  }
-                >
+              <div
+                className={'w-full flex flex-row items-center justify-between'}
+              >
+                {isAdmin && (
                   <CFullDialog
                     trigger={(open) => (
                       <CotopiaButton
@@ -179,13 +177,14 @@ export default function JobButton() {
                       return <Dashboard onClose={close} defaultPage={'jobs'} />;
                     }}
                   </CFullDialog>
-                  <AddJobHandler
-                    parentJobs={parentItems}
-                    workspaceId={workspace_id}
-                    onCreated={mutate}
-                  />
-                </div>
-              )}
+                )}
+
+                <AddJobHandler
+                  parentJobs={parentItems}
+                  workspaceId={workspace_id}
+                  onCreated={mutate}
+                />
+              </div>
             </div>
           </PopupBoxChild>
         );

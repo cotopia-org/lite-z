@@ -1,10 +1,10 @@
-import CotopiaIconButton from "@/components/shared-ui/c-icon-button";
-import CotopiaTooltip from "@/components/shared-ui/c-tooltip";
-import { Calendar } from "lucide-react";
-import { useUserDetail } from "..";
-import { capitalizeWords } from "@/lib/utils";
-import ModalBox from "@/components/shared/modal-box";
-import SchedulesList from "./list";
+import CotopiaIconButton from '@/components/shared-ui/c-icon-button';
+import CotopiaTooltip from '@/components/shared-ui/c-tooltip';
+import { Calendar } from 'lucide-react';
+import { useUserDetail } from '..';
+import { capitalizeWords } from '@/lib/utils';
+import ModalBox from '@/components/shared/modal-box';
+import SchedulesList from './list';
 
 export default function UserSchedules() {
   const { user } = useUserDetail();
@@ -24,14 +24,14 @@ export default function UserSchedules() {
         <CotopiaTooltip title={boxLabel}>
           <CotopiaIconButton
             onClick={open}
-            size={"icon"}
-            className='text-black w-6 h-6'
+            size={'icon'}
+            className="text-black w-6 h-6"
           >
             <Calendar size={16} />
           </CotopiaIconButton>
         </CotopiaTooltip>
       )}
-      className='w-auto'
+      className="w-auto min-w-[800px]"
     >
       {(open, close) => {
         return <SchedulesList justView />;

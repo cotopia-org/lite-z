@@ -23,7 +23,7 @@ export default function Schedules({
     );
 
   return (
-    <div className="mb-6 flex flex-col gap-y-2">
+    <div className="mb-6 flex w-full flex-col gap-y-2">
       {items.map((x) => (
         <ScheduleItem
           schedule={x}

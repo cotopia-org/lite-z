@@ -17,8 +17,15 @@ import { FetchDataType } from '@/services/axios';
 
 export type FulFillmentType = {
   percentage: number;
-  total_month_activities_in_schedules: number;
-  total_month_schedule: number;
+  total_until_now_schedule: number;
+  total_schedule: number;
+  done: number;
+  missing: number;
+  remaining: number;
+  total_days: number;
+  mustWorkPerDay: number;
+  totalDaysUntilNow: number;
+  minimumWork: number;
 };
 export default function ScheduleButton() {
   const { data, isLoading, mutate } =
@@ -84,7 +91,7 @@ export default function ScheduleButton() {
             title={title_node}
             width={'auto'}
           >
-            <div className="flex w-full flex-col gap-y-2 items-end max-h-[400px] overflow-y-auto">
+            <div className="flex w-full flex-col gap-y-2 items-end   max-h-[400px] overflow-y-auto">
               <ScheduleFillment userId={'me'} />
               {content}
               {/*<AddScheduleButton onDelete={mutate} onCreated={() => mutate()} />*/}
@@ -96,10 +103,40 @@ export default function ScheduleButton() {
   );
 }
 
+export function CommitmentSection({
+  percentage,
+  data,
+  bg,
+  label,
+}: {
+  percentage: number;
+  data: string;
+  bg: string;
+  label: string;
+}) {
+  return (
+    <>
+      <div
+        style={{
+          width: percentage + '' + '%',
+          minWidth: '130px',
+        }}
+      >
+        <h2 className="w-full  text-center leading-border-text -mb-3 ">
+          <span className="bg-white text-xs p-1 font-medium">{label}</span>
+        </h2>
+        <div className={'py-2  text-center    ' + bg}>
+          <div className=" text-sm">{data}</div>
+        </div>
+      </div>
+    </>
+  );
+}
+
 export function ScheduleFillment({ userId }: { userId?: string | number }) {
   const { data: fulfillment, isLoading } = useApi<
     FetchDataType<FulFillmentType>
-  >(`/users/${userId}/scheduleFulfillment`);
+  >(`/users/${userId}/scheduleCommitment`);
 
   const fulfillmentData = fulfillment?.data;
   if (fulfillmentData === undefined) return <></>;
@@ -121,23 +158,99 @@ export function ScheduleFillment({ userId }: { userId?: string | number }) {
     text = 'text-green-500';
   }
 
+  const missingPercent =
+    (fulfillmentData.missing / fulfillmentData.total_schedule) * 100;
+  const remainingPercent =
+    (fulfillmentData.remaining / fulfillmentData.total_schedule) * 100;
+
+  if (fulfillmentData.total_schedule < 1) {
+    return null;
+  }
+
   return (
-    <div className={'w-full'}>
+    <div className={'w-full '}>
       {isLoading && <FullLoading />}
-      This month schedule commitment
-      <div className={'bg-slate-300 h-[5px] rounded-lg'}>
-        <div
-          className={'h-full rounded-l-lg ' + bg}
-          style={{
-            width: fulfillmentData.percentage + '' + '%',
-          }}
+      <div className={'mb-1 font-bold'}>This month schedule commitment</div>
+      <div className={'flex flex-row items-center  w-full'}>
+        <CommitmentSection
+          bg={'border-green-500 border-t-2 border-b-2 border-l-2 rounded-l'}
+          data={`${formatTime(fulfillmentData.done)} (${fulfillmentData.percentage.toFixed(2)}%)`}
+          percentage={fulfillmentData.percentage}
+          label={'Done'}
+        />
+
+        <CommitmentSection
+          bg={'border-red-500 border-t-2 border-b-2'}
+          data={`${formatTime(fulfillmentData.missing)} (${missingPercent.toFixed(2)}%)`}
+          percentage={missingPercent}
+          label={'Missed'}
+        />
+        <CommitmentSection
+          bg={'border-slate-500 border-t-2 border-b-2 border-r-2 rounded-r'}
+          data={`${formatTime(fulfillmentData.remaining)} (${remainingPercent.toFixed(2)}%)`}
+          percentage={remainingPercent}
+          label={'Remaining'}
         />
       </div>
-      <p className={'text-center m-1 text-sm font-bold ' + text}>
-        {formatTime(fulfillmentData.total_month_activities_in_schedules)} /{' '}
-        {formatTime(fulfillmentData.total_month_schedule)} (
-        {fulfillmentData.percentage}%)
-      </p>
+
+      {fulfillmentData.mustWorkPerDay > 0 && (
+        <div className={'my-1   text-red-500'}>
+          Need{' '}
+          <span className={'font-bold'}>
+            +{formatTime(fulfillmentData.mustWorkPerDay)}
+          </span>{' '}
+          hour/day to touch commitment of total{' '}
+          <span className={'font-bold tex'}>
+            {formatTime(fulfillmentData.minimumWork, true)} (50% of{' '}
+            {formatTime(fulfillmentData.total_schedule, true)} total hours
+            scheduled)
+          </span>{' '}
+          hrs
+        </div>
+      )}
     </div>
   );
+}
+
+{
+  /*  <div className={'bg-slate-300 h-[5px] rounded-lg'}>*/
+}
+{
+  /*    <div*/
+}
+{
+  /*        className={'h-full rounded-l-lg ' + bg}*/
+}
+{
+  /*        style={{*/
+}
+{
+  /*          width: fulfillmentData.percentage + '' + '%',*/
+}
+{
+  /*        }}*/
+}
+{
+  /*    />*/
+}
+{
+  /*  </div>*/
+}
+{
+  /*  <p className={'text-center m-1 text-sm font-bold ' + text}>*/
+}
+{
+  /*    {formatTime(fulfillmentData.total_month_activities_in_schedules)} /{' '}*/
+}
+{
+  /*    {formatTime(fulfillmentData.total_month_schedule)} (*/
+}
+{
+  /*    {fulfillmentData.percentage}%)*/
+}
+{
+  /*  </p>*/
+}
+{
+  /*</div>*/
 }
