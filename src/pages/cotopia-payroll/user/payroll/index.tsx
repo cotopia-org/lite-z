@@ -13,7 +13,7 @@ type Props = {
   onClose: () => void;
 };
 
-export type PayrollPage =
+export type PayrollPageType =
   | 'all-members'
   | 'all-user-contract'
   | 'user-contract'
@@ -25,8 +25,8 @@ export type PayrollPage =
 
 const PayrollContext = createContext<{
   onClose: () => void;
-  page: PayrollPage;
-  changePage: (page: PayrollPage) => void;
+  page: PayrollPageType;
+  changePage: (page: PayrollPageType) => void;
 }>({
   onClose: () => {},
   page: 'user-contract',
@@ -36,7 +36,7 @@ const PayrollContext = createContext<{
 export const usePayroll = () => useContext(PayrollContext);
 
 export default function PayrollPage({ onClose }: Props) {
-  const [active, setActive] = useState<PayrollPage>('user-contract');
+  const [active, setActive] = useState<PayrollPageType>('user-contract');
   let content = null;
   switch (active) {
     case 'all-user-contract':

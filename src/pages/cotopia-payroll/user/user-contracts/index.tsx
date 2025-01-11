@@ -1,16 +1,8 @@
-import { useApi } from '@/hooks/swr';
-import { UserContractType } from '@/types/contract';
 import UserContracts from '../../common/user-contracts';
+import { useContractsCtx } from '@/components/shared/room/tools/top-right/payroll-button';
 
 export default function MyContracts() {
-  const { data, isLoading, mutate } = useApi(`/users/me/contracts`);
-  const items: UserContractType[] = data !== undefined ? data?.data : [];
+  const { myContracts: items, loading } = useContractsCtx();
 
-  return (
-    <UserContracts
-      items={items}
-      mutate={mutate}
-      loading={isLoading || data === undefined}
-    />
-  );
+  return <UserContracts items={items} loading={loading} />;
 }

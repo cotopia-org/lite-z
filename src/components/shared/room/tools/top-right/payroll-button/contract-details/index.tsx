@@ -1,4 +1,3 @@
-import CBadge from '@/components/shared-ui/c-badge';
 import CotopiaButton from '@/components/shared-ui/c-button';
 import CDialog from '@/components/shared-ui/c-dialog';
 import PayrollContractDetails from '@/components/shared/cotopia-payroll/user-information/user-contract/contract-details';
@@ -29,13 +28,7 @@ export default function ContractDetails({
       )}
       dialogContentCss="w-[800px] max-w-full max-h-screen md:max-h-[calc(100vh-64px)] overflow-y-auto"
     >
-      {(close) => (
-        <PayrollContractDetails
-          onUpdate={mutate}
-          contract={contract}
-          onBack={close}
-        />
-      )}
+      {(close) => <PayrollContractDetails contract={contract} onBack={close} />}
     </CDialog>
   );
 }

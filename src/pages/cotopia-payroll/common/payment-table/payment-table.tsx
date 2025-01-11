@@ -9,7 +9,6 @@ import { ChevronRight } from 'lucide-react';
 import { useMemo, useState } from 'react';
 import PaymentStatus from './payment-status';
 import PayrollCreatePayments from '../../admin/create-payments';
-import { getContractStatus } from '@/lib/utils';
 import PaymentTab from './payment-tab';
 import TitleEl from '@/components/shared/title-el';
 import ContractDetails from '@/components/shared/room/tools/top-right/payroll-button/contract-details';

@@ -1,15 +1,13 @@
 import {
-  CircleDollarSign,
   Coins,
   Grid,
   HandCoins,
   User,
   UserRoundPen,
-  Users,
   X,
 } from 'lucide-react';
 import CotopiaButton from '@/components/shared-ui/c-button';
-import { PayrollPage, usePayroll } from '@/pages/cotopia-payroll/user/payroll';
+import { PayrollPageType, usePayroll } from '@/pages/cotopia-payroll/user/payroll';
 import { ReactNode } from 'react';
 import { cn, isUserAdmin } from '@/lib/utils';
 import useAuth from '@/hooks/auth';
@@ -24,7 +22,7 @@ export default function PayrollSideBarLink() {
 
   const links: {
     title: string;
-    page: PayrollPage;
+    page: PayrollPageType;
     icon: ReactNode;
   }[] = isAdmin
     ? [
