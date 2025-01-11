@@ -315,7 +315,7 @@ export function isUserAdmin(
   );
 }
 
-export function formatTime(totalMinutes: number): string {
+export function formatTime(totalMinutes: number, short = false): string {
   const hours = Math.floor(totalMinutes / 60);
   const wholeMinutes = Math.floor(totalMinutes % 60); // Extract whole minutes
   const seconds = Math.round((totalMinutes % 1) * 60); // Convert fractional part to seconds
@@ -334,7 +334,9 @@ export function formatTime(totalMinutes: number): string {
     adjustedMinutes = 0;
     adjustedHours += 1;
   }
-
+  if (short) {
+    return String(adjustedHours).padStart(2, '0');
+  }
   return `${String(adjustedHours).padStart(2, '0')}:${String(adjustedMinutes).padStart(2, '0')}:${String(adjustedSeconds).padStart(2, '0')}`;
 }
 

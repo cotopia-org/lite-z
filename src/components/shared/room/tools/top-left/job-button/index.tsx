@@ -1,22 +1,22 @@
-import PopupBox from "@/components/shared/popup-box";
-import PopupBoxChild from "@/components/shared/popup-box/child";
-import ToolButton from "../../tool-button";
-import { BriefcaseIcon } from "@/components/icons";
-import { useRoomContext } from "../../../room-context";
-import { useApi } from "@/hooks/swr";
-import { isUserAdmin, urlWithQueryParams } from "@/lib/utils";
-import FullLoading from "@/components/shared/full-loading";
-import AddJobHandler from "./shapes/add-job";
-import { JobType, JobStatusType } from "@/types/job";
-import { FetchDataType } from "@/services/axios";
-import JobItems from "@/components/shared/job-items";
-import CTabs from "@/components/shared-ui/c-tabs";
-import useAuth from "@/hooks/auth";
-import CotopiaButton from "@/components/shared-ui/c-button";
-import { Plus } from "lucide-react";
-import CFullDialog from "@/components/shared-ui/c-dialog/full-dialog";
-import Jobs from "@/pages/dashboard/jobs";
-import Dashboard from "@/pages/dashboard";
+import PopupBox from '@/components/shared/popup-box';
+import PopupBoxChild from '@/components/shared/popup-box/child';
+import ToolButton from '../../tool-button';
+import { BriefcaseIcon } from '@/components/icons';
+import { useRoomContext } from '../../../room-context';
+import { useApi } from '@/hooks/swr';
+import { isUserAdmin, urlWithQueryParams } from '@/lib/utils';
+import FullLoading from '@/components/shared/full-loading';
+import AddJobHandler from './shapes/add-job';
+import { JobType, JobStatusType } from '@/types/job';
+import { FetchDataType } from '@/services/axios';
+import JobItems from '@/components/shared/job-items';
+import CTabs from '@/components/shared-ui/c-tabs';
+import useAuth from '@/hooks/auth';
+import CotopiaButton from '@/components/shared-ui/c-button';
+import { Plus } from 'lucide-react';
+import CFullDialog from '@/components/shared-ui/c-dialog/full-dialog';
+import Jobs from '@/pages/dashboard/jobs';
+import Dashboard from '@/pages/dashboard';
 
 export default function JobButton() {
   const { workspace_id } = useRoomContext();
@@ -31,12 +31,12 @@ export default function JobButton() {
 
   const { data: suggestionsJobs, mutate: mutateSuggest } = useApi<
     FetchDataType<JobType[]>
-  >("/users/mentionedJobs?suggests=true", undefined, {
+  >('/users/mentionedJobs?suggests=true', undefined, {
     isPaused: () => workspace_id === undefined,
   });
 
   const { data: parentJobs } = useApi<FetchDataType<JobType[]>>(
-    "/users/mentionedJobs",
+    '/users/mentionedJobs',
     undefined,
     {
       isPaused: () => workspace_id === undefined,
@@ -47,15 +47,15 @@ export default function JobButton() {
   let suggestItems = (suggestionsJobs && suggestionsJobs?.data) ?? [];
   let parentItems = (parentJobs && parentJobs?.data) ?? [];
 
-  let job_label = "Create job";
+  let job_label = 'Create job';
   const active_job = user?.active_job;
 
   if (active_job)
     job_label =
       active_job.title.length > 20
-        ? active_job.title.slice(0, 20) + "... "
+        ? active_job.title.slice(0, 20) + '... '
         : active_job.title;
-  if (!active_job && jobItems.length > 0) job_label = "Start job";
+  if (!active_job && jobItems.length > 0) job_label = 'Start job';
 
   return (
     <PopupBox
@@ -78,52 +78,52 @@ export default function JobButton() {
             defaultValue="in_progress"
             items={[
               {
-                title: "In Progress",
+                title: 'In Progress',
                 content: (
                   <JobItems
                     user={user}
                     hasAction
                     items={jobItems.filter((x) =>
-                      ["in_progress"].includes(x.status + ""),
+                      ['in_progress'].includes(x.status + ''),
                     )}
                     onMutate={mutate}
                     parentJobs={isUserAdmin(user) ? jobItems : suggestItems}
                   />
                 ),
-                value: "in_progress",
+                value: 'in_progress',
               },
               {
-                title: "Paused",
+                title: 'Paused',
                 content: (
                   <JobItems
                     user={user}
                     hasAction
                     items={jobItems.filter((x) =>
-                      ["paused"].includes(x.status + ""),
+                      ['paused'].includes(x.status + ''),
                     )}
                     onMutate={mutate}
                     parentJobs={isUserAdmin(user) ? jobItems : suggestItems}
                   />
                 ),
-                value: "paused",
+                value: 'paused',
               },
               {
-                title: "Completed",
+                title: 'Completed',
                 content: (
                   <JobItems
                     user={user}
                     hasAction
                     items={jobItems.filter((x) =>
-                      ["completed"].includes(x.status + ""),
+                      ['completed'].includes(x.status + ''),
                     )}
                     parentJobs={isUserAdmin(user) ? jobItems : suggestItems}
                     onMutate={mutate}
                   />
                 ),
-                value: "completed",
+                value: 'completed',
               },
               {
-                title: "Suggested",
+                title: 'Suggested',
                 content: (
                   <JobItems
                     user={user}
@@ -137,12 +137,13 @@ export default function JobButton() {
                     parentJobs={isUserAdmin(user) ? jobItems : suggestItems}
                   />
                 ),
-                value: "suggestions",
+                value: 'suggestions',
                 // badge: suggestItems.length > 0,
               },
             ]}
           />
         );
+        const isAdmin = isUserAdmin(user, workspace_id);
 
         if (isLoading || data === undefined) content = <FullLoading />;
 
@@ -157,23 +158,27 @@ export default function JobButton() {
           >
             <div className="flex w-full flex-col gap-y-6 items-end">
               {content}
+
               <div
-                className={"w-full flex flex-row items-center justify-between"}
+                className={'w-full flex flex-row items-center justify-between'}
               >
-                <CFullDialog
-                  trigger={(open) => (
-                    <CotopiaButton
-                      className="min-w-[100px] !bg-primary"
-                      onClick={open}
-                    >
-                      Dashboard
-                    </CotopiaButton>
-                  )}
-                >
-                  {(close) => {
-                    return <Dashboard onClose={close} defaultPage={"jobs"} />;
-                  }}
-                </CFullDialog>
+                {isAdmin && (
+                  <CFullDialog
+                    trigger={(open) => (
+                      <CotopiaButton
+                        className="min-w-[100px] !bg-primary"
+                        onClick={open}
+                      >
+                        Dashboard
+                      </CotopiaButton>
+                    )}
+                  >
+                    {(close) => {
+                      return <Dashboard onClose={close} defaultPage={'jobs'} />;
+                    }}
+                  </CFullDialog>
+                )}
+
                 <AddJobHandler
                   parentJobs={parentItems}
                   workspaceId={workspace_id}

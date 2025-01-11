@@ -1,11 +1,11 @@
-import React from "react";
-import Items from "./items";
-import ChatInput from "./input";
-import { Virtualizer } from "@tanstack/react-virtual";
-import PinMessages from "./pins";
-import { useChat2 } from "@/hooks/chat/use-chat-2";
-import { cn } from "@/lib/utils";
-import { __BUS } from "@/const/bus";
+import React from 'react';
+import Items from './items';
+import ChatInput from './input';
+import { Virtualizer } from '@tanstack/react-virtual';
+import PinMessages from './pins';
+import { useChat2 } from '@/hooks/chat/use-chat-2';
+import { cn } from '@/lib/utils';
+import { __BUS } from '@/const/bus';
 
 type Props = {
   chat_id: number;
@@ -25,8 +25,8 @@ const Chat2: React.FC<Props> = ({
   let content = (
     <div
       className={cn(
-        "flex flex-col h-full bg-black/[.04] relative",
-        currentChatPins ? "pt-16" : "",
+        'flex flex-col h-full  relative',
+        currentChatPins ? 'pt-12' : '',
       )}
     >
       <PinMessages />
@@ -43,7 +43,7 @@ const Chat2: React.FC<Props> = ({
   return (
     <>
       {content}
-      {typeof addMessage === "function" && (
+      {typeof addMessage === 'function' && (
         <ChatInput addMessage={addMessage} />
       )}
     </>

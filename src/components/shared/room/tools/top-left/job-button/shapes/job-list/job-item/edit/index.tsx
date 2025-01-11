@@ -1,10 +1,10 @@
-import CotopiaIconButton from "@/components/shared-ui/c-icon-button";
-import CotopiaTooltip from "@/components/shared-ui/c-tooltip";
-import { FullModalBox } from "@/components/shared/modal-box";
-import { JobType } from "@/types/job";
-import ManageJobContent from "../../../add-job/content";
-import { EditIcon } from "@/components/icons";
-import { colors } from "@/const/varz";
+import CotopiaIconButton from '@/components/shared-ui/c-icon-button';
+import CotopiaTooltip from '@/components/shared-ui/c-tooltip';
+import { FullModalBox } from '@/components/shared/modal-box';
+import { JobType } from '@/types/job';
+import ManageJobContent from '../../../add-job/content';
+import { EditIcon } from '@/components/icons';
+import { colors } from '@/const/varz';
 
 type Props = {
   job: JobType;

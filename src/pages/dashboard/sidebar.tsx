@@ -2,16 +2,17 @@ import { Coins, Grid, HandCoins, User, UserRoundPen, X } from 'lucide-react';
 import CotopiaButton from '@/components/shared-ui/c-button';
 import { ReactNode } from 'react';
 import { cn } from '@/lib/utils';
+import { PageType } from '@/pages/dashboard/index';
 
 type Props = {
   onClose?: () => void;
   links: {
     title: string;
-    page: string;
+    page: PageType;
     icon: ReactNode;
     content: ReactNode;
   }[];
-  handleChange: (page: string) => void;
+  handleChange: (page: PageType) => void;
   page?: string;
 };
 export default function Sidebar({ onClose, links, handleChange, page }: Props) {

@@ -1,15 +1,15 @@
-"use client";
+'use client';
 
-import FullLoading from "@/components/shared/full-loading";
-import { Checkbox } from "@/components/ui/checkbox";
+import FullLoading from '@/components/shared/full-loading';
+import { Checkbox } from '@/components/ui/checkbox';
 import {
   Table,
   TableBody,
   TableCell,
   TableHead,
   TableRow,
-} from "@/components/ui/table";
-import { ReactNode, useCallback, useEffect, useState } from "react";
+} from '@/components/ui/table';
+import { ReactNode, useCallback, useEffect, useState } from 'react';
 
 export type TableItems = {
   title?: string;
@@ -37,7 +37,7 @@ const CotopiaTable = ({
   loading = false,
   isSelectable = false,
   defaultSelectedIds,
-  notFoundMessage = "There is no items!",
+  notFoundMessage = 'There is no items!',
   onSelectIds,
   onSelectAllIds,
   onDeSelectAllIds,
@@ -56,7 +56,7 @@ const CotopiaTable = ({
         setSelectableIds((crt) => {
           const nVal = [...crt, id];
           //When all items has been selected we should trigger the onSelectAllIds
-          if (nVal.length === items.length && onSelectAllIds)
+          if (nVal?.length === items?.length && onSelectAllIds)
             onSelectAllIds(nVal);
           if (onSelectIds) onSelectIds(nVal);
           return nVal;
@@ -69,12 +69,12 @@ const CotopiaTable = ({
         });
       }
     },
-    [selectableIds, onSelectIds]
+    [selectableIds, onSelectIds],
   );
 
   const selectAllHandler = useCallback(() => {
     if (!isSelectAll) {
-      if (items.length === 0) return;
+      if (items?.length === 0) return;
       const allIds = items.map((item) => item?.id);
       setSelectableIds(allIds);
       if (onSelectIds) onSelectIds(allIds);
@@ -100,7 +100,7 @@ const CotopiaTable = ({
             {item?.id && isSelectable && (
               <TableCell>
                 <Checkbox
-                  className='justify-center'
+                  className="justify-center"
                   onSelect={() => toggleSelectItem(item?.id)}
                   checked={itemIsChecked}
                 />
@@ -111,7 +111,7 @@ const CotopiaTable = ({
                 className={`${tdItem?.className}`}
                 key={tdKey}
                 colSpan={tdItem.colSpan}
-                align={tdItem.align || "left"}
+                align={tdItem.align || 'left'}
               >
                 {tdItem.render(item, rowKey)}
               </TableCell>
@@ -122,10 +122,10 @@ const CotopiaTable = ({
     </>
   );
 
-  if (items.length === 0)
+  if (items?.length === 0)
     content = (
       <TableRow>
-        <TableCell colSpan={tableHeadItems.length} className='text-center'>
+        <TableCell colSpan={tableHeadItems?.length} className="text-center">
           <span>{notFoundMessage}</span>
         </TableCell>
       </TableRow>
@@ -134,7 +134,7 @@ const CotopiaTable = ({
   if (loading)
     content = (
       <TableRow>
-        <TableCell colSpan={tableHeadItems.length} className='text-center'>
+        <TableCell colSpan={tableHeadItems?.length} className="text-center">
           <FullLoading />
         </TableCell>
       </TableRow>
@@ -142,13 +142,13 @@ const CotopiaTable = ({
 
   return (
     <Table>
-      <TableRow className='w-full'>
+      <TableRow className="w-full">
         {!!isSelectable && (
-          <TableHead align='left'>
+          <TableHead align="left">
             <Checkbox
               onSelect={selectAllHandler}
               checked={isSelectAll}
-              className='justify-center'
+              className="justify-center"
             />
           </TableHead>
         )}
@@ -156,7 +156,7 @@ const CotopiaTable = ({
           return (
             <TableHead
               key={key}
-              className='font-normal text-base text-black/[.87] text-left'
+              className="font-normal text-base text-black/[.87] text-left"
             >
               {item.title}
             </TableHead>

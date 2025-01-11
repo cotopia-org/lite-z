@@ -3,7 +3,7 @@ import { useEffect, useRef, useState } from 'react';
 import { useVirtualizer, Virtualizer } from '@tanstack/react-virtual';
 import { Chat2ItemType } from '@/types/chat2';
 import FetchingProgress from './fetching-progress';
-import useBus from 'use-bus';
+import useBus, { dispatch as busDispatch } from 'use-bus';
 import UnSeenHandlers from './un-seen-handlers';
 import useAuth from '@/hooks/auth';
 import { __BUS } from '@/const/bus';
@@ -14,7 +14,9 @@ import { useAppDispatch } from '@/store';
 import { getNextMessages, getPrevMessages } from '@/store/slices/chat-slice';
 import { thunkResHandler } from '@/utils/utils';
 import moment from 'moment';
-import ChatDate from './date';
+import { MessageType } from '@/types/message';
+import ChatDate from '@/components/shared/chat-box-2/items/date';
+import axiosInstance from '@/services/axios';
 
 type Props = {
   chat_id: number;
@@ -35,6 +37,9 @@ export default function Items({
   const { chatObjects, editMessage } = useChat2({ chat_id });
 
   const items = chatObjects?.[chat_id]?.messages ?? [];
+  //
+  //
+  // const unreadMessages = axiosInstance.get(`/chats/${chat_id}/unreadMessages`);
 
   const itemIndex = items.findIndex((x) => x.id === lastMessageUnseen);
 
@@ -99,26 +104,30 @@ export default function Items({
       const messageId = data?.messageId;
 
       const itemIndex = items.findIndex((x) => +x.nonce_id === +messageId);
+      console.log('Here', messageId, itemIndex);
 
       if (itemIndex === -1) return;
 
-      const rightIndex = items.length - (itemIndex + 1);
+      // const rightIndex = items.length - (itemIndex + 1);
 
-      rowVirtualizer.scrollToIndex(rightIndex);
-
-      const messageEl: HTMLDivElement | null = document.querySelector(
-        `.chat-item[data-index="${rightIndex}"]`,
-      );
-
-      if (!messageEl || !messageEl) return;
-
-      messageEl?.classList?.add('[&]:!bg-blue-500/20');
-      messageEl?.classList?.add('[&]:animate-pulse');
-
-      setTimeout(() => {
-        messageEl?.classList?.remove('[&]:!bg-blue-500/20');
-        messageEl?.classList?.remove('[&]:animate-pulse');
-      }, 1500);
+      // vlistRef.current?.scrollToIndex(rightIndex);
+      // // rowVirtualizer.scrollToIndex(rightIndex);
+      //
+      // const messageEl: HTMLDivElement | null = document.querySelector(
+      //   `.chat-item[data-index="${messageId}"]`,
+      // );
+      //
+      // console.log(messageEl);
+      //
+      // if (!messageEl || !messageEl) return;
+      //
+      // messageEl?.classList?.add('[&]:!bg-blue-500/20');
+      // messageEl?.classList?.add('[&]:animate-pulse');
+      //
+      // setTimeout(() => {
+      //   messageEl?.classList?.remove('[&]:!bg-blue-500/20');
+      //   messageEl?.classList?.remove('[&]:animate-pulse');
+      // }, 1500);
     },
     [items],
   );
@@ -129,8 +138,9 @@ export default function Items({
     if (onGetVirtualizer) onGetVirtualizer(rowVirtualizer);
   }, [onGetVirtualizer, rowVirtualizer]);
 
+  const [isScrolling, setIsScrolling] = useState(false);
   const handleScroll = () => {
-    if (chatItemInit.current === false) return;
+    // if (chatItemInit.current === false) return;
 
     if (!vlistRef.current) return;
 
@@ -147,11 +157,20 @@ export default function Items({
         (res) => {
           const newItems = res?.payload?.items ?? [];
 
-          vlistRef.current?.scrollToIndex(newItems.length);
+          // vlistRef.current?.scrollToIndex(newItems.length);
         },
         () => {},
       );
     }
+
+    // setInterval(() => {
+    //   setIsScrolling(false);
+    // }, 5000);
+  };
+
+  const scrollToUnread = () => {
+    console.log(rightIndex);
+    vlistRef.current?.scrollToIndex(rightIndex);
   };
 
   useEffect(() => {
@@ -173,44 +192,70 @@ export default function Items({
   const initScrollEnd = useRef(false);
 
   useEffect(() => {
+    console.log('Here2');
     if (items.length === 0) return;
     if (initScrollEnd.current === true) return;
 
-    vlistRef.current?.scrollToIndex(items.length - 1);
-    initScrollEnd.current = true;
+    // vlistRef.current?.scrollToIndex(items.length - 1);
+
+    scrollToUnread();
+    // initScrollEnd.current = true;
   }, [items, initScrollEnd.current]);
+
+  function formatDate(timestamp: number) {
+    const date = new Date(timestamp * 1000);
+    const now = new Date();
+
+    const options = {
+      month: 'long',
+      day: '2-digit',
+    };
+    if (date.getFullYear() !== now.getFullYear()) {
+      // @ts-ignore
+      options.year = 'numeric';
+    }
+
+    // @ts-ignore
+    return date.toLocaleDateString('en-US', options);
+  }
+
+  const groupedMessages = messages.reduce((acc: any, message) => {
+    const formattedDate = formatDate(message.created_at);
+    if (!acc[formattedDate]) {
+      acc[formattedDate] = [];
+    }
+    acc[formattedDate].push(message);
+    return acc;
+  }, {});
 
   let content = (
     <>
       {!!isFetching && <FetchingProgress />}
       <VList className="h-full" ref={vlistRef} onScroll={handleScroll}>
-        {messages.map((message, i) => {
-          const messageDate = moment(
-            message?.created_at
-              ? message?.created_at * 1000
-              : message?.nonce_id,
-          ).format('dddd, MMMM D, YYYY');
-          const messagePrevDate = moment(
-            messages[i - 1]?.created_at
-              ? messages[i - 1]?.created_at * 1000
-              : messages[i - 1]?.nonce_id,
-          ).format('dddd, MMMM D, YYYY');
-          const showDateHeader = messageDate !== messagePrevDate;
-
+        {Object.keys(groupedMessages).map((date, j) => {
           return (
-            <div key={i}>
-              {!!showDateHeader && <ChatDate date={messageDate} />}
-              {i === rightIndex && (
-                <div className="flex flex-col w-full text-blue-500 bg-black/5 text-sm items-center justify-center my-4 pointer-events-none">
-                  Unread messages
-                </div>
-              )}
-              <ChatItem
-                item={message}
-                key={message.nonce_id}
-                isMine={message?.user.id === profile?.id}
-                index={i}
-              />
+            <div>
+              <ChatDate date={date} />
+
+              {groupedMessages[date].map((message: any, i: number) => {
+                return (
+                  <div>
+                    <ChatItem
+                      item={message}
+                      key={message.nonce_id}
+                      isMine={message?.user.id === profile?.id}
+                      index={messages.indexOf(message)}
+                    />
+                    {messages.indexOf(message) === rightIndex &&
+                      messages.indexOf(message) !== messages.length - 1 && (
+                        <div className="flex flex-col w-full text-blue-500 h-6 bg-white text-sm items-center justify-center my-4 pointer-events-none">
+                          Unread messages
+                        </div>
+                      )}
+                    {messages.indexOf(message)}
+                  </div>
+                );
+              })}
             </div>
           );
         })}
@@ -235,8 +280,13 @@ export default function Items({
     <div className="flex-grow relative">
       <div
         ref={parentRef}
-        className="relative flex-grow overflow-y-auto mb-4 space-y-2"
-        style={{ contain: 'strict', height: '100%' }}
+        className="relative flex-grow overflow-y-auto mb-4 space-y-2 "
+        style={{
+          contain: 'strict',
+          height: '100%',
+          backgroundImage: 'url(/assets/backgrounds/chat-bg-1.png',
+          backgroundSize: 'cover',
+        }}
       >
         {content}
       </div>

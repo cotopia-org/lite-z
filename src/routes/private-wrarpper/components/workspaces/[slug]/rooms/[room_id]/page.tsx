@@ -1,4 +1,4 @@
-import RoomSpatialWrapper from "@/components/shared/room-spatial-wrapper";
+import RoomSpatialWrapper from '@/components/shared/room-spatial-wrapper';
 
 type Props = {
   searchParams: {
@@ -11,7 +11,7 @@ type Props = {
 };
 
 export const metadata = {
-  title: "Room",
+  title: 'Room',
 };
 
 export default function RoomPage({
@@ -19,6 +19,6 @@ export default function RoomPage({
   params: { room_id, slug },
 }: Props) {
   return (
-    <RoomSpatialWrapper token={token} workspace_id={slug} room_id={+room_id} />
+    <RoomSpatialWrapper token={token} workspace_id={+slug} room_id={+room_id} />
   );
 }

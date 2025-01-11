@@ -1,14 +1,14 @@
-import { useCallback, useEffect, useRef } from "react";
-import { ChatType } from "@/types/chat2";
-import Chat2 from "@/components/shared/chat-box-2";
-import { useChat2 } from "@/hooks/chat/use-chat-2";
-import { Virtualizer } from "@tanstack/react-virtual";
-import FullLoading from "@/components/shared/full-loading";
-import { useAppDispatch, useAppSelector } from "@/store";
-import { getChatMessages, getPinMessags } from "@/store/slices/chat-slice";
-import ChatHeading from "./heading";
-import { dispatch, dispatch as busDispatch } from "use-bus";
-import { __BUS } from "@/const/bus";
+import { useCallback, useEffect, useRef } from 'react';
+import { ChatType } from '@/types/chat2';
+import Chat2 from '@/components/shared/chat-box-2';
+import { useChat2 } from '@/hooks/chat/use-chat-2';
+import { Virtualizer } from '@tanstack/react-virtual';
+import FullLoading from '@/components/shared/full-loading';
+import { useAppDispatch, useAppSelector } from '@/store';
+import { getChatMessages, getPinMessags } from '@/store/slices/chat-slice';
+import ChatHeading from './heading';
+import { dispatch, dispatch as busDispatch } from 'use-bus';
+import { __BUS } from '@/const/bus';
 
 type Props = {
   chat_id: number;
@@ -55,20 +55,9 @@ export default function ChatInnerHolder({ chat_id, onBack }: Props) {
 
   if (!currentChat?.id) return null;
 
-  // busDispatch({
-  //   type: __BUS.scrollToTargetMessage,
-  //   messageId: 1735252256000,
-  // });
-
   return (
     <div className="flex flex-col w-full h-[calc(100vh-72px)] overflow-hidden">
-      <ChatHeading
-        title={chatObjects?.[currentChat?.id]?.object?.title ?? ""}
-        onBack={onBack}
-        type={currentChat.type}
-        loading={chatObjects?.[currentChat?.id]?.fetchPageLoading ?? false}
-        muted={currentChat.muted}
-      />
+      <ChatHeading chat={currentChat} onBack={onBack} />
       <Chat2
         chat_id={chat_id}
         lastMessageUnseen={currentChat.last_seen_message?.id}

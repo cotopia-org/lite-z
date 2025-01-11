@@ -53,17 +53,21 @@ export default function ChatPreview() {
         title={chat?.title}
         type={chat.type}
         muted={chat.muted}
-        sub_title={
+        date={
           chat?.last_message?.updated_at
             ? moment(chat?.last_message?.updated_at * 1000).format('HH:mm')
             : undefined
         }
         description={
-          <div className={'text-sm'}>
-            <span className={'text-blue-500 text-sm capitalize'}>
+          <div className={'text-xs'}>
+            <span className={'text-blue-500 text-xs capitalize'}>
               {chat.last_message?.user.username}:{' '}
             </span>
-            <span>{chat.last_message?.text}</span>
+            <span>
+              {chat.last_message?.text && chat.last_message?.text?.length > 41
+                ? chat.last_message?.text.slice(0, 41) + '... '
+                : chat.last_message?.text}
+            </span>
           </div>
         }
       />

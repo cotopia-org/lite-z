@@ -1,5 +1,5 @@
-import CotopiaIconButton from "@/components/shared-ui/c-icon-button";
-import { ArrowLeft } from "lucide-react";
+import CotopiaIconButton from '@/components/shared-ui/c-icon-button';
+import { ArrowLeft } from 'lucide-react';
 
 type Props = {
   onClick: () => void;
@@ -7,8 +7,8 @@ type Props = {
 export default function BackHolder({ onClick }: Props) {
   return (
     <div>
-      <CotopiaIconButton className='text-black/60' onClick={onClick}>
-        <ArrowLeft />
+      <CotopiaIconButton className="text-black/60" onClick={onClick}>
+        <ArrowLeft size={16} />
       </CotopiaIconButton>
     </div>
   );

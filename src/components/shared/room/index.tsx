@@ -1,6 +1,5 @@
 'use client';
 
-import { LiveKitRoom } from '@livekit/components-react';
 import RoomContext from './room-context';
 import RoomInner from './room-inner';
 import { WorkspaceRoomJoinType } from '@/types/room';
@@ -13,7 +12,7 @@ import {
   useState,
 } from 'react';
 import LiveKitConnectionStatus from './connection-status';
-import CheckPermissions2 from './check-permissions-2';
+// import CheckPermissions2 from './check-permissions-2';
 import ChatWrapper from '../chat-wrapper';
 import { ReactFlowProvider } from '@xyflow/react';
 import { toast } from 'sonner';
@@ -66,7 +65,7 @@ export const useRoomHolder = () => useContext(RoomHolderContext);
 
 type Props = {
   token?: string;
-  workspace_id: string;
+  workspace_id: number;
   room_id: number;
   isReConnecting?: boolean;
   isSwitching?: boolean;
@@ -120,7 +119,7 @@ export default function RoomHolder({
     const audioStream = state.audioStream;
     let perm_obj = { audio: !!(audioAccess && audioStream), video: true };
     try {
-      dispatch({ type: 'START_LOADING' });
+      // dispatch({ type: 'START_LOADING' });
       await axiosInstance.post('/settings', { key: 'video', value: 'on' });
       const stream = await navigator.mediaDevices.getUserMedia({ video: true });
       const obj_to_update = {
@@ -130,7 +129,7 @@ export default function RoomHolder({
       };
       dispatch({ type: 'CHANGE_VALUES', payload: obj_to_update });
     } catch (error) {
-      dispatch({ type: 'STOP_LOADING' });
+      // dispatch({ type: 'STOP_LOADING' });
     }
   };
   const disableVideoAccess = async () => {
@@ -140,7 +139,7 @@ export default function RoomHolder({
     if (!videoStream) return;
     let perm_obj = { audio: !!(audioAccess && audioStream), video: false };
     try {
-      dispatch({ type: 'START_LOADING' });
+      // dispatch({ type: 'START_LOADING' });
       await axiosInstance.post('/settings', { key: 'video', value: 'off' });
       const videoTracks = videoStream.getTracks();
       videoTracks.forEach((track) => {
@@ -154,7 +153,7 @@ export default function RoomHolder({
       };
       dispatch({ type: 'CHANGE_VALUES', payload: obj_to_update });
     } catch (error) {
-      dispatch({ type: 'STOP_LOADING' });
+      // dispatch({ type: 'STOP_LOADING' });
     }
   };
   const enableAudioAccess = async () => {
@@ -162,7 +161,7 @@ export default function RoomHolder({
     const videoStream = state.videoStream;
     let perm_obj = { video: !!(videoAccess && videoStream), audio: true };
     try {
-      dispatch({ type: 'START_LOADING' });
+      // dispatch({ type: 'START_LOADING' });
       await axiosInstance.post('/settings', { key: 'audio', value: 'on' });
       const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
       const obj_to_update = {
@@ -172,7 +171,7 @@ export default function RoomHolder({
       };
       dispatch({ type: 'CHANGE_VALUES', payload: obj_to_update });
     } catch (error) {
-      dispatch({ type: 'STOP_LOADING' });
+      // dispatch({ type: 'STOP_LOADING' });
     }
   };
   const disableAudioAccess = async () => {
@@ -182,7 +181,7 @@ export default function RoomHolder({
     if (!audioStream) return;
     let perm_obj = { video: !!(videoAccess && videoStream), audio: false };
     try {
-      dispatch({ type: 'START_LOADING' });
+      // dispatch({ type: 'START_LOADING' });
       await axiosInstance.post('/settings', { key: 'audio', value: 'off' });
       const audioTracks = audioStream.getAudioTracks();
       audioTracks.forEach((track) => {
@@ -196,7 +195,7 @@ export default function RoomHolder({
       };
       dispatch({ type: 'CHANGE_VALUES', payload: obj_to_update });
     } catch (error) {
-      dispatch({ type: 'STOP_LOADING' });
+      // dispatch({ type: 'STOP_LOADING' });
     }
   };
   const changeStreamState = (stream: MediaStream, type: 'video' | 'audio') => {
@@ -285,16 +284,7 @@ export default function RoomHolder({
     },
     [permissionChecked, isSwitching, isReConnecting],
   );
-
-  content = (
-    <>
-      <LiveKitConnectionStatus />
-      <RoomInner />
-    </>
-  );
-
-  // if (!mustJoin) content = <CheckPermissions2 onChecked={handleJoin} />;
-  if (!mustJoin || state.loading)
+  if (!mustJoin || state.loading) {
     return (
       <div
         className={
@@ -304,6 +294,16 @@ export default function RoomHolder({
         <p>Please wait...</p>
       </div>
     );
+  } else {
+    content = (
+      <>
+        <LiveKitConnectionStatus />
+        <RoomInner />
+      </>
+    );
+  }
+
+  // if (!mustJoin) content = <CheckPermissions2 onChecked={handleJoin} />;
 
   return (
     <RoomHolderContext.Provider

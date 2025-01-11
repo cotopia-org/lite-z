@@ -45,11 +45,11 @@ export default function PinMessages() {
         <PinSlider />
         {!!currentPintMessage && (
           <div className="flex flex-col">
-            <strong className="text-primary">Pinned message</strong>
+            <span className="text-primary text-sm">Pinned message</span>
             {currentPintMessage?.text ? (
-              <span>
-                {currentPintMessage.text.length > 35
-                  ? currentPintMessage.text.slice(0, 35) + '... '
+              <span className={'text-xs'}>
+                {currentPintMessage.text.length > 50
+                  ? currentPintMessage.text.slice(0, 50) + '... '
                   : currentPintMessage.text}
               </span>
             ) : null}

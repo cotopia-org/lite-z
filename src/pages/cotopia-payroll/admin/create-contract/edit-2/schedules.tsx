@@ -1,5 +1,4 @@
 import { useRoomContext } from '@/components/shared/room/room-context';
-import ScheduleSelector from '@/components/shared/schedule-selector';
 import useAuth from '@/hooks/auth';
 import { useContractFormik } from '.';
 import CotopiaSwitch from '@/components/shared-ui/c-switch';
@@ -10,17 +9,18 @@ import { isUserAdmin } from '@/lib/utils';
 export default function ContractSchedules() {
   const { user } = useAuth();
 
+  const { workspace_id } = useRoomContext();
   const { formik } = useContractFormik();
 
-  const { scheduled } = useRoomContext();
-
   const values = formik?.values;
+
+  const isAdmin = isUserAdmin(user, workspace_id);
 
   return (
     <div className="grid grid-cols-12 gap-4">
       <div className="col-span-12">
         <CotopiaSwitch
-          disabled={!isUserAdmin(user)}
+          disabled={!isAdmin}
           label="In Schedule"
           checked={values?.in_schedule === 1}
           onCheckedChange={(value) => {

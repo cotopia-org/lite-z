@@ -17,7 +17,7 @@ export default function HintScheduleContract({ contract, onUpdate }: Props) {
   const { user } = useAuth();
   const { workspace_id } = useRoomContext();
 
-  const userIsAdmin = isUserAdmin(user, +(workspace_id as string));
+  const userIsAdmin = isUserAdmin(user, workspace_id);
 
   const [localContract, setLocalContract] = useState(contract);
   useEffect(() => {

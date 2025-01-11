@@ -83,7 +83,7 @@ export default function UserSelector({
       <CotopiaInput
         label={!label ? 'Select User' : ''}
         placeholder={selected ? 'Selected user' : 'Find people'}
-        value={selected ? selected.name : search}
+        value={search}
         onChange={handleChange}
         disabled={disabled}
       />

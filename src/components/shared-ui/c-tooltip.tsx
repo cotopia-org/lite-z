@@ -3,9 +3,9 @@ import {
   TooltipContent,
   TooltipProvider,
   TooltipTrigger,
-} from "@/components/ui/tooltip";
-import { TooltipTriggerProps } from "@radix-ui/react-tooltip";
-import { ReactNode } from "react";
+} from '@/components/ui/tooltip';
+import { TooltipTriggerProps } from '@radix-ui/react-tooltip';
+import { ReactNode } from 'react';
 
 type Props = {
   children: ReactNode;
@@ -24,7 +24,7 @@ export default function CotopiaTooltip({
       <Tooltip>
         <TooltipTrigger
           {...tooltipTriggerProps}
-          className={triggerClassName ?? ""}
+          className={triggerClassName ?? ''}
         >
           {children}
         </TooltipTrigger>

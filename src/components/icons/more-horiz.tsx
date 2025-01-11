@@ -1,4 +1,4 @@
-import { IconProps, defaultColor } from "."
+import { IconProps, defaultColor } from '.';
 
 const MoreHorizontal = ({ color = defaultColor, size = 24 }: IconProps) => {
   return (
@@ -25,7 +25,7 @@ const MoreHorizontal = ({ color = defaultColor, size = 24 }: IconProps) => {
         stroke-width="1.5"
       />
     </svg>
-  )
-}
+  );
+};
 
-export default MoreHorizontal
+export default MoreHorizontal;
