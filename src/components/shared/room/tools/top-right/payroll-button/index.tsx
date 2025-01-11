@@ -75,34 +75,26 @@ export default function PayrollButton() {
     'contractCreated',
     (data) => {
       setContracts((crt) => [data, ...crt]);
-      console.log(data, 'CONTRACT_CREATED');
     },
     [contracts],
   );
-  // useSocket(
-  //   'contractUpdated',
-  //   (data) => {
-  //     let latest_contracts = [...contracts];
-  //     const current_index = latest_contracts.findIndex((l) => l.id === data.id);
-  //     latest_contracts[current_index] = data;
-  //     if (current_index !== -1) setContracts(latest_contracts);
-  //     console.log(data, 'CONTRACT_UPDATED');
-  //   },
-  //   [contracts],
+
   // );
-  useSocket('contractUpdated', (data) => {
-    // let latest_contracts = [...contracts];
-    // const current_index = latest_contracts.findIndex((l) => l.id === data.id);
-    // latest_contracts[current_index] = data;
-    // if (current_index !== -1) setContracts(latest_contracts);
-    console.log(data, 'CONTRACT_UPDATED');
-  });
+  useSocket(
+    'contractUpdated',
+    (data) => {
+      let latest_contracts = [...contracts];
+      const current_index = latest_contracts.findIndex((l) => l.id === data.id);
+      latest_contracts[current_index] = data;
+      if (current_index !== -1) setContracts(latest_contracts);
+    },
+    [contracts],
+  );
 
   useSocket(
     'contractDeleted',
     (data) => {
       setContracts((crt) => crt.filter((c) => c.id !== data.id));
-      console.log(data, 'CONTRACT_DELETED');
     },
     [contracts],
   );
