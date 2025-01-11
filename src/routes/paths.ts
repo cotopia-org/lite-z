@@ -1,19 +1,23 @@
 export const paths = {
-  dashboard: "dashboard",
+  dashboard: 'dashboard',
   auth: {
-    index: "auth",
-    login: "login",
-    register: "register",
-    ["forget-password"]: "forget-password",
+    index: 'auth',
+    login: 'login',
+    register: 'register',
+    ['forget-password']: 'forget-password',
   },
-  invite: "invite",
+  invite: 'invite',
   workspaces: {
-    index: "workspaces",
-    create: "create",
-    view: ":workspace_id",
+    index: 'workspaces',
+    create: 'create',
+    view: ':workspace_id',
+    settings: 'settings',
     rooms: {
-      index: "rooms",
-      view: ":room_id",
+      index: 'rooms',
+      view: {
+        index: ':room_id',
+        settings: 'settings',
+      },
     },
   },
 };

@@ -1,26 +1,31 @@
-import { Navigate, createBrowserRouter } from "react-router-dom";
-import PublicRoutes from "./public-wrapper";
-import { lazy } from "react";
-import { paths } from "./paths";
-import { routeResolver } from "@/lib/utils";
-import ErrorElement from "@/components/shared/error-boundry";
+import { Navigate, createBrowserRouter } from 'react-router-dom';
+import PublicRoutes from './public-wrapper';
+import { lazy } from 'react';
+import { paths } from './paths';
+import { routeResolver } from '@/lib/utils';
+import ErrorElement from '@/components/shared/error-boundry';
 //@ts-ignore
-import PrivateRoutes from "./private-wrarpper";
+import PrivateRoutes from './private-wrarpper';
+
+//Workspace Room Settings
+const WorkspaceRoomSettings = lazy(
+  () => import('@/pages/workspace/rooms/room/settings'),
+);
 
 //Home page
-const HomePage = lazy(() => import("@/pages/home"));
-const Acts = lazy(() => import("@/pages/acts"));
+const HomePage = lazy(() => import('@/pages/home'));
+const Acts = lazy(() => import('@/pages/acts'));
 
 //Workspace page
-const WorkspacePage = lazy(() => import("@/pages/workspace"));
-const WorkspaceRoomPage = lazy(() => import("@/pages/workspace/rooms/room"));
+const WorkspacePage = lazy(() => import('@/pages/workspace'));
+const WorkspaceRoomPage = lazy(() => import('@/pages/workspace/rooms/room'));
 
 //Auth pages
-const LoginPage = lazy(() => import("@/pages/auth/login"));
-const RegisterPage = lazy(() => import("@/pages/auth/register"));
+const LoginPage = lazy(() => import('@/pages/auth/login'));
+const RegisterPage = lazy(() => import('@/pages/auth/register'));
 
 //NotFound Page
-const NotFoundPage = lazy(() => import("@/pages/not-found"));
+const NotFoundPage = lazy(() => import('@/pages/not-found'));
 
 const router = createBrowserRouter([
   {
@@ -28,7 +33,7 @@ const router = createBrowserRouter([
     errorElement: <ErrorElement />,
     children: [
       {
-        path: "/",
+        path: '/',
         element: <Navigate to={paths.dashboard} />,
       },
       {
@@ -36,7 +41,7 @@ const router = createBrowserRouter([
         element: <HomePage />,
       },
       {
-        path: "acts/",
+        path: 'acts/',
         element: <Acts />,
       },
       {
@@ -53,9 +58,19 @@ const router = createBrowserRouter([
           paths.workspaces.index,
           paths.workspaces.view,
           paths.workspaces.rooms.index,
-          paths.workspaces.rooms.view,
+          paths.workspaces.rooms.view.index,
         ),
         element: <WorkspaceRoomPage />,
+      },
+      {
+        path: routeResolver(
+          paths.workspaces.index,
+          paths.workspaces.view,
+          paths.workspaces.rooms.index,
+          paths.workspaces.rooms.view.index,
+          paths.workspaces.rooms.view.settings,
+        ),
+        element: <WorkspaceRoomSettings />,
       },
     ],
   },
@@ -79,7 +94,7 @@ const router = createBrowserRouter([
     ],
   },
   {
-    path: "*",
+    path: '*',
     element: <NotFoundPage />,
   },
 ]);
