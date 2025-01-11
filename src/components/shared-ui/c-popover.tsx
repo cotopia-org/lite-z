@@ -1,5 +1,5 @@
-import { ReactNode } from "react";
-import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover";
+import { ReactNode } from 'react';
+import { Popover, PopoverContent, PopoverTrigger } from '../ui/popover';
 
 type Props = {
   trigger: ReactNode;
@@ -7,7 +7,7 @@ type Props = {
   open?: boolean;
   contentClassName?: string;
   triggerClassName?: string;
-  align?: "center" | "end" | "start";
+  align?: 'center' | 'end' | 'start';
   onOpenChange?: (value: boolean) => void;
 };
 export default function CotopiaPopover({
@@ -15,16 +15,19 @@ export default function CotopiaPopover({
   children,
   open,
   contentClassName,
-  triggerClassName = "",
-  align = "end",
+  triggerClassName = '',
+  align = 'end',
   onOpenChange,
 }: Props) {
   return (
     <Popover open={open} onOpenChange={onOpenChange}>
-      <PopoverTrigger className={`popover-trigger ${triggerClassName}`}>
+      <PopoverTrigger
+        onClick={(e) => e.stopPropagation()}
+        className={`popover-trigger ${triggerClassName}`}
+      >
         {trigger}
       </PopoverTrigger>
-      <PopoverContent align={align} className={contentClassName ?? ""}>
+      <PopoverContent align={align} className={contentClassName ?? ''}>
         {children}
       </PopoverContent>
     </Popover>

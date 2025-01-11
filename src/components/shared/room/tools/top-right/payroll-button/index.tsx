@@ -12,15 +12,38 @@ import CotopiaTable from '@/components/shared-ui/c-table';
 import { UserContractType } from '@/types/contract';
 import moment from 'moment';
 import UserPayments from '@/components/shared/cotopia-payroll/payments';
-import { useMemo } from 'react';
+import { createContext, useContext, useEffect, useMemo, useState } from 'react';
 import ContractDetails from './contract-details';
-import { useApi } from '@/hooks/use-api';
 import ContractStatus from './contract-status';
+import { useLoading } from '@/hooks';
+import axiosInstance from '@/services/axios';
+import { useSocket } from '@/routes/private-wrarpper';
+import useAuth from '@/hooks/auth';
 
 const box_width = 506;
 
+const ContractsContext = createContext<{
+  renderAgain: () => Promise<void>;
+  contracts: UserContractType[];
+  myContracts: UserContractType[];
+  loading: boolean;
+}>({
+  renderAgain: async () => {},
+  myContracts: [],
+  contracts: [],
+  loading: false,
+});
+
+export const useContractsCtx = () => useContext(ContractsContext);
+
 export default function PayrollButton() {
   const { payments } = useRoomContext();
+
+  const { user } = useAuth();
+
+  const { isLoading, startLoading, stopLoading } = useLoading();
+
+  const [contracts, setContracts] = useState<UserContractType[]>([]);
 
   const totalPendingPaymentsAmount = useMemo(() => {
     return payments
@@ -28,15 +51,59 @@ export default function PayrollButton() {
       .reduce((prev, crt) => crt.amount + prev, 0);
   }, [payments]);
 
-  const { data, isLoading, mutate } = useApi(`/users/me/contracts`);
+  const getContracts = async () => {
+    startLoading();
+    try {
+      const res = await axiosInstance.get(`/contracts`);
+      stopLoading();
+      const data = res?.data?.data ?? [];
+      setContracts(data);
+    } catch (err) {
+      stopLoading();
+    }
+  };
 
-  const contracts: UserContractType[] = data !== undefined ? data?.data : [];
+  useEffect(() => {
+    getContracts();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  //separate my contracts
+  const my_contracts = contracts.filter((c) => c.user_id === user.id);
+
+  useSocket(
+    'contractCreated',
+    (data) => {
+      setContracts((crt) => [data, ...crt]);
+    },
+    [contracts],
+  );
+
+  // );
+  useSocket(
+    'contractUpdated',
+    (data) => {
+      let latest_contracts = [...contracts];
+      const current_index = latest_contracts.findIndex((l) => l.id === data.id);
+      latest_contracts[current_index] = data;
+      if (current_index !== -1) setContracts(latest_contracts);
+    },
+    [contracts],
+  );
+
+  useSocket(
+    'contractDeleted',
+    (data) => {
+      setContracts((crt) => crt.filter((c) => c.id !== data.id));
+    },
+    [contracts],
+  );
 
   return (
     <PopupBox
       trigger={(open, isOpen) => (
         <div className="relative">
-          {contracts?.filter((a) => a.status !== 'signed').length > 0 && (
+          {contracts.filter((a) => a.status !== 'signed').length > 0 && (
             <div className="w-2 h-2 bg-red-500 rounded-full absolute top-2 right-2 z-10"></div>
           )}
           <ToolButton
@@ -59,87 +126,95 @@ export default function PayrollButton() {
             top={triggerPosition.top}
             left={triggerPosition.left - (box_width - triggerPosition.width)}
           >
-            <div className="flex w-full flex-col gap-y-6 items-end">
-              <CTabs
-                defaultValue="active-contract"
-                items={[
-                  {
-                    value: 'active-contract',
-                    title: 'Contract',
-                    content: (
-                      <div className="py-3">
-                        <div className="flex flex-col w-full my-4">
-                          <CotopiaTable
-                            loading={isLoading}
-                            items={contracts}
-                            tableHeadItems={[
-                              {
-                                title: 'Times',
-                                render: (item: UserContractType) => (
-                                  <div className="flex flex-col gap-y-2">
-                                    <span>
-                                      {moment(item.start_at).format(
-                                        'YYYY/MM/DD',
-                                      )}
-                                    </span>
-                                    <span>
-                                      {moment(item.end_at).format('YYYY/MM/DD')}
-                                    </span>
-                                  </div>
-                                ),
-                              },
-                              {
-                                title: 'Per hour',
-                                render: (item: UserContractType) =>
-                                  `${item.amount} (${item.currency})`,
-                              },
-                              {
-                                title: 'Status',
-                                render: (item: UserContractType) => {
-                                  return <ContractStatus contract={item} />;
+            <ContractsContext.Provider
+              value={{
+                contracts,
+                myContracts: my_contracts,
+                renderAgain: getContracts,
+                loading: isLoading,
+              }}
+            >
+              <div className="flex w-full flex-col gap-y-6 items-end">
+                <CTabs
+                  defaultValue="active-contract"
+                  items={[
+                    {
+                      value: 'active-contract',
+                      title: 'Contract',
+                      content: (
+                        <div className="py-3">
+                          <div className="flex flex-col w-full my-4">
+                            <CotopiaTable
+                              loading={isLoading}
+                              items={my_contracts}
+                              tableHeadItems={[
+                                {
+                                  title: 'Times',
+                                  render: (item: UserContractType) => (
+                                    <div className="flex flex-col gap-y-2">
+                                      <span>
+                                        {moment(item.start_at).format(
+                                          'YYYY/MM/DD',
+                                        )}
+                                      </span>
+                                      <span>
+                                        {moment(item.end_at).format(
+                                          'YYYY/MM/DD',
+                                        )}
+                                      </span>
+                                    </div>
+                                  ),
                                 },
-                              },
-                              {
-                                title: '',
-                                render: (item: UserContractType) => (
-                                  <div className="flex flex-row items-center gap-1">
-                                    <ContractDetails
-                                      mutate={mutate}
-                                      contract={item}
-                                    />
-                                  </div>
-                                ),
-                              },
-                            ]}
-                          />
+                                {
+                                  title: 'Per hour',
+                                  render: (item: UserContractType) =>
+                                    `${item.amount} (${item.currency})`,
+                                },
+                                {
+                                  title: 'Status',
+                                  render: (item: UserContractType) => {
+                                    return <ContractStatus contract={item} />;
+                                  },
+                                },
+                                {
+                                  title: '',
+                                  render: (item: UserContractType) => (
+                                    <div className="flex flex-row items-center gap-1">
+                                      <ContractDetails contract={item} />
+                                    </div>
+                                  ),
+                                },
+                              ]}
+                            />
+                          </div>
                         </div>
-                      </div>
-                    ),
-                  },
-                  {
-                    title: 'Payments',
-                    value: 'payments',
-                    content: <UserPayments endpoint="/users/me/payments" />,
-                  },
-                ]}
-              />
-              <div className="w-full flex justify-end">
-                <CFullDialog
-                  trigger={(open) => (
-                    <CotopiaButton
-                      onClick={open}
-                      className="bg-primary text-white rounded-xl mt-3"
-                    >
-                      More
-                    </CotopiaButton>
-                  )}
-                >
-                  {(close) => {
-                    return <PayrollPage onClose={close} />;
-                  }}
-                </CFullDialog>
+                      ),
+                    },
+                    {
+                      title: 'Payments',
+                      value: 'payments',
+                      content: <UserPayments />,
+                    },
+                  ]}
+                />
+                <div className="w-full flex justify-end">
+                  <CFullDialog
+                    trigger={(open) => (
+                      <CotopiaButton
+                        onClick={open}
+                        className="bg-primary text-white rounded-xl mt-3"
+                      >
+                        More
+                      </CotopiaButton>
+                    )}
+                  >
+                    {(close) => {
+                      return <PayrollPage onClose={close} />;
+                    }}
+                  </CFullDialog>
+                </div>
               </div>
-            </div>
+            </ContractsContext.Provider>
           </PopupBoxChild>
         );
       }}

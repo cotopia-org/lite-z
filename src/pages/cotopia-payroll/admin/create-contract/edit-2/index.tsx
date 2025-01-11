@@ -23,15 +23,15 @@ import Extensions from './extensions';
 import Policies from './policies';
 import axiosInstance from '@/services/axios';
 import { toast } from 'sonner';
-import { useApi } from '@/hooks/use-api';
 import MinHours from './min-hours';
 import MaxHours from './max-hours';
 import { useRoomContext } from '@/components/shared/room/room-context';
+import useAuth from '@/hooks/auth';
 
 type Props = {
   defaultContract?: UserContractType;
   onBack?: () => void;
-  onUpdate?: (contract: UserContractType) => void;
+  onUpdate?: () => void;
 };
 
 const EditContractFormik = createContext<{ formik?: FormikProps<any> }>({
@@ -86,10 +86,7 @@ export default function ManageContract({
           );
           if (onBack && !defaultContract) onBack();
           if (defaultContract) {
-            if (onUpdate) {
-              console.log(res.data.data);
-              onUpdate(res.data.data);
-            }
+            if (onUpdate) onUpdate();
           }
         })
         .catch((res) => {

@@ -1,26 +1,15 @@
 import CotopiaButton from '@/components/shared-ui/c-button';
 import CDialog from '@/components/shared-ui/c-dialog';
-import useAuth from '@/hooks/auth';
-import { isUserAdmin } from '@/lib/utils';
 import PayrollCreateContract from '@/pages/cotopia-payroll/admin/create-contract';
 import { UserContractType } from '@/types/contract';
 import { Edit } from 'lucide-react';
-import { useRoomContext } from '../../../room-context';
 
 type Props = {
   contract: UserContractType;
-  onUpdate?: (contract: UserContractType) => void;
+  onUpdate?: () => void;
 };
 
 export default function EditContract({ contract, onUpdate }: Props) {
-  // const { workspace_id } = useRoomContext();
-  //
-  // const { user } = useAuth();
-
-  // const userIsAdmin = isUserAdmin(user, +(workspace_id as string));
-  //
-  // if (!userIsAdmin) return null;
-
   return (
     <CDialog
       trigger={(open) => (
