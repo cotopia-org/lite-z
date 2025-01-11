@@ -1,12 +1,9 @@
-import CotopiaTable from "@/components/shared-ui/c-table";
-import { PaymentType } from "@/types/payment";
-import { useRoomContext } from "../../room/room-context";
+import CotopiaTable from '@/components/shared-ui/c-table';
+import { PaymentType } from '@/types/payment';
+import { useRoomContext } from '../../room/room-context';
 
-type Props = {
-  endpoint: string;
-  status?: string;
-};
-export default function UserPayments({ endpoint, status }: Props) {
+type Props = {};
+export default function UserPayments(props: Props) {
   const { payments } = useRoomContext();
 
   return (
@@ -29,7 +26,7 @@ export default function UserPayments({ endpoint, status }: Props) {
         //   },
         // },
         {
-          title: "Total hours",
+          title: 'Total hours',
           render: (item: PaymentType) => item.total_hours?.sum_hours,
         },
         // {
@@ -41,11 +38,11 @@ export default function UserPayments({ endpoint, status }: Props) {
         //   render: (item: PaymentType) => item.round,
         // },
         {
-          title: "Amount",
+          title: 'Amount',
           render: (item: PaymentType) => item.amount.toFixed(1),
         },
         {
-          title: "Status",
+          title: 'Status',
           render: (item: PaymentType) => item.status,
         },
       ]}

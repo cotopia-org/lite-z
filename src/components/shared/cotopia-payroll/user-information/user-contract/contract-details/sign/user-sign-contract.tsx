@@ -10,13 +10,12 @@ import { getProfileThunk } from '@/store/slices/auth/slice';
 import { UserContractType } from '@/types/contract';
 import { Shield } from 'lucide-react';
 import { useEffect, useState } from 'react';
-import { toast } from 'sonner';
 
 type Props = {
   contract: UserContractType;
   onUpdate: (contract: UserContractType) => void;
 };
-export default function UsreSign({ contract, onUpdate }: Props) {
+export default function UserSign({ contract, onUpdate }: Props) {
   const dispatch = useAppDispatch();
 
   const { user } = useAuth();

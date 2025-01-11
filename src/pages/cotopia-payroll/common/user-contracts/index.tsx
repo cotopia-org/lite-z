@@ -5,25 +5,38 @@ import ParticipantsWithPopover from '@/components/shared/participants/with-popov
 import { useRoomContext } from '@/components/shared/room/room-context';
 import EditContract from '@/components/shared/room/tools/top-right/payroll-button/edit-contract';
 import { UserContractType } from '@/types/contract';
-import { ChevronRight, Delete, Edit, Trash } from 'lucide-react';
+import { ChevronRight, Trash } from 'lucide-react';
 import moment from 'moment';
-import { useState } from 'react';
+import { useCallback, useState } from 'react';
 import { useLoading } from '@/hooks';
 import FullLoading from '@/components/shared/full-loading';
 import axiosInstance from '@/services/axios';
-import { toast } from 'sonner';
 import ContractStatus from '@/components/shared/room/tools/top-right/payroll-button/contract-status';
 
 type Props = {
   items: UserContractType[];
   loading?: boolean;
-  mutate: () => void;
 };
-export default function UserContracts({ items, loading, mutate }: Props) {
+export default function UserContracts({ items, loading }: Props) {
   const [selectedContract, setSelectedContract] = useState<UserContractType>();
 
   const { isLoading, startLoading, stopLoading } = useLoading();
   const { workspaceUsers } = useRoomContext();
+
+  const handleDelete = useCallback(
+    (item: UserContractType) => {
+      startLoading();
+      axiosInstance
+        .delete(`/contracts/${item.id}`)
+        .then((res) => {
+          stopLoading();
+        })
+        .catch((e) => {
+          stopLoading();
+        });
+    },
+    [startLoading, stopLoading],
+  );
 
   if (selectedContract) {
     return (
@@ -33,20 +46,6 @@ export default function UserContracts({ items, loading, mutate }: Props) {
       />
     );
   }
-
-  const handleDelete = async (item: UserContractType) => {
-    startLoading();
-    axiosInstance
-      .delete(`/contracts/${item.id}`)
-      .then((res) => {
-        stopLoading();
-        mutate();
-      })
-      .catch((e) => {
-        stopLoading();
-      });
-  };
-
   return (
     <CotopiaTable
       loading={loading}
@@ -101,8 +100,7 @@ export default function UserContracts({ items, loading, mutate }: Props) {
           title: '',
           render: (item: UserContractType) => (
             <div className="flex flex-row items-center gap-x-2">
-              <EditContract contract={item} onUpdate={mutate} />
-
+              <EditContract contract={item} />
               <CotopiaButton
                 variant={'link'}
                 endIcon={<ChevronRight size={16} />}

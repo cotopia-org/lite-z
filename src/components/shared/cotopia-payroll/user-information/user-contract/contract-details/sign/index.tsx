@@ -1,8 +1,8 @@
-import { UserContractType } from "@/types/contract";
-import UserSign from "./user-sign-contract";
-import ContractorSign from "./contractor-sign-status";
-import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
-import { Handshake } from "lucide-react";
+import { UserContractType } from '@/types/contract';
+import UserSign from './user-sign-contract';
+import ContractorSign from './contractor-sign-status';
+import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
+import { Handshake } from 'lucide-react';
 
 type Props = {
   contract: UserContractType;
@@ -17,7 +17,7 @@ export default function SignContract({ contract, onUpdate }: Props) {
         contract.user_sign_status === 1 && (
           <Alert>
             <Handshake className="h-4 w-4" />
-            <AlertTitle>{"Contract is approved"}</AlertTitle>
+            <AlertTitle>{'Contract is approved'}</AlertTitle>
             <AlertDescription>
               {`You and Manager both signed the contract.`}
             </AlertDescription>

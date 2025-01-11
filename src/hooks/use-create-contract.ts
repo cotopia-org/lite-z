@@ -1,9 +1,9 @@
-import { useState } from "react";
-import { toast } from "sonner";
-import { FormikValues } from "formik";
-import { useRoomContext } from "@/components/shared/room/room-context";
-import axiosInstance from "@/services/axios";
-import { usePayroll } from "@/pages/cotopia-payroll/user/payroll";
+import { useState } from 'react';
+import { toast } from 'sonner';
+import { FormikValues } from 'formik';
+import { useRoomContext } from '@/components/shared/room/room-context';
+import axiosInstance from '@/services/axios';
+import { usePayroll } from '@/pages/cotopia-payroll/user/payroll';
 
 interface Props {
   values: FormikValues;
@@ -20,9 +20,8 @@ const useCreateContract = () => {
 
   const createContract = async ({ values, userId }: Props) => {
     setLoading(true);
-
     try {
-      const response = await axiosInstance.post(`/contracts`, {
+      await axiosInstance.post(`/contracts`, {
         type: values.type,
         amount: +values.amount,
         currency: values.currency,
@@ -46,13 +45,11 @@ const useCreateContract = () => {
         user_id: userId,
         workspace_id,
       });
-
-      toast.success("Contract created successfully!");
-
-      changePage("all-members");
+      toast.success('Contract created successfully!');
+      changePage('all-members');
     } catch (error) {
-      console.error("Error creating payments:", error);
-      toast.error("There was an error creating the Contract!");
+      console.error('Error creating payments:', error);
+      toast.error('There was an error creating the Contract!');
     } finally {
       setLoading(false);
     }
@@ -60,9 +57,8 @@ const useCreateContract = () => {
 
   const updateContract = async ({ values, userId, contractId }: Props) => {
     setLoading(true);
-
     try {
-      const response = await axiosInstance.put(`/contracts/${contractId}`, {
+      await axiosInstance.put(`/contracts/${contractId}`, {
         type: values.type,
         amount: +values.amount,
         currency: values.currency,
@@ -86,13 +82,11 @@ const useCreateContract = () => {
         user_id: userId,
         workspace_id,
       });
-
-      toast.success("Contract edited successfully!");
-
-      changePage("all-members");
+      toast.success('Contract edited successfully!');
+      changePage('all-members');
     } catch (error) {
-      console.error("Error editing payments:", error);
-      toast.error("There was an error editing the Contract!");
+      console.error('Error editing payments:', error);
+      toast.error('There was an error editing the Contract!');
     } finally {
       setLoading(false);
     }
