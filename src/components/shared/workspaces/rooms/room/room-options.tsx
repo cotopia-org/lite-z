@@ -4,14 +4,15 @@ import DeleteRoom from './delete-room';
 import { WorkspaceRoomShortType } from '@/types/room';
 import InviteUser from './invite-user';
 import MoreHorizontal from '@/components/icons/more-horiz';
-
 import SettingsRoom from './settings-room';
+import RenameButton from './rename-button';
 
 interface Props {
   room: WorkspaceRoomShortType;
+  changeStateHandler: () => void;
 }
 
-const RoomOptions = ({ room }: Props) => {
+const RoomOptions = ({ room, changeStateHandler }: Props) => {
   return (
     <CotopiaPopover
       trigger={
@@ -24,6 +25,7 @@ const RoomOptions = ({ room }: Props) => {
       }
       contentClassName="w-auto p-1 flex flex-col [&_button]:justify-between"
     >
+      <RenameButton onClick={changeStateHandler} />
       <DeleteRoom room={room} />
       <InviteUser room={room} />
       <SettingsRoom room={room} />
