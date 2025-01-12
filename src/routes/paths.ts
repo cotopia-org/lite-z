@@ -17,6 +17,8 @@ export const paths = {
       view: {
         index: ':room_id',
         settings: 'settings',
+        jobs: 'jobs',
+        payroll: 'payroll',
       },
     },
   },

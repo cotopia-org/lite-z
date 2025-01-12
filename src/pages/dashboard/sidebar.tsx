@@ -17,7 +17,7 @@ type Props = {
 };
 export default function Sidebar({ onClose, links, handleChange, page }: Props) {
   return (
-    <ul className="p-3  flex flex-col h-full w-1/5 gap-y-2 border-r  border-black/30">
+    <ul className="p-3  flex flex-col h-full w-1/5 gap-y-2 border-r  border-black/30 min-h-screen">
       {links.map((link, index) => (
         <li key={index}>
           <CotopiaButton

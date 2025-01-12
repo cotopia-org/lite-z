@@ -7,19 +7,16 @@ import { useApi } from '@/hooks/swr';
 import { isUserAdmin, urlWithQueryParams } from '@/lib/utils';
 import FullLoading from '@/components/shared/full-loading';
 import AddJobHandler from './shapes/add-job';
-import { JobType, JobStatusType } from '@/types/job';
+import { JobType } from '@/types/job';
 import { FetchDataType } from '@/services/axios';
 import JobItems from '@/components/shared/job-items';
 import CTabs from '@/components/shared-ui/c-tabs';
 import useAuth from '@/hooks/auth';
-import CotopiaButton from '@/components/shared-ui/c-button';
-import { Plus } from 'lucide-react';
-import CFullDialog from '@/components/shared-ui/c-dialog/full-dialog';
-import Jobs from '@/pages/dashboard/jobs';
-import Dashboard from '@/pages/dashboard';
+import { Link } from 'react-router-dom';
+import { buttonVariants } from '@/components/ui/button';
 
 export default function JobButton() {
-  const { workspace_id } = useRoomContext();
+  const { workspace_id, room_id } = useRoomContext();
 
   const { user } = useAuth();
 
@@ -163,20 +160,16 @@ export default function JobButton() {
                 className={'w-full flex flex-row items-center justify-between'}
               >
                 {isAdmin && (
-                  <CFullDialog
-                    trigger={(open) => (
-                      <CotopiaButton
-                        className="min-w-[100px] !bg-primary"
-                        onClick={open}
-                      >
-                        Dashboard
-                      </CotopiaButton>
-                    )}
+                  <Link
+                    className={buttonVariants({
+                      variant: 'default',
+                      class: 'min-w-[100px] !bg-primary',
+                    })}
+                    target="_blank"
+                    to={`/workspaces/${workspace_id}/rooms/${room_id}/jobs`}
                   >
-                    {(close) => {
-                      return <Dashboard onClose={close} defaultPage={'jobs'} />;
-                    }}
-                  </CFullDialog>
+                    Dashboard
+                  </Link>
                 )}
 
                 <AddJobHandler

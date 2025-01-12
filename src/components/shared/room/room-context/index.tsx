@@ -19,7 +19,7 @@ import {
   useEffect,
   useState,
 } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 
 type LeftJoinType = { room_id: number; user: UserMinimalType };
 
@@ -88,6 +88,18 @@ const RoomCtx = createContext<{
 });
 
 export const useRoomContext = () => useContext(RoomCtx);
+
+export function EasyRoomContext({ children }: { children: ReactNode }) {
+  const { workspace_id, room_id } = useParams();
+
+  if (!room_id || !workspace_id) return null;
+
+  return (
+    <RoomContext room_id={+room_id} workspace_id={+workspace_id}>
+      {children}
+    </RoomContext>
+  );
+}
 
 export default function RoomContext({
   children,
