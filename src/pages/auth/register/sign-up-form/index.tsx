@@ -41,17 +41,12 @@ export default function SignUpForm({ onLoggedIn }: Props) {
       password: Yup.string().required('Password is required'),
     }),
     onSubmit: async (values, actions) => {
-      thunkResHandler(
-        dispatch(
-          registerThunk({
-            username: values.username,
-            password: values.password,
-            email: values.email,
-          }),
-        ),
-        'auth/register/password',
-        (res) => {},
-        () => {},
+      dispatch(
+        registerThunk({
+          username: values.username,
+          password: values.password,
+          email: values.email,
+        }),
       );
     },
   });
@@ -112,17 +107,7 @@ export default function SignUpForm({ onLoggedIn }: Props) {
             className: '!px-0 !py-0 h-auto',
           })}
         >
-          Login
-          <MoveRight className="ml-2" size={12} />
-        </Link>
-        <Link
-          to={routeResolver(paths.auth.index, paths.auth['forget-password'])}
-          className={buttonVariants({
-            variant: 'link',
-            className: '!px-0 !py-0 h-auto',
-          })}
-        >
-          I don't remember my password
+          Have an account? Login
           <MoveRight className="ml-2" size={12} />
         </Link>
       </div>

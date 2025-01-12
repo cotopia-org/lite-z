@@ -2,7 +2,6 @@ import { WorkspaceType } from '@/types/workspace';
 import WorkspaceItem from './workpsace/workspace';
 import NotFound from '../layouts/not-found';
 import { Route } from 'lucide-react';
-import JoinWorkspaceWithLink from '@/pages/home/components/join-with-link';
 
 type Props = {
   items: WorkspaceType[];

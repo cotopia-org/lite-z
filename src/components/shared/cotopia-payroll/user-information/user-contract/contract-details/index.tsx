@@ -15,14 +15,12 @@ type Props = {
   contract: UserContractType;
   isLoading?: boolean;
   onBack: () => void;
-  onUpdate?: (contract: UserContractType) => void;
 };
 
 export default function PayrollContractDetails({
   contract,
   isLoading = false,
   onBack,
-  onUpdate,
 }: Props) {
   const [localContract, setLocalContract] = useState(contract);
 
@@ -67,12 +65,11 @@ export default function PayrollContractDetails({
       ) : contract ? (
         <div className="flex flex-col gap-y-4 p-4 border border-black rounded">
           {contract.text?.map((item, i) => (
-            <ul className="flex flex-col gap-y-2 px-4 py-1">
+            <ul key={i + 1} className="flex flex-col gap-y-2 px-4 py-1">
               {Object.keys(item).map((key) => {
-                return item[key].map((x) => (
-                  <div>
+                return item[key].map((x, ind) => (
+                  <div key={ind + 1}>
                     <div className={'font-bold mb-2 underline'}>{key}</div>
-
                     <li className="list-disc">
                       <Markdown className="[&_h1]:text-xl [&_h1]:mb-4 [&_h1]:font-bold [&_ol]:ml-4 [&_li]:mb-4 [&_li]:list-decimal">{`${
                         x
@@ -144,7 +141,7 @@ export default function PayrollContractDetails({
         )
       ) : null}
       <SignContract contract={localContract} onUpdate={setLocalContract} />
-      <EditContract contract={localContract} onUpdate={setLocalContract} />
+      <EditContract contract={localContract} />
       <CotopiaButton
         variant={'link'}
         startIcon={<ChevronLeft />}

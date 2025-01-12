@@ -170,7 +170,9 @@ export function ScheduleFillment({ userId }: { userId?: string | number }) {
   return (
     <div className={'w-full '}>
       {isLoading && <FullLoading />}
-      <div className={'mb-1 font-bold'}>This month schedule commitment</div>
+      <div className={'mb-1 font-bold'}>
+        Current contract schedule commitment
+      </div>
       <div className={'flex flex-row items-center  w-full'}>
         <CommitmentSection
           bg={'border-green-500 border-t-2 border-b-2 border-l-2 rounded-l'}
@@ -199,7 +201,7 @@ export function ScheduleFillment({ userId }: { userId?: string | number }) {
           <span className={'font-bold'}>
             +{formatTime(fulfillmentData.mustWorkPerDay)}
           </span>{' '}
-          hour/day to touch commitment of total{' '}
+          per day to meet commitment of total{' '}
           <span className={'font-bold tex'}>
             {formatTime(fulfillmentData.minimumWork, true)} (50% of{' '}
             {formatTime(fulfillmentData.total_schedule, true)} total hours

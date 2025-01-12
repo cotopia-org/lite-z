@@ -252,7 +252,7 @@ export default function Items({
                           Unread messages
                         </div>
                       )}
-                    {messages.indexOf(message)}
+                    {/*{messages.indexOf(message)}*/}
                   </div>
                 );
               })}

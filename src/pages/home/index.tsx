@@ -21,7 +21,6 @@ export default function HomePage() {
           </div>
           <JoinWorkspaceWithLink />
         </div>
-
         <WorkspaceList className="!p-0" />
       </div>
     </div>
