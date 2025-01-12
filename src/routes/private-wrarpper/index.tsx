@@ -12,7 +12,11 @@ import { useAppDispatch } from '@/store';
 import { getProfileThunk } from '@/store/slices/auth/slice';
 import { isPathIncluded } from '@/utils/utils';
 
-const formatsToExclude = ['/workspaces/:workspace_id/rooms/:room_id/settings'];
+const formatsToExclude = [
+  '/workspaces/:workspace_id/rooms/:room_id/settings',
+  '/workspaces/:workspace_id/rooms/:room_id/jobs',
+  '/workspaces/:workspace_id/rooms/:room_id/payroll',
+];
 
 export const useSocket = (
   event?: string,

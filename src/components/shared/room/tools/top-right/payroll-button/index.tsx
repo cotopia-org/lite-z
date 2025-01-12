@@ -1,11 +1,8 @@
-import CotopiaButton from '@/components/shared-ui/c-button';
 import PopupBox from '@/components/shared/popup-box';
 import PopupBoxChild from '@/components/shared/popup-box/child';
 import ToolButton from '../../tool-button';
 import ExpectedPayments from './expected-payments';
 import CTabs from '@/components/shared-ui/c-tabs';
-import CFullDialog from '@/components/shared-ui/c-dialog/full-dialog';
-import PayrollPage from '@/pages/cotopia-payroll/user/payroll';
 import { Coins } from 'lucide-react';
 import { useRoomContext } from '../../../room-context';
 import CotopiaTable from '@/components/shared-ui/c-table';
@@ -16,11 +13,13 @@ import { useMemo } from 'react';
 import ContractDetails from './contract-details';
 import { useApi } from '@/hooks/use-api';
 import ContractStatus from './contract-status';
+import { Link } from 'react-router-dom';
+import { buttonVariants } from '@/components/ui/button';
 
 const box_width = 506;
 
 export default function PayrollButton() {
-  const { payments } = useRoomContext();
+  const { payments, room_id, workspace_id } = useRoomContext();
 
   const totalPendingPaymentsAmount = useMemo(() => {
     return payments
@@ -124,20 +123,16 @@ export default function PayrollButton() {
                 ]}
               />
               <div className="w-full flex justify-end">
-                <CFullDialog
-                  trigger={(open) => (
-                    <CotopiaButton
-                      onClick={open}
-                      className="bg-primary text-white rounded-xl mt-3"
-                    >
-                      More
-                    </CotopiaButton>
-                  )}
+                <Link
+                  to={`/workspaces/${workspace_id}/rooms/${room_id}/payroll`}
+                  className={buttonVariants({
+                    variant: 'default',
+                    class: 'bg-primary text-white rounded-xl mt-3',
+                  })}
+                  target="_blank"
                 >
-                  {(close) => {
-                    return <PayrollPage onClose={close} />;
-                  }}
-                </CFullDialog>
+                  More
+                </Link>
               </div>
             </div>
           </PopupBoxChild>

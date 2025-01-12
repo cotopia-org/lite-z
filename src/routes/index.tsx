@@ -12,9 +12,17 @@ const WorkspaceRoomSettings = lazy(
   () => import('@/pages/workspace/rooms/room/settings'),
 );
 
+//Workspace Room Jobs
+const WorkspaceRoomJobs = lazy(
+  () => import('@/pages/workspace/rooms/room/jobs'),
+);
+
 //Home page
 const HomePage = lazy(() => import('@/pages/home'));
 const Acts = lazy(() => import('@/pages/acts'));
+
+//Workspace payroll page
+const WorkspacePayrollPage = lazy(() => import('@/pages/workspace/payroll'));
 
 //Workspace page
 const WorkspacePage = lazy(() => import('@/pages/workspace'));
@@ -53,6 +61,7 @@ const router = createBrowserRouter([
           },
         ],
       },
+
       {
         path: routeResolver(
           paths.workspaces.index,
@@ -71,6 +80,26 @@ const router = createBrowserRouter([
           paths.workspaces.rooms.view.settings,
         ),
         element: <WorkspaceRoomSettings />,
+      },
+      {
+        path: routeResolver(
+          paths.workspaces.index,
+          paths.workspaces.view,
+          paths.workspaces.rooms.index,
+          paths.workspaces.rooms.view.index,
+          paths.workspaces.rooms.view.payroll,
+        ),
+        element: <WorkspacePayrollPage />,
+      },
+      {
+        path: routeResolver(
+          paths.workspaces.index,
+          paths.workspaces.view,
+          paths.workspaces.rooms.index,
+          paths.workspaces.rooms.view.index,
+          paths.workspaces.rooms.view.jobs,
+        ),
+        element: <WorkspaceRoomJobs />,
       },
     ],
   },
