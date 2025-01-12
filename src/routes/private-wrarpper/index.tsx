@@ -58,7 +58,7 @@ export default function PrivateRoutes() {
 
   const navigate = useNavigate();
 
-  const { accessToken } = useAuth();
+  const { accessToken, user } = useAuth();
   useEffect(() => {
     if (!accessToken) {
       return navigate(routeResolver(paths.auth.index, paths.auth.login));
@@ -77,6 +77,8 @@ export default function PrivateRoutes() {
     const socket = io(VARZ.socketUrl, {
       query: {
         userToken: accessToken,
+        id: user.id,
+        username: user.username,
       },
     });
 
