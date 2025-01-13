@@ -344,11 +344,16 @@ export function formatTime(
     return `${String(adjustedHours).padStart(2, '0')}:${String(adjustedMinutes).padStart(2, '0')}`;
   }
   let string = '';
-  if (hour) {
-    string += String(adjustedHours).padStart(2, '0') + ' hrs ';
+  if (hour && adjustedHours !== 0) {
+    string += String(adjustedHours).padStart(2, '0') + ' hrs';
   }
+
+  if (adjustedHours !== 0 && adjustedMinutes !== 0) {
+    string += ' and ';
+  }
+
   if (min) {
-    string += 'and ' + String(adjustedMinutes).padStart(2, '0') + ' mins';
+    string += String(adjustedMinutes).padStart(2, '0') + ' mins';
   }
 
   if (!hour && !min) {
