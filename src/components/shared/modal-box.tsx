@@ -40,7 +40,7 @@ export default function ModalBox({
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
       <DialogTrigger asChild>{trigger(handleOpen, isOpen)}</DialogTrigger>
       <DialogContent className={finalClassName ?? ''}>
-        <DialogHeader className="dialog-header flex-row justify-between w-full  items-center">
+        <DialogHeader className="dialog-header relative flex-row justify-between w-full  items-center">
           {title && (
             <DialogTitle className="dialog-title text-3xl font-medium">
               {title}
