@@ -1,27 +1,38 @@
-import FullLoading from "@/components/shared/full-loading"
-import { useApi } from "@/hooks/swr"
-import { WorkspaceRoomType } from "@/types/room"
-import { useEffect } from "react"
-import { useNavigate } from "react-router-dom"
+import FullLoading from '@/components/shared/full-loading';
+import { useApi } from '@/hooks/swr';
+import { WorkspaceRoomType } from '@/types/room';
+import { isMobileBrowser } from '@livekit/components-core';
+import { useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 type Props = {
-  workspace_id: string
-}
+  workspace_id: string;
+};
 
 export default function Wrapper({ workspace_id }: Props) {
-  const navigate = useNavigate()
+  const navigate = useNavigate();
 
-  const { data, isLoading } = useApi(`/workspaces/${workspace_id}/rooms`)
+  const { data, isLoading } = useApi(`/workspaces/${workspace_id}/rooms`);
 
-  const rooms: WorkspaceRoomType[] = data !== undefined ? data?.data : []
+  const isMobile = isMobileBrowser();
+
+  const rooms: WorkspaceRoomType[] = data !== undefined ? data?.data : [];
 
   useEffect(() => {
-    if (rooms.length === 0) return
+    if (rooms.length === 0) return;
 
-    navigate(`/workspaces/${workspace_id}/rooms/${rooms[0].id}`)
-  }, [rooms, workspace_id])
+    let defaultRoom: WorkspaceRoomType | undefined = rooms[0];
 
-  if (isLoading || data === undefined) return <FullLoading />
+    if (isMobile) {
+      const gridRoom = rooms.find((a) => a.type === 'grid');
 
-  return null
+      if (gridRoom) defaultRoom = gridRoom;
+    }
+
+    navigate(`/workspaces/${workspace_id}/rooms/${defaultRoom.id}`);
+  }, [rooms, workspace_id, isMobile]);
+
+  if (isLoading || data === undefined) return <FullLoading />;
+
+  return null;
 }
