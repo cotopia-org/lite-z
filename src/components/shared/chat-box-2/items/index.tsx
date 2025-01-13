@@ -200,7 +200,7 @@ export default function Items({
 
     scrollToUnread();
     // initScrollEnd.current = true;
-  }, [items, initScrollEnd.current]);
+  }, []);
 
   function formatDate(timestamp: number) {
     const date = new Date(timestamp * 1000);
@@ -262,6 +262,7 @@ export default function Items({
       </VList>
     </>
   );
+  if (loading) content = <FullLoading className="py-8" />;
 
   if (messages.length === 0)
     content = (
@@ -273,8 +274,6 @@ export default function Items({
         <span>There's no messages yet 😢</span>
       </div>
     );
-
-  if (loading) content = <FullLoading className="py-8" />;
 
   return (
     <div className="flex-grow relative">

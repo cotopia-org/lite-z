@@ -88,7 +88,7 @@ export default function ScheduleButton() {
             left={triggerPosition.left}
             zIndex={triggerPosition.zIndex}
             onClose={close}
-            title={title_node}
+            title={''}
             width={'auto'}
           >
             <div className="flex w-full flex-col gap-y-2 items-end   max-h-[400px] overflow-y-auto">
@@ -108,11 +108,13 @@ export function CommitmentSection({
   data,
   bg,
   label,
+  subData,
 }: {
   percentage: number;
   data: string;
   bg: string;
   label: string;
+  subData: string;
 }) {
   return (
     <>
@@ -125,8 +127,14 @@ export function CommitmentSection({
         <h2 className="w-full  text-center leading-border-text -mb-3 ">
           <span className="bg-white text-xs p-1 font-medium">{label}</span>
         </h2>
-        <div className={'py-2  text-center    ' + bg}>
+        <div
+          className={
+            'py-2 flex flex-col items-center justify-center  text-center    ' +
+            bg
+          }
+        >
           <div className=" text-sm">{data}</div>
+          <div className=" text-sm">{subData}</div>
         </div>
       </div>
     </>
@@ -171,43 +179,42 @@ export function ScheduleFillment({ userId }: { userId?: string | number }) {
     <div className={'w-full '}>
       {isLoading && <FullLoading />}
       <div className={'mb-1 font-bold'}>
-        Current contract schedule commitment
+        {fulfillmentData.percentage}% commitment in{' '}
+        {formatTime(fulfillmentData.total_schedule, true)}
       </div>
       <div className={'flex flex-row items-center  w-full'}>
         <CommitmentSection
           bg={'border-green-500 border-t-2 border-b-2 border-l-2 rounded-l'}
-          data={`${formatTime(fulfillmentData.done)} (${fulfillmentData.percentage.toFixed(2)}%)`}
+          data={`${formatTime(fulfillmentData.done, false, false, true)}`}
+          subData={`${fulfillmentData.percentage.toFixed(2)}%`}
           percentage={fulfillmentData.percentage}
           label={'Done'}
         />
 
         <CommitmentSection
           bg={'border-red-500 border-t-2 border-b-2'}
-          data={`${formatTime(fulfillmentData.missing)} (${missingPercent.toFixed(2)}%)`}
+          data={`${formatTime(fulfillmentData.missing, false, false, true)}`}
+          subData={`${missingPercent.toFixed(2)}%`}
           percentage={missingPercent}
           label={'Missed'}
         />
         <CommitmentSection
           bg={'border-slate-500 border-t-2 border-b-2 border-r-2 rounded-r'}
-          data={`${formatTime(fulfillmentData.remaining)} (${remainingPercent.toFixed(2)}%)`}
+          data={`${formatTime(fulfillmentData.remaining, false, false, true)}`}
+          subData={`${remainingPercent.toFixed(2)}%`}
           percentage={remainingPercent}
           label={'Remaining'}
         />
       </div>
 
       {fulfillmentData.mustWorkPerDay > 0 && (
-        <div className={'my-1   text-red-500'}>
+        <div className={'my-1 text-center  text-red-500'}>
           Need{' '}
           <span className={'font-bold'}>
-            +{formatTime(fulfillmentData.mustWorkPerDay)}
+            +{formatTime(fulfillmentData.mustWorkPerDay, true, true)}
           </span>{' '}
-          per day to meet commitment of total{' '}
-          <span className={'font-bold tex'}>
-            {formatTime(fulfillmentData.minimumWork, true)} (50% of{' '}
-            {formatTime(fulfillmentData.total_schedule, true)} total hours
-            scheduled)
-          </span>{' '}
-          hrs
+          per day to meet commitment of min{' '}
+          <span className={'font-bold tex'}>50%</span>
         </div>
       )}
     </div>

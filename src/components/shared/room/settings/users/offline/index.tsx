@@ -1,23 +1,29 @@
-import TitleEl from "@/components/shared/title-el";
-import { useState } from "react";
-import { useRoomContext } from "../../../room-context";
-import moment from "moment";
-import * as emoji from "node-emoji";
-import User from "./user";
-import CotopiaButton from "@/components/shared-ui/c-button";
-import { Plus } from "lucide-react";
-import { UserType, WorkspaceUserType } from "@/types/user";
+import TitleEl from '@/components/shared/title-el';
+import { useState } from 'react';
+import { useRoomContext } from '../../../room-context';
+import moment from 'moment';
+import * as emoji from 'node-emoji';
+import User from './user';
+import CotopiaButton from '@/components/shared-ui/c-button';
+import { Plus } from 'lucide-react';
+import { UserType, WorkspaceUserType } from '@/types/user';
+import { Link } from 'react-router-dom';
+import { buttonVariants } from '@/components/ui/button';
+import { isUserAdmin } from '@/lib/utils';
+import useAuth from '@/hooks/auth';
 
 type Props = {
   allOfflineParticipants: WorkspaceUserType[];
 };
 export default function OfflineUsers({ allOfflineParticipants }: Props) {
   const [isExpand, setIsExpand] = useState(false);
+  const { workspace_id, room_id } = useRoomContext();
+  const { user } = useAuth();
 
   let finalShowParticipants = [...allOfflineParticipants];
 
-  if (isExpand === false)
-    finalShowParticipants = finalShowParticipants.slice(0, 6);
+  finalShowParticipants = finalShowParticipants.slice(0, 5);
+  const isAdmin = isUserAdmin(user, workspace_id);
 
   return (
     <TitleEl title={`Recently`}>
@@ -26,13 +32,16 @@ export default function OfflineUsers({ allOfflineParticipants }: Props) {
           <User user={item} key={item.id} />
         ))}
       </div>
-      <CotopiaButton
-        variant={"outline"}
-        onClick={() => setIsExpand((prev) => !prev)}
-        startIcon={<Plus size={16} />}
-      >
-        {isExpand ? "Show less" : "Show more"}
-      </CotopiaButton>
+      {isAdmin && (
+        <CotopiaButton variant={'outline'} startIcon={<Plus size={16} />}>
+          <Link
+            target="_blank"
+            to={`/workspaces/${workspace_id}/rooms/${room_id}/users`}
+          >
+            Show more
+          </Link>
+        </CotopiaButton>
+      )}
     </TitleEl>
   );
 }

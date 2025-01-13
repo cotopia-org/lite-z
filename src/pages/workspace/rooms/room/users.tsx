@@ -3,14 +3,14 @@ import RoomContext, {
 } from '@/components/shared/room/room-context';
 import Dashboard from '@/pages/dashboard';
 
-export default function WorkspaceRoomJobsPage() {
+export default function WorkspaceRoomUsersPage() {
   const handleBack = () => {
     window.close();
   };
 
   return (
     <EasyRoomContext>
-      <Dashboard onClose={handleBack} defaultPage={'jobs'} />
+      <Dashboard onClose={handleBack} defaultPage={'users'} />
     </EasyRoomContext>
   );
 }

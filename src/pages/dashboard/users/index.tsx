@@ -93,12 +93,19 @@ export default function Users() {
         user={item.data}
       />
     );
+  const sortedUsers = workspaceUsers.sort((a, b) => {
+    if (a.status === 'online' && b.status !== 'online') return -1;
+    if (a.status !== 'online' && b.status === 'online') return 1;
 
+    const dateA = new Date(a.last_login).getTime();
+    const dateB = new Date(b.last_login).getTime();
+    return dateB - dateA;
+  });
   return (
     <div className={'p-4'}>
       <div className="flex flex-row items-center gap-x-4 justify-between"></div>
 
-      <CotopiaTable items={workspaceUsers} tableHeadItems={tableHeadItems} />
+      <CotopiaTable items={sortedUsers} tableHeadItems={tableHeadItems} />
     </div>
   );
 }

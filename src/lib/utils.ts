@@ -315,7 +315,12 @@ export function isUserAdmin(
   );
 }
 
-export function formatTime(totalMinutes: number, short = false): string {
+export function formatTime(
+  totalMinutes: number,
+  hour: boolean = false,
+  min: boolean = false,
+  short: boolean = false,
+): string {
   const hours = Math.floor(totalMinutes / 60);
   const wholeMinutes = Math.floor(totalMinutes % 60); // Extract whole minutes
   const seconds = Math.round((totalMinutes % 1) * 60); // Convert fractional part to seconds
@@ -334,10 +339,23 @@ export function formatTime(totalMinutes: number, short = false): string {
     adjustedMinutes = 0;
     adjustedHours += 1;
   }
+
   if (short) {
-    return String(adjustedHours).padStart(2, '0');
+    return `${String(adjustedHours).padStart(2, '0')}:${String(adjustedMinutes).padStart(2, '0')}`;
   }
-  return `${String(adjustedHours).padStart(2, '0')}:${String(adjustedMinutes).padStart(2, '0')}:${String(adjustedSeconds).padStart(2, '0')}`;
+  let string = '';
+  if (hour) {
+    string += String(adjustedHours).padStart(2, '0') + ' hrs ';
+  }
+  if (min) {
+    string += 'and ' + String(adjustedMinutes).padStart(2, '0') + ' mins';
+  }
+
+  if (!hour && !min) {
+    return `${String(adjustedHours).padStart(2, '0')}:${String(adjustedMinutes).padStart(2, '0')}:${String(adjustedSeconds).padStart(2, '0')}`;
+  }
+
+  return string;
 }
 
 export function getContractStatus(contract: UserContractType) {

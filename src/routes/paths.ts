@@ -18,6 +18,7 @@ export const paths = {
         index: ':room_id',
         settings: 'settings',
         jobs: 'jobs',
+        users: 'users',
         payroll: 'payroll',
       },
     },
