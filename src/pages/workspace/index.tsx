@@ -1,8 +1,8 @@
-import { useNavigate, useParams } from "react-router-dom";
-import { useApi } from "@/hooks/swr";
-import { WorkspaceRoomType } from "@/types/room";
-import { useEffect } from "react";
-import FullLoading from "@/components/shared/full-loading";
+import { useNavigate, useParams } from 'react-router-dom';
+import { useApi } from '@/hooks/swr';
+import { WorkspaceRoomType } from '@/types/room';
+import { useEffect } from 'react';
+import FullLoading from '@/components/shared/full-loading';
 
 export default function WorkspacePage() {
   const { workspace_id } = useParams();

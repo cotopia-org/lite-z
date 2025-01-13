@@ -106,6 +106,7 @@ export default function PrivateRoutes() {
 
     // Clean up the socket connection on unmount
     return () => {
+      console.log('Here');
       toast.error('Socket disconnected');
       socket.disconnect();
     };

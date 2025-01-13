@@ -232,9 +232,10 @@ export default function RoomHolder({
     // getSettings();
 
     if (socket && socket.connected) {
+      console.log('Join');
       handleJoin();
     }
-  }, [socket]);
+  }, [socket?.connected]);
 
   let content = null;
 
@@ -258,7 +259,7 @@ export default function RoomHolder({
         .get<FetchDataType<WorkspaceRoomJoinType>>(`/rooms/${room_id}/join`)
         .then((res) => {
           setPermissionChecked(true);
-          setMustJoin(true);
+          // setMustJoin(true);
           //Setting token in redux for livekit
           reduxDispatch(setToken(res.data.data.token));
           dispatch({ type: 'STOP_LOADING' });
@@ -275,17 +276,18 @@ export default function RoomHolder({
   // const handlePassed =
   //   permissionChecked === false && !isReConnecting && !isSwitching;
 
-  useBus(
-    __BUS.rejoinRoom,
-    () => {
-      if (permissionChecked === true || isSwitching || isReConnecting) {
-        handleJoin(0);
-      }
-    },
-    [permissionChecked, isSwitching, isReConnecting],
-  );
-  if (!mustJoin || state.loading) {
-    return (
+  // useBus(
+  //   __BUS.rejoinRoom,
+  //   () => {
+  //     if (permissionChecked === true || isSwitching || isReConnecting) {
+  //       handleJoin(0);
+  //     }
+  //   },
+  //   [permissionChecked, isSwitching, isReConnecting],
+  // );
+
+  if (state.loading) {
+    content = (
       <div
         className={
           'items-center justify-center flex text-4xl text-muted bg-slate-400 h-full min-h-screen'
