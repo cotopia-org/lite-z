@@ -167,7 +167,7 @@ export function ScheduleFillment({ userId }: { userId?: string | number }) {
   }
 
   const missingPercent =
-    (fulfillmentData.missing / fulfillmentData.total_schedule) * 100;
+    (fulfillmentData.missing / fulfillmentData.total_until_now_schedule) * 100;
   const remainingPercent =
     (fulfillmentData.remaining / fulfillmentData.total_schedule) * 100;
 
