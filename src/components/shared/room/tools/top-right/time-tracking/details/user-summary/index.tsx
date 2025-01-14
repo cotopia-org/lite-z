@@ -1,27 +1,24 @@
-import Rank from "./rank";
-import { LeaderboardType } from "@/types/leaderboard";
-import UserAvatar from "@/components/shared/user-avatar";
-import { WorkspaceUserType } from "@/types/user";
+import Rank from './rank';
+import { LeaderboardType } from '@/types/leaderboard';
+import UserAvatar from '@/components/shared/user-avatar';
+import { UserType, WorkspaceUserType } from '@/types/user';
 
 type Props = {
   rank: number;
-  leaderboard: LeaderboardType;
-  workspaceUsers: WorkspaceUserType[];
+  user: UserType;
 };
 
-const UserSummary = ({ rank, leaderboard, workspaceUsers }: Props) => {
-  const user = leaderboard.user;
+const UserSummary = ({ rank, user }: Props) => {
+  const avatar = user.avatar;
 
-  const avatar = workspaceUsers.find((x) => x.id === user.id)?.avatar;
-
-  const username = user.name;
+  const username = user.username;
 
   return (
     <div className="flex flex-row w-full items-center gap-x-2">
       <Rank rank={rank} />
       <UserAvatar date={user.created_at} title={username} src={avatar?.url} />
       <span className="text-xs text-grayscale-subtitle font-medium">
-        {username ?? "-"}
+        {username ?? '-'}
       </span>
     </div>
   );
