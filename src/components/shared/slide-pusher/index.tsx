@@ -5,8 +5,8 @@ import {
   useEffect,
   useRef,
   useState,
-} from "react";
-import Slide from "./slide";
+} from 'react';
+import Slide from './slide';
 
 type Props = {
   children: ReactNode;
@@ -87,10 +87,10 @@ export default function SlidePusher({ children }: Props) {
         back: handleBackSlide,
       }}
     >
-      <div className='relative h-full flex-grow'>
+      <div className="relative h-full flex-grow">
         <div
           ref={parentRef}
-          className='viewport flex flex-row w-full h-full absolute top-0 left-0 transition-all'
+          className="viewport flex flex-row w-full h-full absolute top-0 left-0 transition-all"
           style={{
             transform: `translateX(${-1 * (camera - 1) * width}px)`,
           }}

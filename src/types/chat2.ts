@@ -20,4 +20,10 @@ export type ChatType = {
   workspace_id: string;
   type: string;
   created_at: number;
+  folder_id: number | null;
+};
+
+export type FolderType = {
+  id: number;
+  title: string;
 };

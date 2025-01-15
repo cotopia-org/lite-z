@@ -40,6 +40,7 @@ export default function Chat({ chat }: Props) {
 
   const handleSelectChat = () => {
     appDispatch(setCurrentChat(chat));
+
     push(<ChatInnerHolder onBack={handleBackChat} chat_id={chat?.id} />);
   };
 
