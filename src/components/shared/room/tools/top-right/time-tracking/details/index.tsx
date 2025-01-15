@@ -32,6 +32,8 @@ export default function TimeTrackingDetails({
           'flex items-center justify-between  w-full p-2 px-3 !transform-none hover:bg-grayscale-light hover:cursor-pointer';
 
         if (isMe) clss += ` bg-blue-400/[0.4] hover:bg-blue-400/[0.4]`;
+        if (item.percentage < 50)
+          clss += ` bg-red-300/[0.4] hover:bg-red-300/[0.4]`;
 
         return (
           <div
