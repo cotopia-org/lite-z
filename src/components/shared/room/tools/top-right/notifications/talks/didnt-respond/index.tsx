@@ -1,5 +1,6 @@
 import CotopiaPrompt from '@/components/shared-ui/c-prompt';
 import { useLoading } from '@/hooks';
+import useAuth from '@/hooks/auth';
 import { useSocket } from '@/routes/private-wrarpper';
 import axiosInstance from '@/services/axios';
 import { TalkType } from '@/types/talk';
@@ -10,13 +11,23 @@ import { toast } from 'sonner';
 export default function TalkDidntRespondBox() {
   const navigate = useNavigate();
 
+  const { user: profile } = useAuth();
+
   const { startLoading, stopLoading, isLoading } = useLoading();
 
   const [talk, setTalk] = useState<TalkType>();
 
-  useSocket('talkExpired', (talk: TalkType) => {
-    setTalk(talk);
-  });
+  useSocket(
+    'talkExpired',
+    (talk: TalkType) => {
+      if (profile.id !== talk.user.id) {
+        return;
+      }
+
+      setTalk(talk);
+    },
+    [profile],
+  );
 
   const handleUnGhost = () => {
     startLoading();
