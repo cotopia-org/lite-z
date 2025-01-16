@@ -23,7 +23,7 @@ export default function Reject({ onReject }: Props) {
       .then((res) => {
         stopLoading();
         if (onReject) onReject(res.data.data);
-        toast.success('The invitation was rejected successfully.');
+        toast.success('The invitation rejected successfully.');
       })
       .catch((err) => {
         stopLoading();

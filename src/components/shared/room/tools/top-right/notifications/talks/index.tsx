@@ -8,7 +8,12 @@ import { VARZ } from '@/const/varz';
 
 function justActiveTalks(talks: TalkType[]) {
   return talks
-    .filter((a) => a.response === 'no_response' || a.response === null)
+    .filter(
+      (a) =>
+        a.response === 'no_response' ||
+        a.response === 'rejected' ||
+        a.response === null,
+    )
     .filter((a) => {
       const now = moment().utc();
       const created_at = moment.utc(a.created_at);
