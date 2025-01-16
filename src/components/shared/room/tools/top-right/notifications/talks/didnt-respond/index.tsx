@@ -1,17 +1,50 @@
 import CotopiaPrompt from '@/components/shared-ui/c-prompt';
+import { useLoading } from '@/hooks';
+import { useSocket } from '@/routes/private-wrarpper';
+import axiosInstance from '@/services/axios';
+import { TalkType } from '@/types/talk';
+import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { toast } from 'sonner';
 
 export default function TalkDidntRespondBox() {
+  const navigate = useNavigate();
+
+  const { startLoading, stopLoading, isLoading } = useLoading();
+
+  const [talk, setTalk] = useState<TalkType>();
+
+  useSocket('talkExpired', (talk: TalkType) => {
+    setTalk(talk);
+  });
+
+  const handleUnGhost = () => {
+    startLoading();
+    axiosInstance
+      .get(`/users/unGhost`)
+      .then((res) => {
+        stopLoading();
+        toast.success('You are back again!');
+      })
+      .catch((err) => {
+        stopLoading();
+      });
+  };
+
   return (
-    <>
-      <CotopiaPrompt
-        isPortal
-        open={true}
-        onSubmit={() => {}}
-        onClose={() => {}}
-        title="You didn’t respond!"
-        description="You became inactive because you didn’t respond to an invitation. Are you there?"
-        dialogContentClassName="!pt-6"
-      />
-    </>
+    <CotopiaPrompt
+      isPortal
+      open={!!talk}
+      onSubmit={handleUnGhost}
+      loading={isLoading}
+      submitText="I’m Back"
+      cancelText="Leave workspace"
+      onClose={() => {
+        navigate(`/workspaces`);
+      }}
+      title="You didn’t respond!"
+      description="You became inactive because you didn’t respond to an invitation. Are you there?"
+      dialogContentClassName="!pt-6"
+    />
   );
 }

@@ -3,8 +3,7 @@ import { useTalk } from '../..';
 import { useEffect, useState } from 'react';
 import moment from 'moment';
 import { formatTime } from '@/lib/utils';
-
-const fiv_mins = 60 * 5;
+import { VARZ } from '@/const/varz';
 
 const TimeFormat = ({ createdAt }: { createdAt: string }) => {
   const [s, setS] = useState<string>();
@@ -14,7 +13,7 @@ const TimeFormat = ({ createdAt }: { createdAt: string }) => {
     const created_at = moment.utc(createdAt);
     const diffSecs = now.diff(created_at, 'seconds');
 
-    return formatTime(fiv_mins - diffSecs);
+    return formatTime(VARZ.inviteTimout - diffSecs);
   };
 
   useEffect(() => {

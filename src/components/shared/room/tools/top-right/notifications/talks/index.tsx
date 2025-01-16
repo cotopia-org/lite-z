@@ -4,25 +4,17 @@ import { TalkType } from '@/types/talk';
 import { useEffect, useMemo, useState } from 'react';
 import TalkItem from './talk-item';
 import moment from 'moment';
-
-const fiv_mins = 60 * 5;
+import { VARZ } from '@/const/varz';
 
 function justActiveTalks(talks: TalkType[]) {
   return talks
-    .filter(
-      (a) =>
-        a.response === 'no_response' ||
-        a.response === 'accepted' ||
-        a.response === null,
-    )
+    .filter((a) => a.response === 'no_response' || a.response === null)
     .filter((a) => {
       const now = moment().utc();
       const created_at = moment.utc(a.created_at);
       const diffSecs = now.diff(created_at, 'seconds');
 
-      console.log('diffSecs', diffSecs);
-
-      return diffSecs < fiv_mins;
+      return diffSecs < VARZ.inviteTimout;
     });
 }
 

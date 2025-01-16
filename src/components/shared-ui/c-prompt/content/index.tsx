@@ -13,6 +13,7 @@ export type CotopiaPromptType = {
   cancelVariant?: VariantProps<typeof buttonVariants>['variant'];
   loading?: boolean;
   submitText?: string;
+  cancelText?: string;
   afterDesc?: ReactNode;
   className?: string;
   hasNotAction?: boolean;
@@ -24,6 +25,7 @@ export default function CotopiaPromptContent({
   loading = false,
   onSubmit,
   submitText = 'Submit',
+  cancelText = 'Close',
   submitVariant = 'default',
   cancelVariant = 'primary-outline',
   className = '',
@@ -54,7 +56,7 @@ export default function CotopiaPromptContent({
             className="!px-6 w-full "
             variant={cancelVariant}
           >
-            Close
+            {cancelText}
           </CotopiaButton>
           <CotopiaButton
             variant={submitVariant}
