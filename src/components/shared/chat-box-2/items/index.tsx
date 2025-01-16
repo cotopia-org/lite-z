@@ -162,14 +162,9 @@ export default function Items({
         () => {},
       );
     }
-
-    // setInterval(() => {
-    //   setIsScrolling(false);
-    // }, 5000);
   };
 
   const scrollToUnread = () => {
-    console.log(rightIndex);
     vlistRef.current?.scrollToIndex(rightIndex);
   };
 
@@ -192,15 +187,13 @@ export default function Items({
   const initScrollEnd = useRef(false);
 
   useEffect(() => {
-    console.log('Here2');
     if (items.length === 0) return;
-    if (initScrollEnd.current === true) return;
+    // if (initScrollEnd.current === true) return;
 
     // vlistRef.current?.scrollToIndex(items.length - 1);
-
     scrollToUnread();
     // initScrollEnd.current = true;
-  }, []);
+  }, [items]);
 
   function formatDate(timestamp: number) {
     const date = new Date(timestamp * 1000);

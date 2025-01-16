@@ -21,7 +21,7 @@ export default function UserChatList() {
     push(<ChatInnerHolder onBack={back} chat_id={chat?.id} />);
   });
   return (
-    <div className="w-full chats-holder flex flex-col gap-y-0 overflow-y-auto">
+    <div className="w-full chats-holder flex flex-col  gap-y-0 overflow-y-auto">
       {chats.map((chat) => (
         <Chat chat={chat} key={chat.id} />
       ))}

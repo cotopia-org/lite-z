@@ -8,6 +8,7 @@ import useAuth from '@/hooks/auth';
 import { WorkspaceUserType } from '@/types/user';
 import WorkingTimes from './working-times';
 import UserSummary from './user-summary';
+import { formatTime } from '@/lib/utils';
 
 type TimeTrackingDetailProps = {
   leaderboard: CommitmentLeaderboardType[];
@@ -28,9 +29,11 @@ export default function TimeTrackingDetails({
         const isMe = item.user.id === user?.id;
 
         let clss =
-          'flex items-center justify-between w-full p-2 px-3 !transform-none hover:bg-grayscale-light hover:cursor-pointer';
+          'flex items-center justify-between  w-full p-2 px-3 !transform-none hover:bg-grayscale-light hover:cursor-pointer';
 
         if (isMe) clss += ` bg-blue-400/[0.4] hover:bg-blue-400/[0.4]`;
+        if (item.percentage < 50)
+          clss += ` bg-red-300/[0.4] hover:bg-red-300/[0.4]`;
 
         return (
           <div
@@ -42,8 +45,9 @@ export default function TimeTrackingDetails({
           >
             <BlurFade inView className={clss} delay={0.05 + key * 0.05}>
               <UserSummary user={item.user} rank={key + 1} />
-              {item.percentage.toFixed(0)}%
-              {/*<WorkingTimes leaderboard={item} />*/}
+              <div className={'text-sm text-center  w-1/2'}>
+                {item.percentage.toFixed(0)}% ({formatTime(item.done, true)})
+              </div>
             </BlurFade>
           </div>
         );

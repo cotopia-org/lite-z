@@ -348,7 +348,7 @@ export function formatTime(
     string += String(adjustedHours).padStart(2, '0') + ' hrs';
   }
 
-  if (adjustedHours !== 0 && adjustedMinutes !== 0) {
+  if (adjustedHours !== 0 && adjustedMinutes !== 0 && min) {
     string += ' and ';
   }
 
