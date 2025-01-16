@@ -3,11 +3,12 @@ import {
   DialogContent,
   DialogOverlay,
   DialogTrigger,
-} from "@/components/ui/dialog";
-import { ReactNode, useEffect, useState } from "react";
-import CotopiaPromptContent, { CotopiaPromptType } from "./content";
-import useBus from "use-bus";
-import { __BUS } from "@/const/bus";
+} from '@/components/ui/dialog';
+import { ReactNode, useEffect, useState } from 'react';
+import CotopiaPromptContent, { CotopiaPromptType } from './content';
+import useBus from 'use-bus';
+import { __BUS } from '@/const/bus';
+import { cn } from '@/lib/utils';
 
 type PartiallyOptional<T, K extends keyof T> = Omit<T, K> & Partial<Pick<T, K>>;
 
@@ -24,16 +25,18 @@ type WithoutPortalProps = {
 type RemaindPropTypes = {
   afterDesc?: ReactNode;
   open?: boolean;
+  dialogContentClassName?: string;
 };
 
 type Props = RemaindPropTypes &
   (WithPortalProps | WithoutPortalProps) &
-  PartiallyOptional<CotopiaPromptType, "onClose">;
+  PartiallyOptional<CotopiaPromptType, 'onClose'>;
 export default function CotopiaPrompt({
   trigger,
   afterDesc,
   open = false,
   isPortal = true,
+  dialogContentClassName,
   ...rest
 }: Props) {
   const [isOpen, setIsOpen] = useState(open);
@@ -58,11 +61,15 @@ export default function CotopiaPrompt({
 
   let view = null;
 
-  if (isPortal && !!trigger) {
+  if (isPortal) {
     view = (
       <>
-        <DialogTrigger asChild>{trigger(handleOpen)}</DialogTrigger>
-        <DialogContent className='sm:max-w-[425px] pt-12'>
+        {!!trigger && (
+          <DialogTrigger asChild>{trigger(handleOpen)}</DialogTrigger>
+        )}
+        <DialogContent
+          className={cn('sm:max-w-[425px] pt-12', dialogContentClassName)}
+        >
           <CotopiaPromptContent
             {...rest}
             onSubmit={handleSubmit}
@@ -80,8 +87,8 @@ export default function CotopiaPrompt({
         {trigger ? (
           <DialogTrigger asChild>{trigger(handleOpen)}</DialogTrigger>
         ) : null}
-        <DialogOverlay className='z-10' onClick={handleClose} />
-        <div className='fixed left-[50%] top-[50%] z-20 w-full max-w-lg translate-x-[-50%] translate-y-[-50%] gap-4 border bg-background p-6 shadow-lg sm:rounded-lg'>
+        <DialogOverlay className="z-10" onClick={handleClose} />
+        <div className="fixed left-[50%] top-[50%] z-20 w-full max-w-lg translate-x-[-50%] translate-y-[-50%] gap-4 border bg-background p-6 shadow-lg sm:rounded-lg">
           <CotopiaPromptContent
             {...rest}
             onSubmit={handleSubmit}

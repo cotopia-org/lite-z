@@ -9,7 +9,12 @@ const fiv_mins = 60 * 5;
 
 function justActiveTalks(talks: TalkType[]) {
   return talks
-    .filter((a) => a.response === 'no_response' || a.response === null)
+    .filter(
+      (a) =>
+        a.response === 'no_response' ||
+        a.response === 'accepted' ||
+        a.response === null,
+    )
     .filter((a) => {
       const now = moment().utc();
       const created_at = moment.utc(a.created_at);
@@ -53,9 +58,18 @@ export default function Talks() {
 
   useSocket('talkResponded', (data) => {
     console.log('talkResponded data', data);
+    setTalks((prev) => {
+      const nTalks = [...prev];
+      const findIndex = prev.findIndex((a) => a.id === data.id);
+
+      nTalks[findIndex] = data;
+
+      return nTalks;
+    });
   });
 
   const handleChangeTalkItem = (talk: TalkType) => {
+    //Update talk type
     setTalks((prev) => {
       const prevItems = [...prev];
 
