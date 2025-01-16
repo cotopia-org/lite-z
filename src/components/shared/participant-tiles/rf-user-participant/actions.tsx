@@ -1,16 +1,16 @@
-import React from "react"
-import ActionsRight from "./actions-right"
-import MicButton from "./actions-right/mic"
-import { useParticipantTileCtx } from "../participant-tile-provider"
-import { Track } from "livekit-client"
-import { TrackReferenceOrPlaceholder } from "@livekit/components-core"
+import React from 'react';
+import ActionsRight from './actions-right';
+import MicButton from './actions-right/mic';
+import { useParticipantTileCtx } from '../participant-tile-provider';
+import { Track } from 'livekit-client';
+import { TrackReferenceOrPlaceholder } from '@livekit/components-core';
 
 interface Props {}
 
 const RfUserTileActions = (props: Props) => {
-  const { trackRef, targetUser } = useParticipantTileCtx()
+  const { trackRef, targetUser } = useParticipantTileCtx();
 
-  const trackReference = trackRef as TrackReferenceOrPlaceholder
+  const trackReference = trackRef as TrackReferenceOrPlaceholder;
   return (
     <ActionsRight>
       <MicButton
@@ -23,7 +23,7 @@ const RfUserTileActions = (props: Props) => {
         }
       />
     </ActionsRight>
-  )
-}
+  );
+};
 
-export default RfUserTileActions
+export default RfUserTileActions;
