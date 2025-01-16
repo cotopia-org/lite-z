@@ -39,7 +39,7 @@ export default function Talks() {
       axiosInstance
         .get(`/users/talks`)
         .then((res) => {
-          setTalks(res?.data?.data ?? []);
+          setTalks(justActiveTalks(res?.data?.data ?? []));
         })
         .catch((err) => {});
     }
@@ -55,12 +55,28 @@ export default function Talks() {
     console.log('talkResponded data', data);
   });
 
+  const handleChangeTalkItem = (talk: TalkType) => {
+    setTalks((prev) => {
+      const prevItems = [...prev];
+
+      const findIndex = prevItems.findIndex((a) => a.id === talk.id);
+      prevItems[findIndex] = talk;
+
+      return prevItems;
+    });
+  };
+
   if (talks.length === 0) return null;
 
   return (
     <div className="talks flex flex-col gap-y-2 max-h-[600px] overflow-y-auto">
       {talks.map((talk) => (
-        <TalkItem talk={talk} key={talk.id} />
+        <TalkItem
+          talk={talk}
+          key={talk.id}
+          onAccept={handleChangeTalkItem}
+          onReject={handleChangeTalkItem}
+        />
       ))}
     </div>
   );

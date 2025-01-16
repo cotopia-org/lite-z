@@ -2,10 +2,14 @@ import CotopiaButton from '@/components/shared-ui/c-button';
 import { useTalk } from '..';
 import { useLoading } from '@/hooks';
 import axiosInstance from '@/services/axios';
+import { TalkType } from '@/types/talk';
+import { toast } from 'sonner';
 
-type Props = {};
+type Props = {
+  onReject: (talk: TalkType) => void;
+};
 
-export default function Reject() {
+export default function Reject({ onReject }: Props) {
   const { startLoading, stopLoading, isLoading } = useLoading();
 
   const { talk } = useTalk();
@@ -18,6 +22,8 @@ export default function Reject() {
       })
       .then((res) => {
         stopLoading();
+        if (onReject) onReject(res.data.data);
+        toast.success('The invitation was rejected successfully.');
       })
       .catch((err) => {
         stopLoading();

@@ -26,7 +26,6 @@ import { toast } from 'sonner';
 import MinHours from './min-hours';
 import MaxHours from './max-hours';
 import { useRoomContext } from '@/components/shared/room/room-context';
-import useAuth from '@/hooks/auth';
 
 type Props = {
   defaultContract?: UserContractType;

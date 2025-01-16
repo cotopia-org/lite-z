@@ -1,5 +1,5 @@
 import UserContracts from '../../common/user-contracts';
-import { useContractsCtx } from '@/components/shared/room/tools/top-right/payroll-button';
+import { useContractsCtx } from '../../payroll-wrapper';
 
 export default function MyContracts() {
   const { myContracts: items, loading } = useContractsCtx();
