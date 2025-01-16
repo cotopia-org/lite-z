@@ -1,6 +1,7 @@
 import CotopiaButton from '@/components/shared-ui/c-button';
 import { useLoading } from '@/hooks';
 import axiosInstance from '@/services/axios';
+import { toast } from 'sonner';
 
 type Props = {
   user_id: number;
@@ -14,6 +15,7 @@ export default function InviteToTalk({ user_id }: Props) {
       .post(`/talks`, { user_id })
       .then((res) => {
         stopLoading();
+        toast.success('You invited successfully.');
       })
       .catch((err) => {
         stopLoading();
