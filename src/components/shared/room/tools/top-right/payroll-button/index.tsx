@@ -68,7 +68,7 @@ export default function PayrollButton() {
   }, []);
 
   //separate my contracts
-  const my_contracts = contracts.filter((c) => c.user_id === user.id);
+  const my_contracts = contracts.filter((c) => c?.user_id === user?.id);
 
   useSocket(
     'contractCreated',

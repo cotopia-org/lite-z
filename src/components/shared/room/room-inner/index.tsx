@@ -11,10 +11,14 @@ import { VARZ } from '@/const/varz';
 import { useRoomContext as localUseRoomContext } from './../room-context';
 import GridRoomView from '../grid-room-view';
 import FullLoading from '../../full-loading';
+import { cn } from '@/lib/utils';
+import { isMobileBrowser } from '@livekit/components-core';
 
 export default function RoomInner() {
   const { disconnect, connect } = useRoomContext();
   const { room, roomLoading } = localUseRoomContext();
+
+  const isMobile = isMobileBrowser();
 
   let is_grid_view = room?.type === 'grid';
   let is_flow_view = room?.type === 'flow';
@@ -43,13 +47,18 @@ export default function RoomInner() {
     view = <FullLoading />;
   }
 
+  let parentSidebarClass = cn(
+    'fixed right-0 top-0 bottom-0 w-full md:w-[376px] h-screen overflow-y-auto z-10',
+    isMobile ? 'top-[64px] border-t bg-black' : 'bg-white',
+  );
+
   return (
     <>
       <InitRoom />
       <div id="main-room-holder" className={mainRoomHolderClss}>
         <div className="w-full h-full relative">{view}</div>
         {!!sidebar && (
-          <div className="fixed right-0 top-0 bottom-0 w-full md:w-[376px] bg-white h-screen overflow-y-auto z-10">
+          <div className={parentSidebarClass}>
             <RoomSidebar>
               <RoomSettings />
             </RoomSidebar>

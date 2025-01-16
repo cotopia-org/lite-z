@@ -2,6 +2,8 @@ import { UserMinimalType, UserType, WorkspaceUserType } from '@/types/user';
 import UserCover from './cover';
 import { createContext, useContext } from 'react';
 import UserDate from './user-date';
+import InviteToTalk from './invite-to-talk';
+import useAuth from '@/hooks/auth';
 
 type Props = {
   user: UserMinimalType | WorkspaceUserType | UserType;
@@ -18,6 +20,8 @@ const UserDetailContext = createContext<{
 export const useUserDetail = () => useContext(UserDetailContext);
 
 export default function Details({ user, roomId }: Props) {
+  const { user: profile } = useAuth();
+
   return (
     <UserDetailContext.Provider value={{ user, roomId }}>
       <div className="w-full max-w-full flex flex-col select-none">
@@ -33,6 +37,7 @@ export default function Details({ user, roomId }: Props) {
             </div>
           </div>
           {/*<SendingDirect /> */}
+          {profile?.id !== user?.id && <InviteToTalk user_id={user.id} />}
         </div>
       </div>
     </UserDetailContext.Provider>

@@ -161,8 +161,8 @@ const GridRoomView = (props: Props) => {
       <div
         id="room-view"
         className={cn(
-          'w-full h-full bg-black  top-0 left-0',
-          !showSidebar ? 'fixed md:relative z-20' : '',
+          'w-full h-full bg-black top-0 left-0 fixed ',
+          !showSidebar ? 'md:relative z-20' : '',
         )}
       >
         <MeetingWrapper>

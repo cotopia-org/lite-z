@@ -1,18 +1,18 @@
-import { GridIcon } from '@/components/icons';
 import CotopiaButton from '@/components/shared-ui/c-button';
+import CotopiaIconButton from '@/components/shared-ui/c-icon-button';
 import { useRoomContext } from '@/components/shared/room/room-context';
+import { Menu } from 'lucide-react';
 
 export default function SidebarOpener() {
   const { showSidebarInMobile } = useRoomContext();
 
   return (
-    <CotopiaButton
-      className="bg-white text-black h-[48px] rounded-lg"
-      startIcon={<GridIcon size={20} />}
+    <CotopiaIconButton
+      className="!bg-transparent text-white w-[48px] h-[48px] rounded-lg"
       size={'lg'}
       onClick={showSidebarInMobile}
     >
-      Chats & Stuff
-    </CotopiaButton>
+      <Menu size={20} />
+    </CotopiaIconButton>
   );
 }

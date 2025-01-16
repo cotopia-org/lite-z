@@ -196,7 +196,7 @@ export default function RoomSettings() {
         }
       }
     },
-    [chatObjects, user.id],
+    [chatObjects, user?.id],
   );
 
   const [value, setValue] = useState('rooms');

@@ -30,7 +30,7 @@ export default function TimeTrackingButton({
       className="!min-w-[135px] !px-2"
       loading={isLoading}
     >
-      {user.active_contract !== null ? (
+      {user?.active_contract !== null ? (
         <div>
           {!stop && (
             <div className="absolute top-2 right-2 w-2 h-2 bg-red-600 rounded-full animate-pulse"></div>
@@ -49,8 +49,10 @@ export default function TimeTrackingButton({
           </Timer>
         </div>
       ) : (
-        <div>
-          <p className={'text-red-500'}>You have no active contract!</p>
+        <div className="max-w-[100px]">
+          <p className={'text-red-500 text-ellipsis overflow-hidden'}>
+            You have no active contract!
+          </p>
         </div>
       )}
     </ToolButton>
