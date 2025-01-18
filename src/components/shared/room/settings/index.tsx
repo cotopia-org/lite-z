@@ -28,6 +28,8 @@ import { dispatch as busDispatch } from 'use-bus';
 import { __BUS } from '@/const/bus';
 import { toast } from 'sonner';
 import CotopiaAvatar from '@/components/shared-ui/c-avatar';
+import { playSoundEffect } from '@/lib/sound-effects';
+import useSetting from '@/hooks/use-setting';
 
 export default function RoomSettings() {
   const { workspace_id } = useRoomContext();
@@ -39,6 +41,8 @@ export default function RoomSettings() {
 
     dispatch(getChats({ workspace_id: +workspace_id }));
   }, [workspace_id]);
+
+  const { sounds } = useSetting();
 
   const { user } = useAuth();
 
@@ -135,6 +139,8 @@ export default function RoomSettings() {
             dispatch(addMentionedMessages({ chat_id: newMessage.chat_id }));
           }
         }
+
+        if (sounds.messageIncoming) playSoundEffect('newMessage2');
       }
 
       if (targetChat === undefined) {

@@ -1,15 +1,15 @@
-import { combineReducers, configureStore } from "@reduxjs/toolkit";
-import { TypedUseSelectorHook, useDispatch, useSelector } from "react-redux";
+import { combineReducers, configureStore } from '@reduxjs/toolkit';
+import { TypedUseSelectorHook, useDispatch, useSelector } from 'react-redux';
 
-import { persistStore, persistReducer } from "redux-persist";
+import { persistStore, persistReducer } from 'redux-persist';
 
-import storage from "redux-persist/lib/storage";
+import storage from 'redux-persist/lib/storage';
 
-import authSlice from "./slices/auth/slice";
-import roomSlice from "./slices/room-slice";
-import chatSlice from "./slices/chat-slice";
-import settingSlice from "./slices/setting-slice";
-import livekitSlice from "./slices/livekit-slice";
+import authSlice from './slices/auth/slice';
+import roomSlice from './slices/room-slice';
+import chatSlice from './slices/chat-slice';
+import settingSlice from './slices/setting-slice';
+import livekitSlice from './slices/livekit-slice';
 
 const rootReducer = combineReducers({
   auth: authSlice,
@@ -20,9 +20,9 @@ const rootReducer = combineReducers({
 });
 
 const persistConfig = {
-  key: "organization-panel",
+  key: 'organization-panel',
   storage,
-  whitelist: ["auth", "livekit"],
+  whitelist: ['auth', 'livekit', 'setting'],
 };
 
 const persistedReducer = persistReducer(persistConfig, rootReducer);

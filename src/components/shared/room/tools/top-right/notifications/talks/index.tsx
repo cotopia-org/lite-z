@@ -5,6 +5,8 @@ import { useEffect, useMemo, useState } from 'react';
 import TalkItem from './talk-item';
 import moment from 'moment';
 import { VARZ } from '@/const/varz';
+import useAuth from '@/hooks/auth';
+import { playSoundEffect } from '@/lib/sound-effects';
 
 function justActiveTalks(talks: TalkType[]) {
   return talks
@@ -24,6 +26,8 @@ function justActiveTalks(talks: TalkType[]) {
 }
 
 export default function Talks() {
+  const { user: profile } = useAuth();
+
   const [talks, setTalks] = useState<TalkType[]>([]);
 
   useEffect(() => {
@@ -48,13 +52,16 @@ export default function Talks() {
     getUserTalks();
   }, []);
 
-  useSocket('talkCreated', (data) => {
-    console.log('talkCreated data', data);
+  useSocket('talkCreated', (data: TalkType) => {
     setTalks((prev) => [...prev, data]);
+
+    //if my talks
+    if (data.user.id === profile.id) {
+      playSoundEffect('newMessage');
+    }
   });
 
   useSocket('talkResponded', (data) => {
-    console.log('talkResponded data', data);
     setTalks((prev) => {
       const nTalks = [...prev];
       const findIndex = prev.findIndex((a) => a.id === data.id);
