@@ -6,6 +6,7 @@ import { VARZ } from '@/const/varz';
 import { dispatch } from 'use-bus';
 import { __BUS } from '@/const/bus';
 import { doCirclesMeetRaw } from '../canvas-board/canvas-audio-rendrer';
+import { useSocket } from '@/routes/private-wrarpper';
 
 type UserTeleportationType = {
   username: string;
@@ -39,43 +40,11 @@ const getAroundPoints = (r: number, margin: number) => {
 };
 
 export const useTeleport = (username: string) => {
+  const socket = useSocket();
   const { user: myAccount } = useAuth();
 
-  const { updateUserCoords } = useRoomContext();
+  const { updateUserCoords, room_id } = useRoomContext();
   const rf = useReactFlow();
-
-  const handleCircleMeet = (
-    targetUserName: string,
-    targetPosition: XYPosition,
-    node?: Node,
-  ) => {
-    let targetUserNode = rf?.getNode(targetUserName);
-
-    if (targetUserNode === undefined && node === undefined) return;
-
-    if (node) targetUserNode = node;
-
-    const position = targetPosition;
-
-    if (!myAccount?.username) return;
-
-    const myUserPosition = rf?.getNode(myAccount?.username)?.position;
-
-    if (myUserPosition === undefined) return;
-
-    const { meet } = doCirclesMeetRaw(
-      46,
-      VARZ.voiceAreaRadius,
-      myUserPosition,
-      position,
-    );
-
-    rf?.updateNode(targetUserName, {
-      data: { ...targetUserNode?.data, meet },
-    });
-
-    return meet;
-  };
 
   const navigateHandler = (onTeleport?: () => void) => {
     if (!myAccount) return;
@@ -124,6 +93,14 @@ export const useTeleport = (username: string) => {
         position: nPosition,
         data: { ...myNode?.data, meet: true },
       });
+
+      const sendingObject = {
+        room_id: room_id,
+        coordinates: `${nPosition.x},${nPosition.y}`,
+        username: myAccount.username,
+      };
+
+      socket?.emit('updateCoordinates', sendingObject);
 
       if (onTeleport) onTeleport();
     }

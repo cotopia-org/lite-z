@@ -8,6 +8,9 @@ import { UserMinimalType, WorkspaceUserType } from '@/types/user';
 import { useReactFlow } from '@xyflow/react';
 import { AudioTrack } from './audio-track';
 import { useRoomContext } from '../../room/room-context';
+import { useState } from 'react';
+import useBus from 'use-bus';
+import { __BUS } from '@/const/bus';
 
 /** @public */
 export interface CanvasAudioRendererProps {
@@ -38,6 +41,13 @@ export interface CanvasAudioRendererProps {
 const audioOffUserStatuses = ['afk', 'ghost'];
 
 export function CanvasAudioRenderer() {
+  const [_, setRefresher] = useState(0);
+  useBus(__BUS.onDragEndNode, () => {
+    setTimeout(() => {
+      setRefresher(Math.random() * 20000000);
+    }, 200);
+  });
+
   const rf = useReactFlow();
 
   const { room } = useRoomContext();
@@ -90,6 +100,7 @@ export function CanvasAudioRenderer() {
 
         return (
           <>
+            {`VOLUME: ${volume}`}
             <AudioTrack
               key={getTrackReferenceId(trackRef)}
               trackRef={trackRef}
