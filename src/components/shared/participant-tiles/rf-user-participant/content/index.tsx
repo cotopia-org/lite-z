@@ -38,12 +38,15 @@ const RfUserTileContent = ({ meet }: Props) => {
     clss += ` bg-gray-600`;
   }
 
-  if (trackType === 'audio') {
-    trackContent = <AudioTrackHandler />;
-  }
+  // if (trackType === 'audio') {
+  //   trackContent = <AudioTrackHandler />;
+  // }
   if (trackType === 'video') {
     trackContent = <VideoTrackHandler />;
   }
+
+  const hasUserTileActions =
+    targetUser?.status !== 'afk' && targetUser?.status !== 'ghost';
 
   return (
     <div className={clss}>
@@ -65,7 +68,7 @@ const RfUserTileContent = ({ meet }: Props) => {
         {trackContent}
       </div>
       <div className="absolute bottom-0 right-0 z-[2]">
-        {targetUser?.status !== 'afk' && <RfUserTileActions />}
+        {hasUserTileActions && <RfUserTileActions />}
       </div>
     </div>
   );

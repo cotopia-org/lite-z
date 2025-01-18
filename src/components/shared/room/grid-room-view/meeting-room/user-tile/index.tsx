@@ -1,33 +1,33 @@
-import { useParticipantTileCtx } from "@/components/shared/participant-tiles/participant-tile-provider"
-import { cn } from "@/lib/utils"
-import UserTileAvatar from "./avatar"
-import MicButton from "@/components/shared/participant-tiles/rf-user-participant/actions-right/mic"
-import { TrackReferenceOrPlaceholder } from "@livekit/components-core"
-import { Track } from "livekit-client"
-import AudioTrackHandler from "@/components/shared/participant-tiles/rf-user-participant/audio-handler"
-import VideoTrackHandler from "@/components/shared/participant-tiles/rf-user-participant/video-handler"
+import { useParticipantTileCtx } from '@/components/shared/participant-tiles/participant-tile-provider';
+import { cn } from '@/lib/utils';
+import UserTileAvatar from './avatar';
+import MicButton from '@/components/shared/participant-tiles/rf-user-participant/actions-right/mic';
+import { TrackReferenceOrPlaceholder } from '@livekit/components-core';
+import { Track } from 'livekit-client';
+import AudioTrackHandler from '@/components/shared/participant-tiles/rf-user-participant/audio-handler';
+import VideoTrackHandler from '@/components/shared/participant-tiles/rf-user-participant/video-handler';
 
 type Props = {
-  className?: string
-}
+  className?: string;
+};
 
-const UserTile = ({ className = "" }: Props) => {
+const UserTile = ({ className = '' }: Props) => {
   const { ref, htmlProps, trackRef, targetUser, trackType } =
-    useParticipantTileCtx()
+    useParticipantTileCtx();
 
-  const trackReference = trackRef as TrackReferenceOrPlaceholder
-  let video_clss = ""
+  const trackReference = trackRef as TrackReferenceOrPlaceholder;
+  let video_clss = '';
   let trackContent = (
     <>
       <UserTileAvatar />
-      {trackType === "audio" ? <AudioTrackHandler /> : null}
+      {/* {trackType === "audio" ? <AudioTrackHandler /> : null} */}
     </>
-  )
+  );
 
-  if (trackType === "video") {
-    trackContent = <VideoTrackHandler />
+  if (trackType === 'video') {
+    trackContent = <VideoTrackHandler />;
     video_clss =
-      "[&_.lk-participant-tile]:!absolute [&_.lk-participant-tile]:top-0 [&_.lk-participant-tile]:left-0 [&_.lk-participant-tile]:bottom-0 [&_.lk-participant-tile]:left-0 [&_.lk-participant-tile]:right-0 [&_.lk-participant-tile]:w-full [&_.lk-participant-tile]:h-full [&_video]:object-cover [&_video]:!h-full [&_video]:!w-auto [&_video]:!max-w-full"
+      '[&_.lk-participant-tile]:!absolute [&_.lk-participant-tile]:top-0 [&_.lk-participant-tile]:left-0 [&_.lk-participant-tile]:bottom-0 [&_.lk-participant-tile]:left-0 [&_.lk-participant-tile]:right-0 [&_.lk-participant-tile]:w-full [&_.lk-participant-tile]:h-full [&_video]:object-cover [&_video]:!h-full [&_video]:!w-auto [&_video]:!max-w-full';
   }
 
   return (
@@ -36,10 +36,10 @@ const UserTile = ({ className = "" }: Props) => {
         `user-tile bg-white/25 relative w-full h-full flex flex-col overflow-hidden
          p-3 items-center justify-center rounded-2xl`,
         video_clss,
-        className
+        className,
       )}
     >
-      <div ref={ref} style={{ position: "relative" }} {...htmlProps}>
+      <div ref={ref} style={{ position: 'relative' }} {...htmlProps}>
         {trackContent}
       </div>
       <MicButton
@@ -54,7 +54,7 @@ const UserTile = ({ className = "" }: Props) => {
         }
       />
     </div>
-  )
-}
+  );
+};
 
-export default UserTile
+export default UserTile;

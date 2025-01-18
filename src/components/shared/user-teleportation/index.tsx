@@ -1,11 +1,11 @@
 import useAuth from '@/hooks/auth';
 import { useRoomContext } from '../room/room-context';
-import { XYPosition, useReactFlow } from '@xyflow/react';
+import { Node, XYPosition, useReactFlow } from '@xyflow/react';
 import { ReactNode } from 'react';
-import { doCirclesMeetRaw } from '../canvas-board/canvas-audio-rendrer';
 import { VARZ } from '@/const/varz';
 import { dispatch } from 'use-bus';
 import { __BUS } from '@/const/bus';
+import { doCirclesMeetRaw } from '../canvas-board/canvas-audio-rendrer';
 
 type UserTeleportationType = {
   username: string;
@@ -44,21 +44,22 @@ export const useTeleport = (username: string) => {
   const { updateUserCoords } = useRoomContext();
   const rf = useReactFlow();
 
-  const nodes = rf.getNodes();
-
   const handleCircleMeet = (
     targetUserName: string,
     targetPosition: XYPosition,
+    node?: Node,
   ) => {
-    const targetUserNode = rf?.getNode(targetUserName);
+    let targetUserNode = rf?.getNode(targetUserName);
 
-    if (targetUserNode === undefined) return;
+    if (targetUserNode === undefined && node === undefined) return;
+
+    if (node) targetUserNode = node;
 
     const position = targetPosition;
 
-    if (!username) return;
+    if (!myAccount?.username) return;
 
-    const myUserPosition = rf?.getNode(username)?.position;
+    const myUserPosition = rf?.getNode(myAccount?.username)?.position;
 
     if (myUserPosition === undefined) return;
 
@@ -79,8 +80,17 @@ export const useTeleport = (username: string) => {
   const navigateHandler = (onTeleport?: () => void) => {
     if (!myAccount) return;
     if (myAccount?.username === username) return;
-    const currentUserNode = nodes.find((userNode) => userNode.id === username);
+
+    const allNodes = rf?.getNodes();
+
+    const currentUserNode = allNodes.find(
+      (userNode) => userNode.id === username,
+    );
+    const myNode = allNodes.find(
+      (userNode) => userNode.id === myAccount.username,
+    );
     if (currentUserNode === undefined) return;
+
     const xdimension = currentUserNode?.position.x;
     const ydimension = currentUserNode?.position.y;
     const radius = 75;
@@ -103,15 +113,16 @@ export const useTeleport = (username: string) => {
         y: finalYCordinate,
       };
 
-      updateUserCoords(myAccount?.username, nPosition);
-
-      handleCircleMeet(currentUserNode.id, currentUserNode.position);
-
-      rf.updateNode(myAccount.username, { position: nPosition });
+      if (myNode) updateUserCoords(myNode?.id, nPosition);
 
       dispatch({
-        type: __BUS.changeMyUserCoord,
-        data: { id: myAccount.username, position: nPosition },
+        type: __BUS.onDragEndNode,
+        node: { ...myNode, position: nPosition },
+      });
+
+      rf.updateNode(myAccount.username, {
+        position: nPosition,
+        data: { ...myNode?.data, meet: true },
       });
 
       if (onTeleport) onTeleport();
@@ -122,6 +133,8 @@ export const useTeleport = (username: string) => {
 };
 
 const UserTeleportation = ({ username, trigger }: UserTeleportationType) => {
+  const rf = useReactFlow();
+
   const { navigateHandler } = useTeleport(username);
   return <>{trigger(navigateHandler)}</>;
 };

@@ -36,6 +36,7 @@ export default function TalkDidntRespondBox() {
       .then((res) => {
         stopLoading();
         toast.success('You are back again!');
+        setTalk(undefined);
       })
       .catch((err) => {
         stopLoading();

@@ -1,4 +1,11 @@
-import { useCallback, useEffect, useRef, useState } from 'react';
+import {
+  createContext,
+  useCallback,
+  useContext,
+  useEffect,
+  useRef,
+  useState,
+} from 'react';
 import ReactFlowV2 from '../../react-flow/v2';
 import { useRoomContext } from '../../room/room-context';
 import {
@@ -40,6 +47,18 @@ enum RoomRfNodeType {
   shareScreenNode = 'shareScreenNode',
   userNode = 'userNode',
 }
+
+const ReactFlowV2Context = createContext<{
+  handleCircleMeet: (
+    targetUserName: string,
+    targetPosition: XYPosition,
+    node?: Node,
+  ) => void;
+}>({
+  handleCircleMeet: () => {},
+});
+
+export const useReactFlowV2 = () => useContext(ReactFlowV2Context);
 
 export default function WithReactFlowV2() {
   const socket = useSocket();
@@ -283,6 +302,15 @@ export default function WithReactFlowV2() {
     [socket, updateUserCoords, rf?.current],
   );
 
+  useBus(
+    __BUS.onDragEndNode,
+    (data) => {
+      console.log('data', data.node);
+      handleDragStopRfNodes(undefined, data.node);
+    },
+    [handleDragStopRfNodes],
+  );
+
   const handleCircleMeet = (
     targetUserName: string,
     targetPosition: XYPosition,
@@ -316,7 +344,7 @@ export default function WithReactFlowV2() {
     return meet;
   };
 
-  const s = useSocket('updateCoordinates', (data: updateCoordinatesEvent) => {
+  useSocket('updateCoordinates', (data: updateCoordinatesEvent) => {
     const coordsSplitted = data.coordinates.split(',');
 
     if (coordsSplitted.length !== 2) return;
@@ -330,9 +358,27 @@ export default function WithReactFlowV2() {
 
     if (!node) return;
 
+    const allNodes = rf?.current?.getNodes() ?? [];
+
+    for (let node of allNodes) {
+      handleCircleMeet(node.id, node.position);
+    }
+
     handleCircleMeet(data.username, position);
 
     rf.current?.updateNode(data.username, { position });
+  });
+
+  useBus(__BUS.onDragEndNode, (data) => {
+    setTimeout(() => {
+      const allNodes = rf?.current?.getNodes() ?? [];
+
+      for (let node of allNodes) {
+        handleCircleMeet(node.id, node.position);
+      }
+
+      handleCircleMeet(data.id, data.position);
+    }, 200);
   });
 
   useSocket(
@@ -444,6 +490,12 @@ export default function WithReactFlowV2() {
       };
 
       rf.current?.setNodes((prev) => [...prev, nNode]);
+
+      const allNodes = rf?.current?.getNodes() ?? [];
+
+      for (let node of allNodes) {
+        handleCircleMeet(node.id, node.position);
+      }
 
       handleCircleMeet(nNode.id, nNode?.position, nNode);
     },
@@ -656,27 +708,29 @@ export default function WithReactFlowV2() {
   );
 
   return (
-    <div className="w-full h-screen relative z-[10]">
-      <InvisibleNodesViewer invisibleNodes={invisibleNodes} />
-      <ReactFlowV2
-        nodeTypes={{
-          userNode: UserNode,
-          shareScreenNode: ShareScreenNode,
-          jailNode: JailNode,
-          bgNode: BgNode,
-        }}
-        onInit={(rfinstance) => {
-          rf.current = rfinstance;
-        }}
-        onViewportChange={changeViewportHandler}
-        onNodeDragging={dragNodeHandler}
-        onNodeDragStop={handleDragStopRfNodes}
-        translateExtent={[
-          [0, 0],
-          [VARZ.jailWidth - 150, VARZ.jailHeight],
-        ]}
-        hasJail
-      />
-    </div>
+    <ReactFlowV2Context.Provider value={{ handleCircleMeet }}>
+      <div className="w-full h-screen relative z-[10]">
+        <InvisibleNodesViewer invisibleNodes={invisibleNodes} />
+        <ReactFlowV2
+          nodeTypes={{
+            userNode: UserNode,
+            shareScreenNode: ShareScreenNode,
+            jailNode: JailNode,
+            bgNode: BgNode,
+          }}
+          onInit={(rfinstance) => {
+            rf.current = rfinstance;
+          }}
+          onViewportChange={changeViewportHandler}
+          onNodeDragging={dragNodeHandler}
+          onNodeDragStop={handleDragStopRfNodes}
+          translateExtent={[
+            [0, 0],
+            [VARZ.jailWidth - 150, VARZ.jailHeight],
+          ]}
+          hasJail
+        />
+      </div>
+    </ReactFlowV2Context.Provider>
   );
 }

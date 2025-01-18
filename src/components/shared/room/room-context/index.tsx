@@ -220,6 +220,12 @@ export default function RoomContext({
       (x: any) => x.username === username,
     );
 
+    console.log('socket', socket);
+    console.log('room', room);
+    console.log('username', username);
+    console.log('position', position);
+    console.log('participant_index', participant_index);
+
     if (participant_index === -1) return setRoom(room);
 
     participants[participant_index] = {

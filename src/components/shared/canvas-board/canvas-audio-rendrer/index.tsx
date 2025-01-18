@@ -35,6 +35,8 @@ export interface CanvasAudioRendererProps {
  * @public
  */
 
+const audioOffUserStatuses = ['afk', 'ghost'];
+
 export function CanvasAudioRenderer() {
   const rf = useReactFlow();
 
@@ -58,13 +60,13 @@ export function CanvasAudioRenderer() {
       !isLocal(ref.participant) && ref.publication.kind === Track.Kind.Audio,
   );
 
+  if (!user) return null;
+
+  const myUserNode = rf.getNode(user?.username);
+
   return (
     <div style={{ display: 'none' }}>
       {tracks.map((trackRef) => {
-        if (!user) return;
-
-        const myUserNode = rf.getNode(user?.username);
-
         if (myUserNode === undefined) return;
 
         const trackOwner = rf.getNode(trackRef?.participant?.identity);
@@ -83,15 +85,18 @@ export function CanvasAudioRenderer() {
 
         if (meet) volume = 1;
 
-        if (userNode?.status === 'afk') volume = 0;
+        if (userNode?.status && audioOffUserStatuses.includes(userNode?.status))
+          volume = 0;
 
         return (
-          <AudioTrack
-            key={getTrackReferenceId(trackRef)}
-            trackRef={trackRef}
-            volume={volume}
-            muted={isMuted}
-          />
+          <>
+            <AudioTrack
+              key={getTrackReferenceId(trackRef)}
+              trackRef={trackRef}
+              volume={volume}
+              muted={isMuted}
+            />
+          </>
         );
       })}
     </div>
