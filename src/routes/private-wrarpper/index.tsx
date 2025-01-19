@@ -1,6 +1,6 @@
 import useAuth from '@/hooks/auth';
-import { createContext, useContext, useEffect, useState } from 'react';
-import { Outlet, useLocation, useNavigate } from 'react-router-dom';
+import { createContext, useContext, useEffect, useRef, useState } from 'react';
+import { Outlet, useLocation, useNavigate, useParams } from 'react-router-dom';
 import { paths } from '../paths';
 import { io, Socket } from 'socket.io-client';
 import { VARZ } from '@/const/varz';
@@ -48,6 +48,10 @@ const ProfileContext = createContext<{
 export const useProfile = () => useContext(ProfileContext);
 
 export default function PrivateRoutes() {
+  const socketConnected = useRef(false);
+
+  const params = useParams();
+
   const location = useLocation();
 
   const reduxDispatch = useAppDispatch();
@@ -86,18 +90,19 @@ export default function PrivateRoutes() {
     if (socket?.id) localStorage.setItem('socket-id', socket.id);
 
     socket.on('connect', () => {
-      toast.success('Socket connected');
+      if (socketConnected?.current === false) toast.success('Socket connected');
       setSocketState(socket);
       dispatch(__BUS.rejoinRoom);
       dispatch({
         type: __BUS.startWorkTimer,
         id: VARZ.userTimeTrackerId,
       });
+      socketConnected.current = true;
     });
 
     socket.on('disconnect', () => {
       setSocketState(undefined);
-      toast.error('Socket disconnected');
+      if (!params?.room_id) toast.error('Socket disconnected');
       dispatch({
         type: __BUS.stopWorkTimer,
         id: VARZ.userTimeTrackerId,
@@ -106,11 +111,9 @@ export default function PrivateRoutes() {
 
     // Clean up the socket connection on unmount
     return () => {
-      console.log('Here');
-      toast.error('Socket disconnected');
       socket.disconnect();
     };
-  }, [accessToken, location.pathname]);
+  }, [accessToken, location.pathname, params]);
 
   if (initState === false) return null;
 
