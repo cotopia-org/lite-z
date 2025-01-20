@@ -60,7 +60,6 @@ export default function ChatInnerHolder({ chat_id, onBack }: Props) {
       <ChatHeading chat={currentChat} onBack={onBack} />
       <Chat2
         chat_id={chat_id}
-        lastMessageUnseen={currentChat.last_seen_message?.id}
         addMessage={handleSendMessage}
         onGetVirtualizer={(vir) => (chatRef.current = vir)}
       />

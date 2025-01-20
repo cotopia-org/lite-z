@@ -11,15 +11,9 @@ type Props = {
   chat_id: number;
   addMessage?: (text: string) => void;
   onGetVirtualizer?: (vir: Virtualizer<HTMLDivElement, Element>) => void;
-  lastMessageUnseen: number;
 };
 
-const Chat2: React.FC<Props> = ({
-  chat_id,
-  addMessage,
-  onGetVirtualizer,
-  lastMessageUnseen,
-}) => {
+const Chat2: React.FC<Props> = ({ chat_id, addMessage, onGetVirtualizer }) => {
   const { currentChatPins } = useChat2();
 
   let content = (
@@ -31,11 +25,7 @@ const Chat2: React.FC<Props> = ({
     >
       <PinMessages />
       {/* Chat message list */}
-      <Items
-        chat_id={chat_id}
-        lastMessageUnseen={lastMessageUnseen}
-        onGetVirtualizer={onGetVirtualizer}
-      />
+      <Items chat_id={chat_id} onGetVirtualizer={onGetVirtualizer} />
       {/* Chat input */}
     </div>
   );

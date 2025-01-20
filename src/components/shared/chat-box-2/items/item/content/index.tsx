@@ -78,6 +78,7 @@ export default function ChatItemContent({ chat, next, prev }: Props) {
         >
           {chat.text.split('\n').map((line: string, index) => (
             <Linkify
+              key={index}
               options={{
                 nl2br: true,
                 render: {

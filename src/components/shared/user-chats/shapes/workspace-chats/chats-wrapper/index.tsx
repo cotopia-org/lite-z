@@ -112,9 +112,10 @@ export default function ChatsWrapper({
   return (
     <div className="w-full chats-holder  flex flex-col gap-y-0 overflow-y-auto h-[calc(100vh-80px)] pb-20">
       <div className={'w-full flex flex-row justify-between my-2 shadow-sm'}>
-        {tabs.map((tab) => {
+        {tabs.map((tab, key) => {
           return (
             <TabButton
+              key={key}
               unseens={chatSortedByLastMessage
                 .filter((chat) => tab.condition(chat))
                 .reduce((current, c) => current + c.unseens, 0)}

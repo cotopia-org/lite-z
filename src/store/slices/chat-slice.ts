@@ -1,8 +1,8 @@
-import { uniqueById, urlWithQueryParams } from "@/lib/utils";
-import axiosInstance from "@/services/axios";
-import { Chat2ItemType, ChatType } from "@/types/chat2";
-import { UserMinimalType } from "@/types/user";
-import { createSlice, createAsyncThunk, PayloadAction } from "@reduxjs/toolkit";
+import { uniqueById, urlWithQueryParams } from '@/lib/utils';
+import axiosInstance from '@/services/axios';
+import { Chat2ItemType, ChatType } from '@/types/chat2';
+import { UserMinimalType } from '@/types/user';
+import { createSlice, createAsyncThunk, PayloadAction } from '@reduxjs/toolkit';
 
 type ChatState = {
   chats: {
@@ -38,7 +38,7 @@ const initialState: ChatState = {
 
 // Async thunk to fetch chat by page
 export const getChats = createAsyncThunk(
-  "chat/getChats",
+  'chat/getChats',
   async ({ workspace_id }: { workspace_id: number }) => {
     const res = await axiosInstance.get(`/users/chats`, {
       params: { workspace_id },
@@ -52,7 +52,7 @@ export const getChats = createAsyncThunk(
 
 // Async thunk to fetch chat messages by page
 export const getChatMessages = createAsyncThunk(
-  "chat/getChatMessages",
+  'chat/getChatMessages',
   async ({ chat_id, page }: { chat_id: number; page?: number }) => {
     let res;
     let page_number = page;
@@ -79,7 +79,7 @@ export const getChatMessages = createAsyncThunk(
 );
 
 export const getPrevMessages = createAsyncThunk(
-  "chat/getPrevMessages",
+  'chat/getPrevMessages',
   async ({ chat_id, page }: { chat_id: number; page?: number }) => {
     let res;
     let page_number = page;
@@ -94,7 +94,7 @@ export const getPrevMessages = createAsyncThunk(
 );
 
 export const getNextMessages = createAsyncThunk(
-  "chat/getNextMessages",
+  'chat/getNextMessages',
   async ({ chat_id, page }: { chat_id: number; page?: number }) => {
     let res;
     let page_number = page;
@@ -110,7 +110,7 @@ export const getNextMessages = createAsyncThunk(
 
 // Async thunk to fetch chat messages by page
 export const getBeforeAndAfterMessages = createAsyncThunk(
-  "chat/getBeforeAndAfterMessages",
+  'chat/getBeforeAndAfterMessages',
   async ({ message_id }: { message_id: number }) => {
     const res = await axiosInstance.get(`/messages/${message_id}`);
 
@@ -122,7 +122,7 @@ export const getBeforeAndAfterMessages = createAsyncThunk(
 
 // Async thunk to fetch chat messages by page
 export const getPinMessags = createAsyncThunk(
-  "chat/getPinMessags",
+  'chat/getPinMessags',
   async ({ chat_id }: { chat_id: number }) => {
     const res = await axiosInstance.get(`/chats/${chat_id}/pinnedMessages`);
 
@@ -133,7 +133,7 @@ export const getPinMessags = createAsyncThunk(
 );
 
 const chatSlice = createSlice({
-  name: "chat",
+  name: 'chat',
   initialState,
   reducers: {
     addNewChat: (state, action: PayloadAction<ChatType>) => {
@@ -297,7 +297,7 @@ const chatSlice = createSlice({
         state.chats[chat_id].messages = state.chats[chat_id].messages.map(
           (m) => {
             if (m.nonce_id === action.payload.nonce_id) {
-              m.text = "This message has been deleted";
+              m.text = 'This message has been deleted';
             }
 
             return m;
@@ -384,11 +384,13 @@ const chatSlice = createSlice({
         },
       )
       .addCase(getChats.rejected, (state, action) => {
-        state.error = action.error.message || "Failed to fetch messages";
+        state.error = action.error.message || 'Failed to fetch messages';
         state.loading = false;
       })
       .addCase(getChatMessages.pending, (state, action) => {
-        state.loading = true;
+        const { chat_id } = action.meta.arg;
+
+        state.chats[chat_id].loading = true;
       })
       .addCase(
         getChatMessages.fulfilled,
@@ -408,13 +410,14 @@ const chatSlice = createSlice({
           state.chats[chat_id].page = action.payload.page_number;
           state.chats[chat_id].lastPage = false;
           state.chats[chat_id].firstPage = action.payload.page_number === 1;
-
-          state.loading = false;
+          state.chats[chat_id].loading = false;
         },
       )
       .addCase(getChatMessages.rejected, (state, action) => {
-        state.error = action.error.message || "Failed to fetch messages";
-        state.loading = false;
+        state.error = action.error.message || 'Failed to fetch messages';
+        const { chat_id } = action.meta.arg;
+
+        state.chats[chat_id].loading = true;
       })
       .addCase(getPrevMessages.pending, (state, action) => {
         const { chat_id } = action.meta.arg;
@@ -449,7 +452,7 @@ const chatSlice = createSlice({
         },
       )
       .addCase(getPrevMessages.rejected, (state, action) => {
-        state.error = action.error.message || "Failed to fetch messages";
+        state.error = action.error.message || 'Failed to fetch messages';
         const { chat_id } = action.meta.arg;
         state.chats[chat_id].fetchPageLoading = false;
       })
@@ -484,7 +487,7 @@ const chatSlice = createSlice({
       )
       .addCase(getNextMessages.rejected, (state, action) => {
         const { chat_id } = action.meta.arg;
-        state.error = action.error.message || "Failed to fetch messages";
+        state.error = action.error.message || 'Failed to fetch messages';
         state.chats[chat_id].fetchPageLoading = true;
       })
       .addCase(getPinMessags.pending, (state, action) => {

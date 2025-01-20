@@ -11,46 +11,38 @@ import { VList, VListHandle } from 'virtua';
 import { useChat2 } from '@/hooks/chat/use-chat-2';
 import FullLoading from '../../full-loading';
 import { useAppDispatch } from '@/store';
-import { getNextMessages, getPrevMessages } from '@/store/slices/chat-slice';
+import {
+  getChatMessages,
+  getNextMessages,
+  getPinMessags,
+  getPrevMessages,
+} from '@/store/slices/chat-slice';
 import { thunkResHandler } from '@/utils/utils';
 import moment from 'moment';
 import { MessageType } from '@/types/message';
 import ChatDate from '@/components/shared/chat-box-2/items/date';
-import axiosInstance from '@/services/axios';
+import axiosInstance, { FetchDataType } from '@/services/axios';
+import { useApi } from '@/hooks/swr';
+import { WorkspaceType } from '@/types/workspace';
 
 type Props = {
   chat_id: number;
   marginFetching?: number;
   onGetVirtualizer?: (vir: Virtualizer<HTMLDivElement, Element>) => void;
-  lastMessageUnseen: number;
 };
 
 export default function Items({
   chat_id,
   marginFetching = 1000,
   onGetVirtualizer,
-  lastMessageUnseen,
 }: Props) {
   const vlistRef = useRef<VListHandle | null>(null);
 
-  const chatItemInit = useRef(false);
-  const { chatObjects, editMessage } = useChat2({ chat_id });
+  const { chatObjects, currentChat } = useChat2({ chat_id });
 
   const items = chatObjects?.[chat_id]?.messages ?? [];
-  //
-  //
-  // const unreadMessages = axiosInstance.get(`/chats/${chat_id}/unreadMessages`);
 
-  const itemIndex = items.findIndex((x) => x.id === lastMessageUnseen);
-
-  const rightIndex = items.length - (itemIndex + 1);
-
-  // useEffect(() => {
-  //   //TODO: have to check this with mahdi
-  //   vlistRef.current?.scrollToIndex(rightIndex);
-  // }, [rightIndex]);
-
-  const [unseenIndex, setUnSeenIndex] = useState<number | null>(null);
+  const [unreadIndex, setUnreadIndex] = useState(items.length - 1);
 
   const dispatch = useAppDispatch();
 
@@ -104,7 +96,7 @@ export default function Items({
       const messageId = data?.messageId;
 
       const itemIndex = items.findIndex((x) => +x.nonce_id === +messageId);
-      console.log('Here', messageId, itemIndex);
+      console.log('Target', messageId, itemIndex);
 
       if (itemIndex === -1) return;
 
@@ -138,7 +130,6 @@ export default function Items({
     if (onGetVirtualizer) onGetVirtualizer(rowVirtualizer);
   }, [onGetVirtualizer, rowVirtualizer]);
 
-  const [isScrolling, setIsScrolling] = useState(false);
   const handleScroll = () => {
     // if (chatItemInit.current === false) return;
 
@@ -164,8 +155,9 @@ export default function Items({
     }
   };
 
-  const scrollToUnread = () => {
-    vlistRef.current?.scrollToIndex(rightIndex);
+  const scrollToUnread = (index: number) => {
+    // console.log(index);
+    vlistRef.current?.scrollToIndex(index);
   };
 
   useEffect(() => {
@@ -188,11 +180,19 @@ export default function Items({
 
   useEffect(() => {
     if (items.length === 0) return;
+    console.log('HERE');
     // if (initScrollEnd.current === true) return;
 
     // vlistRef.current?.scrollToIndex(items.length - 1);
-    scrollToUnread();
     // initScrollEnd.current = true;
+
+    const lastMessageSeen = chatObjects?.[chat_id].object.last_seen_message?.id;
+
+    console.log(items);
+    console.log(
+      [...items].reverse().findIndex((x) => x.id === lastMessageSeen),
+    );
+    scrollToUnread(5);
   }, [items]);
 
   function formatDate(timestamp: number) {
@@ -227,25 +227,25 @@ export default function Items({
       <VList className="h-full" ref={vlistRef} onScroll={handleScroll}>
         {Object.keys(groupedMessages).map((date, j) => {
           return (
-            <div>
+            <div key={j}>
               <ChatDate date={date} />
 
               {groupedMessages[date].map((message: any, i: number) => {
                 return (
-                  <div>
+                  <div key={i + j}>
                     <ChatItem
                       item={message}
                       key={message.nonce_id}
                       isMine={message?.user.id === profile?.id}
                       index={messages.indexOf(message)}
                     />
-                    {messages.indexOf(message) === rightIndex &&
+                    {messages.indexOf(message) === unreadIndex &&
                       messages.indexOf(message) !== messages.length - 1 && (
                         <div className="flex flex-col w-full text-blue-500 h-6 bg-white text-sm items-center justify-center my-4 pointer-events-none">
                           Unread messages
                         </div>
                       )}
-                    {/*{messages.indexOf(message)}*/}
+                    {messages.indexOf(message)}
                   </div>
                 );
               })}
@@ -255,9 +255,10 @@ export default function Items({
       </VList>
     </>
   );
+
   if (loading) content = <FullLoading className="py-8" />;
 
-  if (messages.length === 0)
+  if (!loading && items.length === 0)
     content = (
       <div
         className={
