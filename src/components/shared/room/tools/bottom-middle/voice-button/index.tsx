@@ -1,123 +1,120 @@
-import { useLocalParticipant } from "@livekit/components-react"
-import { Track } from "livekit-client"
-import { useRoomHolder } from "../../.."
-import { toast } from "sonner"
-import StreamButton from "../stream-button"
-import { MicIcon, MicOffIcon } from "@/components/icons"
-import { useCallback, useEffect, useState } from "react"
-import { colors } from "@/const/varz"
-import useAuth from "@/hooks/auth"
-import { useSocket } from "@/routes/private-wrarpper"
+import { useLocalParticipant } from '@livekit/components-react';
+import { Track } from 'livekit-client';
+import { useRoomHolder } from '../../..';
+import { toast } from 'sonner';
+import StreamButton from '../stream-button';
+import { MicIcon, MicOffIcon } from '@/components/icons';
+import { useCallback, useEffect, useState } from 'react';
+import useAuth from '@/hooks/auth';
+import { useSocket } from '@/routes/private-wrarpper';
+import useSetting from '@/hooks/use-setting';
 
 export default function VoiceButtonTool() {
+  const { user } = useAuth();
 
-  const {user} = useAuth()
+  const [browserPermission, setBrowserPermission] = useState(true);
 
-  const [navPermission, setNavPermission] = useState(true)
-
+  const { afk } = useSetting();
   const {
     enableAudioAccess,
     disableAudioAccess,
     mediaPermissions,
     stream_loading,
-  } = useRoomHolder()
-  const participant = useLocalParticipant()
+  } = useRoomHolder();
+  const participant = useLocalParticipant();
 
-  const localParticipant = participant.localParticipant
-  let voiceTrack = undefined
+  const localParticipant = participant.localParticipant;
+  let voiceTrack = undefined;
   if (
     localParticipant &&
-    typeof localParticipant?.getTrackPublication !== "undefined"
+    typeof localParticipant?.getTrackPublication !== 'undefined'
   ) {
     //@ts-nocheck
-    voiceTrack = localParticipant?.getTrackPublication(Track.Source.Microphone)
+    voiceTrack = localParticipant?.getTrackPublication(Track.Source.Microphone);
   }
 
-  const track = voiceTrack?.track
-  const isMuted = voiceTrack?.isMuted ?? true
+  const track = voiceTrack?.track;
+  const isMuted = voiceTrack?.isMuted ?? true;
 
   const toggleMute = useCallback(async () => {
-    if (!navPermission) {
+    if (!browserPermission) {
       return toast.error(
-        "Access to microphone is blocked,please check your browser settings"
-      )
+        'Access to microphone is blocked,please check your browser settings',
+      );
+    } else if (afk) {
+      return toast.error('You should first enable your AFK');
     } else {
       if (!track) {
-        // eslint-disable-next-line no-sequences
-        return localParticipant.setMicrophoneEnabled(true), enableAudioAccess()
-      }
-      if (track.isMuted) {
-        track.unmute()
-        enableAudioAccess()
+        localParticipant.setMicrophoneEnabled(true);
+        enableAudioAccess();
+      } else if (track.isMuted) {
+        track.unmute();
+        enableAudioAccess();
       } else {
-        track.mute()
-        track.stop()
-        disableAudioAccess()
+        track.mute();
+        track.stop();
+        disableAudioAccess();
       }
     }
   }, [
-    disableAudioAccess,
-    enableAudioAccess,
-    localParticipant,
-    navPermission,
+    browserPermission,
+    afk,
     track,
-  ])
+    localParticipant,
+    enableAudioAccess,
+    disableAudioAccess,
+  ]);
 
-  useSocket('userUpdated', (updatedUser) => {
-
-    if ( track === undefined) return
-
-    if ( updatedUser.id === user.id && updatedUser.status === 'afk' ) {
-      track.mute()
-      track.stop()
-      disableAudioAccess()
-    }
-  }, [track, user?.id])
+  useSocket(
+    'userUpdated',
+    (updatedUser) => {
+      if (track === undefined) return;
+      if (updatedUser.id === user.id && updatedUser.status === 'afk') {
+        track.mute();
+        track.stop();
+        disableAudioAccess();
+      }
+    },
+    [track, user?.id],
+  );
 
   useEffect(() => {
-    navigator.permissions.query({ name: "microphone" } as any).then((res) => {
-      const permState = res.state
-      if (permState === "denied") {
-        setNavPermission(false)
+    navigator.permissions.query({ name: 'microphone' } as any).then((res) => {
+      const permState = res.state;
+      if (permState === 'denied') {
+        setBrowserPermission(false);
       } else {
-        setNavPermission(true)
+        setBrowserPermission(true);
       }
-    })
-  }, [])
+    });
+  }, []);
 
-  let title = "Mic Off"
-
-  let default_clss = ""
-  let mic_off_color = colors.foreground
-  let mic_on_color = colors.foreground
-
-  if (!navPermission) {
-    title = "Permission denied"
+  let title = 'Mic Off';
+  let isActive = false;
+  if (!browserPermission) {
+    title = 'Permission denied';
   }
-
-  if (!navPermission || !mediaPermissions.audio) {
-    mic_off_color = colors.error.default
-    default_clss = " !bg-error-surface-default"
+  if (!browserPermission || !mediaPermissions.audio) {
+    isActive = false;
   }
-  if (mediaPermissions.audio) {
-    mic_on_color = colors.success.default
-    default_clss = " !bg-success-surface-default"
+  if (mediaPermissions.audio && !isMuted) {
+    isActive = true;
   }
-
-  if (track?.isMuted) title = "Mic on"
-
+  if (track?.isMuted) title = 'Mic on';
   return (
     <StreamButton
       onClick={toggleMute}
       tooltipTitle={title}
       loading={stream_loading}
-      className={default_clss}
+      isActive={isActive}
     >
-      {isMuted ? (
-        <MicOffIcon color={mic_off_color} size={20} />
-      ) : (
-        <MicIcon color={mic_on_color} size={20} />
-      )}
+      {({ color }) => {
+        let icon = <MicOffIcon color={color} size={20} />;
+        if (!isMuted) {
+          icon = <MicIcon color={color} size={20} />;
+        }
+        return icon;
+      }}
     </StreamButton>
-  )
+  );
 }

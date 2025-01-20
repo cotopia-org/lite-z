@@ -1,17 +1,16 @@
-import CotopiaIconButton from '@/components/shared-ui/c-icon-button';
-import CotopiaTooltip from '@/components/shared-ui/c-tooltip';
 import { useLoading } from '@/hooks';
 import useSetting from '@/hooks/use-setting';
-import { cn } from '@/lib/utils';
 import { useAppDispatch } from '@/store';
 import { disableAfk, enableAfk } from '@/store/slices/setting-slice';
 import { thunkResHandler } from '@/utils/utils';
 import { useLocalParticipant } from '@livekit/components-react';
 import { Track } from 'livekit-client';
-import { PauseCircle, PlayCircle } from 'lucide-react';
+import { HeadphonesIcon } from 'lucide-react';
 import { useRoomHolder } from '../../..';
 import { dispatch as busDispatch } from 'use-bus';
 import { __BUS } from '@/const/bus';
+import StreamButton from '../stream-button';
+import { HeadphoneOffIcon } from '@/components/icons';
 
 export default function AfkButtonTool() {
   const participant = useLocalParticipant();
@@ -30,7 +29,7 @@ export default function AfkButtonTool() {
 
   const { afk } = useSetting();
 
-  const { enableAudioAccess, disableAudioAccess } = useRoomHolder();
+  const { disableAudioAccess, disableAfkHandler } = useRoomHolder();
 
   const { startLoading, stopLoading, isLoading } = useLoading();
   const dispatch = useAppDispatch();
@@ -43,7 +42,7 @@ export default function AfkButtonTool() {
         () => {
           stopLoading();
           track?.unmute();
-          enableAudioAccess();
+          disableAfkHandler();
           busDispatch(__BUS.startWorkTimer);
         },
         () => {
@@ -68,20 +67,21 @@ export default function AfkButtonTool() {
   };
 
   return (
-    <CotopiaTooltip
-      title={afk === false ? `Enable AFK` : `Disable AFK`}
-      triggerClassName="hidden md:flex"
+    <StreamButton
+      tooltipTitle={`${!afk ? 'Enable AFK' : 'Disable AFK'}`}
+      onClick={handleToggleAfk}
+      loading={isLoading}
+      isActive={!afk}
     >
-      <CotopiaIconButton
-        className={cn(
-          'text-black !rounded-lg',
-          afk === true ? '!bg-yellow-100' : '',
-        )}
-        onClick={handleToggleAfk}
-        loading={isLoading}
-      >
-        {afk === true ? <PlayCircle /> : <PauseCircle />}
-      </CotopiaIconButton>
-    </CotopiaTooltip>
+      {({ color }) => {
+        let icon = <HeadphonesIcon color={color} size={20} />;
+
+        if (afk) {
+          icon = <HeadphoneOffIcon color={color} size={20} />;
+        }
+
+        return icon;
+      }}
+    </StreamButton>
   );
 }

@@ -28,7 +28,7 @@ export const disableAfk = createAsyncThunk<
   }
 });
 
-export type InitialStateType = {
+export type SettingStateType = {
   sounds: {
     userJoinLeft: boolean;
     messageIncoming: boolean;
@@ -36,7 +36,7 @@ export type InitialStateType = {
   afk: boolean;
 };
 
-const initialState: InitialStateType = {
+const initialState: SettingStateType = {
   sounds: {
     userJoinLeft: true,
     messageIncoming: true,
@@ -50,7 +50,7 @@ const settingSlice = createSlice({
   reducers: {
     toggleSoundSetting: (
       state,
-      action: PayloadAction<{ key: keyof InitialStateType['sounds'] }>,
+      action: PayloadAction<{ key: keyof SettingStateType['sounds'] }>,
     ) => {
       state.sounds[action.payload.key] = !state.sounds[action.payload.key];
     },

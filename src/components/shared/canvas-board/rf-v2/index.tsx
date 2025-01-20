@@ -305,7 +305,6 @@ export default function WithReactFlowV2() {
   useBus(
     __BUS.onDragEndNode,
     (data) => {
-      console.log('data', data.node);
       handleDragStopRfNodes(undefined, data.node);
     },
     [handleDragStopRfNodes],

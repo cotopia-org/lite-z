@@ -269,7 +269,7 @@ export const useChat2 = (props?: {
   }, [chats]);
 
   const getUser = (userId: number) => {
-    return currentChat?.participants?.find((x) => x.id === userId);
+    return currentChat?.participants?.find((x: any) => x.id === userId);
   };
 
   return {

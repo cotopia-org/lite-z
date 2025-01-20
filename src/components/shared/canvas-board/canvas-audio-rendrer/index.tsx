@@ -1,7 +1,6 @@
 import { getTrackReferenceId, isLocal } from '@livekit/components-core';
 import { useTracks } from '@livekit/components-react';
 import { Track } from 'livekit-client';
-
 import useAuth from '@/hooks/auth';
 import { VARZ } from '@/const/varz';
 import { UserMinimalType, WorkspaceUserType } from '@/types/user';
@@ -91,6 +90,7 @@ export function CanvasAudioRenderer() {
         );
 
         let volume = 0;
+
         let isMuted = !meet;
 
         if (meet) volume = 1;
@@ -98,9 +98,12 @@ export function CanvasAudioRenderer() {
         if (userNode?.status && audioOffUserStatuses.includes(userNode?.status))
           volume = 0;
 
+        if (room?.is_megaphone) {
+          volume = 1;
+        }
+
         return (
           <>
-            {`VOLUME: ${volume}`}
             <AudioTrack
               key={getTrackReferenceId(trackRef)}
               trackRef={trackRef}

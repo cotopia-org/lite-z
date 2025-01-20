@@ -27,7 +27,6 @@ export default function SchedulesList({ justView = true }: Props) {
 
   if (data === undefined || isLoading) return <FullLoading />;
 
-  console.log(workspaceUsers);
   return (
     <BoxHolder title={``}>
       <ScheduleFillment userId={user?.id} />

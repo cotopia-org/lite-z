@@ -10,21 +10,14 @@ export default function MicButtonHandler() {
   const { send } = useChat2();
 
   const handleSendVoice = async (file: Blob) => {
-    console.log('file', file.type);
-
     startLoading();
-
     //Upload attachment
     const formData = new FormData();
     if (file) formData.append('file', file);
-
     try {
       const fileRes = await axiosInstance.post(`/files`, formData);
-
       const attachment: AttachmentFileType = fileRes?.data?.data;
-
       await send({ voice_id: attachment.id });
-
       stopLoading();
     } catch (e) {
       stopLoading();

@@ -47,6 +47,7 @@ const RoomHolderContext = createContext<{
   enableAudioAccess: () => void;
   disableVideoAccess: () => void;
   disableAudioAccess: () => void;
+  disableAfkHandler: () => void;
   changeStreamState: (stream: MediaStream, type: 'video' | 'audio') => void;
   stream: InitStreamType;
   stream_loading: boolean;
@@ -57,6 +58,7 @@ const RoomHolderContext = createContext<{
   disableVideoAccess: () => {},
   disableAudioAccess: () => {},
   changeStreamState: () => {},
+  disableAfkHandler: () => {},
   stream: initialState,
   stream_loading: false,
 });
@@ -111,9 +113,6 @@ export default function RoomHolder({
 
   const [state, dispatch] = useReducer(reducer, initialState);
 
-  const [permissionChecked, setPermissionChecked] = useState(false);
-  const [mustJoin, setMustJoin] = useState(false);
-
   const enableVideoAccess = async () => {
     const audioAccess = state.permissions.audio;
     const audioStream = state.audioStream;
@@ -156,6 +155,23 @@ export default function RoomHolder({
       // dispatch({ type: 'STOP_LOADING' });
     }
   };
+
+  const disableAfkHandler = async () => {
+    const videoAccess = state.permissions.video;
+    const videoStream = state.videoStream;
+    let perm_obj = { video: !!(videoAccess && videoStream), audio: true };
+    try {
+      await axiosInstance.post('/settings', { key: 'audio', value: 'on' });
+      const obj_to_update = {
+        loading: false,
+        permissions: perm_obj,
+      };
+      dispatch({ type: 'CHANGE_VALUES', payload: obj_to_update });
+    } catch (error) {
+      // dispatch({ type: 'STOP_LOADING' });
+    }
+  };
+
   const enableAudioAccess = async () => {
     const videoAccess = state.permissions.video;
     const videoStream = state.videoStream;
@@ -232,7 +248,6 @@ export default function RoomHolder({
     // getSettings();
 
     if (socket && socket.connected) {
-      console.log('Join');
       handleJoin();
     }
   }, [socket?.connected]);
@@ -258,7 +273,6 @@ export default function RoomHolder({
       axiosInstance
         .get<FetchDataType<WorkspaceRoomJoinType>>(`/rooms/${room_id}/join`)
         .then((res) => {
-          setPermissionChecked(true);
           // setMustJoin(true);
           //Setting token in redux for livekit
           reduxDispatch(setToken(res.data.data.token));
@@ -315,6 +329,7 @@ export default function RoomHolder({
           audio: state.permissions.audio,
         },
         stream_loading: state.loading,
+        disableAfkHandler,
         changeStreamState,
         enableAudioAccess,
         enableVideoAccess,
