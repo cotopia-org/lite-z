@@ -36,6 +36,7 @@ export default function RoomInner() {
         disconnect();
         await connect(VARZ.serverUrl as string, token);
         console.log('start audio');
+        document.getElementById('main-room-holder')?.click();
         startAudio();
       }
     }
