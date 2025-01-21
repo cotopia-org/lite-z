@@ -91,5 +91,7 @@ export const AudioTrack = /* @__PURE__ */ React.forwardRef<
     }
   }, [muted, pub, track]);
 
-  return <audio ref={mediaEl} playsInline={true} {...elementProps} />;
+  return (
+    <audio ref={mediaEl} {...elementProps} playsInline={true} autoPlay={true} />
+  );
 });
