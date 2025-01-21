@@ -366,6 +366,8 @@ export default function WithReactFlowV2() {
     handleCircleMeet(data.username, position);
 
     rf.current?.updateNode(data.username, { position });
+
+    dispatch(__BUS.refreshNodeAudio);
   });
 
   useBus(__BUS.onDragEndNode, (data) => {
