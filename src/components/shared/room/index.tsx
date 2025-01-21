@@ -159,7 +159,13 @@ export default function RoomHolder({
   const disableAfkHandler = async () => {
     const videoAccess = state.permissions.video;
     const videoStream = state.videoStream;
-    let perm_obj = { video: !!(videoAccess && videoStream), audio: true };
+    const audioAccess = state.permissions.audio;
+    const audioStream = state.audioStream;
+    let perm_obj = {
+      video: !!(videoAccess && videoStream),
+      audio: !!(audioAccess && audioStream),
+    };
+    console.log(perm_obj, 'PERMS');
     try {
       await axiosInstance.post('/settings', { key: 'audio', value: 'on' });
       const obj_to_update = {
@@ -270,7 +276,6 @@ export default function RoomHolder({
   const handleJoin = useCallback(
     async (tries = 0) => {
       dispatch({ type: 'START_LOADING' });
-
       axiosInstance
         .get<FetchDataType<WorkspaceRoomJoinType>>(`/rooms/${room_id}/join`)
         .then((res) => {
@@ -281,8 +286,6 @@ export default function RoomHolder({
         })
         .catch((err) => {
           handleReTry(tries);
-
-          // toast.error("Couldn't join to the room!");
         });
     },
     [room_id],

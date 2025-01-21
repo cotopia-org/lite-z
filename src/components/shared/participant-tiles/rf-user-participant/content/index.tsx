@@ -4,6 +4,7 @@ import RfUserTileActions from '../actions';
 import VideoTrackHandler from '../video-handler';
 import AfkLayer from '../../afk';
 import GhostLayer from '../../ghost';
+import { useRoomContext } from '@/components/shared/room/room-context';
 
 interface Props {
   meet: boolean;
@@ -12,6 +13,10 @@ interface Props {
 const RfUserTileContent = ({ meet }: Props) => {
   const { trackType, targetUser, livekitIdentity, userFullName, isSpeaking } =
     useParticipantTileCtx();
+
+  const { room } = useRoomContext();
+
+  const is_megaphone = !!room?.is_megaphone;
 
   let clss =
     'relative z-[10] user-circle transition-all w-full h-full [&_.lk-participant-tile]:!absolute [&_.lk-participant-tile]:w-full [&_.lk-participant-tile]:h-full [&_.lk-participant-tile]:top-0 [&_.lk-participant-tile]:left-0 rounded-full p-1 [&_video]:h-full [&_video]:object-cover [&_video]:rounded-full [&_video]:h-full [&_video]:w-full w-[96px] h-[96px] flex flex-col items-center justify-center';
@@ -37,6 +42,9 @@ const RfUserTileContent = ({ meet }: Props) => {
     clss += ` bg-gray-600`;
   }
 
+  if (is_megaphone) {
+    clss += ' scale-100';
+  }
   // if (trackType === 'audio') {
   //   trackContent = <AudioTrackHandler />;
   // }
@@ -49,7 +57,7 @@ const RfUserTileContent = ({ meet }: Props) => {
 
   return (
     <div className={clss}>
-      <div className="relative w-[86px] h-[86px] rounded-full flex flex-col items-center justify-center overflow-hidden z-[1]">
+      <div className="relative w-[86px]  h-[86px] rounded-full flex flex-col items-center justify-center overflow-hidden z-[1]">
         {targetUser?.status === 'afk' && <AfkLayer />}
         {targetUser?.status === 'ghost' && <GhostLayer />}
         {showAvatar && (
