@@ -1,7 +1,6 @@
 import CotopiaAvatar from '@/components/shared-ui/c-avatar';
 import { useParticipantTileCtx } from '../../participant-tile-provider';
 import RfUserTileActions from '../actions';
-import AudioTrackHandler from '../audio-handler';
 import VideoTrackHandler from '../video-handler';
 import AfkLayer from '../../afk';
 import GhostLayer from '../../ghost';

@@ -100,6 +100,7 @@ export function CanvasAudioRenderer() {
 
         if (room?.is_megaphone) {
           volume = 1;
+          isMuted = false;
         }
 
         return (
