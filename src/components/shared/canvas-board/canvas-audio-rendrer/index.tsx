@@ -105,6 +105,7 @@ export function CanvasAudioRenderer() {
 
         return (
           <>
+            {`VOLUME: ${volume}`}
             <AudioTrack
               key={getTrackReferenceId(trackRef)}
               trackRef={trackRef}
