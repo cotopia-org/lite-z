@@ -89,6 +89,15 @@ export const useTeleport = (username: string) => {
         node: { ...myNode, position: nPosition },
       });
 
+      dispatch({
+        type: __BUS.refreshNodeAudio,
+      });
+
+      dispatch({
+        type: __BUS.onDragEndNode,
+        node: { ...myNode, position: nPosition },
+      });
+
       rf.updateNode(myAccount.username, {
         position: nPosition,
         data: { ...myNode?.data, meet: true },

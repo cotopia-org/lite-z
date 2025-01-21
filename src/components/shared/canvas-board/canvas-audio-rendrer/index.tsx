@@ -41,7 +41,7 @@ const audioOffUserStatuses = ['afk', 'ghost'];
 
 export function CanvasAudioRenderer() {
   const [_, setRefresher] = useState(0);
-  useBus(__BUS.onDragEndNode, () => {
+  useBus(__BUS.refreshNodeAudio, () => {
     setTimeout(() => {
       setRefresher(Math.random() * 20000000);
     }, 200);

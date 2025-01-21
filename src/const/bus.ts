@@ -1,6 +1,7 @@
 export const __BUS = {
   mutateTableAgain: 'MUTATE_TABLE_AGAIN',
   onDragEndNode: 'ON_DRAG_END_NODE',
+  refreshNodeAudio: 'REFRESH_NODE_AUDIO',
   openMainSideBar: 'OPEN_MAIN_SIDE_BAR',
   closeMainSideBar: 'CLOSE_MAIN_SIDE_BAR',
   closePrompt: 'CLOSE_PROMPT',
