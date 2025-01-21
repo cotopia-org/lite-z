@@ -6,7 +6,11 @@ import LiveKitAudioManager from '../components/audio-manager';
 import InitRoom from './init-room';
 import CanvasBoard from '../../canvas-board';
 import { useAppSelector } from '@/store';
-import { useRoomContext } from '@livekit/components-react';
+import {
+  useAudioPlayback,
+  useRoomContext,
+  useStartAudio,
+} from '@livekit/components-react';
 import { VARZ } from '@/const/varz';
 import { useRoomContext as localUseRoomContext } from './../room-context';
 import GridRoomView from '../grid-room-view';
@@ -15,6 +19,8 @@ import { cn } from '@/lib/utils';
 import { isMobileBrowser } from '@livekit/components-core';
 
 export default function RoomInner() {
+  const { startAudio } = useAudioPlayback();
+
   const { disconnect, connect } = useRoomContext();
   const { room, roomLoading } = localUseRoomContext();
 
@@ -28,6 +34,7 @@ export default function RoomInner() {
     if (token) {
       disconnect();
       connect(VARZ.serverUrl as string, token);
+      startAudio();
     }
   }, [token]);
 
