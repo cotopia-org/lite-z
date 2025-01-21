@@ -1,16 +1,15 @@
-import useSetting from "@/hooks/use-setting";
-import { playSoundEffect } from "@/lib/sound-effects";
+import useSetting from '@/hooks/use-setting';
+import { playSoundEffect } from '@/lib/sound-effects';
 import {
   removeMessageAction,
   unreadMessagesAction,
   updateMessagesAction,
-} from "@/store/slices/room-slice";
-import { useAppDispatch } from "@/store";
-import { ChatItemType } from "@/types/chat";
-import { Chat2ItemType } from "@/types/chat2";
-import { ReactNode } from "react";
-import { useSocket } from "@/routes/private-wrarpper";
-import { toast } from "sonner";
+} from '@/store/slices/room-slice';
+import { useAppDispatch } from '@/store';
+import { ChatItemType } from '@/types/chat';
+import { Chat2ItemType } from '@/types/chat2';
+import { ReactNode } from 'react';
+import { useSocket } from '@/routes/private-wrarpper';
 
 type Props = {
   children: ReactNode;
@@ -21,11 +20,11 @@ export default function ChatWrapper({ children }: Props) {
   const appDispatch = useAppDispatch();
 
   useSocket(
-    "messageReceived",
+    'messageReceived',
     (data: ChatItemType) => {
       const isDirect = data?.is_direct;
 
-      if (settings.sounds.messageIncoming) playSoundEffect("newMessage2");
+      if (settings.sounds.messageIncoming) playSoundEffect('newMessage2');
 
       appDispatch(
         updateMessagesAction({
@@ -35,14 +34,14 @@ export default function ChatWrapper({ children }: Props) {
       appDispatch(
         unreadMessagesAction({
           message: data,
-          messageType: isDirect ? "direct" : "room",
+          messageType: isDirect ? 'direct' : 'room',
         }),
       );
     },
     [settings.sounds.messageIncoming],
   );
 
-  useSocket("messageSeen", (data) => {
+  useSocket('messageSeen', (data) => {
     const message = data.message;
     let convertedMessage = { ...message, seen: true };
     appDispatch(
@@ -52,10 +51,10 @@ export default function ChatWrapper({ children }: Props) {
     );
   });
 
-  useSocket("messageUpdated", (data: Chat2ItemType) => {
+  useSocket('messageUpdated', (data: Chat2ItemType) => {
     appDispatch(updateMessagesAction({ message: data }));
   });
-  useSocket("messageDeleted", (data: Chat2ItemType) => {
+  useSocket('messageDeleted', (data: Chat2ItemType) => {
     appDispatch(removeMessageAction({ message: data }));
   });
 

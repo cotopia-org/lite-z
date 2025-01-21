@@ -60,9 +60,7 @@ const GridRoomView = (props: Props) => {
   }, [hasShareScreen, shareScreenTrack, room?.participants]);
 
   useEffect(() => {
-    const initParticipants = uniqueById(
-      room?.participants || [],
-    ) as UserMinimalType[];
+    const initParticipants = room?.participants || [];
     if (initRef.current === true) return;
     if (initParticipants.length === 0) return;
     setNodes(
@@ -79,11 +77,9 @@ const GridRoomView = (props: Props) => {
     __BUS.initRoomParticipantsOnRf,
     (data: any) => {
       //update participants when somebody join into the room
-      const participants = uniqueById(
-        data?.participants || [],
-      ) as UserMinimalType[];
+      const participants = data?.participants || [];
       setNodes(
-        participants.map((p) => ({
+        participants.map((p: UserMinimalType) => ({
           id: p.id,
           type: MeetingTileType.UserTile,
           participant: p,
@@ -169,7 +165,7 @@ const GridRoomView = (props: Props) => {
         )}
       >
         <MeetingWrapper>
-          <MeetingRoom nodes={nodes} />
+          <MeetingRoom nodes={uniqueById(nodes) as MeetingNodeType[]} />
           <RoomAudioRenderer />
         </MeetingWrapper>
       </div>
