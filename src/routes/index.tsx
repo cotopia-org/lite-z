@@ -66,7 +66,6 @@ const router = createBrowserRouter([
           },
         ],
       },
-
       {
         path: routeResolver(
           paths.workspaces.index,

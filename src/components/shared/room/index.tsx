@@ -235,8 +235,6 @@ export default function RoomHolder({
         let video = videoAccess?.value === 'on' ? true : false;
         let audio = audioAccess?.value === 'on' ? true : false;
 
-        await navigator.mediaDevices.getUserMedia({ audio: true });
-
         dispatch({
           type: 'CHANGE_VALUES',
           payload: {
