@@ -41,7 +41,6 @@ export default function AfkButtonTool() {
         'users/beOnline',
         () => {
           stopLoading();
-          track?.unmute();
           disableAfkHandler();
           busDispatch(__BUS.startWorkTimer);
         },
