@@ -19,7 +19,7 @@ export default function LivekitRefactored({ children }: Props) {
       token={token}
       connect={true}
       video={mediaPermissions.video}
-      audio={mediaPermissions.audio}
+      audio
       options={{
         adaptiveStream: {
           pixelDensity: 'screen',
