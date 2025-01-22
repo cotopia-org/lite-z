@@ -104,7 +104,6 @@ export default function Items({
       const messageId = data?.messageId;
 
       const itemIndex = items.findIndex((x) => +x.nonce_id === +messageId);
-      console.log('Here', messageId, itemIndex);
 
       if (itemIndex === -1) return;
 
