@@ -165,7 +165,6 @@ export default function RoomHolder({
       video: !!(videoAccess && videoStream),
       audio: !!(audioAccess && audioStream),
     };
-    console.log(perm_obj, 'PERMS');
     try {
       await axiosInstance.post('/settings', { key: 'audio', value: 'on' });
       const obj_to_update = {

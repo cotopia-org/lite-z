@@ -52,7 +52,6 @@ export function CanvasAudioRenderer() {
   const { room } = useRoomContext();
   const { user } = useAuth();
 
-  console.log(room, 'ROOM');
   const userNode = room?.participants?.find((a) => a.id === user?.id);
 
   const tracks = useTracks(
