@@ -9,7 +9,6 @@ import StreamButton from '../stream-button';
 import useSetting from '@/hooks/use-setting';
 import { dispatch } from 'use-bus';
 import { __BUS } from '@/const/bus';
-import { playSoundEffect } from '@/lib/sound-effects';
 
 export default function MegaPhoneButtonTool() {
   const { room, workspace_id } = useRoomContext();
@@ -31,11 +30,6 @@ export default function MegaPhoneButtonTool() {
     startLoading();
     try {
       await axiosInstance.get(`/rooms/${room.id}/toggleMegaphone`);
-      if (mgEnabled) {
-        playSoundEffect('megaphoneDisable');
-      } else {
-        playSoundEffect('megaphoneEnable');
-      }
       dispatch(__BUS.refreshNodeAudio);
       stopLoading();
     } catch (error) {
