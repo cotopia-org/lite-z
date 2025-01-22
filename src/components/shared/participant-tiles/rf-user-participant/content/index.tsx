@@ -5,6 +5,7 @@ import VideoTrackHandler from '../video-handler';
 import AfkLayer from '../../afk';
 import GhostLayer from '../../ghost';
 import { useRoomContext } from '@/components/shared/room/room-context';
+import { cn } from '@/lib/utils';
 
 interface Props {
   meet: boolean;
@@ -27,23 +28,23 @@ const RfUserTileContent = ({ meet }: Props) => {
   if (trackType === 'video' && meet) showAvatar = false;
 
   //Scale down the user profile if user isn't in user's area
-  if (!meet) clss += ` scale-[0.6]`;
+  if (!meet) clss = cn(clss, ` scale-[0.6]`);
 
   //Highlight user circle in different states
   if (isSpeaking && meet) {
-    clss += ` bg-green-700`;
+    clss = cn(clss, ` bg-green-700`);
   }
 
   if (!isSpeaking) {
-    clss += ` bg-black/10`;
+    clss = cn(clss, ` bg-black/10`);
   }
 
   if (!meet) {
-    clss += ` bg-gray-600`;
+    clss = cn(clss, ` bg-gray-600`);
   }
 
   if (is_megaphone) {
-    clss += ' scale-100';
+    clss = cn(clss, ' scale-100');
   }
   // if (trackType === 'audio') {
   //   trackContent = <AudioTrackHandler />;
