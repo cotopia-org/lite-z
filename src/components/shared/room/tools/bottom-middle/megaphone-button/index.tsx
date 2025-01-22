@@ -9,7 +9,6 @@ import StreamButton from '../stream-button';
 import useSetting from '@/hooks/use-setting';
 import { dispatch } from 'use-bus';
 import { __BUS } from '@/const/bus';
-import { playSoundEffect } from '@/lib/sound-effects';
 
 export default function MegaPhoneButtonTool() {
   const { room, workspace_id } = useRoomContext();

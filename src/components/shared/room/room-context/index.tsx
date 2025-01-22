@@ -151,12 +151,16 @@ export default function RoomContext({
     setRoom(data);
   });
   useSocket('toggleMegaphone', (data) => {
-    if (room?.is_megaphone) {
-      playSoundEffect('megaphoneDisable');
-    } else {
+    const is_megaphone = data?.is_megaphone || false;
+    console.log(is_megaphone);
+    setRoom(data);
+    if (is_megaphone) {
       playSoundEffect('megaphoneEnable');
     }
-    setRoom(data);
+    if (!is_megaphone) {
+      playSoundEffect('megaphoneDisable');
+    }
+    // },
   });
 
   //Update room object when background changed
