@@ -7,7 +7,6 @@ import { isUserAdmin } from '@/lib/utils';
 import { toast } from 'sonner';
 import StreamButton from '../stream-button';
 import useSetting from '@/hooks/use-setting';
-import { dispatch } from 'use-bus';
 import { __BUS } from '@/const/bus';
 
 export default function MegaPhoneButtonTool() {
@@ -16,21 +15,21 @@ export default function MegaPhoneButtonTool() {
   const { startLoading, stopLoading, isLoading } = useLoading();
 
   const { user } = useAuth();
-  const { afk } = useSetting();
+  const { reduxSettings } = useSetting();
+  const is_afk = reduxSettings.afk;
 
   const is_admin = isUserAdmin(user, workspace_id) ?? false;
 
   const mgEnabled = room?.is_megaphone;
 
   const toggleMegaphoneHandler = async () => {
-    if (afk) return toast.error('You should first enable your AFK');
+    if (is_afk) return toast.error('You should first enable your AFK');
     if (!room) return;
     if (!is_admin)
       return toast.error('You dont have permission to do this action');
     startLoading();
     try {
       await axiosInstance.get(`/rooms/${room.id}/toggleMegaphone`);
-      dispatch(__BUS.refreshNodeAudio);
       stopLoading();
     } catch (error) {
       stopLoading();

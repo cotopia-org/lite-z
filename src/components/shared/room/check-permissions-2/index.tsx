@@ -3,8 +3,8 @@ import { Mic, Video as IconVideo } from 'lucide-react';
 import React, { useEffect, useRef } from 'react';
 import CotopiaButton from '@/components/shared-ui/c-button';
 import Video from './video';
-import { useRoomHolder } from '..';
 import { useSocket } from '@/routes/private-wrarpper';
+import { useWorkspaceContext } from '@/pages/workspace';
 
 interface MediaAccessProps {
   onChecked: () => void;
@@ -13,14 +13,8 @@ interface MediaAccessProps {
 const CheckPermissions2: React.FC<MediaAccessProps> = ({ onChecked }) => {
   const socket = useSocket();
 
-  const {
-    stream,
-    enableVideoAccess,
-    disableVideoAccess,
-    enableAudioAccess,
-    disableAudioAccess,
-    changeStreamState,
-  } = useRoomHolder();
+  const { stream, enableAudioStream, disableVideoStream } =
+    useWorkspaceContext();
 
   const permissions = stream.permissions;
   const hasVideoAccess = permissions.video;
@@ -41,7 +35,6 @@ const CheckPermissions2: React.FC<MediaAccessProps> = ({ onChecked }) => {
   useEffect(() => {
     const audioStreaming = async () => {
       const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-      changeStreamState(stream, 'audio');
       firstAudRef.current = false;
     };
 
@@ -53,7 +46,6 @@ const CheckPermissions2: React.FC<MediaAccessProps> = ({ onChecked }) => {
   useEffect(() => {
     const videoStreaming = async () => {
       const stream = await navigator.mediaDevices.getUserMedia({ video: true });
-      changeStreamState(stream, 'video');
       firstAudRef.current = false;
     };
     if (!!firstVidRef.current && hasVideoAccess) {
@@ -64,17 +56,17 @@ const CheckPermissions2: React.FC<MediaAccessProps> = ({ onChecked }) => {
 
   const handleToggleVideo = () => {
     if (videoStream) {
-      disableVideoAccess();
+      disableVideoStream();
     } else {
-      enableVideoAccess();
+      enableAudioStream();
     }
   };
 
   const handleToggleAudio = () => {
     if (audioStream) {
-      disableAudioAccess();
+      // disableAudioAccess();
     } else {
-      enableAudioAccess();
+      // enableAudioAccess();
     }
   };
 

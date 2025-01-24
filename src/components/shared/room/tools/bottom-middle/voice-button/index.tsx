@@ -1,6 +1,5 @@
 import { useLocalParticipant } from '@livekit/components-react';
 import { Track } from 'livekit-client';
-import { useRoomHolder } from '../../..';
 import { toast } from 'sonner';
 import StreamButton from '../stream-button';
 import { MicIcon, MicOffIcon } from '@/components/icons';
@@ -14,13 +13,13 @@ export default function VoiceButtonTool() {
 
   const [browserPermission, setBrowserPermission] = useState(true);
 
-  const { afk } = useSetting();
-  const {
-    enableAudioAccess,
-    disableAudioAccess,
-    mediaPermissions,
-    stream_loading,
-  } = useRoomHolder();
+  const { reduxSettings } = useSetting();
+
+  const isAfk = reduxSettings.afk;
+
+  // const { disableAudioAccess, mediaPermissions, stream_loading } =
+  //   useRoomHolder();
+
   const participant = useLocalParticipant();
 
   const localParticipant = participant.localParticipant;
@@ -41,29 +40,22 @@ export default function VoiceButtonTool() {
       return toast.error(
         'Access to microphone is blocked,please check your browser settings',
       );
-    } else if (afk) {
+    } else if (isAfk) {
       return toast.error('You should first enable your AFK');
     } else {
       if (!track) {
         localParticipant.setMicrophoneEnabled(true);
-        enableAudioAccess();
+        // enableAudioAccess();
       } else if (track.isMuted) {
         track.unmute();
-        enableAudioAccess();
+        // enableAudioAccess();
       } else {
         track.mute();
         track.stop();
-        disableAudioAccess();
+        // disableAudioAccess();
       }
     }
-  }, [
-    browserPermission,
-    afk,
-    track,
-    localParticipant,
-    enableAudioAccess,
-    disableAudioAccess,
-  ]);
+  }, [browserPermission, isAfk, track, localParticipant]);
 
   useSocket(
     'userUpdated',
@@ -72,7 +64,7 @@ export default function VoiceButtonTool() {
       if (updatedUser.id === user.id && updatedUser.status === 'afk') {
         track.mute();
         track.stop();
-        disableAudioAccess();
+        // disableAudioAccess();
       }
     },
     [track, user?.id],
@@ -94,18 +86,18 @@ export default function VoiceButtonTool() {
   if (!browserPermission) {
     title = 'Permission denied';
   }
-  if (!browserPermission || !mediaPermissions.audio) {
-    isActive = false;
-  }
-  if (mediaPermissions.audio && !isMuted) {
-    isActive = true;
-  }
+  // if (!browserPermission || !mediaPermissions.audio) {
+  //   isActive = false;
+  // }
+  // if (mediaPermissions.audio && !isMuted) {
+  //   isActive = true;
+  // }
   if (track?.isMuted) title = 'Mic on';
   return (
     <StreamButton
       onClick={toggleMute}
       tooltipTitle={title}
-      loading={stream_loading}
+      // loading={stream_loading}
       isActive={isActive}
     >
       {({ color }) => {

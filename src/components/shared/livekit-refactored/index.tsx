@@ -2,7 +2,7 @@ import { VARZ } from '@/const/varz';
 import { useAppSelector } from '@/store';
 import { LiveKitRoom } from '@livekit/components-react';
 import { ReactNode } from 'react';
-import { useRoomHolder } from '../room';
+import { useWorkspaceContext } from '@/pages/workspace';
 
 type Props = {
   children: ReactNode;
@@ -10,7 +10,7 @@ type Props = {
 export default function LivekitRefactored({ children }: Props) {
   const { token } = useAppSelector((store) => store.livekit);
 
-  const { mediaPermissions } = useRoomHolder();
+  const { permissions } = useWorkspaceContext();
 
   return (
     //@ts-ignore
@@ -18,8 +18,8 @@ export default function LivekitRefactored({ children }: Props) {
       serverUrl={VARZ.serverUrl}
       token={token}
       connect={true}
-      video={mediaPermissions.video}
-      audio={mediaPermissions.audio}
+      video={permissions.video}
+      audio={permissions.audio}
       options={{
         adaptiveStream: {
           pixelDensity: 'screen',

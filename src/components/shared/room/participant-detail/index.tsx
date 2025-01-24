@@ -1,13 +1,13 @@
-import { UserMinimalType, WorkspaceUserType } from "@/types/user"
-import { ReactNode } from "react"
-import CotopiaPopover from "@/components/shared-ui/c-popover"
-import Details from "./details"
+import { UserMinimalType, WorkspaceUserType } from '@/types/user';
+import { ReactNode } from 'react';
+import CotopiaPopover from '@/components/shared-ui/c-popover';
+import Details from './details';
 
 type Props = {
-  user: UserMinimalType | WorkspaceUserType
-  children: ReactNode
-  roomId?: number
-}
+  user: UserMinimalType | WorkspaceUserType;
+  children: ReactNode;
+  roomId?: number;
+};
 export default function ParticipantDetails({ user, roomId, children }: Props) {
   return (
     <CotopiaPopover
@@ -16,5 +16,5 @@ export default function ParticipantDetails({ user, roomId, children }: Props) {
     >
       <Details roomId={roomId} user={user} />
     </CotopiaPopover>
-  )
+  );
 }

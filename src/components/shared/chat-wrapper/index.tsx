@@ -15,7 +15,7 @@ type Props = {
   children: ReactNode;
 };
 export default function ChatWrapper({ children }: Props) {
-  const settings = useSetting();
+  const { reduxSettings } = useSetting();
 
   const appDispatch = useAppDispatch();
 
@@ -24,7 +24,7 @@ export default function ChatWrapper({ children }: Props) {
     (data: ChatItemType) => {
       const isDirect = data?.is_direct;
 
-      if (settings.sounds.messageIncoming) playSoundEffect('newMessage2');
+      if (reduxSettings.sounds.messageIncoming) playSoundEffect('newMessage2');
 
       appDispatch(
         updateMessagesAction({
@@ -38,7 +38,7 @@ export default function ChatWrapper({ children }: Props) {
         }),
       );
     },
-    [settings.sounds.messageIncoming],
+    [reduxSettings.sounds.messageIncoming],
   );
 
   useSocket('messageSeen', (data) => {

@@ -4,6 +4,7 @@ import MicButton from './actions-right/mic';
 import { useParticipantTileCtx } from '../participant-tile-provider';
 import { Track } from 'livekit-client';
 import { TrackReferenceOrPlaceholder } from '@livekit/components-core';
+import { UserMinimalType } from '@/types/user';
 
 interface Props {}
 
@@ -14,6 +15,7 @@ const RfUserTileActions = (props: Props) => {
   return (
     <ActionsRight>
       <MicButton
+        targetUser={targetUser as UserMinimalType}
         trackRef={{
           participant: trackReference?.participant,
           source: Track.Source.Microphone,

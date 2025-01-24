@@ -10,14 +10,16 @@ import useSetting from '@/hooks/use-setting';
 export default function VideoButtonTool() {
   const [navPermission, setNavPermission] = useState(true);
 
-  const { afk } = useSetting();
+  const { reduxSettings } = useSetting();
 
-  const {
-    enableVideoAccess,
-    disableVideoAccess,
-    mediaPermissions,
-    stream_loading,
-  } = useRoomHolder();
+  const isAfk = reduxSettings.afk;
+
+  // const {
+  //   enableVideoAccess,
+  //   disableVideoAccess,
+  //   mediaPermissions,
+  //   stream_loading,
+  // } = useRoomHolder();
 
   const participant = useLocalParticipant();
 
@@ -42,25 +44,25 @@ export default function VideoButtonTool() {
       return toast.error(
         'Access to camera is blocked,please check your browser settings',
       );
-    } else if (afk) {
+    } else if (isAfk) {
       return toast.error('You should first enable Your AFK');
     } else {
       if (!track) {
         localParticipant.setCameraEnabled(true);
-        enableVideoAccess();
+        // enableVideoAccess();
       } else if (isUpstreamPaused) {
-        enableVideoAccess();
+        // enableVideoAccess();
         track.unmute();
       } else {
-        disableVideoAccess();
+        // disableVideoAccess();
         track.mute();
         track.stop();
       }
     }
   }, [
-    afk,
-    disableVideoAccess,
-    enableVideoAccess,
+    isAfk,
+    // disableVideoAccess,
+    // enableVideoAccess,
     isUpstreamPaused,
     localParticipant,
     navPermission,
@@ -86,12 +88,12 @@ export default function VideoButtonTool() {
     title = 'Permission denied';
   }
 
-  if (!navPermission || !mediaPermissions.video) {
-    isActive = false;
-  }
-  if (mediaPermissions.video) {
-    isActive = true;
-  }
+  // if (!navPermission || !mediaPermissions.video) {
+  //   isActive = false;
+  // }
+  // if (mediaPermissions.video) {
+  //   isActive = true;
+  // }
 
   if (track?.isMuted) {
     title = 'Video on';
@@ -101,7 +103,7 @@ export default function VideoButtonTool() {
   return (
     <StreamButton
       tooltipTitle={title}
-      loading={stream_loading}
+      // loading={stream_loading}
       onClick={toggleUpstream}
       isActive={isActive}
     >

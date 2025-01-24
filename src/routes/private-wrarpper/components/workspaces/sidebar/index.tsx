@@ -10,7 +10,12 @@ import { isNowBetween } from '@/lib/utils';
 export default function WorkspaceSidebar() {
   const { workspace_id } = useParams();
 
-  const { workspaceUsers, scheduled, onlineUsers } = useRoomContext();
+  const { workspaceUsers, scheduled, onlineUsers, room } = useRoomContext();
+
+  const participants = room?.participants || [];
+
+  console.log(participants, 'PARTICIPANTS');
+  console.log(workspaceUsers, 'WPARTICIPANTS');
 
   const today = moment();
 
