@@ -38,11 +38,9 @@ export default function Items({
 }: Props) {
   const vlistRef = useRef<VListHandle | null>(null);
 
-  const { chatObjects, currentChat } = useChat2({ chat_id });
+  const { chatObjects } = useChat2({ chat_id });
 
   const items = chatObjects?.[chat_id]?.messages ?? [];
-
-  const [unreadIndex, setUnreadIndex] = useState(items.length - 1);
 
   const dispatch = useAppDispatch();
 
@@ -52,40 +50,20 @@ export default function Items({
   const firstPage = chatObjects?.[chat_id]?.firstPage ?? true;
   const lastPage = chatObjects?.[chat_id]?.lastPage ?? false;
 
-  const isInitialized = useRef(false);
-
   const { user: profile } = useAuth();
 
   const parentRef = useRef<HTMLDivElement>(null);
-
-  const latestMessage = useRef<Chat2ItemType>();
 
   const [isFetching, setIsFetching] = useState(false);
 
   const messages = [...items].reverse();
 
-  // Virtualizer setup
-  const rowVirtualizer = useVirtualizer({
-    count: messages.length,
-    getScrollElement: () => parentRef.current,
-    estimateSize: () => 100, // Estimated height of each message
-    measureElement: (el) => el.getBoundingClientRect().height,
-  });
-
-  useEffect(() => {
-    const virtualItems = rowVirtualizer?.getVirtualItems();
-    const totalsize = rowVirtualizer?.getTotalSize();
-
-    if (virtualItems.length > 0 && totalsize > 0) {
-      isInitialized.current = true;
-    }
-  }, [rowVirtualizer]);
-
   useBus(
     __BUS.scrollEndChatBox,
     () => {
+      console.log('Hewre');
       if (items.length === 0) return;
-      vlistRef.current?.scrollToIndex(items.length - 1);
+      vlistRef.current?.scrollToIndex(messages.length - 1);
     },
     [items, vlistRef.current],
   );
@@ -95,40 +73,14 @@ export default function Items({
     (data: any) => {
       const messageId = data?.messageId;
 
-      const itemIndex = items.findIndex((x) => +x.nonce_id === +messageId);
+      const itemIndex = messages.findIndex((x) => +x.nonce_id === +messageId);
       console.log('Target', messageId, itemIndex);
 
       if (itemIndex === -1) return;
-
-      // const rightIndex = items.length - (itemIndex + 1);
-
-      // vlistRef.current?.scrollToIndex(rightIndex);
-      // // rowVirtualizer.scrollToIndex(rightIndex);
-      //
-      // const messageEl: HTMLDivElement | null = document.querySelector(
-      //   `.chat-item[data-index="${messageId}"]`,
-      // );
-      //
-      // console.log(messageEl);
-      //
-      // if (!messageEl || !messageEl) return;
-      //
-      // messageEl?.classList?.add('[&]:!bg-blue-500/20');
-      // messageEl?.classList?.add('[&]:animate-pulse');
-      //
-      // setTimeout(() => {
-      //   messageEl?.classList?.remove('[&]:!bg-blue-500/20');
-      //   messageEl?.classList?.remove('[&]:animate-pulse');
-      // }, 1500);
+      scrollToMessage(itemIndex);
     },
-    [items],
+    [messages],
   );
-
-  useEffect(() => {
-    if (!rowVirtualizer) return;
-
-    if (onGetVirtualizer) onGetVirtualizer(rowVirtualizer);
-  }, [onGetVirtualizer, rowVirtualizer]);
 
   const handleScroll = () => {
     // if (chatItemInit.current === false) return;
@@ -155,100 +107,38 @@ export default function Items({
     }
   };
 
-  const scrollToUnread = (index: number) => {
+  const scrollToMessage = (index: number) => {
     // console.log(index);
     vlistRef.current?.scrollToIndex(index);
   };
 
   useEffect(() => {
-    if (!!!latestMessage.current) return;
-
-    const itemIndex = items.findIndex(
-      (x) => x.id === latestMessage.current?.id,
-    );
-
-    if (itemIndex === -1) return;
-
-    rowVirtualizer.scrollToIndex(items.length - (itemIndex + 1), {
-      align: 'start',
-    });
-
-    setIsFetching(false);
-  }, [items.length, rowVirtualizer]);
-
-  const initScrollEnd = useRef(false);
-
-  useEffect(() => {
     if (items.length === 0) return;
-    console.log('HERE');
-    // if (initScrollEnd.current === true) return;
-
-    // vlistRef.current?.scrollToIndex(items.length - 1);
-    // initScrollEnd.current = true;
 
     const lastMessageSeen = chatObjects?.[chat_id].object.last_seen_message?.id;
 
-    console.log(items);
-    console.log(
-      [...items].reverse().findIndex((x) => x.id === lastMessageSeen),
-    );
-    scrollToUnread(5);
+    scrollToMessage(messages.findIndex((x) => x.id === lastMessageSeen));
   }, [items]);
-
-  function formatDate(timestamp: number) {
-    const date = new Date(timestamp * 1000);
-    const now = new Date();
-
-    const options = {
-      month: 'long',
-      day: '2-digit',
-    };
-    if (date.getFullYear() !== now.getFullYear()) {
-      // @ts-ignore
-      options.year = 'numeric';
-    }
-
-    // @ts-ignore
-    return date.toLocaleDateString('en-US', options);
-  }
-
-  const groupedMessages = messages.reduce((acc: any, message) => {
-    const formattedDate = formatDate(message.created_at);
-    if (!acc[formattedDate]) {
-      acc[formattedDate] = [];
-    }
-    acc[formattedDate].push(message);
-    return acc;
-  }, {});
 
   let content = (
     <>
       {!!isFetching && <FetchingProgress />}
       <VList className="h-full" ref={vlistRef} onScroll={handleScroll}>
-        {Object.keys(groupedMessages).map((date, j) => {
+        {messages.map((message, key) => {
           return (
-            <div key={j}>
-              <ChatDate date={date} />
-
-              {groupedMessages[date].map((message: any, i: number) => {
-                return (
-                  <div key={i + j}>
-                    <ChatItem
-                      item={message}
-                      key={message.nonce_id}
-                      isMine={message?.user.id === profile?.id}
-                      index={messages.indexOf(message)}
-                    />
-                    {messages.indexOf(message) === unreadIndex &&
-                      messages.indexOf(message) !== messages.length - 1 && (
-                        <div className="flex flex-col w-full text-blue-500 h-6 bg-white text-sm items-center justify-center my-4 pointer-events-none">
-                          Unread messages
-                        </div>
-                      )}
-                    {messages.indexOf(message)}
+            <div key={key}>
+              <ChatItem
+                item={message}
+                key={message.nonce_id}
+                isMine={message?.user.id === profile?.id}
+                index={messages.indexOf(message)}
+              />
+              {messages.indexOf(message) === 2 &&
+                messages.indexOf(message) !== messages.length - 1 && (
+                  <div className="flex flex-col w-full text-blue-500 h-6 bg-white text-sm items-center justify-center my-4 pointer-events-none">
+                    Unread messages
                   </div>
-                );
-              })}
+                )}
             </div>
           );
         })}
