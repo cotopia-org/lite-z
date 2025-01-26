@@ -1,9 +1,9 @@
-import * as React from "react";
-import type { TrackReference } from "@livekit/components-core";
-import { log } from "@livekit/components-core";
-import { RemoteAudioTrack, RemoteTrackPublication } from "livekit-client";
-import { useEnsureTrackRef } from "@livekit/components-react";
-import { useMediaTrackBySourceOrName } from "./use-media-track-by-source-or-name";
+import * as React from 'react';
+import type { TrackReference } from '@livekit/components-core';
+import { log } from '@livekit/components-core';
+import { RemoteAudioTrack, RemoteTrackPublication } from 'livekit-client';
+import { useEnsureTrackRef } from '@livekit/components-react';
+import { useMediaTrackBySourceOrName } from './use-media-track-by-source-or-name';
 
 /** @public */
 export interface AudioTrackProps
@@ -48,7 +48,7 @@ export const AudioTrack = /* @__PURE__ */ React.forwardRef<
     muted,
     ...props
   }: AudioTrackProps,
-  ref
+  ref,
 ) {
   const trackReference = useEnsureTrackRef(trackRef);
 
@@ -76,7 +76,7 @@ export const AudioTrack = /* @__PURE__ */ React.forwardRef<
     if (track instanceof RemoteAudioTrack) {
       track.setVolume(volume);
     } else {
-      log.warn("Volume can only be set on remote audio tracks.");
+      log.warn('Volume can only be set on remote audio tracks.');
     }
   }, [volume, track]);
 
@@ -87,9 +87,11 @@ export const AudioTrack = /* @__PURE__ */ React.forwardRef<
     if (pub instanceof RemoteTrackPublication) {
       pub.setEnabled(!muted);
     } else {
-      log.warn("Can only call setEnabled on remote track publications.");
+      log.warn('Can only call setEnabled on remote track publications.');
     }
   }, [muted, pub, track]);
 
-  return <audio ref={mediaEl} {...elementProps} />;
+  return (
+    <audio ref={mediaEl} {...elementProps} playsInline={true} autoPlay={true} />
+  );
 });

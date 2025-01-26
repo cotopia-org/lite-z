@@ -1,11 +1,11 @@
-import { useParticipants } from "@livekit/components-react";
-import { useRoomContext } from "../../room-context";
-import { useSocket } from "@/routes/private-wrarpper";
-import { __BUS } from "@/const/bus";
-import {  useReactFlow, XYPosition } from "@xyflow/react";
-import { updateCoordinatesEvent } from "@/types/socket";
-import useAuth from "@/hooks/auth";
-import { VARZ } from "@/const/varz";
+import { useParticipants } from '@livekit/components-react';
+import { useRoomContext } from '../../room-context';
+import { useSocket } from '@/routes/private-wrarpper';
+import { __BUS } from '@/const/bus';
+import { useReactFlow, XYPosition } from '@xyflow/react';
+import { updateCoordinatesEvent } from '@/types/socket';
+import useAuth from '@/hooks/auth';
+import { VARZ } from '@/const/varz';
 
 const BOUNDRY_RADIUS = 50;
 
@@ -41,7 +41,7 @@ const LiveKitAudioManager = () => {
   const isOverlap = (position1: XYPosition, position2: XYPosition): boolean => {
     const distance = Math.sqrt(
       Math.pow(position1.x - position2.x, 2) +
-        Math.pow(position1?.y - position2?.y, 2)
+        Math.pow(position1?.y - position2?.y, 2),
     );
 
     return distance < VARZ.voiceAreaRadius;
@@ -57,7 +57,7 @@ const LiveKitAudioManager = () => {
     }
   };
 
-  useSocket("updateCoordinates", (data: updateCoordinatesEvent) => {
+  useSocket('updateCoordinates', (data: updateCoordinatesEvent) => {
     checkBoundaries();
   });
 

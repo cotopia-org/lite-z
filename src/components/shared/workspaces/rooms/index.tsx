@@ -1,12 +1,13 @@
-import { WorkspaceRoomShortType } from "@/types/room";
-import { WorkspaceUserType } from "@/types/user";
-import RoomTypesTabs from "./room-types-tabs";
-import CTabs from "@/components/shared-ui/c-tabs";
-import { roomSeparatorByType } from "@/lib/utils";
-import WorkspaceRoom from "./room";
-import { LayoutGrid } from "lucide-react";
-import { useRoomContext } from "../../room/room-context";
-import RoomsHolder from "./rooms-holder";
+import { WorkspaceRoomShortType } from '@/types/room';
+import { WorkspaceUserType } from '@/types/user';
+import RoomTypesTabs from './room-types-tabs';
+import CTabs from '@/components/shared-ui/c-tabs';
+import { roomSeparatorByType } from '@/lib/utils';
+import WorkspaceRoom from './room';
+import { LayoutGrid } from 'lucide-react';
+import { useRoomContext } from '../../room/room-context';
+import RoomsHolder from './rooms-holder';
+import WorkspaceOverviewItem from './overview-item';
 
 type Props = {
   rooms: WorkspaceRoomShortType[];
@@ -34,6 +35,7 @@ export default function WorkspaceRooms({
 
   let rooms_view = (
     <>
+      <WorkspaceOverviewItem />
       {rooms.map((room) => {
         return (
           <WorkspaceRoom
@@ -42,7 +44,7 @@ export default function WorkspaceRooms({
             workspace_id={workspace_id}
             room={room}
             participants={workspaceUsers.filter(
-              (x) => x.room_id === room.id && x.status === "online",
+              (x) => x.room_id === room.id && x.status === 'online',
             )}
           />
         );

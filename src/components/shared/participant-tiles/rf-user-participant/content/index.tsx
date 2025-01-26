@@ -1,10 +1,11 @@
 import CotopiaAvatar from '@/components/shared-ui/c-avatar';
 import { useParticipantTileCtx } from '../../participant-tile-provider';
 import RfUserTileActions from '../actions';
-import AudioTrackHandler from '../audio-handler';
 import VideoTrackHandler from '../video-handler';
 import AfkLayer from '../../afk';
 import GhostLayer from '../../ghost';
+import { useRoomContext } from '@/components/shared/room/room-context';
+import { cn } from '@/lib/utils';
 
 interface Props {
   meet: boolean;
@@ -13,6 +14,10 @@ interface Props {
 const RfUserTileContent = ({ meet }: Props) => {
   const { trackType, targetUser, livekitIdentity, userFullName, isSpeaking } =
     useParticipantTileCtx();
+
+  const { room } = useRoomContext();
+
+  const is_megaphone = !!room?.is_megaphone;
 
   let clss =
     'relative z-[10] user-circle transition-all w-full h-full [&_.lk-participant-tile]:!absolute [&_.lk-participant-tile]:w-full [&_.lk-participant-tile]:h-full [&_.lk-participant-tile]:top-0 [&_.lk-participant-tile]:left-0 rounded-full p-1 [&_video]:h-full [&_video]:object-cover [&_video]:rounded-full [&_video]:h-full [&_video]:w-full w-[96px] h-[96px] flex flex-col items-center justify-center';
@@ -23,21 +28,24 @@ const RfUserTileContent = ({ meet }: Props) => {
   if (trackType === 'video' && meet) showAvatar = false;
 
   //Scale down the user profile if user isn't in user's area
-  if (!meet) clss += ` scale-[0.6]`;
+  if (!meet) clss = cn(clss, ` scale-[0.6]`);
 
   //Highlight user circle in different states
   if (isSpeaking && meet) {
-    clss += ` bg-green-700`;
+    clss = cn(clss, ` bg-green-700`);
   }
 
   if (!isSpeaking) {
-    clss += ` bg-black/10`;
+    clss = cn(clss, ` bg-black/10`);
   }
 
   if (!meet) {
-    clss += ` bg-gray-600`;
+    clss = cn(clss, ` bg-gray-600`);
   }
 
+  if (is_megaphone) {
+    clss = cn(clss, ' scale-100');
+  }
   // if (trackType === 'audio') {
   //   trackContent = <AudioTrackHandler />;
   // }
@@ -50,7 +58,7 @@ const RfUserTileContent = ({ meet }: Props) => {
 
   return (
     <div className={clss}>
-      <div className="relative w-[86px] h-[86px] rounded-full flex flex-col items-center justify-center overflow-hidden z-[1]">
+      <div className="relative w-[86px]  h-[86px] rounded-full flex flex-col items-center justify-center overflow-hidden z-[1]">
         {targetUser?.status === 'afk' && <AfkLayer />}
         {targetUser?.status === 'ghost' && <GhostLayer />}
         {showAvatar && (

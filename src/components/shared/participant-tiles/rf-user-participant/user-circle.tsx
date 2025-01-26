@@ -6,8 +6,6 @@ import { useRoomContext } from '../../room/room-context';
 import WithConnectionQuality from '@/routes/private-wrarpper/components/session/with-connection-quality';
 import VoiceAreaHearing from '@/routes/private-wrarpper/components/session/wrapper/voice-area-hearing';
 import RfUserTileContent from './content';
-import AfkLayer from '../afk';
-import GhostLayer from '../ghost';
 
 interface Props {
   isDragging: boolean;

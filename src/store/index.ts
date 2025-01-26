@@ -1,7 +1,12 @@
 import { combineReducers, configureStore } from '@reduxjs/toolkit';
 import { TypedUseSelectorHook, useDispatch, useSelector } from 'react-redux';
 
-import { persistStore, persistReducer } from 'redux-persist';
+import {
+  persistStore,
+  persistReducer,
+  createTransform,
+  PersistConfig,
+} from 'redux-persist';
 
 import storage from 'redux-persist/lib/storage';
 
@@ -19,10 +24,24 @@ const rootReducer = combineReducers({
   livekit: livekitSlice,
 });
 
-const persistConfig = {
+type RootReducerType = ReturnType<typeof rootReducer>;
+const excludeSpecificKeyTransform = createTransform<
+  RootReducerType['setting'],
+  RootReducerType['setting']
+>(
+  (inboundState: any) => {
+    const { afk, ...rest } = inboundState;
+    return rest;
+  },
+  (outboundState) => outboundState,
+  { whitelist: ['setting'] },
+);
+
+const persistConfig: PersistConfig<ReturnType<typeof rootReducer>> = {
   key: 'organization-panel',
   storage,
   whitelist: ['auth', 'livekit', 'setting'],
+  transforms: [excludeSpecificKeyTransform],
 };
 
 const persistedReducer = persistReducer(persistConfig, rootReducer);

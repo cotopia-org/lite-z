@@ -305,7 +305,6 @@ export default function WithReactFlowV2() {
   useBus(
     __BUS.onDragEndNode,
     (data) => {
-      console.log('data', data.node);
       handleDragStopRfNodes(undefined, data.node);
     },
     [handleDragStopRfNodes],
@@ -367,6 +366,8 @@ export default function WithReactFlowV2() {
     handleCircleMeet(data.username, position);
 
     rf.current?.updateNode(data.username, { position });
+
+    dispatch(__BUS.refreshNodeAudio);
   });
 
   useBus(__BUS.onDragEndNode, (data) => {

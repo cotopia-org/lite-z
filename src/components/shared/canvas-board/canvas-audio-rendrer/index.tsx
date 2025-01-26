@@ -1,7 +1,6 @@
 import { getTrackReferenceId, isLocal } from '@livekit/components-core';
 import { useTracks } from '@livekit/components-react';
 import { Track } from 'livekit-client';
-
 import useAuth from '@/hooks/auth';
 import { VARZ } from '@/const/varz';
 import { UserMinimalType, WorkspaceUserType } from '@/types/user';
@@ -42,7 +41,7 @@ const audioOffUserStatuses = ['afk', 'ghost'];
 
 export function CanvasAudioRenderer() {
   const [_, setRefresher] = useState(0);
-  useBus(__BUS.onDragEndNode, () => {
+  useBus(__BUS.refreshNodeAudio, () => {
     setTimeout(() => {
       setRefresher(Math.random() * 20000000);
     }, 200);
@@ -91,12 +90,18 @@ export function CanvasAudioRenderer() {
         );
 
         let volume = 0;
+
         let isMuted = !meet;
 
         if (meet) volume = 1;
 
         if (userNode?.status && audioOffUserStatuses.includes(userNode?.status))
           volume = 0;
+
+        if (room?.is_megaphone) {
+          volume = 1;
+          isMuted = false;
+        }
 
         return (
           <>

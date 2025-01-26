@@ -331,22 +331,10 @@ export const getExternalNodesFromViewport = (
       y: node.position.y + node.measured.heigth / 2,
     };
 
-    console.log(
-      node.position.x,
-      node.measured.width,
-      v_mutable_x,
-      viewport.width,
-      v_mutable_x + viewport.width,
-      node.id,
-      'node_',
-    );
-
     const outside_left = node.position.x + node.measured.width < v_mutable_x;
     const outside_right = node.position.x > v_mutable_x + viewport.width;
     const outside_top = node.position.y + node.measured.heigth < v_mutable_y;
     const outside_bottom = node.position.y > v_mutable_y + viewport.height;
-
-    console.log(outside_bottom, outside_left, outside_top, outside_right);
 
     if (!outside_left && !outside_right && !outside_top && !outside_bottom) {
       internal_nodes.push(node);

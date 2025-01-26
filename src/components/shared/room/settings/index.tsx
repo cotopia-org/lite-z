@@ -173,7 +173,6 @@ export default function RoomSettings() {
 
         if (foundMessage > -1) {
           //We should update state of message
-          console.log('update state of message, for instance to sent');
           dispatch(
             updateMessage({
               ...newMessage,

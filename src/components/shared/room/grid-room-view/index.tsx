@@ -1,13 +1,12 @@
 import { useEffect, useRef, useState } from 'react';
 import { useRoomContext } from '../room-context';
 import { TracksContextProvider } from '../sessions/context';
-
 import MeetingWrapper from './wrapper';
 import { UserMinimalType } from '@/types/user';
 import useBus from 'use-bus';
 import { __BUS } from '@/const/bus';
 import { useAllTrackContext } from '../sessions/context/tracks-provider';
-import { cn, isScreenShareExist } from '@/lib/utils';
+import { cn, isScreenShareExist, uniqueById } from '@/lib/utils';
 import { useSocket } from '@/routes/private-wrarpper';
 import { LivekitTrackPublishedType, UserLeftJoinType } from '@/types/socket';
 import MeetingRoom from './meeting-room';
@@ -38,7 +37,7 @@ const GridRoomView = (props: Props) => {
   const { hasShareScreen, shareScreenTrack } = isScreenShareExist(tracks);
 
   useEffect(() => {
-    const initParticipants = room?.participants || [];
+    const initParticipants = uniqueById(room?.participants || []);
     if (!hasShareScreen) return;
     if (!shareScreenTrack) return;
     if (isInitShareScreen.current === true) return;
@@ -78,9 +77,9 @@ const GridRoomView = (props: Props) => {
     __BUS.initRoomParticipantsOnRf,
     (data: any) => {
       //update participants when somebody join into the room
-      const participants: UserMinimalType[] = data?.participants || [];
+      const participants = data?.participants || [];
       setNodes(
-        participants.map((p) => ({
+        participants.map((p: UserMinimalType) => ({
           id: p.id,
           type: MeetingTileType.UserTile,
           participant: p,
@@ -166,7 +165,7 @@ const GridRoomView = (props: Props) => {
         )}
       >
         <MeetingWrapper>
-          <MeetingRoom nodes={nodes} />
+          <MeetingRoom nodes={uniqueById(nodes) as MeetingNodeType[]} />
           <RoomAudioRenderer />
         </MeetingWrapper>
       </div>

@@ -1,10 +1,11 @@
-import AddButtonTool from "./add-button"
-import AfkButtonTool from "./afk-button"
-import BroadcastButtonTool from "./broadcast-button"
-import EditButtonTool from "./edit-button"
-import ShareScreenButtonTool from "./share-screen-button"
-import VideoButtonTool from "./video-button"
-import VoiceButtonTool from "./voice-button"
+import AddButtonTool from './add-button';
+import AfkButtonTool from './afk-button';
+import BroadcastButtonTool from './broadcast-button';
+import EditButtonTool from './edit-button';
+import MegaPhoneButtonTool from './megaphone-button';
+import ShareScreenButtonTool from './share-screen-button';
+import VideoButtonTool from './video-button';
+import VoiceButtonTool from './voice-button';
 // import MegaPhoneButtonTool from "./megaphonew-button";
 
 export default function BottomMiddleTools() {
@@ -17,8 +18,8 @@ export default function BottomMiddleTools() {
       <VideoButtonTool />
       <VoiceButtonTool />
       <AfkButtonTool />
-      {/* <MegaPhoneButtonTool /> */}
+      <MegaPhoneButtonTool />
       {/* <GridViewButtonTool /> */}
     </div>
-  )
+  );
 }

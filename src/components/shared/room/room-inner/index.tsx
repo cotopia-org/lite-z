@@ -25,10 +25,16 @@ export default function RoomInner() {
 
   const { token } = useAppSelector((store) => store.livekit);
   useEffect(() => {
-    if (token) {
-      disconnect();
-      connect(VARZ.serverUrl as string, token);
+    async function init() {
+      if (token) {
+        disconnect();
+        await connect(VARZ.serverUrl as string, token);
+        // console.log('start audio');
+        // startAudio();
+      }
     }
+
+    init();
   }, [token]);
 
   const { sidebar } = useLocalRoomContext();

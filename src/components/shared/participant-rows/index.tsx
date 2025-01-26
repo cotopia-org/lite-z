@@ -65,13 +65,10 @@ const ParticipantRows = ({ participants }: Props) => {
                 participants={[participant]}
                 render={(item, content) => {
                   const user = workspaceUsers.find((a) => a.id === item.id);
-
                   const admin = user ? isUserAdmin(user, workspace_id) : false;
-
                   const isOwner = findWorkspace
                     ? findWorkspace?.role === 'owner'
                     : false;
-
                   return (
                     <ParticipantDetails
                       user={user as WorkspaceUserType}
@@ -113,7 +110,6 @@ const ParticipantRows = ({ participants }: Props) => {
                 </span>
               </div>
             </div>
-
             <div className="flex items-center gap-x-1">{accessibilities}</div>
           </div>
         );
