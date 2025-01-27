@@ -18,7 +18,9 @@ export default function WorkspaceActions({ item }: Props) {
       }
       contentClassName="w-auto p-1 flex flex-col  [&_button]:justify-between"
     >
-      <TagsOption workspace={item} />
+      {() => {
+        return <TagsOption workspace={item} />;
+      }}
     </CotopiaPopover>
   );
 }

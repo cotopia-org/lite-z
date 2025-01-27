@@ -23,7 +23,9 @@ export default function UserView({ user }: Props) {
       }
       contentClassName="p-0 overflow-hidden border-0 m-0 shadow-md"
     >
-      <Details user={user as UserMinimalType} />
+      {() => {
+        return <Details user={user as UserMinimalType} />;
+      }}
     </CotopiaPopover>
   );
 }

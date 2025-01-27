@@ -1,73 +1,67 @@
-import { useLocalParticipant } from '@livekit/components-react';
-import { Track } from 'livekit-client';
 import { toast } from 'sonner';
 import StreamButton from '../stream-button';
 import { MicIcon, MicOffIcon } from '@/components/icons';
-import { useCallback, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import useAuth from '@/hooks/auth';
 import { useSocket } from '@/routes/private-wrarpper';
 import useSetting from '@/hooks/use-setting';
+import { useMediaContext } from '../../../media-context';
+import { useWorkspaceContext } from '@/pages/workspace/workspace-context';
+import { useRoomContext } from '../../../room-context';
+import { LockIcon } from 'lucide-react';
 
 export default function VoiceButtonTool() {
   const { user } = useAuth();
 
   const [browserPermission, setBrowserPermission] = useState(true);
 
+  const { room } = useRoomContext();
+
+  const userNode = room?.participants.find((p) => p?.id === user?.id);
+
+  const hard_muted = userNode?.hard_muted;
+
   const { reduxSettings } = useSetting();
+
+  const { voiceOn, voiceOff, audioTrack } = useMediaContext();
+
+  const { permissions, streamLoading } = useWorkspaceContext();
+
+  const isMuted = audioTrack?.isMuted ?? true;
 
   const isAfk = reduxSettings.afk;
 
-  // const { disableAudioAccess, mediaPermissions, stream_loading } =
-  //   useRoomHolder();
-
-  const participant = useLocalParticipant();
-
-  const localParticipant = participant.localParticipant;
-  let voiceTrack = undefined;
-  if (
-    localParticipant &&
-    typeof localParticipant?.getTrackPublication !== 'undefined'
-  ) {
-    //@ts-nocheck
-    voiceTrack = localParticipant?.getTrackPublication(Track.Source.Microphone);
-  }
-
-  const track = voiceTrack?.track;
-  const isMuted = voiceTrack?.isMuted ?? true;
-
-  const toggleMute = useCallback(async () => {
+  const toggleMute = () => {
     if (!browserPermission) {
       return toast.error(
         'Access to microphone is blocked,please check your browser settings',
       );
-    } else if (isAfk) {
-      return toast.error('You should first enable your AFK');
-    } else {
-      if (!track) {
-        localParticipant.setMicrophoneEnabled(true);
-        // enableAudioAccess();
-      } else if (track.isMuted) {
-        track.unmute();
-        // enableAudioAccess();
-      } else {
-        track.mute();
-        track.stop();
-        // disableAudioAccess();
-      }
     }
-  }, [browserPermission, isAfk, track, localParticipant]);
+
+    if (hard_muted) {
+      return toast.error(
+        'You have been muted by the admin. Please wait until they unmute you.',
+      );
+    }
+    if (isAfk) {
+      return toast.error('You should first enable your AFK');
+    }
+    if (!audioTrack || isMuted) {
+      voiceOn();
+    } else {
+      voiceOff();
+    }
+  };
 
   useSocket(
     'userUpdated',
     (updatedUser) => {
-      if (track === undefined) return;
-      if (updatedUser.id === user.id && updatedUser.status === 'afk') {
-        track.mute();
-        track.stop();
-        // disableAudioAccess();
+      if (audioTrack === undefined) return;
+      if (updatedUser?.id === user?.id && updatedUser?.status === 'afk') {
+        voiceOff();
       }
     },
-    [track, user?.id],
+    [audioTrack, user?.id],
   );
 
   useEffect(() => {
@@ -86,26 +80,39 @@ export default function VoiceButtonTool() {
   if (!browserPermission) {
     title = 'Permission denied';
   }
-  // if (!browserPermission || !mediaPermissions.audio) {
-  //   isActive = false;
-  // }
-  // if (mediaPermissions.audio && !isMuted) {
-  //   isActive = true;
-  // }
-  if (track?.isMuted) title = 'Mic on';
+  if (!browserPermission || !permissions.audio) {
+    isActive = false;
+  }
+  if (permissions.audio && !isMuted) {
+    isActive = true;
+  }
+  if (isMuted) title = 'Mic on';
+
   return (
     <StreamButton
       onClick={toggleMute}
       tooltipTitle={title}
-      // loading={stream_loading}
+      loading={streamLoading}
       isActive={isActive}
+      {...(hard_muted && { className: 'opacity-50 relative' })}
     >
       {({ color }) => {
+        const lock_node = (
+          <div className="absolute top-[3px] right-[3px]">
+            <LockIcon size={8} color={color} />
+          </div>
+        );
+
         let icon = <MicOffIcon color={color} size={20} />;
         if (!isMuted) {
           icon = <MicIcon color={color} size={20} />;
         }
-        return icon;
+        return (
+          <>
+            {(hard_muted && lock_node) || null}
+            {icon}
+          </>
+        );
       }}
     </StreamButton>
   );

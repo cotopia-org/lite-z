@@ -4,7 +4,7 @@ import React, { useEffect, useRef } from 'react';
 import CotopiaButton from '@/components/shared-ui/c-button';
 import Video from './video';
 import { useSocket } from '@/routes/private-wrarpper';
-import { useWorkspaceContext } from '@/pages/workspace';
+import { useWorkspaceContext } from '@/pages/workspace/workspace-context';
 
 interface MediaAccessProps {
   onChecked: () => void;

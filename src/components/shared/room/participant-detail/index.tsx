@@ -14,7 +14,9 @@ export default function ParticipantDetails({ user, roomId, children }: Props) {
       trigger={children}
       contentClassName="p-0 overflow-hidden border-0 m-0 shadow-md"
     >
-      <Details roomId={roomId} user={user} />
+      {(close) => {
+        return <Details onClose={close} roomId={roomId} user={user} />;
+      }}
     </CotopiaPopover>
   );
 }

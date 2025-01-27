@@ -169,15 +169,6 @@ export default function RoomContext({
   useSocket(
     'toggleHardMuted',
     (user: UserMinimalType) => {
-      const is_mine = user.id === profile.id;
-      const hard_muted = user.hard_muted;
-      if (is_mine) {
-        if (hard_muted) {
-          // disableAudioAccess();
-        } else {
-          // enableAudioAccess();
-        }
-      }
       setRoom((prev) => {
         let newRoom: WorkspaceRoomType = prev as WorkspaceRoomType;
         newRoom.participants = newRoom?.participants.map((item) => {
@@ -189,8 +180,6 @@ export default function RoomContext({
         });
         return newRoom;
       });
-
-      dispatch(__BUS.refreshNodeAudio);
     },
     [profile],
   );

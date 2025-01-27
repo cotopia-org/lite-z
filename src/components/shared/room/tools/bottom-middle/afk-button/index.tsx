@@ -3,35 +3,22 @@ import useSetting from '@/hooks/use-setting';
 import { useAppDispatch } from '@/store';
 import { disableAfk, enableAfk } from '@/store/slices/setting-slice';
 import { thunkResHandler } from '@/utils/utils';
-import { useLocalParticipant } from '@livekit/components-react';
-import { Track } from 'livekit-client';
 import { HeadphonesIcon } from 'lucide-react';
-import { useRoomHolder } from '../../..';
 import { dispatch as busDispatch } from 'use-bus';
 import { __BUS } from '@/const/bus';
 import StreamButton from '../stream-button';
 import { HeadphoneOffIcon } from '@/components/icons';
+import { useMediaContext } from '../../../media-context';
+import { useWorkspaceContext } from '@/pages/workspace/workspace-context';
 
 export default function AfkButtonTool() {
-  const participant = useLocalParticipant();
+  const { voiceOff } = useMediaContext();
 
-  const localParticipant = participant.localParticipant;
-  let voiceTrack = undefined;
-  if (
-    localParticipant &&
-    typeof localParticipant?.getTrackPublication !== 'undefined'
-  ) {
-    //@ts-nocheck
-    voiceTrack = localParticipant?.getTrackPublication(Track.Source.Microphone);
-  }
-
-  const track = voiceTrack?.track;
+  const { resetStreamHandler } = useWorkspaceContext();
 
   const { reduxSettings } = useSetting();
 
   const is_afk = reduxSettings.afk;
-
-  // const { disableAudioAccess, disableAfkHandler } = useRoomHolder();
 
   const { startLoading, stopLoading, isLoading } = useLoading();
   const dispatch = useAppDispatch();
@@ -43,7 +30,7 @@ export default function AfkButtonTool() {
         'users/beOnline',
         () => {
           stopLoading();
-          // disableAfkHandler();
+          resetStreamHandler();
           busDispatch(__BUS.startWorkTimer);
         },
         () => {
@@ -56,8 +43,7 @@ export default function AfkButtonTool() {
         'users/beAfk',
         () => {
           stopLoading();
-          track?.mute();
-          // disableAudioAccess();
+          voiceOff();
           busDispatch(__BUS.stopWorkTimer);
         },
         () => {

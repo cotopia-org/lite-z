@@ -2,7 +2,8 @@ import { VARZ } from '@/const/varz';
 import { useAppSelector } from '@/store';
 import { LiveKitRoom } from '@livekit/components-react';
 import { ReactNode } from 'react';
-import { useWorkspaceContext } from '@/pages/workspace';
+import MediaContextProvider from '../room/media-context';
+import { useWorkspaceContext } from '@/pages/workspace/workspace-context';
 
 type Props = {
   children: ReactNode;
@@ -34,7 +35,7 @@ export default function LivekitRefactored({ children }: Props) {
         },
       }}
     >
-      {children}
+      <MediaContextProvider>{children}</MediaContextProvider>
     </LiveKitRoom>
   );
 }

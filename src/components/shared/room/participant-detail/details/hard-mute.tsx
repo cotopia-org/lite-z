@@ -7,11 +7,15 @@ import CotopiaIconButton from '@/components/shared-ui/c-icon-button';
 import { colors } from '@/const/varz';
 import axiosInstance from '@/services/axios';
 import { toast } from 'sonner';
+import useAuth from '@/hooks/auth';
+import { isUserAdmin } from '@/lib/utils';
 
 export default function UserHardMute() {
-  const { user } = useUserDetail();
+  const { user, closePopover } = useUserDetail();
 
-  const { room } = useRoomContext();
+  const { user: profile } = useAuth();
+
+  const { room, workspace_id } = useRoomContext();
 
   const { isLoading, startLoading, stopLoading } = useLoading();
 
@@ -19,6 +23,12 @@ export default function UserHardMute() {
 
   const target_user = participants.find((p) => p.id === user?.id);
 
+  const isAdmin = isUserAdmin(
+    profile,
+    workspace_id ? +workspace_id : undefined,
+  );
+
+  if (!isAdmin) return null;
   if (!target_user) return null;
 
   const hard_muted = target_user?.hard_muted;
@@ -28,6 +38,7 @@ export default function UserHardMute() {
     try {
       startLoading();
       await axiosInstance.get(`/users/${target_user.id}/toggleHardMute`);
+      if (closePopover) closePopover();
       stopLoading();
     } catch (error) {
       stopLoading();
