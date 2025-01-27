@@ -102,10 +102,10 @@ export function CanvasAudioRenderer() {
           volume = 1;
           isMuted = false;
         }
-        if (userNode?.hard_muted) {
-          isMuted = true;
-          volume = 0;
-        }
+        // if (userNode?.hard_muted) {
+        //   isMuted = true;
+        //   volume = 0;
+        // }
 
         return (
           <AudioTrack
