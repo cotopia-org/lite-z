@@ -6,7 +6,6 @@ import MegaPhoneButtonTool from './megaphone-button';
 import ShareScreenButtonTool from './share-screen-button';
 import VideoButtonTool from './video-button';
 import VoiceButtonTool from './voice-button';
-// import MegaPhoneButtonTool from "./megaphonew-button";
 
 export default function BottomMiddleTools() {
   return (

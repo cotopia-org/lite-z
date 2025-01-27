@@ -1,3 +1,5 @@
+import { __BUS } from '@/const/bus';
+import useAuth from '@/hooks/auth';
 import { useApi } from '@/hooks/swr';
 import useLoading from '@/hooks/use-loading';
 import useQueryParams from '@/hooks/use-query-params';
@@ -20,6 +22,7 @@ import {
   useState,
 } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
+import { dispatch } from 'use-bus';
 
 type LeftJoinType = { room_id: number; user: UserMinimalType };
 
@@ -106,6 +109,7 @@ export default function RoomContext({
   room_id,
   workspace_id,
 }: Props) {
+  const { user: profile } = useAuth();
   const [showSidebar, setShowSidebar] = useState(false);
   const showSidebarInMobile = () => {
     setShowSidebar(true);
@@ -159,7 +163,26 @@ export default function RoomContext({
     if (!is_megaphone) {
       playSoundEffect('megaphoneDisable');
     }
+    dispatch(__BUS.refreshNodeAudio);
   });
+
+  useSocket(
+    'toggleHardMuted',
+    (user: UserMinimalType) => {
+      setRoom((prev) => {
+        let newRoom: WorkspaceRoomType = prev as WorkspaceRoomType;
+        newRoom.participants = newRoom?.participants.map((item) => {
+          if (item.id === user.id) {
+            return user;
+          } else {
+            return item;
+          }
+        });
+        return newRoom;
+      });
+    },
+    [profile],
+  );
 
   //Update room object when background changed
   useSocket('roomBackgroundChanged', (data: WorkspaceRoomType) => {
@@ -172,17 +195,15 @@ export default function RoomContext({
   useSocket('userUpdated', (user) => {
     setRoom((prev) => {
       let newRoom: WorkspaceRoomType = prev as WorkspaceRoomType;
-
       newRoom.participants = newRoom?.participants.map((item) => {
         if (item.id === user.id) return user;
         return item;
       });
-
       return newRoom;
     });
   });
 
-  const settings = useSetting();
+  const { reduxSettings } = useSetting();
 
   const { query } = useQueryParams();
   const livekit_token = query?.token ?? undefined;
@@ -198,7 +219,7 @@ export default function RoomContext({
         const livekitToken = res.data.data.token; //Getting livekit token from joinObject
         mutateWorkspaceUsers();
         if (livekitToken) {
-          if (settings.sounds.userJoinLeft) playSoundEffect('joined');
+          if (reduxSettings.sounds.userJoinLeft) playSoundEffect('joined');
           router(
             `/workspaces/${workspace_id}/rooms/${room_id}?token=${livekitToken}`,
           );

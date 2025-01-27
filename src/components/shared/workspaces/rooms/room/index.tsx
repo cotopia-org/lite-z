@@ -27,14 +27,15 @@ export default function WorkspaceRoom({
   selected_room_id,
   participants,
 }: Props) {
-  const { sounds } = useSetting();
+  const { reduxSettings } = useSetting();
+
+  const sounds = reduxSettings.sounds;
 
   const dispatch = useAppDispatch();
 
   const navigate = useNavigate();
 
-  const { updateParticipants, closeSidebarInMobile, showSidebar } =
-    useRoomContext();
+  const { updateParticipants, closeSidebarInMobile } = useRoomContext();
 
   const { startLoading, stopLoading } = useLoading();
 

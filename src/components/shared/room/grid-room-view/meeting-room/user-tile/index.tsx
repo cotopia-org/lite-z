@@ -6,6 +6,7 @@ import { TrackReferenceOrPlaceholder } from '@livekit/components-core';
 import { Track } from 'livekit-client';
 import AudioTrackHandler from '@/components/shared/participant-tiles/rf-user-participant/audio-handler';
 import VideoTrackHandler from '@/components/shared/participant-tiles/rf-user-participant/video-handler';
+import { UserMinimalType } from '@/types/user';
 
 type Props = {
   className?: string;
@@ -43,6 +44,7 @@ const UserTile = ({ className = '' }: Props) => {
         {trackContent}
       </div>
       <MicButton
+        targetUser={targetUser as UserMinimalType}
         className="mic-action absolute left-3 bottom-3 w-6 h-6"
         micSize={16}
         trackRef={{

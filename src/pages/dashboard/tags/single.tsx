@@ -55,7 +55,7 @@ type Props = {
 };
 
 export default function Tag({ tag, onBack, mutate }: Props) {
-  const { selectItem, editItem } = useDashboard();
+  const { selectItem } = useDashboard();
 
   const [title, setTitle] = useState(tag.title);
   const [editing, setEditing] = useState(false);

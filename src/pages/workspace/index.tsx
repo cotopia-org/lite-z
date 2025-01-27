@@ -1,18 +1,19 @@
 import FullLoading from '@/components/shared/full-loading';
 import RoomSettings from '@/components/shared/room/settings';
 import RoomSidebar from '@/components/shared/room/sidebar';
-import RoomWrapper from '@/components/shared/room/wrapper';
 import { useApi } from '@/hooks/swr';
 import { cn } from '@/lib/utils';
 import { FetchDataType } from '@/services/axios';
 import { WorkspaceType } from '@/types/workspace';
 import { useParams } from 'react-router-dom';
+import WorkspacePermissionProvider from './workspace-context';
 
 export default function WorkspacePage() {
   const params = useParams();
   const { data, isLoading } = useApi<FetchDataType<WorkspaceType>>(
     `/workspaces/${params.workspace_id}`,
   );
+
   const workspace = data !== undefined ? data?.data : null;
 
   if (data === undefined || isLoading) return <FullLoading />;
@@ -26,7 +27,7 @@ export default function WorkspacePage() {
   );
 
   return (
-    <>
+    <WorkspacePermissionProvider>
       <div id="lobby-page" className={mainRoomHolderClss}>
         <div className="relative p-8">
           <div className="flex flex-col gap-y-4">
@@ -40,6 +41,6 @@ export default function WorkspacePage() {
           </RoomSidebar>
         </div>
       </div>
-    </>
+    </WorkspacePermissionProvider>
   );
 }

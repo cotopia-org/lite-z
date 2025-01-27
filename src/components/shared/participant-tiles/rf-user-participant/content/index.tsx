@@ -25,15 +25,12 @@ const RfUserTileContent = ({ meet }: Props) => {
 
   let trackContent: any = null;
 
-  if (trackType === 'video' && meet) showAvatar = false;
+  const in_range = meet || is_megaphone;
+
+  if (trackType === 'video' && in_range) showAvatar = false;
 
   //Scale down the user profile if user isn't in user's area
   if (!meet) clss = cn(clss, ` scale-[0.6]`);
-
-  //Highlight user circle in different states
-  if (isSpeaking && meet) {
-    clss = cn(clss, ` bg-green-700`);
-  }
 
   if (!isSpeaking) {
     clss = cn(clss, ` bg-black/10`);
@@ -46,6 +43,11 @@ const RfUserTileContent = ({ meet }: Props) => {
   if (is_megaphone) {
     clss = cn(clss, ' scale-100');
   }
+  //Highlight user circle in different states
+  if (isSpeaking && in_range) {
+    clss = cn(clss, ` bg-green-700`);
+  }
+
   // if (trackType === 'audio') {
   //   trackContent = <AudioTrackHandler />;
   // }

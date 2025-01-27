@@ -7,19 +7,22 @@ import useAuth from '@/hooks/auth';
 
 type Props = {
   user: UserMinimalType | WorkspaceUserType | UserType;
+  onClose?: () => void;
   roomId?: number;
 };
 
 const UserDetailContext = createContext<{
   user?: UserMinimalType | WorkspaceUserType | UserType;
+  closePopover?: () => void;
   roomId?: number | undefined;
 }>({
   user: undefined,
+  closePopover: () => {},
   roomId: undefined,
 });
 export const useUserDetail = () => useContext(UserDetailContext);
 
-export default function Details({ user, roomId }: Props) {
+export default function Details({ user, roomId, onClose }: Props) {
   const { user: profile } = useAuth();
 
   const hasInviteToTalk = useMemo(() => {
@@ -31,7 +34,7 @@ export default function Details({ user, roomId }: Props) {
   }, [user?.status, profile]);
 
   return (
-    <UserDetailContext.Provider value={{ user, roomId }}>
+    <UserDetailContext.Provider value={{ user, roomId, closePopover: onClose }}>
       <div className="w-full max-w-full flex flex-col select-none">
         <UserCover />
         <div className="p-4 pt-0 flex flex-col gap-y-2">
