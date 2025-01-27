@@ -25,10 +25,16 @@ const RoomOptions = ({ room, changeStateHandler }: Props) => {
       }
       contentClassName="w-auto p-1 flex flex-col [&_button]:justify-between"
     >
-      <RenameButton onClick={changeStateHandler} />
-      <DeleteRoom room={room} />
-      <InviteUser room={room} />
-      <SettingsRoom room={room} />
+      {() => {
+        return (
+          <>
+            <RenameButton onClick={changeStateHandler} />
+            <DeleteRoom room={room} />
+            <InviteUser room={room} />
+            <SettingsRoom room={room} />
+          </>
+        );
+      }}
     </CotopiaPopover>
   );
 };

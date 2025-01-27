@@ -102,17 +102,18 @@ export function CanvasAudioRenderer() {
           volume = 1;
           isMuted = false;
         }
+        if (userNode?.hard_muted) {
+          isMuted = true;
+          volume = 0;
+        }
 
         return (
-          <>
-            {`VOLUME: ${volume}`}
-            <AudioTrack
-              key={getTrackReferenceId(trackRef)}
-              trackRef={trackRef}
-              volume={volume}
-              muted={isMuted}
-            />
-          </>
+          <AudioTrack
+            key={getTrackReferenceId(trackRef)}
+            trackRef={trackRef}
+            volume={volume}
+            muted={isMuted}
+          />
         );
       })}
     </div>

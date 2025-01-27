@@ -1,6 +1,4 @@
-import { ReactNode } from 'react';
 import CotopiaAvatar from '../shared-ui/c-avatar';
-import CotopiaTooltip from '../shared-ui/c-tooltip';
 import { UserMinimalType, UserType, WorkspaceUserType } from '@/types/user';
 import CotopiaPopover from '@/components/shared-ui/c-popover';
 import Details from '@/components/shared/room/participant-detail/details';
@@ -25,7 +23,9 @@ export default function UserView({ user }: Props) {
       }
       contentClassName="p-0 overflow-hidden border-0 m-0 shadow-md"
     >
-      <Details user={user} />
+      {() => {
+        return <Details user={user as UserMinimalType} />;
+      }}
     </CotopiaPopover>
   );
 }

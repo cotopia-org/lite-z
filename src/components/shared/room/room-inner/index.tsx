@@ -13,10 +13,20 @@ import GridRoomView from '../grid-room-view';
 import FullLoading from '../../full-loading';
 import { cn } from '@/lib/utils';
 import { isMobileBrowser } from '@livekit/components-core';
+import { useSocket } from '@/routes/private-wrarpper';
+import { UserMinimalType } from '@/types/user';
+import useAuth from '@/hooks/auth';
+import { useMediaContext } from '../media-context';
+import { useWorkspaceContext } from '@/pages/workspace/workspace-context';
+import { __BUS } from '@/const/bus';
+import { dispatch } from 'use-bus';
 
 export default function RoomInner() {
+  const { user: profile } = useAuth();
   const { disconnect, connect } = useRoomContext();
   const { room, roomLoading } = localUseRoomContext();
+  const { voiceOff, audioTrack } = useMediaContext();
+  const { resetStreamHandler } = useWorkspaceContext();
 
   const isMobile = isMobileBrowser();
 
@@ -24,18 +34,35 @@ export default function RoomInner() {
   let is_flow_view = room?.type === 'flow';
 
   const { token } = useAppSelector((store) => store.livekit);
+
   useEffect(() => {
     async function init() {
       if (token) {
         disconnect();
         await connect(VARZ.serverUrl as string, token);
-        // console.log('start audio');
-        // startAudio();
       }
     }
-
     init();
   }, [token]);
+
+  useSocket(
+    'toggleHardMuted',
+    (user: UserMinimalType) => {
+      const is_mine = user.id === profile.id;
+      const hard_muted = user.hard_muted;
+      if (is_mine) {
+        if (hard_muted) {
+          voiceOff();
+          audioTrack?.mute();
+          audioTrack?.stop();
+        } else {
+          resetStreamHandler();
+        }
+      }
+      dispatch(__BUS.refreshNodeAudio);
+    },
+    [audioTrack, resetStreamHandler, voiceOff],
+  );
 
   const { sidebar } = useLocalRoomContext();
 

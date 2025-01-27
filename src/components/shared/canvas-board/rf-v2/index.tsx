@@ -30,7 +30,7 @@ import {
 import UserNode from './nodes/user';
 import { VARZ } from '@/const/varz';
 import JailNode from './nodes/jail-node';
-import { getPositionFromStringCoordinates } from '@/lib/utils';
+import { getPositionFromStringCoordinates, uniqueById } from '@/lib/utils';
 import { UserMinimalType } from '@/types/user';
 import BgNode from './nodes/bg-node';
 import { useTracks } from '@livekit/components-react';
@@ -391,7 +391,6 @@ export default function WithReactFlowV2() {
             case 'SCREEN_SHARE':
               const isMyShareScreen =
                 user?.username === data.participant.identity; //Or admin
-
               const shareScreenNode = {
                 id: data.track.sid,
                 data: {
@@ -586,7 +585,6 @@ export default function WithReactFlowV2() {
       const properWidth = viewport.width;
       const properHeight = viewport.height;
       let userNodeHeight = userNodeBound * viewport.zoom;
-
       //Covering area will be from properX to properWidth + properX // properY to properHeight + properY
       const coveringArea = {
         x: { from: properX, to: properX + properWidth },
@@ -687,6 +685,7 @@ export default function WithReactFlowV2() {
 
           return {
             node: item,
+            id: item.id,
             invisible: isInvisible,
             invisible_side: dir,
             delta_x,
@@ -708,10 +707,13 @@ export default function WithReactFlowV2() {
     [rf?.current, user],
   );
 
+  // uniqueById
   return (
     <ReactFlowV2Context.Provider value={{ handleCircleMeet }}>
       <div className="w-full h-screen relative z-[10]">
-        <InvisibleNodesViewer invisibleNodes={invisibleNodes} />
+        <InvisibleNodesViewer
+          invisibleNodes={uniqueById(invisibleNodes) as InvisibleNodeType[]}
+        />
         <ReactFlowV2
           nodeTypes={{
             userNode: UserNode,

@@ -1,71 +1,38 @@
-import { useLocalParticipant } from '@livekit/components-react';
-import { Track } from 'livekit-client';
-import { useRoomHolder } from '../../..';
 import { toast } from 'sonner';
 import { useCallback, useEffect, useState } from 'react';
 import StreamButton from '../stream-button';
 import { VideoIcon, VideoOffIcon } from '@/components/icons';
 import useSetting from '@/hooks/use-setting';
+import { useMediaContext } from '../../../media-context';
+import { useWorkspaceContext } from '@/pages/workspace/workspace-context';
 
 export default function VideoButtonTool() {
   const [navPermission, setNavPermission] = useState(true);
 
-  const { afk } = useSetting();
+  const { reduxSettings } = useSetting();
 
-  const {
-    enableVideoAccess,
-    disableVideoAccess,
-    mediaPermissions,
-    stream_loading,
-  } = useRoomHolder();
+  const isAfk = reduxSettings.afk;
 
-  const participant = useLocalParticipant();
+  const { permissions, streamLoading } = useWorkspaceContext();
 
-  const localParticipant = participant.localParticipant;
+  const { cameraTrack, videoOn, videoOff } = useMediaContext();
 
-  let videoTrack = undefined;
-
-  if (
-    localParticipant &&
-    typeof localParticipant?.getTrackPublication !== 'undefined'
-  ) {
-    //@ts-nocheck
-    videoTrack = localParticipant?.getTrackPublication(Track.Source.Camera);
-  }
-
-  const track = videoTrack?.track;
-
-  const isUpstreamPaused = videoTrack?.isMuted ?? true;
-
+  const isUpstreamPaused = cameraTrack?.isMuted ?? true;
   const toggleUpstream = useCallback(async () => {
     if (!navPermission) {
       return toast.error(
         'Access to camera is blocked,please check your browser settings',
       );
-    } else if (afk) {
+    } else if (isAfk) {
       return toast.error('You should first enable Your AFK');
     } else {
-      if (!track) {
-        localParticipant.setCameraEnabled(true);
-        enableVideoAccess();
-      } else if (isUpstreamPaused) {
-        enableVideoAccess();
-        track.unmute();
+      if (!cameraTrack || isUpstreamPaused) {
+        videoOn();
       } else {
-        disableVideoAccess();
-        track.mute();
-        track.stop();
+        videoOff();
       }
     }
-  }, [
-    afk,
-    disableVideoAccess,
-    enableVideoAccess,
-    isUpstreamPaused,
-    localParticipant,
-    navPermission,
-    track,
-  ]);
+  }, [navPermission, isAfk, cameraTrack, isUpstreamPaused, videoOn, videoOff]);
 
   useEffect(() => {
     navigator.permissions.query({ name: 'camera' } as any).then((res) => {
@@ -86,14 +53,14 @@ export default function VideoButtonTool() {
     title = 'Permission denied';
   }
 
-  if (!navPermission || !mediaPermissions.video) {
+  if (!navPermission || !permissions.video) {
     isActive = false;
   }
-  if (mediaPermissions.video) {
+  if (permissions.video) {
     isActive = true;
   }
 
-  if (track?.isMuted) {
+  if (cameraTrack?.isMuted) {
     title = 'Video on';
     isActive = false;
   }
@@ -101,7 +68,7 @@ export default function VideoButtonTool() {
   return (
     <StreamButton
       tooltipTitle={title}
-      loading={stream_loading}
+      loading={streamLoading}
       onClick={toggleUpstream}
       isActive={isActive}
     >

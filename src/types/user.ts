@@ -79,13 +79,13 @@ export type UserMinimalType = {
   screenshare_size: null | string;
   schedule_hours_in_week?: number;
   total_minutes?: number;
+  hard_muted?: boolean;
   status?: string;
   created_at?: number;
 };
 
 export type WorkspaceUserType = {
   created_at?: number;
-
   active_job: JobType | null;
   active_contract?: UserContractType;
   avatar: AttachmentFileType;
