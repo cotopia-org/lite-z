@@ -9,12 +9,13 @@ import { __BUS } from '@/const/bus';
 import StreamButton from '../stream-button';
 import { HeadphoneOffIcon } from '@/components/icons';
 import { useMediaContext } from '../../../media-context';
-import { useWorkspaceContext } from '@/pages/workspace/workspace-context';
+import { useCallback } from 'react';
+import { usePermissionContext } from '@/pages/workspace/permission-context';
 
 export default function AfkButtonTool() {
   const { voiceOff } = useMediaContext();
 
-  const { resetStreamHandler } = useWorkspaceContext();
+  const { resetStreamHandler } = usePermissionContext();
 
   const { reduxSettings } = useSetting();
 
@@ -22,7 +23,7 @@ export default function AfkButtonTool() {
 
   const { startLoading, stopLoading, isLoading } = useLoading();
   const dispatch = useAppDispatch();
-  const handleToggleAfk = () => {
+  const handleToggleAfk = useCallback(() => {
     startLoading();
     if (is_afk === true) {
       thunkResHandler(
@@ -51,7 +52,14 @@ export default function AfkButtonTool() {
         },
       );
     }
-  };
+  }, [
+    dispatch,
+    is_afk,
+    resetStreamHandler,
+    startLoading,
+    stopLoading,
+    voiceOff,
+  ]);
 
   return (
     <StreamButton

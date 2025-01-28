@@ -52,7 +52,6 @@ export default function SlidePusher({ children }: Props) {
     setTimeout(() => {
       setCamera((prev) => {
         if (prev > 0) return prev - 1;
-
         return 0;
       });
     }, 100);

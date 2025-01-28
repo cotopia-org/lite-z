@@ -17,16 +17,16 @@ import { useSocket } from '@/routes/private-wrarpper';
 import { UserMinimalType } from '@/types/user';
 import useAuth from '@/hooks/auth';
 import { useMediaContext } from '../media-context';
-import { useWorkspaceContext } from '@/pages/workspace/workspace-context';
 import { __BUS } from '@/const/bus';
 import { dispatch } from 'use-bus';
+import { usePermissionContext } from '@/pages/workspace/permission-context';
 
 export default function RoomInner() {
   const { user: profile } = useAuth();
   const { disconnect, connect } = useRoomContext();
   const { room, roomLoading } = localUseRoomContext();
   const { voiceOff, audioTrack } = useMediaContext();
-  const { resetStreamHandler } = useWorkspaceContext();
+  const { resetStreamHandler } = usePermissionContext();
 
   const isMobile = isMobileBrowser();
 

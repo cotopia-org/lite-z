@@ -4,7 +4,7 @@ import React, { useEffect, useRef } from 'react';
 import CotopiaButton from '@/components/shared-ui/c-button';
 import Video from './video';
 import { useSocket } from '@/routes/private-wrarpper';
-import { useWorkspaceContext } from '@/pages/workspace/workspace-context';
+import { usePermissionContext } from '@/pages/workspace/permission-context';
 
 interface MediaAccessProps {
   onChecked: () => void;
@@ -14,7 +14,7 @@ const CheckPermissions2: React.FC<MediaAccessProps> = ({ onChecked }) => {
   const socket = useSocket();
 
   const { stream, enableAudioStream, disableVideoStream } =
-    useWorkspaceContext();
+    usePermissionContext();
 
   const permissions = stream.permissions;
   const hasVideoAccess = permissions.video;

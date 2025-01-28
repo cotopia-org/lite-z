@@ -152,6 +152,7 @@ export default function RoomContext({
   }, [room_id]);
 
   useSocket('roomUpdated', (data) => {
+    console.log('roomUpdated');
     setRoom(data);
   });
   useSocket('toggleMegaphone', (data) => {
@@ -325,6 +326,8 @@ export default function RoomContext({
       room.participants = [...participants, data.user];
 
       setRoom(room);
+
+      dispatch(__BUS.refreshNodeAudio);
     },
     [room, mutateWorkspaceUsers],
   );

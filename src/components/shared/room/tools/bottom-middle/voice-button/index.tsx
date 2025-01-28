@@ -1,14 +1,14 @@
 import { toast } from 'sonner';
 import StreamButton from '../stream-button';
 import { MicIcon, MicOffIcon } from '@/components/icons';
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import useAuth from '@/hooks/auth';
 import { useSocket } from '@/routes/private-wrarpper';
 import useSetting from '@/hooks/use-setting';
 import { useMediaContext } from '../../../media-context';
-import { useWorkspaceContext } from '@/pages/workspace/workspace-context';
 import { useRoomContext } from '../../../room-context';
 import { LockIcon } from 'lucide-react';
+import { usePermissionContext } from '@/pages/workspace/permission-context';
 
 export default function VoiceButtonTool() {
   const { user } = useAuth();
@@ -25,19 +25,18 @@ export default function VoiceButtonTool() {
 
   const { voiceOn, voiceOff, audioTrack } = useMediaContext();
 
-  const { permissions, streamLoading } = useWorkspaceContext();
+  const { permissions, streamLoading } = usePermissionContext();
 
   const isMuted = audioTrack?.isMuted ?? true;
 
   const isAfk = reduxSettings.afk;
 
-  const toggleMute = () => {
+  const toggleMute = useCallback(() => {
     if (!browserPermission) {
       return toast.error(
         'Access to microphone is blocked,please check your browser settings',
       );
     }
-
     if (hard_muted) {
       return toast.error(
         'You have been muted by the admin. Please wait until they unmute you.',
@@ -51,7 +50,15 @@ export default function VoiceButtonTool() {
     } else {
       voiceOff();
     }
-  };
+  }, [
+    audioTrack,
+    browserPermission,
+    hard_muted,
+    isAfk,
+    isMuted,
+    voiceOff,
+    voiceOn,
+  ]);
 
   useSocket(
     'userUpdated',
@@ -61,7 +68,7 @@ export default function VoiceButtonTool() {
         voiceOff();
       }
     },
-    [audioTrack, user?.id],
+    [audioTrack, user?.id, voiceOff],
   );
 
   useEffect(() => {

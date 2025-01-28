@@ -1,5 +1,5 @@
-import { ReactNode } from "react";
-import { useSlides } from "..";
+import { ReactNode } from 'react';
+import { useSlides } from '..';
 
 type Props = {
   children: ReactNode;
@@ -15,7 +15,7 @@ export default function Slide({ children, index }: Props) {
         left: width * index,
         opacity: camera === index + 1 ? 1 : 0,
       }}
-      className='absolute flex flex-grow top-0 transition-all overflow-hidden'
+      className="absolute flex flex-grow top-0 transition-all overflow-hidden"
     >
       {children}
     </div>

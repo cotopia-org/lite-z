@@ -6,7 +6,6 @@ import { cn } from '@/lib/utils';
 import { FetchDataType } from '@/services/axios';
 import { WorkspaceType } from '@/types/workspace';
 import { useParams } from 'react-router-dom';
-import WorkspacePermissionProvider from './workspace-context';
 
 export default function WorkspacePage() {
   const params = useParams();
@@ -27,20 +26,18 @@ export default function WorkspacePage() {
   );
 
   return (
-    <WorkspacePermissionProvider>
-      <div id="lobby-page" className={mainRoomHolderClss}>
-        <div className="relative p-8">
-          <div className="flex flex-col gap-y-4">
-            <h1 className="text-2xl font-bold">{workspace.title}</h1>
-            <p>{workspace.description}</p>
-          </div>
-        </div>
-        <div className={cn(parentSidebarClass, 'border-l')}>
-          <RoomSidebar>
-            <RoomSettings />
-          </RoomSidebar>
+    <div id="lobby-page" className={mainRoomHolderClss}>
+      <div className="relative p-8">
+        <div className="flex flex-col gap-y-4">
+          <h1 className="text-2xl font-bold">{workspace.title}</h1>
+          <p>{workspace.description}</p>
         </div>
       </div>
-    </WorkspacePermissionProvider>
+      <div className={cn(parentSidebarClass, 'border-l')}>
+        <RoomSidebar>
+          <RoomSettings />
+        </RoomSidebar>
+      </div>
+    </div>
   );
 }

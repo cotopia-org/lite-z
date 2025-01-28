@@ -75,8 +75,8 @@ export default function WorkspaceRoom({
             participants: res.data.data.participants ?? [],
             background: (res?.data?.data as any)?.background ?? undefined,
           });
-
           busDispatch(__BUS.stopMyScreenSharing);
+          busDispatch(__BUS.refreshNodeAudio);
         })
         .catch((err) => {
           stopLoading();
