@@ -227,6 +227,8 @@ export default function RoomContext({
           return;
         }
       });
+
+    dispatch(__BUS.refreshNodeAudio);
   };
 
   const [permissionState, setPermissionState] = useState({

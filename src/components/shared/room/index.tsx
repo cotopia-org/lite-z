@@ -3,7 +3,7 @@
 import RoomContext from './room-context';
 import RoomInner from './room-inner';
 import { WorkspaceRoomJoinType } from '@/types/room';
-import { useCallback, useEffect } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import LiveKitConnectionStatus from './connection-status';
 import ChatWrapper from '../chat-wrapper';
 import { ReactFlowProvider } from '@xyflow/react';
@@ -16,6 +16,8 @@ import { setToken } from '@/store/slices/livekit-slice';
 import LivekitRefactored from '../livekit-refactored';
 import { useLoading } from '@/hooks';
 import MediaPermissionProvider from '@/pages/workspace/permission-context';
+import { __BUS } from '@/const/bus';
+import useBus, { dispatch } from 'use-bus';
 
 type Props = {
   token?: string;
@@ -27,7 +29,13 @@ type Props = {
 
 export default function RoomHolder({ workspace_id, room_id }: Props) {
   const reduxDispatch = useAppDispatch();
+  const [_, setRefresher] = useState(0);
 
+  useBus(__BUS.refreshRoomHolder, () => {
+    setTimeout(() => {
+      setRefresher(Math.random() * 20000000);
+    }, 200);
+  });
   const { isLoading, startLoading, stopLoading } = useLoading();
 
   const socket = useSocket();
@@ -88,6 +96,7 @@ export default function RoomHolder({ workspace_id, room_id }: Props) {
           stopLoading();
           handleReTry(tries);
         });
+      dispatch(__BUS.refreshNodeAudio);
     },
     [room_id],
   );
