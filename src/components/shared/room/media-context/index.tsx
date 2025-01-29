@@ -1,8 +1,16 @@
-import { useWorkspaceContext } from '@/pages/workspace/workspace-context';
+import { __BUS } from '@/const/bus';
+import { usePermissionContext } from '@/pages/workspace/permission-context';
 import { useLocalParticipant } from '@livekit/components-react';
-import { LocalTrackPublication, LocalTrack,Track} from 'livekit-client';
-import { ReactNode, createContext, useContext } from 'react';
+import { LocalTrackPublication, LocalTrack, Track } from 'livekit-client';
+import {
+  ReactNode,
+  createContext,
+  useContext,
+  useCallback,
+  useMemo,
+} from 'react';
 import { toast } from 'sonner';
+import { dispatch } from 'use-bus';
 
 type Props = { children: ReactNode };
 
@@ -41,52 +49,63 @@ const MediaContextProvider = ({ children }: Props) => {
   const publishedAudioTrack = voiceTrack;
   const publishedCameraTrack = videoTrack;
 
-  const audioTrack = publishedAudioTrack?.track;
-  const cameraTrack = publishedCameraTrack?.track;
+  const audioTrack = useMemo(() => {
+    return publishedAudioTrack?.track;
+  }, [publishedAudioTrack]);
+
+  const cameraTrack = useMemo(() => {
+    return publishedCameraTrack?.track;
+  }, [publishedCameraTrack]);
+
+  console.log(audioTrack, 'AUDIOTRACKs');
 
   const {
     enableAudioStream,
     disableAudioStream,
     enableVideoStream,
     disableVideoStream,
-  } = useWorkspaceContext();
+  } = usePermissionContext();
 
-  const voiceOnHandler = () => {
+  const voiceOnHandler = useCallback(() => {
     try {
       enableAudioStream();
       if (!audioTrack) {
-        return localParticipant.setMicrophoneEnabled(true);
+        localParticipant.setMicrophoneEnabled(true);
+      } else if (audioTrack && audioTrack?.isMuted) {
+        audioTrack.unmute();
       }
-      if (audioTrack && audioTrack?.isMuted) {
-        return audioTrack.unmute();
-      }
+      dispatch(__BUS.refreshNodeAudio);
     } catch (error) {
       toast.error('An error occurred while turning on the microphone.');
     }
-  };
-  const voiceOffHandler = () => {
+  }, [enableAudioStream, audioTrack, localParticipant]);
+
+  const voiceOffHandler = useCallback(() => {
     try {
       disableAudioStream();
       audioTrack?.mute();
       audioTrack?.stop();
+
+      dispatch(__BUS.refreshNodeAudio);
     } catch (error) {
       toast.error('An error occurred while turning off the microphone.');
     }
-  };
-  const videoOnHandler = async () => {
+  }, [audioTrack, disableAudioStream]);
+
+  const videoOnHandler = useCallback(() => {
     try {
       enableVideoStream();
       if (!cameraTrack) {
-        return localParticipant.setCameraEnabled(true);
-      }
-      if (cameraTrack && cameraTrack?.isMuted) {
-        return cameraTrack.unmute();
+        localParticipant.setCameraEnabled(true);
+      } else if (cameraTrack && cameraTrack?.isMuted) {
+        cameraTrack?.unmute();
       }
     } catch (error) {
       toast.error('An error occurred while turning on the camera.');
     }
-  };
-  const videoOffHandler = async () => {
+  }, [cameraTrack, enableVideoStream, localParticipant]);
+
+  const videoOffHandler = useCallback(() => {
     if (!cameraTrack) return toast.error('Not found camera track');
     try {
       disableVideoStream();
@@ -95,7 +114,7 @@ const MediaContextProvider = ({ children }: Props) => {
     } catch (error) {
       toast.error('An error occurred while turning off the camera.');
     }
-  };
+  }, [cameraTrack, disableVideoStream]);
 
   return (
     <MediaContext.Provider

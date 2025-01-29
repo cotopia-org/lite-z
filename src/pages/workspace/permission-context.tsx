@@ -49,7 +49,7 @@ const reducer = (state: InitStreamType, action: StreamActionType) => {
   }
 };
 
-const WorkspaceContext = createContext<{
+const PermissionContext = createContext<{
   permissions: MediaPermission;
   stream: InitStreamType;
   streamLoading: boolean;
@@ -69,9 +69,9 @@ const WorkspaceContext = createContext<{
   resetStreamHandler: () => {},
 });
 
-export const useWorkspaceContext = () => useContext(WorkspaceContext);
+export const usePermissionContext = () => useContext(PermissionContext);
 
-export default function WorkspacePermissionProvider({
+export default function MediaPermissionProvider({
   children,
 }: {
   children: ReactNode;
@@ -89,12 +89,7 @@ export default function WorkspacePermissionProvider({
     dispatch({ type: 'START_LOADING' });
     const videoAccess = state.permissions.video;
     const videoStream = state.videoStream;
-    const audioStream = state.audioStream;
 
-    if (audioStream) {
-      dispatch({ type: 'STOP_LOADING' });
-      return toast.error('Audio stream already exists');
-    }
     let perm_obj = { video: !!(videoAccess && videoStream), audio: true };
     try {
       await enableAudioSetting();
@@ -209,7 +204,7 @@ export default function WorkspacePermissionProvider({
   };
 
   return (
-    <WorkspaceContext.Provider
+    <PermissionContext.Provider
       value={{
         stream: state,
         permissions: state.permissions,
@@ -222,6 +217,6 @@ export default function WorkspacePermissionProvider({
       }}
     >
       {children}
-    </WorkspaceContext.Provider>
+    </PermissionContext.Provider>
   );
 }

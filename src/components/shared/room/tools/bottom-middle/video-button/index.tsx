@@ -4,7 +4,7 @@ import StreamButton from '../stream-button';
 import { VideoIcon, VideoOffIcon } from '@/components/icons';
 import useSetting from '@/hooks/use-setting';
 import { useMediaContext } from '../../../media-context';
-import { useWorkspaceContext } from '@/pages/workspace/workspace-context';
+import { usePermissionContext } from '@/pages/workspace/permission-context';
 
 export default function VideoButtonTool() {
   const [navPermission, setNavPermission] = useState(true);
@@ -13,7 +13,7 @@ export default function VideoButtonTool() {
 
   const isAfk = reduxSettings.afk;
 
-  const { permissions, streamLoading } = useWorkspaceContext();
+  const { permissions, streamLoading } = usePermissionContext();
 
   const { cameraTrack, videoOn, videoOff } = useMediaContext();
 

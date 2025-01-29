@@ -34,6 +34,7 @@ export default function TimeTrackingButtonTool() {
       .then((res) => {
         const mins = res.data.data.minutes;
         if (!res.data.data.time_count) {
+          console.log(res?.data.data, 'TIME_COUNT');
           setStop(true);
         }
         setSeconds(mins * 60);

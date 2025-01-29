@@ -15,7 +15,7 @@ import { useAppDispatch } from '@/store';
 import { setToken } from '@/store/slices/livekit-slice';
 import LivekitRefactored from '../livekit-refactored';
 import { useLoading } from '@/hooks';
-import WorkspacePermissionProvider from '@/pages/workspace/workspace-context';
+import MediaPermissionProvider from '@/pages/workspace/permission-context';
 
 type Props = {
   token?: string;
@@ -112,7 +112,7 @@ export default function RoomHolder({ workspace_id, room_id }: Props) {
   }
 
   return (
-    <WorkspacePermissionProvider>
+    <MediaPermissionProvider>
       <ReactFlowProvider>
         <ChatWrapper>
           <RoomContext room_id={room_id} workspace_id={workspace_id}>
@@ -123,32 +123,6 @@ export default function RoomHolder({ workspace_id, room_id }: Props) {
           </RoomContext>
         </ChatWrapper>
       </ReactFlowProvider>
-    </WorkspacePermissionProvider>
+    </MediaPermissionProvider>
   );
 }
-
-// const disableAfkHandler = async () => {
-//   const videoAccess = state.permissions.video;
-//   const videoStream = state.videoStream;
-//   const audioAccess = state.permissions.audio;
-//   const audioStream = state.audioStream;
-//   let perm_obj = {
-//     video: !!(videoAccess && videoStream),
-//     audio: !!(audioAccess && audioStream),
-//   };
-//   try {
-//     await axiosInstance.post('/settings', { key: 'audio', value: 'on' });
-//     const obj_to_update = {
-//       loading: false,
-//       permissions: perm_obj,
-//     };
-//     dispatch({ type: 'CHANGE_VALUES', payload: obj_to_update });
-//   } catch (error) {}
-// };
-// const changeStreamState = (stream: MediaStream, type: 'video' | 'audio') => {
-//   let key = '';
-//   if (type === 'video') key = 'videoStream';
-//   if (type === 'audio') key = 'audioStream';
-//   if (!key) return;
-//   dispatch({ type: 'CHANGE_VALUES', payload: { [key]: stream } });
-// };

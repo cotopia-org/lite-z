@@ -3,7 +3,7 @@ import { useAppSelector } from '@/store';
 import { LiveKitRoom } from '@livekit/components-react';
 import { ReactNode } from 'react';
 import MediaContextProvider from '../room/media-context';
-import { useWorkspaceContext } from '@/pages/workspace/workspace-context';
+import { usePermissionContext } from '@/pages/workspace/permission-context';
 
 type Props = {
   children: ReactNode;
@@ -11,7 +11,7 @@ type Props = {
 export default function LivekitRefactored({ children }: Props) {
   const { token } = useAppSelector((store) => store.livekit);
 
-  const { permissions } = useWorkspaceContext();
+  const { permissions } = usePermissionContext();
 
   return (
     //@ts-ignore
