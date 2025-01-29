@@ -73,6 +73,7 @@ export type UserMinimalType = {
   coordinates: string | null;
   video_coordinates: null | string;
   video_size: null | string;
+  hasTimeCounted?: boolean;
   video_status: null | string;
   voice_status: null | string;
   screenshare_coordinates: null | string;

@@ -152,7 +152,6 @@ export default function RoomContext({
   }, [room_id]);
 
   useSocket('roomUpdated', (data) => {
-    console.log('roomUpdated');
     setRoom(data);
   });
   useSocket('toggleMegaphone', (data) => {
@@ -184,6 +183,33 @@ export default function RoomContext({
     },
     [profile],
   );
+  useSocket('timeStarted', (user: UserMinimalType) => {
+    setRoom((prev) => {
+      let newRoom: WorkspaceRoomType = prev as WorkspaceRoomType;
+      newRoom.participants = newRoom?.participants.map((item) => {
+        if (item.id === user.id) {
+          return { ...user, hasTimeCounted: true };
+        } else {
+          return item;
+        }
+      });
+      return newRoom;
+    });
+  });
+
+  useSocket('timeEnded', (user: UserMinimalType) => {
+    setRoom((prev) => {
+      let newRoom: WorkspaceRoomType = prev as WorkspaceRoomType;
+      newRoom.participants = newRoom?.participants.map((item) => {
+        if (item.id === user.id) {
+          return { ...user, hasTimeCounted: false };
+        } else {
+          return item;
+        }
+      });
+      return newRoom;
+    });
+  });
 
   //Update room object when background changed
   useSocket('roomBackgroundChanged', (data: WorkspaceRoomType) => {
