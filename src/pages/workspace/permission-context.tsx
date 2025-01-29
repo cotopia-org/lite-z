@@ -53,19 +53,19 @@ const PermissionContext = createContext<{
   permissions: MediaPermission;
   stream: InitStreamType;
   streamLoading: boolean;
-  enableAudioStream: () => void;
-  enableVideoStream: () => void;
-  disableAudioStream: () => void;
-  disableVideoStream: () => void;
+  enableAudioStream: () => Promise<void>;
+  enableVideoStream: () => Promise<void>;
+  disableAudioStream: () => Promise<void>;
+  disableVideoStream: () => Promise<void>;
   resetStreamHandler: () => void;
 }>({
   stream: initialState,
   streamLoading: false,
   permissions: DEFAULT_MEDIA_PERMISSIONS,
-  enableAudioStream: () => {},
-  enableVideoStream: () => {},
-  disableAudioStream: () => {},
-  disableVideoStream: () => {},
+  enableAudioStream: async () => {},
+  enableVideoStream: async () => {},
+  disableAudioStream: async () => {},
+  disableVideoStream: async () => {},
   resetStreamHandler: () => {},
 });
 
@@ -131,12 +131,7 @@ export default function MediaPermissionProvider({
   const enableVideoStream = async () => {
     const audioAccess = state.permissions.audio;
     const audioStream = state.audioStream;
-    const videoStream = state.videoStream;
     dispatch({ type: 'START_LOADING' });
-    if (videoStream) {
-      dispatch({ type: 'STOP_LOADING' });
-      return toast.error('Video stream already exists');
-    }
     let perm_obj = { audio: !!(audioAccess && audioStream), video: true };
     try {
       await enableVideoSetting();
@@ -157,14 +152,11 @@ export default function MediaPermissionProvider({
     const audioAccess = state.permissions.audio;
     const audioStream = state.audioStream;
     const videoStream = state.videoStream;
-    if (!videoStream) {
-      dispatch({ type: 'STOP_LOADING' });
-      return toast.error('No vidoe stream found');
-    }
+
     let perm_obj = { audio: !!(audioAccess && audioStream), video: false };
     try {
       disableVideoSetting();
-      const videoTracks = videoStream.getTracks();
+      const videoTracks = videoStream?.getTracks() || [];
       videoTracks.forEach((track) => {
         track.stop();
       });

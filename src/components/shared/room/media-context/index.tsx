@@ -8,6 +8,7 @@ import {
   useContext,
   useCallback,
   useMemo,
+  useState,
 } from 'react';
 import { toast } from 'sonner';
 import { dispatch } from 'use-bus';
@@ -37,6 +38,7 @@ const MediaContext = createContext<{
 export const useMediaContext = () => useContext(MediaContext);
 
 const MediaContextProvider = ({ children }: Props) => {
+  const [_, setRefresher] = useState(0);
   const participant = useLocalParticipant();
 
   const localParticipant = participant.localParticipant;
@@ -57,7 +59,13 @@ const MediaContextProvider = ({ children }: Props) => {
     return publishedCameraTrack?.track;
   }, [publishedCameraTrack]);
 
-  console.log(audioTrack, 'AUDIOTRACKs');
+  const refreshTracksHandler = () => {
+    setTimeout(() => {
+      dispatch(__BUS.refreshNodeAudio);
+      dispatch(__BUS.refreshRoomHolder);
+      setRefresher(Math.round(Math.random() * 200000000));
+    }, 200);
+  };
 
   const {
     enableAudioStream,
@@ -66,51 +74,52 @@ const MediaContextProvider = ({ children }: Props) => {
     disableVideoStream,
   } = usePermissionContext();
 
-  const voiceOnHandler = useCallback(() => {
+  const voiceOnHandler = useCallback(async () => {
     try {
-      enableAudioStream();
+      await enableAudioStream();
       if (!audioTrack) {
         localParticipant.setMicrophoneEnabled(true);
       } else if (audioTrack && audioTrack?.isMuted) {
         audioTrack.unmute();
       }
-      dispatch(__BUS.refreshNodeAudio);
+      refreshTracksHandler();
     } catch (error) {
       toast.error('An error occurred while turning on the microphone.');
     }
   }, [enableAudioStream, audioTrack, localParticipant]);
 
-  const voiceOffHandler = useCallback(() => {
+  const voiceOffHandler = useCallback(async () => {
     try {
-      disableAudioStream();
+      await disableAudioStream();
       audioTrack?.mute();
       audioTrack?.stop();
-
-      dispatch(__BUS.refreshNodeAudio);
+      refreshTracksHandler();
     } catch (error) {
       toast.error('An error occurred while turning off the microphone.');
     }
   }, [audioTrack, disableAudioStream]);
 
-  const videoOnHandler = useCallback(() => {
+  const videoOnHandler = useCallback(async () => {
     try {
-      enableVideoStream();
+      await enableVideoStream();
       if (!cameraTrack) {
         localParticipant.setCameraEnabled(true);
       } else if (cameraTrack && cameraTrack?.isMuted) {
         cameraTrack?.unmute();
       }
+      refreshTracksHandler();
     } catch (error) {
       toast.error('An error occurred while turning on the camera.');
     }
   }, [cameraTrack, enableVideoStream, localParticipant]);
 
-  const videoOffHandler = useCallback(() => {
+  const videoOffHandler = useCallback(async () => {
     if (!cameraTrack) return toast.error('Not found camera track');
     try {
-      disableVideoStream();
+      await disableVideoStream();
       cameraTrack.mute();
       cameraTrack.stop();
+      refreshTracksHandler();
     } catch (error) {
       toast.error('An error occurred while turning off the camera.');
     }
