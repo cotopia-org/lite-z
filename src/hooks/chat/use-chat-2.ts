@@ -120,6 +120,8 @@ export const useChat2 = (props?: {
       }),
     );
 
+    chats[message.chat_id].object.last_seen_message = message;
+
     if (
       message?.mentions?.length > 0 &&
       message?.mentions?.findIndex((x) => x.model_id === user?.id) > -1

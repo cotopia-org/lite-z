@@ -111,13 +111,19 @@ export default function Items({
     // console.log(index);
     vlistRef.current?.scrollToIndex(index);
   };
-
+  const lastMessageSeen = chatObjects?.[chat_id].object.last_seen_message?.id;
+  const lastMessage = chatObjects[chat_id].object.last_message;
   useEffect(() => {
     if (items.length === 0) return;
 
-    const lastMessageSeen = chatObjects?.[chat_id].object.last_seen_message?.id;
+    console.log(lastMessage.id, lastMessageSeen);
 
-    scrollToMessage(messages.findIndex((x) => x.id === lastMessageSeen));
+    let scrollMessage = messages.length - 1;
+    if (lastMessage.id !== lastMessageSeen) {
+      scrollMessage = messages.findIndex((x) => x.id === lastMessageSeen);
+    }
+
+    scrollToMessage(scrollMessage);
   }, [items]);
 
   let content = (
@@ -133,7 +139,7 @@ export default function Items({
                 isMine={message?.user.id === profile?.id}
                 index={messages.indexOf(message)}
               />
-              {messages.indexOf(message) === 2 &&
+              {message.id === lastMessageSeen &&
                 messages.indexOf(message) !== messages.length - 1 && (
                   <div className="flex flex-col w-full text-blue-500 h-6 bg-white text-sm items-center justify-center my-4 pointer-events-none">
                     Unread messages
