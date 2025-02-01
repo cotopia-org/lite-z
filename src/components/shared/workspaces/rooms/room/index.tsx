@@ -13,6 +13,7 @@ import ParticipantRows from '@/components/shared/participant-rows';
 import { dispatch as busDispatch } from 'use-bus';
 import { __BUS } from '@/const/bus';
 import { useRoomContext } from '@/components/shared/room/room-context';
+import { useActiveRoom } from '@/pages/workspace';
 
 type Props = {
   room: WorkspaceRoomShortType;
@@ -39,6 +40,8 @@ export default function WorkspaceRoom({
 
   const { startLoading, stopLoading } = useLoading();
 
+  const { setActiveRoom } = useActiveRoom();
+
   const joinRoomHandler = async () => {
     if (room.type === 'grid') closeSidebarInMobile();
 
@@ -52,15 +55,15 @@ export default function WorkspaceRoom({
           //set livekit token
           dispatch(setToken(livekitToken));
 
-          navigate(
-            urlWithQueryParams(`/workspaces/${workspace_id}/rooms/${room.id}`, {
-              isSwitching: true,
-            }),
-          );
-
-          setTimeout(() => {
-            navigate(`/workspaces/${workspace_id}/rooms/${room.id}`);
-          }, 400);
+          // navigate(
+          //   urlWithQueryParams(`/workspaces/${workspace_id}/rooms/${room.id}`, {
+          //     isSwitching: true,
+          //   }),
+          // );
+          //
+          // setTimeout(() => {
+          //   navigate(`/workspaces/${workspace_id}/rooms/${room.id}`);
+          // }, 400);
 
           stopLoading();
 
@@ -77,6 +80,7 @@ export default function WorkspaceRoom({
           });
           busDispatch(__BUS.stopMyScreenSharing);
           busDispatch(__BUS.refreshNodeAudio);
+          setActiveRoom(room.id);
         })
         .catch((err) => {
           stopLoading();

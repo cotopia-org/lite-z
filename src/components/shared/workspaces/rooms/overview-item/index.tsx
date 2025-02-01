@@ -5,6 +5,7 @@ import { FetchDataType } from '@/services/axios';
 import { WorkspaceType } from '@/types/workspace';
 import { Text } from 'lucide-react';
 import { Link, useLocation } from 'react-router-dom';
+import { useActiveRoom } from '@/pages/workspace';
 
 export default function WorkspaceOverviewItem() {
   const location = useLocation();
@@ -16,7 +17,8 @@ export default function WorkspaceOverviewItem() {
   );
   const workspace = data !== undefined ? data?.data?.data : null;
 
-  const isActive = location.pathname === `/workspaces/${workspace_id}`;
+  const { activeRoom } = useActiveRoom();
+  const isActive = activeRoom === null;
 
   return (
     <Link

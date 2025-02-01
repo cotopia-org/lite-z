@@ -6,12 +6,25 @@ import { cn } from '@/lib/utils';
 import { FetchDataType } from '@/services/axios';
 import { WorkspaceType } from '@/types/workspace';
 import { useParams } from 'react-router-dom';
+import { createContext, useContext, useState } from 'react';
+import WorkspaceRoomPage from '@/pages/workspace/rooms/room';
+
+const ActiveRoomContext = createContext<{
+  activeRoom: number | null;
+  setActiveRoom: (id: number) => void;
+}>({
+  activeRoom: null,
+  setActiveRoom: (id: number) => {},
+});
+
+export const useActiveRoom = () => useContext(ActiveRoomContext);
 
 export default function WorkspacePage() {
   const params = useParams();
   const { data, isLoading } = useApi<FetchDataType<WorkspaceType>>(
     `/workspaces/${params.workspace_id}`,
   );
+  const [room, setRoom] = useState<number | null>(null);
 
   const workspace = data !== undefined ? data?.data : null;
 
@@ -25,7 +38,7 @@ export default function WorkspacePage() {
     'fixed right-0 top-0 bottom-0 w-full md:w-[376px] h-screen overflow-y-auto z-10',
   );
 
-  return (
+  let content = (
     <div id="lobby-page" className={mainRoomHolderClss}>
       <div className="relative p-8">
         <div className="flex flex-col gap-y-4">
@@ -39,5 +52,23 @@ export default function WorkspacePage() {
         </RoomSidebar>
       </div>
     </div>
+  );
+
+  if (room !== null) {
+    content = <WorkspaceRoomPage />;
+  }
+
+  return (
+    <ActiveRoomContext.Provider
+      value={{
+        activeRoom: room,
+        setActiveRoom: (id) => {
+          console.log(id);
+          setRoom(id);
+        },
+      }}
+    >
+      {content}
+    </ActiveRoomContext.Provider>
   );
 }

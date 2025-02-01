@@ -7,6 +7,7 @@ import { FetchDataType } from '@/services/axios';
 import { useSocket } from '@/routes/private-wrarpper';
 import { useParams } from 'react-router-dom';
 import { WorkspaceUserType } from '@/types/user';
+import { useActiveRoom } from '@/pages/workspace';
 
 type Props = {
   workspace_id: string;
@@ -17,7 +18,7 @@ export default function WorkspaceRoomsHolder({
   workspace_id,
   workspaceUsers,
 }: Props) {
-  const { room_id } = useParams();
+  const { activeRoom: room_id } = useActiveRoom();
 
   const [rooms, setRooms] = useState<WorkspaceRoomShortType[]>([]);
 
