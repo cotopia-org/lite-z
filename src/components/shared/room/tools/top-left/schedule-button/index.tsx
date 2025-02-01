@@ -25,6 +25,7 @@ export type FulFillmentType = {
   total_days: number;
   mustWorkPerDay: number;
   totalDaysUntilNow: number;
+  min_commitment_percent: number;
   minimumWork: number;
 };
 export default function ScheduleButton() {
@@ -39,7 +40,7 @@ export default function ScheduleButton() {
 
   const todayDay = today.day();
 
-  let event_label = 'Add Schedule';
+  let event_label = 'Schedules';
   const allDays = schedules.flatMap((day) => day.days);
   const todayDate = allDays.find((day) => +day.day === todayDay);
   if (todayDate) {
@@ -61,6 +62,9 @@ export default function ScheduleButton() {
       </span>
     </div>
   );
+  if (schedules.length < 1) {
+    return null;
+  }
 
   return (
     <PopupBox
@@ -76,11 +80,10 @@ export default function ScheduleButton() {
       )}
     >
       {(triggerPosition, open, close) => {
-        let content = null;
-        if (schedules.length > 0)
-          content = (
-            <Schedules justView={true} items={schedules} onDelete={mutate} />
-          );
+        let content = (
+          <Schedules justView={true} items={schedules} onDelete={mutate} />
+        );
+
         if (isLoading || data === undefined) return <FullLoading />;
         return (
           <PopupBoxChild
@@ -150,7 +153,7 @@ export function ScheduleFillment({ userId }: { userId?: string | number }) {
   if (fulfillmentData === undefined) return <></>;
 
   const percent = fulfillmentData.percentage;
-  const min = 50;
+  const min = fulfillmentData.min_commitment_percent;
   const max = 100;
   const mid = 80;
 
@@ -167,7 +170,10 @@ export function ScheduleFillment({ userId }: { userId?: string | number }) {
   }
 
   const missingPercent =
-    (fulfillmentData.missing / fulfillmentData.total_until_now_schedule) * 100;
+    fulfillmentData.missing === 0
+      ? 0
+      : (fulfillmentData.missing / fulfillmentData.total_until_now_schedule) *
+        100;
   const remainingPercent =
     (fulfillmentData.remaining / fulfillmentData.total_schedule) * 100;
 
@@ -214,7 +220,9 @@ export function ScheduleFillment({ userId }: { userId?: string | number }) {
             +{formatTime(fulfillmentData.mustWorkPerDay, true, true)}
           </span>{' '}
           per day to meet commitment of min{' '}
-          <span className={'font-bold tex'}>50%</span>
+          <span className={'font-bold tex'}>
+            {fulfillmentData.min_commitment_percent}%
+          </span>
         </div>
       )}
     </div>

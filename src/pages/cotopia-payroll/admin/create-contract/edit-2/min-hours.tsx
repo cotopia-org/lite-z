@@ -21,6 +21,22 @@ export default function MinHours() {
             : ''
         }
       />
+
+      <CotopiaInput
+        {...formik?.getFieldProps('min_commitment_percent')}
+        placeholder="Enter minimum percent commitment"
+        label="Min Commitment Percent"
+        type="number"
+        hasError={
+          !!touched?.min_commitment_percent && !!errors?.min_commitment_percent
+        }
+        helperText={
+          touched?.min_commitment_percent &&
+          typeof errors?.min_commitment_percent === 'string'
+            ? errors?.min_commitment_percent
+            : ''
+        }
+      />
     </div>
   );
 }
