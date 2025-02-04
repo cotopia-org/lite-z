@@ -19,6 +19,7 @@ export interface UserContractType {
   renew_notice: number;
   renew_time_period: number;
   renew_time_period_type: string;
+  min_commitment_percent: number;
   renewal_count: number;
   role: string;
   start_at: string;
@@ -29,6 +30,7 @@ export interface UserContractType {
   user_status: string;
   last_payment: PaymentType;
   in_schedule: 1 | 0 | boolean;
+  in_job: 1 | 0 | boolean;
   schedule?: ScheduleType;
   content: number[];
   status:

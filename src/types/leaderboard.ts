@@ -8,6 +8,7 @@ export type LeaderboardType = {
 };
 export type CommitmentLeaderboardType = {
   percentage: number;
+  min_commitment_percent: number;
   done: number;
   user: UserType;
 };

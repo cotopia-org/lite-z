@@ -32,7 +32,7 @@ export default function TimeTrackingDetails({
           'flex items-center justify-between  w-full p-2 px-3 !transform-none hover:bg-grayscale-light hover:cursor-pointer';
 
         if (isMe) clss += ` bg-blue-400/[0.4] hover:bg-blue-400/[0.4]`;
-        if (item.percentage < 50)
+        if (item.percentage < item.min_commitment_percent)
           clss += ` bg-red-300/[0.4] hover:bg-red-300/[0.4]`;
 
         return (
@@ -55,5 +55,13 @@ export default function TimeTrackingDetails({
     </div>
   );
 
-  return <ScrollArea className="h-72 w-full">{content}</ScrollArea>;
+  if (leaderboard.length < 1) {
+    content = (
+      <div className={'text-center text-black/50 text-sm my-5'}>
+        No one has active contract yet!
+      </div>
+    );
+  }
+
+  return <ScrollArea className="h-auto w-full">{content}</ScrollArea>;
 }

@@ -23,6 +23,7 @@ import { __BUS } from '@/const/bus';
 export default function TimeTrackingButtonTool() {
   const [seconds, setSeconds] = useState<undefined | number>();
   const [stop, setStop] = useState<boolean>(false);
+  const [desc, setDesc] = useState<string | undefined>();
 
   const { startLoading, stopLoading, isLoading } = useLoading();
   const getActivityTime = () => {
@@ -34,8 +35,8 @@ export default function TimeTrackingButtonTool() {
       .then((res) => {
         const mins = res.data.data.minutes;
         if (!res.data.data.time_count) {
-          console.log(res?.data.data, 'TIME_COUNT');
           setStop(true);
+          setDesc(res.data.data.time_stop_desc);
         }
         setSeconds(mins * 60);
         stopLoading();
@@ -101,6 +102,7 @@ export default function TimeTrackingButtonTool() {
           onClick={open}
           isLoading={isLoading}
           stop={stop}
+          desc={desc}
         />
       )}
     >
