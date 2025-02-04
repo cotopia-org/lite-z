@@ -1,23 +1,83 @@
-import FullLoading from '@/components/shared/full-loading';
 import RoomSettings from '@/components/shared/room/settings';
 import RoomSidebar from '@/components/shared/room/sidebar';
-import { useApi } from '@/hooks/swr';
 import { cn } from '@/lib/utils';
-import { FetchDataType } from '@/services/axios';
-import { WorkspaceType } from '@/types/workspace';
+import { WorkspaceRoomShortType, WorkspaceRoomType } from '@/types/room';
+import { createContext, useContext, useEffect, useState } from 'react';
+import WorkspaceRoomPage from './rooms/room';
+import WorkspaceRootPage from './workspace-root';
+import { useValues } from '@/hooks';
+import { UserMinimalType, WorkspaceUserType } from '@/types/user';
 import { useParams } from 'react-router-dom';
+import axiosInstance from '@/services/axios';
+import { useSocket } from '@/routes/private-wrarpper';
+import useAuth from '@/hooks/auth';
+
+type LeftJoinType = { room_id: number; user: UserMinimalType };
+
+const WorkspaceContext = createContext<{
+  users: WorkspaceUserType[];
+  activeRoom: WorkspaceRoomType | WorkspaceRoomShortType | undefined;
+  setActiveRoom: (
+    room: WorkspaceRoomType | WorkspaceRoomShortType | undefined,
+  ) => void;
+  changeUserRoom: (user_id: number, room_id: number) => void;
+}>({
+  users: [],
+  activeRoom: undefined,
+  setActiveRoom: () => {},
+  changeUserRoom: () => {},
+});
+
+export const useWorkspace = () => useContext(WorkspaceContext);
 
 export default function WorkspacePage() {
-  const params = useParams();
-  const { data, isLoading } = useApi<FetchDataType<WorkspaceType>>(
-    `/workspaces/${params.workspace_id}`,
+  const { user } = useAuth();
+
+  const { workspace_id } = useParams();
+
+  const { values, changeKey } = useValues<{
+    activeRoom: WorkspaceRoomType | WorkspaceRoomShortType | undefined;
+    users: WorkspaceUserType[];
+  }>({ activeRoom: undefined, users: [] });
+
+  const changeUserRoom = (user_id: number, room_id: number | null) => {
+    const users = values?.users ?? [];
+    const userIndex = users.findIndex((user) => user.id === user_id);
+    if (userIndex !== -1) {
+      users[userIndex].room_id = room_id;
+      changeKey('users', users);
+    }
+  };
+
+  useEffect(() => {
+    async function getWorkspaceUsers(workspace_id: string) {
+      axiosInstance
+        .get(`/workspaces/${workspace_id}/users`)
+        .then((res) => {
+          const users: WorkspaceUserType[] = res.data?.data ?? [];
+          //Set workspace users to users
+          changeKey('users', users);
+        })
+        .catch((err) => {});
+    }
+    if (workspace_id !== undefined) getWorkspaceUsers(workspace_id);
+  }, [workspace_id]);
+
+  useSocket(
+    'userLeftFromRoom',
+    (data: LeftJoinType) => {
+      if (data.user.id !== user.id) changeUserRoom(data.user.id, null);
+    },
+    [user],
   );
 
-  const workspace = data !== undefined ? data?.data : null;
-
-  if (data === undefined || isLoading) return <FullLoading />;
-
-  if (workspace === null) return null;
+  useSocket(
+    'userJoinedToRoom',
+    (data: LeftJoinType) => {
+      changeUserRoom(data.user.id, data.room_id);
+    },
+    [],
+  );
 
   let mainRoomHolderClss = 'main-room-holder w-full h-screen overflow-hidden';
 
@@ -26,18 +86,22 @@ export default function WorkspacePage() {
   );
 
   return (
-    <div id="lobby-page" className={mainRoomHolderClss}>
-      <div className="relative p-8">
-        <div className="flex flex-col gap-y-4">
-          <h1 className="text-2xl font-bold">{workspace.title}</h1>
-          <p>{workspace.description}</p>
+    <WorkspaceContext.Provider
+      value={{
+        users: values?.users ?? [],
+        changeUserRoom,
+        activeRoom: values?.activeRoom,
+        setActiveRoom: (room) => changeKey('activeRoom', room),
+      }}
+    >
+      <div id="lobby-page" className={mainRoomHolderClss}>
+        {values?.activeRoom ? <WorkspaceRoomPage /> : <WorkspaceRootPage />}
+        <div className={cn(parentSidebarClass, 'border-l')}>
+          <RoomSidebar>
+            <RoomSettings />
+          </RoomSidebar>
         </div>
       </div>
-      <div className={cn(parentSidebarClass, 'border-l')}>
-        <RoomSidebar>
-          <RoomSettings />
-        </RoomSidebar>
-      </div>
-    </div>
+    </WorkspaceContext.Provider>
   );
 }

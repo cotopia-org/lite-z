@@ -6,11 +6,14 @@ import WorkspaceActionFab from './componets/action-fab';
 import { useRoomContext } from '@/components/shared/room/room-context';
 import moment from 'moment';
 import { isNowBetween } from '@/lib/utils';
+import { useWorkspace } from '@/pages/workspace';
 
 export default function WorkspaceSidebar() {
   const { workspace_id } = useParams();
 
-  const { workspaceUsers, scheduled, onlineUsers } = useRoomContext();
+  const { scheduled, onlineUsers } = useRoomContext();
+
+  const { users } = useWorkspace();
 
   const today = moment();
 
@@ -32,7 +35,7 @@ export default function WorkspaceSidebar() {
 
   const finalSchedulesIds = finalSchedules.map((x) => x.user.id);
 
-  const allOfflineParticipants = workspaceUsers
+  const allOfflineParticipants = users
     .filter((x) => !onlineUserIds.includes(x.id))
     .filter((x) => !finalSchedulesIds.includes(x.id))
     .filter((x) => x.last_login !== null)
@@ -42,7 +45,7 @@ export default function WorkspaceSidebar() {
     <div className="flex flex-col gap-y-4 bg-white h-[calc(100vh-80px)] pb-20 overflow-y-auto relative">
       <div>
         <WorkspaceRoomsHolder
-          workspaceUsers={workspaceUsers}
+          workspaceUsers={users}
           workspace_id={workspace_id as string}
         />
       </div>
