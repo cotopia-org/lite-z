@@ -77,7 +77,7 @@ export default function RoomInner() {
     view = <CanvasBoard />;
   }
   if (roomLoading) {
-    view = <FullLoading />;
+    view = <FullLoading className="justify-center bg-black/5" />;
   }
 
   let parentSidebarClass = cn(

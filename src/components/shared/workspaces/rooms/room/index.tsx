@@ -1,11 +1,10 @@
 import { WorkspaceRoomJoinType, WorkspaceRoomShortType } from '@/types/room';
 import { WorkspaceUserType } from '@/types/user';
-import { cn, uniqueById, urlWithQueryParams } from '@/lib/utils';
+import { cn, uniqueById } from '@/lib/utils';
 import useSetting from '@/hooks/use-setting';
 import { playSoundEffect } from '@/lib/sound-effects';
 import useLoading from '@/hooks/use-loading';
 import axiosInstance, { FetchDataType } from '@/services/axios';
-import { useNavigate } from 'react-router-dom';
 import { useAppDispatch } from '@/store';
 import { setToken } from '@/store/slices/livekit-slice';
 import RoomItem from './room-item';
@@ -13,6 +12,8 @@ import ParticipantRows from '@/components/shared/participant-rows';
 import { dispatch as busDispatch } from 'use-bus';
 import { __BUS } from '@/const/bus';
 import { useRoomContext } from '@/components/shared/room/room-context';
+import { useWorkspace } from '@/pages/workspace';
+import useAuth from '@/hooks/auth';
 
 type Props = {
   room: WorkspaceRoomShortType;
@@ -22,18 +23,19 @@ type Props = {
 };
 
 export default function WorkspaceRoom({
-  workspace_id,
   room,
   selected_room_id,
   participants,
 }: Props) {
+  const { user } = useAuth();
+
+  const { setActiveRoom, changeUserRoom } = useWorkspace();
+
   const { reduxSettings } = useSetting();
 
   const sounds = reduxSettings.sounds;
 
   const dispatch = useAppDispatch();
-
-  const navigate = useNavigate();
 
   const { updateParticipants, closeSidebarInMobile } = useRoomContext();
 
@@ -43,6 +45,12 @@ export default function WorkspaceRoom({
     if (room.type === 'grid') closeSidebarInMobile();
 
     if (selected_room_id !== room.id) {
+      //Change user room in workspace datas
+      changeUserRoom(user.id, room.id);
+
+      //Set active room ...
+      setActiveRoom(room);
+
       startLoading();
       axiosInstance
         .get<FetchDataType<WorkspaceRoomJoinType>>(`/rooms/${room.id}/join`)
@@ -52,15 +60,11 @@ export default function WorkspaceRoom({
           //set livekit token
           dispatch(setToken(livekitToken));
 
-          navigate(
-            urlWithQueryParams(`/workspaces/${workspace_id}/rooms/${room.id}`, {
-              isSwitching: true,
-            }),
-          );
-
-          setTimeout(() => {
-            navigate(`/workspaces/${workspace_id}/rooms/${room.id}`);
-          }, 400);
+          // navigate(
+          //   urlWithQueryParams(`/workspaces/${workspace_id}/rooms/${room.id}`, {
+          //     isSwitching: true,
+          //   }),
+          // );
 
           stopLoading();
 
