@@ -7,13 +7,15 @@ import { useRoomContext } from '@/components/shared/room/room-context';
 import moment from 'moment';
 import { isNowBetween } from '@/lib/utils';
 import { useWorkspace } from '@/pages/workspace';
+import FullLoading from '@/components/shared/full-loading';
+import BlurFade from '@/components/magicui/blur-fade';
 
 export default function WorkspaceSidebar() {
   const { workspace_id } = useParams();
 
   const { scheduled, onlineUsers } = useRoomContext();
 
-  const { users } = useWorkspace();
+  const { users, workspaceFetchingLoading } = useWorkspace();
 
   const today = moment();
 
@@ -41,18 +43,20 @@ export default function WorkspaceSidebar() {
     .filter((x) => x.last_login !== null)
     .sort((a, b) => moment(b.last_login).unix() - moment(a.last_login).unix());
 
+  if (workspaceFetchingLoading) return <FullLoading className="py-6" />;
+
   return (
     <div className="flex flex-col gap-y-4 bg-white h-[calc(100vh-80px)] pb-20 overflow-y-auto relative">
-      <div>
+      <BlurFade delay={0.3} inView>
         <WorkspaceRoomsHolder
           workspaceUsers={users}
           workspace_id={workspace_id as string}
         />
-      </div>
-      <div className="p-4 flex flex-col gap-y-6">
+      </BlurFade>
+      <BlurFade delay={0.6} inView className="p-4 flex flex-col gap-y-6">
         <ScheduledUsers finalSchedules={finalSchedules} />
         <OfflineUsers allOfflineParticipants={allOfflineParticipants} />
-      </div>
+      </BlurFade>
       <WorkspaceActionFab />
     </div>
   );

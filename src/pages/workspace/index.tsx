@@ -5,7 +5,7 @@ import { WorkspaceRoomShortType, WorkspaceRoomType } from '@/types/room';
 import { createContext, useContext, useEffect, useState } from 'react';
 import WorkspaceRoomPage from './rooms/room';
 import WorkspaceRootPage from './workspace-root';
-import { useValues } from '@/hooks';
+import { useLoading, useValues } from '@/hooks';
 import { UserMinimalType, WorkspaceUserType } from '@/types/user';
 import { useParams } from 'react-router-dom';
 import axiosInstance from '@/services/axios';
@@ -21,16 +21,20 @@ const WorkspaceContext = createContext<{
     room: WorkspaceRoomType | WorkspaceRoomShortType | undefined,
   ) => void;
   changeUserRoom: (user_id: number, room_id: number) => void;
+  workspaceFetchingLoading?: boolean;
 }>({
   users: [],
   activeRoom: undefined,
   setActiveRoom: () => {},
   changeUserRoom: () => {},
+  workspaceFetchingLoading: false,
 });
 
 export const useWorkspace = () => useContext(WorkspaceContext);
 
 export default function WorkspacePage() {
+  const { startLoading, stopLoading, isLoading } = useLoading();
+
   const { user } = useAuth();
 
   const { workspace_id } = useParams();
@@ -51,14 +55,19 @@ export default function WorkspacePage() {
 
   useEffect(() => {
     async function getWorkspaceUsers(workspace_id: string) {
+      startLoading();
+
       axiosInstance
         .get(`/workspaces/${workspace_id}/users`)
         .then((res) => {
           const users: WorkspaceUserType[] = res.data?.data ?? [];
           //Set workspace users to users
           changeKey('users', users);
+          stopLoading();
         })
-        .catch((err) => {});
+        .catch((err) => {
+          stopLoading();
+        });
     }
     if (workspace_id !== undefined) getWorkspaceUsers(workspace_id);
   }, [workspace_id]);
@@ -92,6 +101,7 @@ export default function WorkspacePage() {
         changeUserRoom,
         activeRoom: values?.activeRoom,
         setActiveRoom: (room) => changeKey('activeRoom', room),
+        workspaceFetchingLoading: isLoading,
       }}
     >
       <div id="lobby-page" className={mainRoomHolderClss}>
