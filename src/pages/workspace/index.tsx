@@ -11,6 +11,8 @@ import { useParams } from 'react-router-dom';
 import axiosInstance from '@/services/axios';
 import { useSocket } from '@/routes/private-wrarpper';
 import useAuth from '@/hooks/auth';
+import { LeaderboardType } from '@/types/leaderboard';
+import { ScheduleType } from '@/types/calendar';
 
 type LeftJoinType = { room_id: number; user: UserMinimalType };
 
@@ -22,12 +24,16 @@ const WorkspaceContext = createContext<{
   ) => void;
   changeUserRoom: (user_id: number, room_id: number) => void;
   workspaceFetchingLoading?: boolean;
+  leadeboard: LeaderboardType[];
+  schudules: ScheduleType[];
 }>({
   users: [],
   activeRoom: undefined,
   setActiveRoom: () => {},
   changeUserRoom: () => {},
   workspaceFetchingLoading: false,
+  leadeboard: [],
+  schudules: [],
 });
 
 export const useWorkspace = () => useContext(WorkspaceContext);
@@ -42,7 +48,9 @@ export default function WorkspacePage() {
   const { values, changeKey } = useValues<{
     activeRoom: WorkspaceRoomType | WorkspaceRoomShortType | undefined;
     users: WorkspaceUserType[];
-  }>({ activeRoom: undefined, users: [] });
+    leaderboard: LeaderboardType[];
+    schedules: ScheduleType[];
+  }>({ activeRoom: undefined, users: [], leaderboard: [], schedules: [] });
 
   const changeUserRoom = (user_id: number, room_id: number | null) => {
     const users = values?.users ?? [];
@@ -54,6 +62,41 @@ export default function WorkspacePage() {
   };
 
   useEffect(() => {
+    //schedules getting function
+    async function getSchedules(workspace_id: string) {
+      startLoading();
+
+      axiosInstance
+        .get(`/workspaces/${workspace_id}/schedules`)
+        .then((res) => {
+          const schedules: ScheduleType[] = res.data?.data ?? [];
+          //Set leaderboard users to leaderboard key
+          changeKey('schedules', schedules);
+          stopLoading();
+        })
+        .catch((err) => {
+          stopLoading();
+        });
+    }
+
+    //leaderboard getting function
+    async function getLeaderboard(workspace_id: string) {
+      startLoading();
+
+      axiosInstance
+        .get(`/workspaces/${workspace_id}/leaderboard`)
+        .then((res) => {
+          const leaderboard: LeaderboardType[] = res.data?.data ?? [];
+          //Set leaderboard users to leaderboard key
+          changeKey('leaderboard', leaderboard);
+          stopLoading();
+        })
+        .catch((err) => {
+          stopLoading();
+        });
+    }
+
+    //Workspace users getting function
     async function getWorkspaceUsers(workspace_id: string) {
       startLoading();
 
@@ -61,7 +104,7 @@ export default function WorkspacePage() {
         .get(`/workspaces/${workspace_id}/users`)
         .then((res) => {
           const users: WorkspaceUserType[] = res.data?.data ?? [];
-          //Set workspace users to users
+          //Set workspace users to users key
           changeKey('users', users);
           stopLoading();
         })
@@ -69,7 +112,11 @@ export default function WorkspacePage() {
           stopLoading();
         });
     }
-    if (workspace_id !== undefined) getWorkspaceUsers(workspace_id);
+    if (workspace_id !== undefined) {
+      getWorkspaceUsers(workspace_id);
+      getLeaderboard(workspace_id);
+      getSchedules(workspace_id);
+    }
   }, [workspace_id]);
 
   useSocket(
@@ -102,6 +149,8 @@ export default function WorkspacePage() {
         activeRoom: values?.activeRoom,
         setActiveRoom: (room) => changeKey('activeRoom', room),
         workspaceFetchingLoading: isLoading,
+        leadeboard: values?.leaderboard ?? [],
+        schudules: values?.schedules ?? [],
       }}
     >
       <div id="lobby-page" className={mainRoomHolderClss}>
