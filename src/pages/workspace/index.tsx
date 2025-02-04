@@ -64,47 +64,44 @@ export default function WorkspacePage() {
   useEffect(() => {
     //schedules getting function
     async function getSchedules(workspace_id: string) {
-      startLoading();
-
-      axiosInstance
+      return axiosInstance
         .get(`/workspaces/${workspace_id}/schedules`)
         .then((res) => {
           const schedules: ScheduleType[] = res.data?.data ?? [];
-          //Set leaderboard users to leaderboard key
-          changeKey('schedules', schedules);
-          stopLoading();
-        })
-        .catch((err) => {
-          stopLoading();
+          return schedules;
         });
     }
 
     //leaderboard getting function
     async function getLeaderboard(workspace_id: string) {
-      startLoading();
-
-      axiosInstance
+      return axiosInstance
         .get(`/workspaces/${workspace_id}/leaderboard`)
         .then((res) => {
           const leaderboard: LeaderboardType[] = res.data?.data ?? [];
-          //Set leaderboard users to leaderboard key
-          changeKey('leaderboard', leaderboard);
-          stopLoading();
-        })
-        .catch((err) => {
-          stopLoading();
+          return leaderboard;
         });
     }
 
     //Workspace users getting function
     async function getWorkspaceUsers(workspace_id: string) {
-      startLoading();
-
-      axiosInstance
+      return axiosInstance
         .get(`/workspaces/${workspace_id}/users`)
         .then((res) => {
           const users: WorkspaceUserType[] = res.data?.data ?? [];
-          //Set workspace users to users key
+          return users;
+        });
+    }
+
+    async function getAllData(workspace_id: string) {
+      startLoading();
+      Promise.all([
+        getSchedules(workspace_id),
+        getLeaderboard(workspace_id),
+        getWorkspaceUsers(workspace_id),
+      ])
+        .then(([schedules, leaderboard, users]) => {
+          changeKey('schedules', schedules);
+          changeKey('leaderboard', leaderboard);
           changeKey('users', users);
           stopLoading();
         })
@@ -112,10 +109,9 @@ export default function WorkspacePage() {
           stopLoading();
         });
     }
+
     if (workspace_id !== undefined) {
-      getWorkspaceUsers(workspace_id);
-      getLeaderboard(workspace_id);
-      getSchedules(workspace_id);
+      getAllData(workspace_id);
     }
   }, [workspace_id]);
 
