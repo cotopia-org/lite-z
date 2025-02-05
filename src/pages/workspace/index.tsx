@@ -13,6 +13,7 @@ import { useSocket } from '@/routes/private-wrarpper';
 import useAuth from '@/hooks/auth';
 import { LeaderboardType } from '@/types/leaderboard';
 import { ScheduleType } from '@/types/calendar';
+import { ReactFlowProvider } from '@xyflow/react';
 
 type LeftJoinType = { room_id: number; user: UserMinimalType };
 
@@ -149,14 +150,16 @@ export default function WorkspacePage() {
         schudules: values?.schedules ?? [],
       }}
     >
-      <div id="lobby-page" className={mainRoomHolderClss}>
-        {values?.activeRoom ? <WorkspaceRoomPage /> : <WorkspaceRootPage />}
-        <div className={cn(parentSidebarClass, 'border-l')}>
-          <RoomSidebar>
-            <RoomSettings />
-          </RoomSidebar>
+      <ReactFlowProvider>
+        <div id="lobby-page" className={mainRoomHolderClss}>
+          {values?.activeRoom ? <WorkspaceRoomPage /> : <WorkspaceRootPage />}
+          <div className={cn(parentSidebarClass, 'border-l')}>
+            <RoomSidebar>
+              <RoomSettings />
+            </RoomSidebar>
+          </div>
         </div>
-      </div>
+      </ReactFlowProvider>
     </WorkspaceContext.Provider>
   );
 }
