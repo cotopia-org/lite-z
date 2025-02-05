@@ -26,7 +26,7 @@ export default function Details({ user, roomId, onClose }: Props) {
   const { user: profile } = useAuth();
 
   const hasInviteToTalk = useMemo(() => {
-    if (user.status === 'afk') return false;
+    if (user?.status === 'afk') return false;
 
     if (profile?.id === user?.id) return false;
 
