@@ -40,15 +40,17 @@ export default function Details({ user, roomId, onClose }: Props) {
         <div className="p-4 pt-0 flex flex-col gap-y-2">
           <div className="flex flex-col">
             <strong data-testid="username-detail-card" className="capitalize">
-              {user.name}
+              {user?.name ?? '-'}
             </strong>
             <div className="flex flex-row items-center justify-between">
-              <span className="text-xs font-light">{user.username}</span>
+              <span className="text-xs font-light">
+                {user?.username ?? '-'}
+              </span>
               <UserDate />
             </div>
           </div>
           {/*<SendingDirect /> */}
-          {hasInviteToTalk && <InviteToTalk user_id={user.id} />}
+          {hasInviteToTalk && user?.id && <InviteToTalk user_id={user.id} />}
         </div>
       </div>
     </UserDetailContext.Provider>
