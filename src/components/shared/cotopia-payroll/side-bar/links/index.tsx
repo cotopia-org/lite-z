@@ -4,6 +4,7 @@ import {
   HandCoins,
   User,
   UserRoundPen,
+  Wallet,
   X,
 } from 'lucide-react';
 import CotopiaButton from '@/components/shared-ui/c-button';
@@ -81,9 +82,9 @@ export default function PayrollSideBarLink() {
           icon: <Grid />,
         },
         {
-          title: 'Users Payments',
-          page: 'all-payment',
-          icon: <Grid />,
+          title: 'Cotopia Wallet',
+          page: 'cotopia-wallet',
+          icon: <Wallet />,
         },
         {
           title: 'My Payments',
@@ -93,7 +94,7 @@ export default function PayrollSideBarLink() {
       ];
 
   return (
-    <ul className="p-3 mt-4 flex flex-col gap-y-2">
+    <ul className="p-3 mt-4 flex flex-col gap-y-6">
       {links.map((link) => (
         <li key={link.title}>
           <CotopiaButton

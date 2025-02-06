@@ -12,13 +12,16 @@ import { cn, isUserAdmin } from '@/lib/utils';
 import ParticipantBadge from './participant-badges';
 import { Crown, Shield } from 'lucide-react';
 import ParticipantDetails from '../room/participant-detail';
+import { useWorkspace } from '@/pages/workspace';
 
 interface Props {
   participants: WorkspaceUserType[];
 }
 
 const ParticipantRows = ({ participants }: Props) => {
-  const { room_id, workspace_id, workspaceUsers } = useRoomContext();
+  const { users } = useWorkspace();
+
+  const { room_id, workspace_id } = useRoomContext();
 
   const { user } = useAuth();
 
@@ -64,7 +67,7 @@ const ParticipantRows = ({ participants }: Props) => {
                 roomId={room_id}
                 participants={[participant]}
                 render={(item, content) => {
-                  const user = workspaceUsers.find((a) => a.id === item.id);
+                  const user = users.find((a) => a.id === item.id);
                   const admin = user ? isUserAdmin(user, workspace_id) : false;
                   const isOwner = findWorkspace
                     ? findWorkspace?.role === 'owner'

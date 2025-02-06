@@ -321,6 +321,9 @@ export function formatTime(
   min: boolean = false,
   short: boolean = false,
 ): string {
+  if (totalMinutes === 0) {
+    return 0 + ' hrs';
+  }
   const hours = Math.floor(totalMinutes / 60);
   const wholeMinutes = Math.floor(totalMinutes % 60); // Extract whole minutes
   const seconds = Math.round((totalMinutes % 1) * 60); // Convert fractional part to seconds

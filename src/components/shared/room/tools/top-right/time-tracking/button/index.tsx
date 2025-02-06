@@ -4,6 +4,7 @@ import { ClockIcon } from '@/components/icons';
 import { VARZ } from '@/const/varz';
 import { cn } from '@/lib/utils';
 import useAuth from '@/hooks/auth';
+import colors from 'tailwindcss/colors';
 
 type Props = {
   isLoading: boolean;
@@ -11,6 +12,7 @@ type Props = {
   isOpen: boolean;
   defaultSeconds: number;
   stop: boolean;
+  desc?: string;
 };
 
 export default function TimeTrackingButton({
@@ -19,6 +21,7 @@ export default function TimeTrackingButton({
   isOpen,
   defaultSeconds,
   stop,
+  desc,
 }: Props) {
   const { user } = useAuth();
 
@@ -43,14 +46,14 @@ export default function TimeTrackingButton({
           >
             {(time) => (
               <span className={cn('min-w-[60px]', stop ? 'text-red-500' : '')}>
-                {time}
+                {desc === undefined ? time : desc}
               </span>
             )}
           </Timer>
         </div>
       ) : (
-        <div className="max-w-[100px]">
-          <p className={'text-red-500 text-ellipsis overflow-hidden'}>
+        <div className="max-w-[200px]">
+          <p className={'text-red-500 text-xs text-ellipsis overflow-hidden'}>
             You have no active contract!
           </p>
         </div>

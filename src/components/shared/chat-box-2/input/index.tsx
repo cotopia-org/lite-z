@@ -51,7 +51,7 @@ const ChatInput: React.FC<ChatInputProps> = ({ addMessage }) => {
   const showReplyMessage = replyMessage && !editMessage
 
   return (
-    <div className='relative mb-2'>
+    <div className='relative mb-2 bg-red-500'>
       <Mentions value={inputValue} onAdd={handleAddUserMention} />
       {showReplyMessage && <ReplyBox item={replyMessage} />}
       {editMessage && <EditBox item={editMessage} />}

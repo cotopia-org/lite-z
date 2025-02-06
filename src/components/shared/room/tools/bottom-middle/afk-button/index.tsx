@@ -3,45 +3,35 @@ import useSetting from '@/hooks/use-setting';
 import { useAppDispatch } from '@/store';
 import { disableAfk, enableAfk } from '@/store/slices/setting-slice';
 import { thunkResHandler } from '@/utils/utils';
-import { useLocalParticipant } from '@livekit/components-react';
-import { Track } from 'livekit-client';
 import { HeadphonesIcon } from 'lucide-react';
-import { useRoomHolder } from '../../..';
 import { dispatch as busDispatch } from 'use-bus';
 import { __BUS } from '@/const/bus';
 import StreamButton from '../stream-button';
 import { HeadphoneOffIcon } from '@/components/icons';
+import { useMediaContext } from '../../../media-context';
+import { useCallback } from 'react';
+import { usePermissionContext } from '@/pages/workspace/permission-context';
 
 export default function AfkButtonTool() {
-  const participant = useLocalParticipant();
+  const { voiceOff } = useMediaContext();
 
-  const localParticipant = participant.localParticipant;
-  let voiceTrack = undefined;
-  if (
-    localParticipant &&
-    typeof localParticipant?.getTrackPublication !== 'undefined'
-  ) {
-    //@ts-nocheck
-    voiceTrack = localParticipant?.getTrackPublication(Track.Source.Microphone);
-  }
+  const { resetStreamHandler } = usePermissionContext();
 
-  const track = voiceTrack?.track;
+  const { reduxSettings } = useSetting();
 
-  const { afk } = useSetting();
-
-  const { disableAudioAccess, disableAfkHandler } = useRoomHolder();
+  const is_afk = reduxSettings.afk;
 
   const { startLoading, stopLoading, isLoading } = useLoading();
   const dispatch = useAppDispatch();
-  const handleToggleAfk = () => {
+  const handleToggleAfk = useCallback(() => {
     startLoading();
-    if (afk === true) {
+    if (is_afk === true) {
       thunkResHandler(
         dispatch(disableAfk()),
         'users/beOnline',
         () => {
           stopLoading();
-          disableAfkHandler();
+          resetStreamHandler();
           busDispatch(__BUS.startWorkTimer);
         },
         () => {
@@ -54,8 +44,7 @@ export default function AfkButtonTool() {
         'users/beAfk',
         () => {
           stopLoading();
-          track?.mute();
-          disableAudioAccess();
+          voiceOff();
           busDispatch(__BUS.stopWorkTimer);
         },
         () => {
@@ -63,19 +52,26 @@ export default function AfkButtonTool() {
         },
       );
     }
-  };
+  }, [
+    dispatch,
+    is_afk,
+    resetStreamHandler,
+    startLoading,
+    stopLoading,
+    voiceOff,
+  ]);
 
   return (
     <StreamButton
-      tooltipTitle={`${!afk ? 'Enable AFK' : 'Disable AFK'}`}
+      tooltipTitle={`${!is_afk ? 'Enable AFK' : 'Disable AFK'}`}
       onClick={handleToggleAfk}
       loading={isLoading}
-      isActive={!afk}
+      isActive={!is_afk}
     >
       {({ color }) => {
         let icon = <HeadphonesIcon color={color} size={20} />;
 
-        if (afk) {
+        if (is_afk) {
           icon = <HeadphoneOffIcon color={color} size={20} />;
         }
 

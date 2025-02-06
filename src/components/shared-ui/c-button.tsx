@@ -32,7 +32,7 @@ export default function CotopiaButton({
         <Loader className="animate-spin" />
       ) : (
         <>
-          <div className="button-wrapper flex flex-row items-center gap-x-2">
+          <div className="button-wrapper flex flex-row items-center gap-x-2 ">
             {!!startIcon && startIcon}
             {rest?.children}
           </div>

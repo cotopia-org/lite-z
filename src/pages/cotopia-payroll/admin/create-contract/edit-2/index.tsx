@@ -26,6 +26,7 @@ import { toast } from 'sonner';
 import MinHours from './min-hours';
 import MaxHours from './max-hours';
 import { useRoomContext } from '@/components/shared/room/room-context';
+import InJob from './InJob';
 
 type Props = {
   defaultContract?: UserContractType;
@@ -103,6 +104,7 @@ export default function ManageContract({
     { title: 'Max', content: <MaxHours /> },
     { title: 'Payment Details', content: <PaymentDetails /> },
     { title: 'Renewal', content: <Extensions /> },
+    { title: 'In Job', content: <InJob /> },
     { title: 'Schedule(s)', content: <Schedules /> },
     { title: 'Disclosure', content: <Policies /> },
   ];

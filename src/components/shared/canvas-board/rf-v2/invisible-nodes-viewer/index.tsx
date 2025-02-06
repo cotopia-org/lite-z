@@ -1,9 +1,9 @@
 import { Node } from '@xyflow/react';
 import InvisibleNode from './invisible-node';
-import { VARZ } from '@/const/varz';
 
 export type InvisibleNodeType = {
   node: Node;
+  id: string | number;
   invisible: boolean;
   invisible_side?: string;
   delta_x?: number;

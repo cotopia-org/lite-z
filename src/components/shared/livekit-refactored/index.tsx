@@ -2,7 +2,8 @@ import { VARZ } from '@/const/varz';
 import { useAppSelector } from '@/store';
 import { LiveKitRoom } from '@livekit/components-react';
 import { ReactNode } from 'react';
-import { useRoomHolder } from '../room';
+import MediaContextProvider from '../room/media-context';
+import { usePermissionContext } from '@/pages/workspace/permission-context';
 
 type Props = {
   children: ReactNode;
@@ -10,7 +11,7 @@ type Props = {
 export default function LivekitRefactored({ children }: Props) {
   const { token } = useAppSelector((store) => store.livekit);
 
-  const { mediaPermissions } = useRoomHolder();
+  const { permissions } = usePermissionContext();
 
   return (
     //@ts-ignore
@@ -18,8 +19,8 @@ export default function LivekitRefactored({ children }: Props) {
       serverUrl={VARZ.serverUrl}
       token={token}
       connect={true}
-      video={mediaPermissions.video}
-      audio={mediaPermissions.audio}
+      video={permissions.video}
+      audio={permissions.audio}
       options={{
         adaptiveStream: {
           pixelDensity: 'screen',
@@ -34,7 +35,7 @@ export default function LivekitRefactored({ children }: Props) {
         },
       }}
     >
-      {children}
+      <MediaContextProvider>{children}</MediaContextProvider>
     </LiveKitRoom>
   );
 }

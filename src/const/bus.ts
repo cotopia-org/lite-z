@@ -11,6 +11,7 @@ export const __BUS = {
   scrollEndChatBox: 'SCROLL_END_CHATBOX',
   scrollMessageToEnd: 'SCROLL_MSG_TO_END',
   backToOriginMessage: 'BACK_TO_ORIGIN_MESSAGE',
+  refreshRoomHolder: 'REFRESH_ROOM_HOLDER',
   scrollToTopNewChatMessages: 'SCROLL_TO_TOP_NEW_CHAT_MESSAGES',
   scrollToTargetMessage: 'SCROLL_TO_TARGET_MESSAGE',
   changeMyUserCoord: 'CHANGE_MY_USER_COORD',

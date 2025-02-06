@@ -102,7 +102,9 @@ export default function PayrollButton() {
     <PopupBox
       trigger={(open, isOpen) => (
         <div className="relative">
-          {contracts.filter((a) => a.status !== 'signed').length > 0 && (
+          {my_contracts.filter(
+            (a) => a.status === 'waiting_user_sign' || a.status === 'draft',
+          ).length > 0 && (
             <div className="w-2 h-2 bg-red-500 rounded-full absolute top-2 right-2 z-10"></div>
           )}
           <ToolButton

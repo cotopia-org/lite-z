@@ -8,6 +8,7 @@ import Employees from '../../admin/employees/components/employees-table';
 import PayrollAllPayments from '../../admin/all-payments';
 import AllUserContracts from '../../admin/all-user-contracts';
 import MyContracts from '../user-contracts';
+import CotopiaWallet from '../../common/cotopia-wallet';
 
 type Props = {
   onClose: () => void;
@@ -17,7 +18,7 @@ export type PayrollPageType =
   | 'all-members'
   | 'all-user-contract'
   | 'user-contract'
-  | 'all-payment'
+  | 'cotopia-wallet'
   | 'payments'
   | 'all-payments'
   | 'create-contract'
@@ -54,8 +55,8 @@ export default function PayrollPage({ onClose }: Props) {
     case 'all-members':
       content = <Employees />;
       break;
-    case 'all-payment':
-      content = <PayrollDashboard />;
+    case 'cotopia-wallet':
+      content = <CotopiaWallet />;
       break;
     case 'all-payments':
       content = <PayrollAllPayments />;

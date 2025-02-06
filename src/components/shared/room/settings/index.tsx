@@ -42,7 +42,7 @@ export default function RoomSettings() {
     dispatch(getChats({ workspace_id: +workspace_id }));
   }, [workspace_id]);
 
-  const { sounds } = useSetting();
+  const { reduxSettings } = useSetting();
 
   const { user } = useAuth();
 
@@ -140,7 +140,8 @@ export default function RoomSettings() {
           }
         }
 
-        if (sounds.messageIncoming) playSoundEffect('newMessage2');
+        if (reduxSettings.sounds.messageIncoming)
+          playSoundEffect('newMessage2');
       }
 
       if (targetChat === undefined) {
