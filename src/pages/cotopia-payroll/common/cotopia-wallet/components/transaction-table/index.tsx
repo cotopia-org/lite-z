@@ -25,12 +25,20 @@ function TransactionsTable({ transactions }: TransactionsTableProps) {
           </tr>
         </thead>
 
+
         <tbody>
-          {transactions.map((tx) => (
-            <Transaction key={tx.id} {...tx} />
-          ))}
+
+          {/* {transactions.map((tx) => (
+              <Transaction key={tx.id} {...tx} />
+            ))} */}
+
+          <tr>
+            <td colSpan={5} className="text-center p-6 font-medium text-sm">No transactions found</td>
+          </tr>
+
         </tbody>
-        
+
+
       </table>
     </div>
   );

@@ -2,7 +2,7 @@ import { useRef } from "react";
 import CotopiaButton from "@/components/shared-ui/c-button";
 import { FullModalBox } from "@/components/shared/modal-box";
 import ToolButton from "@/components/shared/room/tools/tool-button";
-import { Wallet } from "lucide-react";
+import { Copy, Wallet } from "lucide-react";
 import { toast } from "sonner";
 
 export default function ReceiveMoney() {
@@ -40,15 +40,16 @@ export default function ReceiveMoney() {
                 <>
                     <span
                         ref={walletAddressRef}
-                        className="bg-gray-200 p-2 text-center font-semibold rounded-sm"
+                        className="bg-gray-100 p-3 rounded-lg shadow-md text-gray-800 font-semibold w-full text-center"
                     >
-                        Lorem ipsum dolor sit amet consectetur adipisicing elit. Soluta earum quo harum?
+                        0xA1b2C3D4E5F6G7H8I9J0K1L2M3N4O5P6Q7R8S9T0
                     </span>
+
                     <CotopiaButton
-                        className="w-full p-7"
+                        className="w-full flex items-center justify-center gap-x-2 p-4 bg-blue-600 hover:bg-blue-700 transition-all rounded-lg text-white font-semibold shadow-md"
                         onClick={handleCopyAddress}
                     >
-                        Copy wallet address
+                        <Copy size={18} /> Copy Wallet Address
                     </CotopiaButton>
                 </>
             )}

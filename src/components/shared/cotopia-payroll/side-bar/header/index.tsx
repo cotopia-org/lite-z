@@ -10,6 +10,7 @@ export default function PayrollSideBarHeader() {
 
   const user = useAppSelector((store) => store.auth.user);
   const isAdmin = isUserAdmin(user, workspace_id ? +workspace_id : undefined);
+  
   return (
     <FullModalBox
       trigger={(open) => (
