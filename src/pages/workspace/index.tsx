@@ -27,6 +27,7 @@ const WorkspaceContext = createContext<{
   workspaceFetchingLoading?: boolean;
   leadeboard: LeaderboardType[];
   schudules: ScheduleType[];
+  workspace_id: string;
 }>({
   users: [],
   activeRoom: undefined,
@@ -35,6 +36,8 @@ const WorkspaceContext = createContext<{
   workspaceFetchingLoading: false,
   leadeboard: [],
   schudules: [],
+  //@ts-ignore
+  workspace_id: undefined,
 });
 
 export const useWorkspace = () => useContext(WorkspaceContext);
@@ -148,6 +151,7 @@ export default function WorkspacePage() {
         workspaceFetchingLoading: isLoading,
         leadeboard: values?.leaderboard ?? [],
         schudules: values?.schedules ?? [],
+        workspace_id: workspace_id as string,
       }}
     >
       <ReactFlowProvider>
