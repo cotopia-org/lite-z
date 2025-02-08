@@ -13,6 +13,7 @@ import PaymentTab from './payment-tab';
 import TitleEl from '@/components/shared/title-el';
 import ContractDetails from '@/components/shared/room/tools/top-right/payroll-button/contract-details';
 import ContractStatus from '@/components/shared/room/tools/top-right/payroll-button/contract-status';
+import { usePayroll } from '../../user/payroll';
 
 type Props = {
   isAll?: boolean;
@@ -25,7 +26,7 @@ export default function Payments({ isAll = true }: Props) {
 
   const [selectedContractId, setSelectedContractId] = useState<number>();
 
-  const { workspaceUsers } = useRoomContext();
+  const { users: workspaceUsers } = usePayroll();
 
   const { data, mutate } = useApi(isAll ? `/payments` : `/users/me/payments`);
   const payments: PaymentType[] = data !== undefined ? data?.data : [];

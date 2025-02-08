@@ -8,6 +8,10 @@ import Employees from '../../admin/employees/components/employees-table';
 import PayrollAllPayments from '../../admin/all-payments';
 import AllUserContracts from '../../admin/all-user-contracts';
 import MyContracts from '../user-contracts';
+import { useParams } from 'react-router-dom';
+import { useApi } from '@/hooks/swr';
+import { FetchDataType } from '@/services/axios';
+import { UserType, WorkspaceUserType } from '@/types/user';
 
 type Props = {
   onClose: () => void;
@@ -27,15 +31,23 @@ const PayrollContext = createContext<{
   onClose: () => void;
   page: PayrollPageType;
   changePage: (page: PayrollPageType) => void;
+  users: WorkspaceUserType[];
 }>({
   onClose: () => {},
   page: 'user-contract',
   changePage: (page) => {},
+  users: [],
 });
 
 export const usePayroll = () => useContext(PayrollContext);
 
 export default function PayrollPage({ onClose }: Props) {
+  const { workspace_id } = useParams();
+  const { data } = useApi<FetchDataType<WorkspaceUserType[]>>(
+    `/workspaces/${workspace_id}/users`,
+  );
+  const users = data !== undefined ? data.data : [];
+
   const [active, setActive] = useState<PayrollPageType>('user-contract');
   let content = null;
   switch (active) {
@@ -67,7 +79,7 @@ export default function PayrollPage({ onClose }: Props) {
 
   return (
     <PayrollContext.Provider
-      value={{ onClose, page: active, changePage: setActive }}
+      value={{ onClose, page: active, changePage: setActive, users }}
     >
       <PayrollWrapper>{content}</PayrollWrapper>
     </PayrollContext.Provider>

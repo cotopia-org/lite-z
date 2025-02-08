@@ -2,7 +2,6 @@ import CotopiaButton from '@/components/shared-ui/c-button';
 import CotopiaTable from '@/components/shared-ui/c-table';
 import PayrollContractDetails from '@/components/shared/cotopia-payroll/user-information/user-contract/contract-details';
 import ParticipantsWithPopover from '@/components/shared/participants/with-popover';
-import { useRoomContext } from '@/components/shared/room/room-context';
 import EditContract from '@/components/shared/room/tools/top-right/payroll-button/edit-contract';
 import { UserContractType } from '@/types/contract';
 import { ChevronRight, Trash } from 'lucide-react';
@@ -12,6 +11,7 @@ import { useLoading } from '@/hooks';
 import FullLoading from '@/components/shared/full-loading';
 import axiosInstance from '@/services/axios';
 import ContractStatus from '@/components/shared/room/tools/top-right/payroll-button/contract-status';
+import { usePayroll } from '../../user/payroll';
 
 type Props = {
   items: UserContractType[];
@@ -21,7 +21,7 @@ export default function UserContracts({ items, loading }: Props) {
   const [selectedContract, setSelectedContract] = useState<UserContractType>();
 
   const { isLoading, startLoading, stopLoading } = useLoading();
-  const { workspaceUsers } = useRoomContext();
+  const { users: workspaceUsers } = usePayroll();
 
   const handleDelete = useCallback(
     (item: UserContractType) => {
