@@ -67,7 +67,7 @@ export default function CalendarPage() {
             .add(day, 'days')
             .add(weekOffset, 'weeks');
 
-          times.forEach(({ start, end }) => {
+          times.forEach(({ start, end }, index) => {
             const startTime = eventDate
               .clone()
               //@ts-ignore
@@ -80,7 +80,7 @@ export default function CalendarPage() {
               .format();
 
             transformedEvents.push({
-              id: `${entry.id}-${weekOffset}-${day}`,
+              id: `${entry.id}-${weekOffset}-${day}-${index}`,
               title: `${userName}`,
               start: startTime,
               end: endTime,
