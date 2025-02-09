@@ -1,4 +1,4 @@
-import { UserMinimalType, WorkspaceUserType } from './user';
+import { WorkspaceUserType } from './user';
 
 export enum AvailabiltyType {
   'Video' = 0,

@@ -31,7 +31,7 @@ const WorkspacePayrollPage = lazy(() => import('@/pages/workspace/payroll'));
 
 //Workspace page
 const WorkspacePage = lazy(() => import('@/pages/workspace'));
-const WorkspaceRoomPage = lazy(() => import('@/pages/workspace/rooms/room'));
+const WorkspaceCalendarPage = lazy(() => import('@/pages/workspace/calendar'));
 
 //Auth pages
 const LoginPage = lazy(() => import('@/pages/auth/login'));
@@ -70,10 +70,9 @@ const router = createBrowserRouter([
         path: routeResolver(
           paths.workspaces.index,
           paths.workspaces.view,
-          paths.workspaces.rooms.index,
-          paths.workspaces.rooms.view.index,
+          paths.workspaces.calendar,
         ),
-        element: <WorkspaceRoomPage />,
+        element: <WorkspaceCalendarPage />,
       },
       {
         path: routeResolver(

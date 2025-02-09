@@ -1,36 +1,139 @@
-import FullLoading from '@/components/shared/full-loading';
 import RoomSettings from '@/components/shared/room/settings';
 import RoomSidebar from '@/components/shared/room/sidebar';
-import { useApi } from '@/hooks/swr';
 import { cn } from '@/lib/utils';
-import { FetchDataType } from '@/services/axios';
-import { WorkspaceType } from '@/types/workspace';
+import { WorkspaceRoomShortType, WorkspaceRoomType } from '@/types/room';
+import { createContext, useContext, useEffect, useState } from 'react';
+import WorkspaceRoomPage from './rooms/room';
+import WorkspaceRootPage from './workspace-root';
+import { useLoading, useValues } from '@/hooks';
+import { UserMinimalType, WorkspaceUserType } from '@/types/user';
 import { useParams } from 'react-router-dom';
-import { createContext, useContext, useState } from 'react';
-import WorkspaceRoomPage from '@/pages/workspace/rooms/room';
+import axiosInstance from '@/services/axios';
+import { useSocket } from '@/routes/private-wrarpper';
+import useAuth from '@/hooks/auth';
+import { LeaderboardType } from '@/types/leaderboard';
+import { ScheduleType } from '@/types/calendar';
+import { ReactFlowProvider } from '@xyflow/react';
 
-const ActiveRoomContext = createContext<{
-  activeRoom: number | null;
-  setActiveRoom: (id: number) => void;
+type LeftJoinType = { room_id: number; user: UserMinimalType };
+
+const WorkspaceContext = createContext<{
+  users: WorkspaceUserType[];
+  activeRoom: WorkspaceRoomType | WorkspaceRoomShortType | undefined;
+  setActiveRoom: (
+    room: WorkspaceRoomType | WorkspaceRoomShortType | undefined,
+  ) => void;
+  changeUserRoom: (user_id: number, room_id: number) => void;
+  workspaceFetchingLoading?: boolean;
+  leadeboard: LeaderboardType[];
+  schudules: ScheduleType[];
+  workspace_id: string;
 }>({
-  activeRoom: null,
-  setActiveRoom: (id: number) => {},
+  users: [],
+  activeRoom: undefined,
+  setActiveRoom: () => {},
+  changeUserRoom: () => {},
+  workspaceFetchingLoading: false,
+  leadeboard: [],
+  schudules: [],
+  //@ts-ignore
+  workspace_id: undefined,
 });
 
-export const useActiveRoom = () => useContext(ActiveRoomContext);
+export const useWorkspace = () => useContext(WorkspaceContext);
 
 export default function WorkspacePage() {
-  const params = useParams();
-  const { data, isLoading } = useApi<FetchDataType<WorkspaceType>>(
-    `/workspaces/${params.workspace_id}`,
+  const { startLoading, stopLoading, isLoading } = useLoading();
+
+  const { user } = useAuth();
+
+  const { workspace_id } = useParams();
+
+  const { values, changeKey } = useValues<{
+    activeRoom: WorkspaceRoomType | WorkspaceRoomShortType | undefined;
+    users: WorkspaceUserType[];
+    leaderboard: LeaderboardType[];
+    schedules: ScheduleType[];
+  }>({ activeRoom: undefined, users: [], leaderboard: [], schedules: [] });
+
+  const changeUserRoom = (user_id: number, room_id: number | null) => {
+    const users = values?.users ?? [];
+    const userIndex = users.findIndex((user) => user.id === user_id);
+    if (userIndex !== -1) {
+      users[userIndex].room_id = room_id;
+      changeKey('users', users);
+    }
+  };
+
+  useEffect(() => {
+    //schedules getting function
+    async function getSchedules(workspace_id: string) {
+      return axiosInstance
+        .get(`/workspaces/${workspace_id}/schedules`)
+        .then((res) => {
+          const schedules: ScheduleType[] = res.data?.data ?? [];
+          return schedules;
+        });
+    }
+
+    //leaderboard getting function
+    async function getLeaderboard(workspace_id: string) {
+      return axiosInstance
+        .get(`/workspaces/${workspace_id}/leaderboard`)
+        .then((res) => {
+          const leaderboard: LeaderboardType[] = res.data?.data ?? [];
+          return leaderboard;
+        });
+    }
+
+    //Workspace users getting function
+    async function getWorkspaceUsers(workspace_id: string) {
+      return axiosInstance
+        .get(`/workspaces/${workspace_id}/users`)
+        .then((res) => {
+          const users: WorkspaceUserType[] = res.data?.data ?? [];
+          return users;
+        });
+    }
+
+    async function getAllData(workspace_id: string) {
+      startLoading();
+      Promise.all([
+        getSchedules(workspace_id),
+        getLeaderboard(workspace_id),
+        getWorkspaceUsers(workspace_id),
+      ])
+        .then(([schedules, leaderboard, users]) => {
+          changeKey('schedules', schedules);
+          changeKey('leaderboard', leaderboard);
+          changeKey('users', users);
+          stopLoading();
+        })
+        .catch((err) => {
+          stopLoading();
+        });
+    }
+
+    if (workspace_id !== undefined) {
+      getAllData(workspace_id);
+    }
+  }, [workspace_id]);
+
+  useSocket(
+    'userLeftFromRoom',
+    (data: LeftJoinType) => {
+      if (data.user.id !== user.id) changeUserRoom(data.user.id, null);
+    },
+    [user],
   );
-  const [room, setRoom] = useState<number | null>(null);
 
-  const workspace = data !== undefined ? data?.data : null;
-
-  if (data === undefined || isLoading) return <FullLoading />;
-
-  if (workspace === null) return null;
+  useSocket(
+    'userJoinedToRoom',
+    (data: LeftJoinType) => {
+      changeUserRoom(data.user.id, data.room_id);
+    },
+    [],
+  );
 
   let mainRoomHolderClss = 'main-room-holder w-full h-screen overflow-hidden';
 
@@ -38,37 +141,29 @@ export default function WorkspacePage() {
     'fixed right-0 top-0 bottom-0 w-full md:w-[376px] h-screen overflow-y-auto z-10',
   );
 
-  let content = (
-    <div id="lobby-page" className={mainRoomHolderClss}>
-      <div className="relative p-8">
-        <div className="flex flex-col gap-y-4">
-          <h1 className="text-2xl font-bold">{workspace.title}</h1>
-          <p>{workspace.description}</p>
-        </div>
-      </div>
-      <div className={cn(parentSidebarClass, 'border-l')}>
-        <RoomSidebar>
-          <RoomSettings />
-        </RoomSidebar>
-      </div>
-    </div>
-  );
-
-  if (room !== null) {
-    content = <WorkspaceRoomPage />;
-  }
-
   return (
-    <ActiveRoomContext.Provider
+    <WorkspaceContext.Provider
       value={{
-        activeRoom: room,
-        setActiveRoom: (id) => {
-          console.log(id);
-          setRoom(id);
-        },
+        users: values?.users ?? [],
+        changeUserRoom,
+        activeRoom: values?.activeRoom,
+        setActiveRoom: (room) => changeKey('activeRoom', room),
+        workspaceFetchingLoading: isLoading,
+        leadeboard: values?.leaderboard ?? [],
+        schudules: values?.schedules ?? [],
+        workspace_id: workspace_id as string,
       }}
     >
-      {content}
-    </ActiveRoomContext.Provider>
+      <ReactFlowProvider>
+        <div id="lobby-page" className={mainRoomHolderClss}>
+          {values?.activeRoom ? <WorkspaceRoomPage /> : <WorkspaceRootPage />}
+          <div className={cn(parentSidebarClass, 'border-l')}>
+            <RoomSidebar>
+              <RoomSettings />
+            </RoomSidebar>
+          </div>
+        </div>
+      </ReactFlowProvider>
+    </WorkspaceContext.Provider>
   );
 }

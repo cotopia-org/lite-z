@@ -5,6 +5,7 @@ import useLoading from '@/hooks/use-loading';
 import useQueryParams from '@/hooks/use-query-params';
 import useSetting from '@/hooks/use-setting';
 import { playSoundEffect } from '@/lib/sound-effects';
+import { useWorkspace } from '@/pages/workspace';
 import { useSocket } from '@/routes/private-wrarpper';
 import axiosInstance, { FetchDataType } from '@/services/axios';
 import { ScheduleType } from '@/types/calendar';
@@ -204,6 +205,8 @@ export default function RoomContext({
     });
   });
 
+  const { setActiveRoom, users, leadeboard, schudules } = useWorkspace();
+
   const { reduxSettings } = useSetting();
 
   const { query } = useQueryParams();
@@ -218,12 +221,14 @@ export default function RoomContext({
       .get<FetchDataType<WorkspaceRoomJoinType>>(`/rooms/${room_id}/join`)
       .then((res) => {
         const livekitToken = res.data.data.token; //Getting livekit token from joinObject
-        mutateWorkspaceUsers();
         if (livekitToken) {
           if (reduxSettings.sounds.userJoinLeft) playSoundEffect('joined');
-          router(
-            `/workspaces/${workspace_id}/rooms/${room_id}?token=${livekitToken}`,
-          );
+
+          setActiveRoom(room);
+
+          // router(
+          //   `/workspaces/${workspace_id}/rooms/${room_id}?token=${livekitToken}`,
+          // );
           return;
         }
       });
@@ -276,29 +281,9 @@ export default function RoomContext({
   const openSidebar = (sidebar: ReactNode) => setSidebar(sidebar);
   const closeSidebar = () => setSidebar(undefined);
 
-  const { data: leaderboardData } = useApi(
-    `/workspaces/${workspace_id}/leaderboard`,
-  );
-  const leaderboardUsers: LeaderboardType[] =
-    leaderboardData !== undefined ? leaderboardData.data : [];
-
-  const { data: schedulesData } = useApi(
-    `/workspaces/${workspace_id}/schedules`,
-  );
-  const schedulesItems: ScheduleType[] =
-    schedulesData !== undefined ? schedulesData?.data : [];
-
-  const { data: workspaceUsersData, mutate: mutateWorkspaceUsers } = useApi(
-    `/workspaces/${workspace_id}/users`,
-  );
-  const workspaceUsers: WorkspaceUserType[] =
-    workspaceUsersData !== undefined ? workspaceUsersData?.data : [];
-
   useSocket(
     'userLeftFromRoom',
     (data: LeftJoinType) => {
-      mutateWorkspaceUsers();
-
       if (room === undefined) return;
 
       if (room_id !== data.room_id) return;
@@ -311,14 +296,12 @@ export default function RoomContext({
 
       setRoom(room);
     },
-    [room, mutateWorkspaceUsers],
+    [room],
   );
 
   useSocket(
     'userJoinedToRoom',
     (data: LeftJoinType) => {
-      mutateWorkspaceUsers();
-
       if (room === undefined) return;
 
       if (room_id !== data.room_id) return;
@@ -331,10 +314,10 @@ export default function RoomContext({
 
       dispatch(__BUS.refreshNodeAudio);
     },
-    [room, mutateWorkspaceUsers],
+    [room],
   );
 
-  const workpaceJobItems: JobType[] = workspaceUsers
+  const workpaceJobItems: JobType[] = users
     .filter((x) => x.active_job !== undefined)
     .map((x) => x.active_job as JobType);
 
@@ -342,11 +325,11 @@ export default function RoomContext({
 
   const usersHaveInProgressJobs: UserMinimalType[] = [];
 
-  const workingUsers = workspaceUsers.filter(
+  const workingUsers = users.filter(
     (x) => x.active_job !== null && x.status === 'online',
   );
 
-  const onlineUsers = leaderboardUsers
+  const onlineUsers = leadeboard
     .filter(
       (x) =>
         x.user.active === 1 &&
@@ -376,12 +359,11 @@ export default function RoomContext({
         changePermissionState,
         livekit_token: (livekit_token as string) ?? undefined,
         joinRoom: handleJoinRoom,
-        leaderboard: leaderboardUsers,
-        scheduled: schedulesItems,
-        workspaceUsers,
+        leaderboard: leadeboard,
+        scheduled: schudules,
+        workspaceUsers: users,
         workspaceJobs: workpaceJobItems,
         workingUsers: workingUsers,
-        mutateWorkspaceUsers,
         //@ts-ignore
         onlineUsers: onlineUsers,
         usersHaveJobs: usersHaveJobs,

@@ -51,44 +51,6 @@ export default function WorkspaceRooms({
       })}
     </>
   );
-  //
-  // if (gridRooms.length > 0) {
-  //   rooms_view = (
-  //     <RoomTypesTabs>
-  //       <RoomsHolder title="Canvas Room">
-  //         {flowRooms.map((room) => {
-  //           return (
-  //             <WorkspaceRoom
-  //               selected_room_id={selected_room_id}
-  //               key={room.id}
-  //               workspace_id={workspace_id}
-  //               room={room}
-  //               participants={workspaceUsers.filter(
-  //                 (x) => x.room_id === room.id && x.status === "online"
-  //               )}
-  //             />
-  //           )
-  //         })}
-  //       </RoomsHolder>
-  //       <hr className="my-4" />
-  //       <RoomsHolder title="Grid Room">
-  //         {gridRooms.map((room) => {
-  //           return (
-  //             <WorkspaceRoom
-  //               selected_room_id={selected_room_id}
-  //               key={room.id}
-  //               workspace_id={workspace_id}
-  //               room={room}
-  //               participants={workspaceUsers.filter(
-  //                 (x) => x.room_id === room.id && x.status === "online"
-  //               )}
-  //             />
-  //           )
-  //         })}
-  //       </RoomsHolder>
-  //     </RoomTypesTabs>
-  //   )
-  // }
 
   return (
     <div className="flex flex-col justify-start gap-y-1 w-full">

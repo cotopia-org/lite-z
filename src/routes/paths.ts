@@ -11,6 +11,7 @@ export const paths = {
     index: 'workspaces',
     create: 'create',
     view: ':workspace_id',
+    calendar: 'calendar',
     settings: 'settings',
     rooms: {
       index: 'rooms',
