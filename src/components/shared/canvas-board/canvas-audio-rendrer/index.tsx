@@ -69,8 +69,6 @@ export function CanvasAudioRenderer() {
       !isLocal(ref.participant) && ref.publication.kind === Track.Kind.Audio,
   );
 
-  console.log(tracks, 'TRACKS');
-
   if (!user) return null;
 
   const myUserNode = rf.getNode(user?.username);
@@ -104,12 +102,6 @@ export function CanvasAudioRenderer() {
           volume = 1;
           isMuted = false;
         }
-        // if (userNode?.hard_muted) {
-        //   isMuted = true;
-        //   volume = 0;
-        // }
-
-        console.log(volume, trackOwner, 'VOLUME');
 
         return (
           <AudioTrack
