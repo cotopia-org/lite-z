@@ -44,10 +44,10 @@ export default function WorkspaceRoom({
   const joinRoomHandler = async () => {
     if (room.type === 'grid') closeSidebarInMobile();
 
-    if (selected_room_id !== room.id) {
-      //Change user room in workspace datas
-      changeUserRoom(user.id, room.id);
+    //Change user room in workspace datas
+    changeUserRoom(user.id, room.id);
 
+    if (selected_room_id !== room.id) {
       //Set active room ...
       setActiveRoom(room);
 

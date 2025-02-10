@@ -41,29 +41,6 @@ export default function RoomHolder({ workspace_id, room_id }: Props) {
   const socket = useSocket();
 
   useEffect(() => {
-    // const getSettings = async () => {
-    //   try {
-    //     dispatch({ type: 'START_LOADING' });
-    //     const res = await axiosInstance.get('/users/settings');
-    //     const settings: { [key: string]: any }[] = res.data.data ?? [];
-    //     let videoAccess = settings.find((x) => x.key === 'video');
-    //     let audioAccess = settings.find((y) => y.key === 'audio');
-    //     let video = videoAccess?.value === 'on' ? true : false;
-    //     let audio = audioAccess?.value === 'on' ? true : false;
-    //
-    //     dispatch({
-    //       type: 'CHANGE_VALUES',
-    //       payload: {
-    //         loading: false,
-    //         permissions: { video, audio },
-    //       },
-    //     });
-    //   } catch (error) {
-    //     dispatch({ type: 'STOP_LOADING' });
-    //   }
-    // };
-    // getSettings();
-
     if (socket && socket.connected) {
       handleJoin();
     }

@@ -124,15 +124,16 @@ export default function WorkspacePage() {
     (data: LeftJoinType) => {
       if (data.user.id !== user.id) changeUserRoom(data.user.id, null);
     },
-    [user],
+    [user, changeUserRoom],
   );
 
   useSocket(
     'userJoinedToRoom',
     (data: LeftJoinType) => {
+      console.log('user joined', data);
       changeUserRoom(data.user.id, data.room_id);
     },
-    [],
+    [changeUserRoom],
   );
 
   let mainRoomHolderClss = 'main-room-holder w-full h-screen overflow-hidden';

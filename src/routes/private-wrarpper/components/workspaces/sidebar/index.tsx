@@ -38,9 +38,7 @@ export default function WorkspaceSidebar() {
   const finalSchedulesIds = finalSchedules.map((x) => x.user.id);
 
   const allOfflineParticipants = users
-    .filter((x) => !onlineUserIds.includes(x.id))
-    .filter((x) => !finalSchedulesIds.includes(x.id))
-    .filter((x) => x.last_login !== null)
+    .filter((item) => item.status === 'offline')
     .sort((a, b) => moment(b.last_login).unix() - moment(a.last_login).unix());
 
   if (workspaceFetchingLoading) return <FullLoading className="py-6" />;
