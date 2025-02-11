@@ -35,12 +35,6 @@ export default function WorkspaceSidebar() {
     )
     .filter((x) => !onlineUserIds.includes(x.user.id));
 
-  const finalSchedulesIds = finalSchedules.map((x) => x.user.id);
-
-  const allOfflineParticipants = users
-    .filter((item) => item.status === 'offline')
-    .sort((a, b) => moment(b.last_login).unix() - moment(a.last_login).unix());
-
   if (workspaceFetchingLoading) return <FullLoading className="py-6" />;
 
   return (
@@ -53,7 +47,7 @@ export default function WorkspaceSidebar() {
       </BlurFade>
       <BlurFade delay={0.6} inView className="p-4 flex flex-col gap-y-6">
         <ScheduledUsers finalSchedules={finalSchedules} />
-        <OfflineUsers allOfflineParticipants={allOfflineParticipants} />
+        <OfflineUsers />
       </BlurFade>
       <WorkspaceActionFab />
     </div>
