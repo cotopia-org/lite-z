@@ -65,11 +65,10 @@ export default function WorkspacePage() {
   const changeUserRoom = (user_id: number, room_id: number | null) => {
     const users = values?.users ?? [];
     const userIndex = users.findIndex((user) => user.id === user_id);
-    console.log('users', users);
-    console.log('userIndex', userIndex);
+
     if (userIndex !== -1) {
       users[userIndex].room_id = room_id;
-      changeKey('users', users);
+      if (room_id !== null) users[userIndex].status = 'online';
     }
   };
 
