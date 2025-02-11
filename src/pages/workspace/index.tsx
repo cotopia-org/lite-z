@@ -59,7 +59,13 @@ export default function WorkspacePage() {
   }>({ activeRoom: undefined, users: [], leaderboard: [], schedules: [] });
 
   const leaveLocalUserFromActiveRoom = () => {
-    changeUserRoom(user.id, null);
+    const allUsers = [...values.users];
+    const user_index = allUsers.findIndex((a) => a.id === user.id);
+
+    if (user_index > -1) {
+      allUsers[user_index] = { ...allUsers[user_index], room_id: null };
+    }
+    changeKey('users', allUsers);
   };
 
   const changeUserRoom = (user_id: number, room_id: number | null) => {

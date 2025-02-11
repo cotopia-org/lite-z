@@ -1,12 +1,6 @@
 import { WorkspaceRoomShortType } from '@/types/room';
 import { WorkspaceUserType } from '@/types/user';
-import RoomTypesTabs from './room-types-tabs';
-import CTabs from '@/components/shared-ui/c-tabs';
-import { roomSeparatorByType } from '@/lib/utils';
 import WorkspaceRoom from './room';
-import { LayoutGrid } from 'lucide-react';
-import { useRoomContext } from '../../room/room-context';
-import RoomsHolder from './rooms-holder';
 import WorkspaceOverviewItem from './overview-item';
 
 type Props = {
