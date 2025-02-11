@@ -10,13 +10,16 @@ import { useLocation } from 'react-router-dom';
 export default function WorkspaceOverviewItem() {
   const location = useLocation();
 
-  const { activeRoom, setActiveRoom } = useWorkspace();
+  const { activeRoom, setActiveRoom, leaveLocalUserFromActiveRoom } =
+    useWorkspace();
   const { workspace_id } = useRoomContext();
 
   const handleClick = () => {
     if (activeRoom) {
       setActiveRoom(undefined);
-      axiosInstance.get(`/rooms/${activeRoom.id}/leave`);
+      axiosInstance.get(`/rooms/${activeRoom.id}/leave`).then((res) => {
+        leaveLocalUserFromActiveRoom();
+      });
     }
   };
 

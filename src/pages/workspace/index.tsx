@@ -24,6 +24,7 @@ const WorkspaceContext = createContext<{
     room: WorkspaceRoomType | WorkspaceRoomShortType | undefined,
   ) => void;
   changeUserRoom: (user_id: number, room_id: number) => void;
+  leaveLocalUserFromActiveRoom: () => void;
   workspaceFetchingLoading?: boolean;
   leadeboard: LeaderboardType[];
   schudules: ScheduleType[];
@@ -33,6 +34,7 @@ const WorkspaceContext = createContext<{
   activeRoom: undefined,
   setActiveRoom: () => {},
   changeUserRoom: () => {},
+  leaveLocalUserFromActiveRoom: () => {},
   workspaceFetchingLoading: false,
   leadeboard: [],
   schudules: [],
@@ -55,6 +57,10 @@ export default function WorkspacePage() {
     leaderboard: LeaderboardType[];
     schedules: ScheduleType[];
   }>({ activeRoom: undefined, users: [], leaderboard: [], schedules: [] });
+
+  const leaveLocalUserFromActiveRoom = () => {
+    changeUserRoom(user.id, null);
+  };
 
   const changeUserRoom = (user_id: number, room_id: number | null) => {
     const users = values?.users ?? [];
@@ -153,6 +159,7 @@ export default function WorkspacePage() {
         leadeboard: values?.leaderboard ?? [],
         schudules: values?.schedules ?? [],
         workspace_id: workspace_id as string,
+        leaveLocalUserFromActiveRoom,
       }}
     >
       <ReactFlowProvider>
