@@ -105,6 +105,7 @@ export default function RoomHolder({ workspace_id, room_id }: Props) {
             {socket?.connected === false && (
               <Disconnected onReTry={handleReTry} />
             )}
+            {/* @ts-ignore */}
             <LivekitRefactored disconnect={!socket?.connected}>
               {content}
             </LivekitRefactored>

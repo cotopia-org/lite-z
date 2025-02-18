@@ -14,7 +14,7 @@ export default function LivekitRefactored({ children, disconnect }: Props) {
 
   const { permissions } = usePermissionContext();
 
-  if (disconnect) return children;
+  if (disconnect) return <>{children}</>;
 
   return (
     //@ts-ignore
