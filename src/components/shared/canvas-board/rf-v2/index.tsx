@@ -453,8 +453,12 @@ export default function WithReactFlowV2() {
           return prev.filter((n) => n.id !== data.user.username);
         });
       }
+      //Stop the timer for user left join
+      dispatch({
+        type: __BUS.stopWorkTimer,
+      });
     },
-    [room?.id],
+    [room?.id, user?.id],
   );
 
   useSocket(
