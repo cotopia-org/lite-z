@@ -1,12 +1,12 @@
 import RoomSettings from '@/components/shared/room/settings';
 import RoomSidebar from '@/components/shared/room/sidebar';
-import { cn } from '@/lib/utils';
+import { cn, urlWithQueryParams } from '@/lib/utils';
 import { WorkspaceRoomShortType, WorkspaceRoomType } from '@/types/room';
-import { createContext, useContext, useEffect, useState } from 'react';
+import { createContext, useContext, useEffect } from 'react';
 import WorkspaceRoomPage from './rooms/room';
 import WorkspaceRootPage from './workspace-root';
 import { useLoading, useValues } from '@/hooks';
-import { UserMinimalType, WorkspaceUserType } from '@/types/user';
+import { UserMinimalType, UserType, WorkspaceUserType } from '@/types/user';
 import { useParams } from 'react-router-dom';
 import axiosInstance from '@/services/axios';
 import { useSocket } from '@/routes/private-wrarpper';
@@ -14,11 +14,19 @@ import useAuth from '@/hooks/auth';
 import { LeaderboardType } from '@/types/leaderboard';
 import { ScheduleType } from '@/types/calendar';
 import { ReactFlowProvider } from '@xyflow/react';
+import { JobType } from '@/types/job';
+import { dispatch } from 'use-bus';
+import { __BUS } from '@/const/bus';
 
 type LeftJoinType = { room_id: number; user: UserMinimalType };
 
 const WorkspaceContext = createContext<{
   users: WorkspaceUserType[];
+  changeItem: (key: string, value: any) => void;
+  changeItems: (values: { [key: string]: any }) => void;
+  myJobs: JobType[];
+  suggestedJobs: JobType[];
+  parentJobs: JobType[];
   activeRoom: WorkspaceRoomType | WorkspaceRoomShortType | undefined;
   setActiveRoom: (
     room: WorkspaceRoomType | WorkspaceRoomShortType | undefined,
@@ -30,6 +38,9 @@ const WorkspaceContext = createContext<{
   workspace_id: string;
 }>({
   users: [],
+  myJobs: [],
+  parentJobs: [],
+  suggestedJobs: [],
   activeRoom: undefined,
   setActiveRoom: () => {},
   changeUserRoom: () => {},
@@ -49,12 +60,27 @@ export default function WorkspacePage() {
 
   const { workspace_id } = useParams();
 
-  const { values, changeKey } = useValues<{
+  const { values, changeKey, changeBulk } = useValues<{
     activeRoom: WorkspaceRoomType | WorkspaceRoomShortType | undefined;
     users: WorkspaceUserType[];
     leaderboard: LeaderboardType[];
     schedules: ScheduleType[];
-  }>({ activeRoom: undefined, users: [], leaderboard: [], schedules: [] });
+    jobs: {
+      myJobs: JobType[];
+      suggestedJobs: JobType[];
+      parentJobs: JobType[];
+    };
+  }>({
+    activeRoom: undefined,
+    users: [],
+    leaderboard: [],
+    schedules: [],
+    jobs: {
+      myJobs: [],
+      suggestedJobs: [],
+      parentJobs: [],
+    },
+  });
 
   const changeUserRoom = (user_id: number, room_id: number | null) => {
     const users = values?.users ?? [];
@@ -73,6 +99,32 @@ export default function WorkspacePage() {
         .then((res) => {
           const schedules: ScheduleType[] = res.data?.data ?? [];
           return schedules;
+        });
+    }
+
+    //getting jobs function
+    async function getJobs(workspace_id: string) {
+      return axiosInstance
+        .get(urlWithQueryParams(`/users/me/jobs`, { workspace_id }))
+        .then((res) => {
+          const jobs: JobType[] = res.data?.data ?? [];
+          return jobs;
+        });
+    }
+    //getting parent jobs function
+    async function getParentJobs() {
+      return axiosInstance.get('/users/mentionedJobs').then((res) => {
+        const jobs: JobType[] = res.data?.data ?? [];
+        return jobs;
+      });
+    }
+    //getting suggested jobs function
+    async function getSuggestedJobs() {
+      return axiosInstance
+        .get(urlWithQueryParams(`/users/mentionedJobs`, { suggests: true }))
+        .then((res) => {
+          const jobs: JobType[] = res.data?.data ?? [];
+          return jobs;
         });
     }
 
@@ -102,13 +154,33 @@ export default function WorkspacePage() {
         getSchedules(workspace_id),
         getLeaderboard(workspace_id),
         getWorkspaceUsers(workspace_id),
+        getJobs(workspace_id),
+        getSuggestedJobs(),
+        getParentJobs(),
       ])
-        .then(([schedules, leaderboard, users]) => {
-          changeKey('schedules', schedules);
-          changeKey('leaderboard', leaderboard);
-          changeKey('users', users);
-          stopLoading();
-        })
+        .then(
+          ([
+            schedules,
+            leaderboard,
+            users,
+            jobs,
+            suggestedJobs,
+            parentJobs,
+          ]) => {
+            changeKey('schedules', schedules);
+            changeKey('leaderboard', leaderboard);
+            changeKey('users', users);
+            changeBulk({
+              jobs: {
+                myJobs: jobs,
+                suggestedJobs: suggestedJobs,
+                parentJobs: parentJobs,
+              },
+            });
+
+            stopLoading();
+          },
+        )
         .catch((err) => {
           stopLoading();
         });
@@ -134,6 +206,76 @@ export default function WorkspacePage() {
     },
     [],
   );
+  useSocket('timeStopped', (data: JobType) => {
+    dispatch(__BUS.stopWorkTimer);
+  });
+
+  useSocket('timeStarted', (data: JobType) => {
+    dispatch(__BUS.startWorkTimer);
+  });
+
+  useSocket(
+    'jobCreated',
+    (job: JobType) => {
+      const jobMembers = job?.members || [];
+
+      const isMyJob = jobMembers.map((j) => j.id).includes(user.id);
+
+      const jobsState = values?.jobs || {};
+
+      const myJobs = jobsState?.myJobs || [];
+
+      const lastActiveJob = myJobs.find((j) => j.status === 'in_progress');
+
+      if (isMyJob) {
+        const latestJobs = [...myJobs].map((i) => {
+          if (lastActiveJob && i.id === lastActiveJob.id) {
+            return { ...i, status: 'paused' };
+          } else {
+            return i;
+          }
+        });
+        const newJobs = [job, ...latestJobs];
+        changeBulk({ jobs: { ...jobsState, myJobs: newJobs } });
+      }
+    },
+    [values],
+  );
+  useSocket(
+    'jobSuggested',
+    (job: JobType) => {
+      const latestJobs = values?.jobs || {};
+      const suggestedJobs = latestJobs?.suggestedJobs || [];
+      changeBulk({
+        jobs: { ...latestJobs, suggestedJobs: [job, ...suggestedJobs] },
+      });
+    },
+    [values],
+  );
+  useSocket(
+    'activeJobUpdated',
+    (userData: UserType) => {
+      const timeStarted = userData.timeStarted;
+      if (!!timeStarted) {
+        dispatch(__BUS.startWorkTimer);
+      } else {
+        dispatch(__BUS.stopWorkTimer);
+      }
+      const isMyJob = userData.id === user.id;
+      if (!isMyJob) {
+        const latestUsers = [...values.users];
+        const updatedUsers = latestUsers.map((u) => {
+          if (u.id === userData.id) {
+            return userData;
+          } else {
+            return u;
+          }
+        });
+        changeKey('users', updatedUsers);
+      }
+    },
+    [values, user],
+  );
 
   let mainRoomHolderClss = 'main-room-holder w-full h-screen overflow-hidden';
 
@@ -145,7 +287,12 @@ export default function WorkspacePage() {
     <WorkspaceContext.Provider
       value={{
         users: values?.users ?? [],
+        myJobs: values?.jobs?.myJobs ?? [],
+        parentJobs: values?.jobs?.parentJobs ?? [],
+        suggestedJobs: values?.jobs?.suggestedJobs ?? [],
         changeUserRoom,
+        changeItem: changeKey,
+        changeItems: changeBulk,
         activeRoom: values?.activeRoom,
         setActiveRoom: (room) => changeKey('activeRoom', room),
         workspaceFetchingLoading: isLoading,

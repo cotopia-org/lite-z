@@ -1,11 +1,10 @@
-import NotFound from "../layouts/not-found";
-import JobItem from "../room/tools/top-left/job-button/shapes/job-list/job-item";
-import { JobType } from "@/types/job";
-import { UserType } from "@/types/user";
+import NotFound from '../layouts/not-found';
+import JobItem from '../room/tools/top-left/job-button/shapes/job-list/job-item';
+import { JobType } from '@/types/job';
+import { UserType } from '@/types/user';
 
 type Props = {
   items: JobType[];
-  onMutate?: () => void;
   hasAction?: boolean;
   suggested?: boolean;
   user?: UserType | null;
@@ -13,7 +12,6 @@ type Props = {
 };
 export default function JobItems({
   items,
-  onMutate,
   hasAction = false,
   suggested = false,
   user,
@@ -29,7 +27,6 @@ export default function JobItems({
             user={user}
             hasAction={hasAction && !suggested}
             suggested={suggested}
-            mutate={onMutate}
             item={item}
             key={key + 1}
           />

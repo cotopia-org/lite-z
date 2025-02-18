@@ -1,16 +1,15 @@
-import React, { ReactNode } from "react"
-import CotopiaIconButton from "../shared-ui/c-icon-button"
-import { ArrowLeft, X } from "lucide-react"
-import CotopiaButton from "@/components/shared-ui/c-button"
+import { ReactNode } from 'react';
+import CotopiaIconButton from '../shared-ui/c-icon-button';
+import { X } from 'lucide-react';
 
 type Props = {
-  title: string | ReactNode
-  children: ReactNode
-  onClose?: () => void
-  has_divider?: boolean
-  className?: string
-  button?: undefined | ReactNode
-}
+  title: string | ReactNode;
+  children: ReactNode;
+  onClose?: () => void;
+  has_divider?: boolean;
+  className?: string;
+  button?: undefined | ReactNode;
+};
 export default function BoxHolder({
   title,
   children,
@@ -19,17 +18,17 @@ export default function BoxHolder({
   className,
   button,
 }: Props) {
-  let title_node = title
+  let title_node = title;
 
-  if (typeof title === "string") {
-    title_node = <span className="text-lg font-medium">{title}</span>
+  if (typeof title === 'string') {
+    title_node = <span className="text-lg font-medium">{title}</span>;
   }
 
   return (
-    <div className={`flex flex-col gap-y-4 ${className ?? ""}`}>
+    <div className={`flex flex-col gap-y-4 ${className ?? ''}`}>
       <div className="box-header flex flex-row items-center justify-between">
         {title_node}
-        <div className={"flex flex-row gap-x-2"}>
+        <div className={'flex flex-row gap-x-2'}>
           {button}
           {!!onClose && (
             <CotopiaIconButton
@@ -44,5 +43,5 @@ export default function BoxHolder({
       {has_divider && <hr />}
       <div className="box-children">{children}</div>
     </div>
-  )
+  );
 }

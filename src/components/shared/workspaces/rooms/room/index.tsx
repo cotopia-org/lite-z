@@ -47,32 +47,24 @@ export default function WorkspaceRoom({
     if (selected_room_id !== room.id) {
       //Change user room in workspace datas
       changeUserRoom(user.id, room.id);
-
       //Set active room ...
       setActiveRoom(room);
-
       startLoading();
       axiosInstance
         .get<FetchDataType<WorkspaceRoomJoinType>>(`/rooms/${room.id}/join`)
         .then((res) => {
           const livekitToken = res.data.data.token; //Getting livekit token from joinObject
-
           //set livekit token
           dispatch(setToken(livekitToken));
-
           // navigate(
           //   urlWithQueryParams(`/workspaces/${workspace_id}/rooms/${room.id}`, {
           //     isSwitching: true,
           //   }),
           // );
-
           stopLoading();
-
           if (sounds.userJoinLeft) playSoundEffect('joined');
-
           //Update participants of room context
           updateParticipants(res.data.data.participants ?? []);
-
           //Dispatch rf canvas to inform new participants
           busDispatch({
             type: __BUS.initRoomParticipantsOnRf,

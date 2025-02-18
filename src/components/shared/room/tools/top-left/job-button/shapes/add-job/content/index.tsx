@@ -4,25 +4,22 @@ import CotopiaInput from '@/components/shared-ui/c-input';
 import CotopiaTextarea from '@/components/shared-ui/c-textarea';
 import TitleEl from '@/components/shared/title-el';
 import useLoading from '@/hooks/use-loading';
-import axiosInstance, { FetchDataType } from '@/services/axios';
+import axiosInstance from '@/services/axios';
 import { JobType } from '@/types/job';
 import { useFormik } from 'formik';
 import { Plus } from 'lucide-react';
 import { toast } from 'sonner';
 import * as Yup from 'yup';
-import DeleteJobHandler from '../delete-job';
 import CSelect from '@/components/shared-ui/c-select';
-import { useApi } from '@/hooks/swr';
 import Search from '@/components/shared/search';
 import { MentionType } from '@/types/mention';
+import { useWorkspace } from '@/pages/workspace';
 
 interface Props {
   onClose: () => void;
   defaultValue?: JobType;
   onDelete?: () => void;
   onCreated?: () => void;
-  workspaceId?: number;
-  parentJobs: JobType[];
 }
 
 const dropdownItems = [
@@ -32,14 +29,11 @@ const dropdownItems = [
   { title: 'Started', value: 'started' },
 ];
 
-const ManageJobContent = ({
-  defaultValue,
-  workspaceId,
-  onCreated,
-  onDelete,
-  onClose,
-  parentJobs,
-}: Props) => {
+const ManageJobContent = ({ defaultValue, onCreated, onClose }: Props) => {
+  const { parentJobs, workspace_id: workspaceId } = useWorkspace();
+
+  const parentItems = parentJobs || [];
+
   const isEdit = defaultValue !== undefined;
   const { isLoading, stopLoading, startLoading } = useLoading();
   const {
@@ -72,7 +66,6 @@ const ManageJobContent = ({
     }),
     onSubmit: async (values) => {
       const { ...rest } = values;
-
       try {
         let payload: {
           [key: string]: string | number | undefined | number[] | MentionType[];
@@ -105,7 +98,7 @@ const ManageJobContent = ({
     <form onSubmit={handleSubmit} className="flex flex-wrap gap-4 px-4 w-full">
       <TitleEl title="Parent" className={'w-1/2'}>
         <CSelect
-          items={parentJobs
+          items={parentItems
             .filter((x) => !x.old)
             .map((x) => ({
               title: '- '.repeat(x.level) + x.title,

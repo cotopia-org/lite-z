@@ -17,10 +17,10 @@ export type UserType = {
   name: string;
   room_id: null | number;
   workspace_id: null | number;
+  timeStarted: boolean;
   screenshare_coordinates: null | string;
   screenshare_size: null | string;
   last_login: string;
-
   status: null | string;
   username: string;
   video_coordinates: null | string;

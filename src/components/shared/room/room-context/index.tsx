@@ -1,6 +1,5 @@
 import { __BUS } from '@/const/bus';
 import useAuth from '@/hooks/auth';
-import { useApi } from '@/hooks/swr';
 import useLoading from '@/hooks/use-loading';
 import useQueryParams from '@/hooks/use-query-params';
 import useSetting from '@/hooks/use-setting';
