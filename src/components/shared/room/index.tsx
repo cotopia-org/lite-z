@@ -105,9 +105,9 @@ export default function RoomHolder({ workspace_id, room_id }: Props) {
             {socket?.connected === false && (
               <Disconnected onReTry={handleReTry} />
             )}
-            {!!socket?.connected && (
-              <LivekitRefactored>{content}</LivekitRefactored>
-            )}
+            <LivekitRefactored disconnect={!socket?.connected}>
+              {content}
+            </LivekitRefactored>
           </RoomContext>
         </ChatWrapper>
       </ReactFlowProvider>

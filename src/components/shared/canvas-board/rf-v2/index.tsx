@@ -454,9 +454,10 @@ export default function WithReactFlowV2() {
         });
       }
       //Stop the timer for user left join
-      dispatch({
-        type: __BUS.stopWorkTimer,
-      });
+      if (user?.id === data?.user?.id)
+        dispatch({
+          type: __BUS.stopWorkTimer,
+        });
     },
     [room?.id, user?.id],
   );
@@ -502,6 +503,12 @@ export default function WithReactFlowV2() {
       }
 
       handleCircleMeet(nNode.id, nNode?.position, nNode);
+
+      //Stop the timer for user left join
+      if (user?.id === data?.user?.id)
+        dispatch({
+          type: __BUS.startWorkTimer,
+        });
     },
     [user?.username],
   );

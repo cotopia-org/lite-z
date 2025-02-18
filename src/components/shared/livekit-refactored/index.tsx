@@ -7,14 +7,16 @@ import { usePermissionContext } from '@/pages/workspace/permission-context';
 
 type Props = {
   children: ReactNode;
+  disconnect: boolean;
 };
-export default function LivekitRefactored({ children }: Props) {
+export default function LivekitRefactored({ children, disconnect }: Props) {
   const { token } = useAppSelector((store) => store.livekit);
 
   const { permissions } = usePermissionContext();
 
+  if (disconnect) return children;
+
   return (
-    //@ts-ignore
     <LiveKitRoom
       serverUrl={VARZ.serverUrl}
       token={token}
