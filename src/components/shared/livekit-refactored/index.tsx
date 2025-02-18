@@ -17,6 +17,7 @@ export default function LivekitRefactored({ children, disconnect }: Props) {
   if (disconnect) return children;
 
   return (
+    //@ts-ignore
     <LiveKitRoom
       serverUrl={VARZ.serverUrl}
       token={token}
