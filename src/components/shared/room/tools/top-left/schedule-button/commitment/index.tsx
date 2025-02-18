@@ -74,6 +74,7 @@ type Props = {
   numbers: {
     passed: number;
     commitment: number;
+    remaining: number;
     lost: number;
   };
   times: {
@@ -96,7 +97,7 @@ export default function ScheduleCommitment({ numbers, times }: Props) {
   );
   let commitment = (
     <div className="absolute left-0 right-0 z-[1] flex flex-col items-start top-0 bottom-0 overflow-hidden">
-      <CommitmentProgressBar progress={numbers.commitment} variant="light" />
+      <CommitmentProgressBar progress={numbers.remaining} variant="light" />
     </div>
   );
   let commitmentDivider = (
