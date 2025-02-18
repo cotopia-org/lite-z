@@ -1,16 +1,16 @@
-import useKeyPress from "@/hooks/use-key-press";
-import { ReactNode, useRef, useState } from "react";
+import useKeyPress from '@/hooks/use-key-press';
+import { ReactNode, useRef, useState } from 'react';
 
 type Props = {
   trigger: (
     open: () => void,
     isOpen: boolean,
-    handleClose: () => void
+    handleClose: () => void,
   ) => ReactNode;
   children?: (
     style: { top: number; left: number; width: number; zIndex: number },
     open: () => void,
-    close: () => void
+    close: () => void,
   ) => ReactNode;
   className?: string;
 };
@@ -23,7 +23,7 @@ export default function PopupBox({ trigger, children, className }: Props) {
     setTriggerPosition(undefined);
   };
 
-  useKeyPress("Escape", handleClose);
+  useKeyPress('Escape', handleClose);
 
   const [triggerPosition, setTriggerPosition] = useState<{
     top: number;
@@ -48,8 +48,8 @@ export default function PopupBox({ trigger, children, className }: Props) {
     setTriggerPosition({ top, left, height, width });
   };
 
-  let triggerClss = "trigger transition-all";
-  let modalClss = "modaloverlay transition-all";
+  let triggerClss = 'trigger transition-all';
+  let modalClss = 'modaloverlay transition-all';
 
   if (isOpen) triggerClss += ` fixed z-20 scale-[1.05]`;
   if (isOpen)
@@ -59,7 +59,7 @@ export default function PopupBox({ trigger, children, className }: Props) {
     <>
       {!!isOpen && (
         <div
-          className='placeholder-trigger'
+          className="placeholder-trigger"
           style={{ ...triggerPosition }}
         ></div>
       )}
@@ -86,7 +86,7 @@ export default function PopupBox({ trigger, children, className }: Props) {
             zIndex: 21;
           },
           handleOpen,
-          handleClose
+          handleClose,
         )}
     </>
   );

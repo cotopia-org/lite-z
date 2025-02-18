@@ -1,9 +1,7 @@
-import { UserMinimalType } from "./user";
-import { TagType } from "@/types/tag";
-import { MentionType } from "@/types/mention";
-import { AttachmentFileType } from "@/types/file";
+import { MentionType } from '@/types/mention';
+import { AttachmentFileType } from '@/types/file';
 
-export type JobStatusType = "in_progress" | "paused" | "completed" | "started";
+export type JobStatusType = 'in_progress' | 'paused' | 'completed' | 'started';
 
 export type UserJobType = {
   id: number;

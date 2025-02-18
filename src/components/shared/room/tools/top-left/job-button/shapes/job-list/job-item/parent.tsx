@@ -1,6 +1,5 @@
-import StatusBox from "@/components/shared/status-box";
-import { cn, getTimeFormat } from "@/lib/utils";
-import { JobType } from "@/types/job";
+import StatusBox from '@/components/shared/status-box';
+import { JobType } from '@/types/job';
 
 type Props = {
   job: JobType;

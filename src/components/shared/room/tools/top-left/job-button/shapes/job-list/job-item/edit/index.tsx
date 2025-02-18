@@ -29,7 +29,6 @@ export default function EditJobButton({ job, fetchAgain, parentJobs }: Props) {
     >
       {(open, close) => (
         <ManageJobContent
-          parentJobs={parentJobs}
           onClose={close}
           defaultValue={job}
           onCreated={() => {
