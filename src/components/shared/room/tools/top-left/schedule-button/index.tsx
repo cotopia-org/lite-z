@@ -173,8 +173,7 @@ export function ScheduleFillment({ userId }: { userId?: string | number }) {
   const missingPercent =
     fulfillmentData.missing === 0
       ? 0
-      : (fulfillmentData.missing / fulfillmentData.total_until_now_schedule) *
-        100;
+      : (fulfillmentData.missing / fulfillmentData.total_schedule) * 100;
 
   const remainingPercent =
     (fulfillmentData.remaining / fulfillmentData.total_schedule) * 100;
@@ -190,17 +189,17 @@ export function ScheduleFillment({ userId }: { userId?: string | number }) {
         {fulfillmentData.percentage}% commitment in{' '}
         {formatTime(fulfillmentData.total_schedule, true)}
       </div>
-
       <ScheduleCommitment
         numbers={{
           passed: fulfillmentData.percentage,
-          commitment: min,
           lost: missingPercent,
+          commitment: min,
+          remaining: remainingPercent + fulfillmentData.percentage,
         }}
         times={{
-          attended: '22hrs',
-          missed: '10hrs',
-          remaining: '30hrs',
+          attended: formatTime(fulfillmentData.done, false, false, true),
+          missed: formatTime(fulfillmentData.missing, false, false, true),
+          remaining: formatTime(fulfillmentData.remaining, false, false, true),
         }}
       />
       {/* <div className={'flex flex-row items-center  w-full'}>

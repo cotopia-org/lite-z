@@ -107,7 +107,7 @@ export default function ScheduleCommitment({ numbers, times }: Props) {
       }}
       className="absolute left-0 right-0 z-[4] flex flex-col items-start top-0 bottom-0 overflow-hidden"
     >
-      <div className="w-2 h-full bg-primary"></div>
+      <div className="w-1 h-full bg-primary"></div>
     </div>
   );
 
@@ -124,10 +124,10 @@ export default function ScheduleCommitment({ numbers, times }: Props) {
           <Label label={`Attended: ${times.attended}`} variant="primary" />
         </div>
         <div>
-          <Label label={`Remaining: ${times.attended}`} variant="light" />
+          <Label label={`Remaining: ${times.remaining}`} variant="light" />
         </div>
         <div>
-          <Label label={`Missed: ${times.attended}`} variant="error" />
+          <Label label={`Missed: ${times.missed}`} variant="error" />
         </div>
       </div>
     </div>
