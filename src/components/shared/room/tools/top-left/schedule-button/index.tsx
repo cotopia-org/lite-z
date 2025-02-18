@@ -14,6 +14,7 @@ import Schedules from '@/components/shared/schedules';
 import FullLoading from '@/components/shared/full-loading';
 import AddScheduleButton from './shapes/add-schedule';
 import { FetchDataType } from '@/services/axios';
+import ScheduleCommitment from './commitment';
 
 export type FulFillmentType = {
   percentage: number;
@@ -188,7 +189,14 @@ export function ScheduleFillment({ userId }: { userId?: string | number }) {
         {fulfillmentData.percentage}% commitment in{' '}
         {formatTime(fulfillmentData.total_schedule, true)}
       </div>
-      <div className={'flex flex-row items-center  w-full'}>
+      <ScheduleCommitment
+        numbers={{
+          passed: fulfillmentData.percentage,
+          commitment: remainingPercent,
+          lost: missingPercent,
+        }}
+      />
+      {/* <div className={'flex flex-row items-center  w-full'}>
         <CommitmentSection
           bg={'border-green-500 border-t-2 border-b-2 border-l-2 rounded-l'}
           data={`${formatTime(fulfillmentData.done, false, false, true)}`}
@@ -196,7 +204,6 @@ export function ScheduleFillment({ userId }: { userId?: string | number }) {
           percentage={fulfillmentData.percentage}
           label={'Done'}
         />
-
         <CommitmentSection
           bg={'border-red-500 border-t-2 border-b-2'}
           data={`${formatTime(fulfillmentData.missing, false, false, true)}`}
@@ -211,7 +218,7 @@ export function ScheduleFillment({ userId }: { userId?: string | number }) {
           percentage={remainingPercent}
           label={'Remaining'}
         />
-      </div>
+      </div> */}
 
       {fulfillmentData.mustWorkPerDay > 0 && (
         <div className={'my-1 text-center  text-red-500'}>

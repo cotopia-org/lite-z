@@ -1,22 +1,21 @@
 import TitleEl from '@/components/shared/title-el';
-import { useState } from 'react';
 import { useRoomContext } from '../../../room-context';
-import moment from 'moment';
-import * as emoji from 'node-emoji';
 import User from './user';
 import CotopiaButton from '@/components/shared-ui/c-button';
 import { Plus } from 'lucide-react';
-import { UserType, WorkspaceUserType } from '@/types/user';
 import { Link } from 'react-router-dom';
-import { buttonVariants } from '@/components/ui/button';
 import { isUserAdmin } from '@/lib/utils';
 import useAuth from '@/hooks/auth';
+import { useWorkspace } from '@/pages/workspace';
+import moment from 'moment';
 
-type Props = {
-  allOfflineParticipants: WorkspaceUserType[];
-};
-export default function OfflineUsers({ allOfflineParticipants }: Props) {
-  const [isExpand, setIsExpand] = useState(false);
+export default function OfflineUsers() {
+  const { users, activeRoom } = useWorkspace();
+
+  const allOfflineParticipants = users
+    .filter((item) => item.status === 'offline')
+    .sort((a, b) => moment(b.last_login).unix() - moment(a.last_login).unix());
+
   const { workspace_id, room_id } = useRoomContext();
   const { user } = useAuth();
 
@@ -32,11 +31,11 @@ export default function OfflineUsers({ allOfflineParticipants }: Props) {
           <User user={item} key={item.id} />
         ))}
       </div>
-      {isAdmin && (
+      {isAdmin && activeRoom && (
         <CotopiaButton variant={'outline'} startIcon={<Plus size={16} />}>
           <Link
             target="_blank"
-            to={`/workspaces/${workspace_id}/rooms/${room_id}/users`}
+            to={`/workspaces/${workspace_id}/rooms/${activeRoom?.id}/users`}
           >
             Show more
           </Link>

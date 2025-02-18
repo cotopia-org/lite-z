@@ -11,19 +11,29 @@ import { HeadphoneOffIcon } from '@/components/icons';
 import { useMediaContext } from '../../../media-context';
 import { useCallback } from 'react';
 import { usePermissionContext } from '@/pages/workspace/permission-context';
+import { useRoomContext } from '../../../room-context';
+import useAuth from '@/hooks/auth';
 
 export default function AfkButtonTool() {
   const { voiceOff } = useMediaContext();
 
+  const { user: profile } = useAuth();
+
   const { resetStreamHandler } = usePermissionContext();
 
+  const { room } = useRoomContext();
   const { reduxSettings } = useSetting();
 
   const is_afk = reduxSettings.afk;
 
+  const participants = room?.participants || [];
+
   const { startLoading, stopLoading, isLoading } = useLoading();
   const dispatch = useAppDispatch();
   const handleToggleAfk = useCallback(() => {
+    const userNode = participants.find((p) => p.id === profile.id);
+
+    const userStoped = !userNode?.hasTimeCounted;
     startLoading();
     if (is_afk === true) {
       thunkResHandler(
@@ -32,7 +42,9 @@ export default function AfkButtonTool() {
         () => {
           stopLoading();
           resetStreamHandler();
-          busDispatch(__BUS.startWorkTimer);
+          if (!userStoped) {
+            busDispatch(__BUS.startWorkTimer);
+          }
         },
         () => {
           stopLoading();
@@ -45,7 +57,9 @@ export default function AfkButtonTool() {
         () => {
           stopLoading();
           voiceOff();
-          busDispatch(__BUS.stopWorkTimer);
+          if (!userStoped) {
+            busDispatch(__BUS.stopWorkTimer);
+          }
         },
         () => {
           stopLoading();
@@ -58,6 +72,7 @@ export default function AfkButtonTool() {
     resetStreamHandler,
     startLoading,
     stopLoading,
+    participants,
     voiceOff,
   ]);
 
