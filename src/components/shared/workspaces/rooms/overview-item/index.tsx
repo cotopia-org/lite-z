@@ -2,16 +2,26 @@ import { useRoomContext } from '@/components/shared/room/room-context';
 import { useApi } from '@/hooks/swr';
 import { cn } from '@/lib/utils';
 import { useWorkspace } from '@/pages/workspace';
-import { FetchDataType } from '@/services/axios';
+import axiosInstance, { FetchDataType } from '@/services/axios';
 import { WorkspaceType } from '@/types/workspace';
 import { Text } from 'lucide-react';
-import { Link, useLocation } from 'react-router-dom';
+import { useLocation } from 'react-router-dom';
 
 export default function WorkspaceOverviewItem() {
   const location = useLocation();
 
-  const { activeRoom, setActiveRoom } = useWorkspace();
+  const { activeRoom, setActiveRoom, leaveLocalUserFromActiveRoom } =
+    useWorkspace();
   const { workspace_id } = useRoomContext();
+
+  const handleClick = () => {
+    if (activeRoom) {
+      setActiveRoom(undefined);
+      axiosInstance.get(`/rooms/${activeRoom.id}/leave`).then((res) => {
+        leaveLocalUserFromActiveRoom();
+      });
+    }
+  };
 
   const data = useApi<FetchDataType<WorkspaceType>>(
     `/workspaces/${workspace_id}`,
@@ -23,7 +33,7 @@ export default function WorkspaceOverviewItem() {
 
   return (
     <div
-      onClick={() => setActiveRoom(undefined)}
+      onClick={handleClick}
       className={cn(
         'cursor-pointer m-2 py-2 flex flex-row items-center px-4 gap-x-2 hover:bg-black/5 rounded-lg',
         isActive ? '!bg-primary text-white [&_*]:text-white' : '',

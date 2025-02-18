@@ -14,6 +14,7 @@ import Schedules from '@/components/shared/schedules';
 import FullLoading from '@/components/shared/full-loading';
 import AddScheduleButton from './shapes/add-schedule';
 import { FetchDataType } from '@/services/axios';
+import ScheduleCommitment from './commitment';
 
 export type FulFillmentType = {
   percentage: number;
@@ -152,28 +153,13 @@ export function ScheduleFillment({ userId }: { userId?: string | number }) {
   const fulfillmentData = fulfillment?.data;
   if (fulfillmentData === undefined) return <></>;
 
-  const percent = fulfillmentData.percentage;
   const min = fulfillmentData.min_commitment_percent;
-  const max = 100;
-  const mid = 80;
-
-  let bg = 'bg-primary';
-  let text = 'text-primary';
-  if (percent <= min) {
-    bg = 'bg-red-500';
-    text = 'text-red-500';
-  }
-
-  if (percent >= mid) {
-    bg = 'bg-green-500';
-    text = 'text-green-500';
-  }
 
   const missingPercent =
     fulfillmentData.missing === 0
       ? 0
-      : (fulfillmentData.missing / fulfillmentData.total_until_now_schedule) *
-        100;
+      : (fulfillmentData.missing / fulfillmentData.total_schedule) * 100;
+
   const remainingPercent =
     (fulfillmentData.remaining / fulfillmentData.total_schedule) * 100;
 
@@ -188,7 +174,20 @@ export function ScheduleFillment({ userId }: { userId?: string | number }) {
         {fulfillmentData.percentage}% commitment in{' '}
         {formatTime(fulfillmentData.total_schedule, true)}
       </div>
-      <div className={'flex flex-row items-center  w-full'}>
+      <ScheduleCommitment
+        numbers={{
+          passed: fulfillmentData.percentage,
+          lost: missingPercent,
+          commitment: min,
+          remaining: remainingPercent + fulfillmentData.percentage,
+        }}
+        times={{
+          attended: formatTime(fulfillmentData.done, false, false, true),
+          missed: formatTime(fulfillmentData.missing, false, false, true),
+          remaining: formatTime(fulfillmentData.remaining, false, false, true),
+        }}
+      />
+      {/* <div className={'flex flex-row items-center  w-full'}>
         <CommitmentSection
           bg={'border-green-500 border-t-2 border-b-2 border-l-2 rounded-l'}
           data={`${formatTime(fulfillmentData.done, false, false, true)}`}
@@ -196,7 +195,6 @@ export function ScheduleFillment({ userId }: { userId?: string | number }) {
           percentage={fulfillmentData.percentage}
           label={'Done'}
         />
-
         <CommitmentSection
           bg={'border-red-500 border-t-2 border-b-2'}
           data={`${formatTime(fulfillmentData.missing, false, false, true)}`}
@@ -211,9 +209,28 @@ export function ScheduleFillment({ userId }: { userId?: string | number }) {
           percentage={remainingPercent}
           label={'Remaining'}
         />
-      </div>
+      </div> */}
+      {100 - missingPercent <= min && (
+        <div className={'my-1 text-center  text-red-500'}>
+          Missed{' '}
+          <span className={'font-bold tex'}>{missingPercent.toFixed(1)}%</span>{' '}
+          of total scheduled time, so cant meet the commitment of{' '}
+          <span className={'font-bold tex'}>
+            {fulfillmentData.min_commitment_percent}%
+          </span>
+        </div>
+      )}
 
-      {fulfillmentData.mustWorkPerDay > 0 && (
+      {fulfillmentData.percentage >= min && (
+        <div className={'my-1 text-center  text-green-500'}>
+          Met the commitment of{' '}
+          <span className={'font-bold tex'}>
+            {fulfillmentData.min_commitment_percent}%
+          </span>
+        </div>
+      )}
+
+      {fulfillmentData.mustWorkPerDay > 0 && 100 - missingPercent > min && (
         <div className={'my-1 text-center  text-red-500'}>
           Need{' '}
           <span className={'font-bold'}>

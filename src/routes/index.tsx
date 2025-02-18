@@ -24,6 +24,10 @@ const WorkspaceRoomUsers = lazy(
 
 //Home page
 const HomePage = lazy(() => import('@/pages/home'));
+
+//User's calendar page
+const UserCalendarPage = lazy(() => import('@/pages/user-calendar'));
+
 const Acts = lazy(() => import('@/pages/acts'));
 
 //Workspace payroll page
@@ -48,6 +52,10 @@ const router = createBrowserRouter([
       {
         path: '/',
         element: <Navigate to={paths.dashboard} />,
+      },
+      {
+        path: '/calendar',
+        element: <UserCalendarPage />,
       },
       {
         path: paths.dashboard,

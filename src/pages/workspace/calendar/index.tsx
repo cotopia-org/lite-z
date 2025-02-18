@@ -14,14 +14,12 @@ import { ArrowLeft, ArrowRight } from 'lucide-react';
 import { getRandomColor } from '@/lib/utils';
 
 export default function CalendarPage() {
-  const { workspace_id } = useParams();
+  // const { workspace_id } = useParams();
 
   const calendarRef = useRef<FullCalendar>(null);
 
-  const { data, isLoading } = useApi<FetchDataType<ScheduleType[]>>(
-    `/workspaces/${workspace_id}/schedules`,
-  );
-  const schedules = data !== undefined ? data?.data : [];
+  const { data, isLoading } = useApi<FetchDataType<any[]>>(`/availabilities`);
+  const availabilities = data !== undefined ? data?.data : [];
 
   const [currentDate, setCurrentDate] = useState(new Date().toDateString());
 
@@ -41,59 +39,51 @@ export default function CalendarPage() {
     setCurrentDate(calendarApi.getDate().toDateString());
   };
 
-  //   const handleToday = () => {
-  //     if (calendarRef.current === null) return;
-
-  //     let calendarApi = calendarRef.current.getApi();
-  //     calendarApi.today();
-  //     setCurrentDate(calendarApi.getDate().toDateString());
-  //   };
-
   const events = useMemo(() => {
     const transformedEvents: any[] = [];
 
-    schedules.forEach((entry) => {
+    availabilities.forEach((entry) => {
       const userName = entry.user.name;
       const recurrenceStart = moment.tz(
         entry.recurrence_start_at,
         entry.timezone,
       );
 
-      entry.days.forEach(({ day, times }) => {
-        for (let weekOffset = 0; weekOffset < 4; weekOffset++) {
-          const eventDate = recurrenceStart
-            .clone()
-            .startOf('week')
-            .add(day, 'days')
-            .add(weekOffset, 'weeks');
+      // entry.days.forEach(({ day, times }) => {
+      //   for (let weekOffset = 0; weekOffset < 4; weekOffset++) {
+      //     const eventDate = recurrenceStart
+      //       .clone()
+      //       .startOf('week')
+      //       .add(day, 'days')
+      //       .add(weekOffset, 'weeks');
 
-          times.forEach(({ start, end }, index) => {
-            const startTime = eventDate
-              .clone()
-              //@ts-ignore
-              .set({ hour: start.split(':')[0], minute: start.split(':')[1] })
-              .format();
-            const endTime = eventDate
-              .clone()
-              //@ts-ignore
-              .set({ hour: end.split(':')[0], minute: end.split(':')[1] })
-              .format();
+      //     times.forEach(({ start, end }, index) => {
+      //       const startTime = eventDate
+      //         .clone()
+      //         //@ts-ignore
+      //         .set({ hour: start.split(':')[0], minute: start.split(':')[1] })
+      //         .format();
+      //       const endTime = eventDate
+      //         .clone()
+      //         //@ts-ignore
+      //         .set({ hour: end.split(':')[0], minute: end.split(':')[1] })
+      //         .format();
 
-            transformedEvents.push({
-              id: `${entry.id}-${weekOffset}-${day}-${index}`,
-              title: `${userName}`,
-              start: startTime,
-              end: endTime,
-              backgroundColor: getRandomColor(entry.user.created_at),
-              textColor: '#fff',
-            });
-          });
-        }
-      });
+      //       transformedEvents.push({
+      //         id: `${entry.id}-${weekOffset}-${day}-${index}`,
+      //         title: `${userName}`,
+      //         start: startTime,
+      //         end: endTime,
+      //         backgroundColor: getRandomColor(entry.user.created_at),
+      //         textColor: '#fff',
+      //       });
+      //     });
+      //   }
+      // });
     });
 
     return transformedEvents;
-  }, [schedules]);
+  }, [availabilities]);
 
   if (data === undefined || isLoading) return <FullLoading />;
 

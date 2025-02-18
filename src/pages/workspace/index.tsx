@@ -32,6 +32,7 @@ const WorkspaceContext = createContext<{
     room: WorkspaceRoomType | WorkspaceRoomShortType | undefined,
   ) => void;
   changeUserRoom: (user_id: number, room_id: number) => void;
+  leaveLocalUserFromActiveRoom: () => void;
   workspaceFetchingLoading?: boolean;
   leadeboard: LeaderboardType[];
   schudules: ScheduleType[];
@@ -44,6 +45,7 @@ const WorkspaceContext = createContext<{
   activeRoom: undefined,
   setActiveRoom: () => {},
   changeUserRoom: () => {},
+  leaveLocalUserFromActiveRoom: () => {},
   workspaceFetchingLoading: false,
   leadeboard: [],
   schudules: [],
@@ -82,12 +84,23 @@ export default function WorkspacePage() {
     },
   });
 
+  const leaveLocalUserFromActiveRoom = () => {
+    const allUsers = [...values.users];
+    const user_index = allUsers.findIndex((a) => a.id === user.id);
+
+    if (user_index > -1) {
+      allUsers[user_index] = { ...allUsers[user_index], room_id: null };
+    }
+    changeKey('users', allUsers);
+  };
+
   const changeUserRoom = (user_id: number, room_id: number | null) => {
     const users = values?.users ?? [];
     const userIndex = users.findIndex((user) => user.id === user_id);
+
     if (userIndex !== -1) {
       users[userIndex].room_id = room_id;
-      changeKey('users', users);
+      if (room_id !== null) users[userIndex].status = 'online';
     }
   };
 
@@ -196,15 +209,16 @@ export default function WorkspacePage() {
     (data: LeftJoinType) => {
       if (data.user.id !== user.id) changeUserRoom(data.user.id, null);
     },
-    [user],
+    [user, changeUserRoom],
   );
 
   useSocket(
     'userJoinedToRoom',
     (data: LeftJoinType) => {
+      console.log('user joined', data);
       changeUserRoom(data.user.id, data.room_id);
     },
-    [],
+    [changeUserRoom],
   );
   useSocket('timeStopped', (data: JobType) => {
     dispatch(__BUS.stopWorkTimer);
@@ -299,6 +313,7 @@ export default function WorkspacePage() {
         leadeboard: values?.leaderboard ?? [],
         schudules: values?.schedules ?? [],
         workspace_id: workspace_id as string,
+        leaveLocalUserFromActiveRoom,
       }}
     >
       <ReactFlowProvider>
