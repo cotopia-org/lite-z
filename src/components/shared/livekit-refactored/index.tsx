@@ -14,14 +14,12 @@ export default function LivekitRefactored({ children, disconnect }: Props) {
 
   const { permissions } = usePermissionContext();
 
-  if (disconnect) return <>{children}</>;
-
   return (
     //@ts-ignore
     <LiveKitRoom
       serverUrl={VARZ.serverUrl}
       token={token}
-      connect={true}
+      connect={disconnect}
       video={permissions.video}
       audio={permissions.audio}
       options={{
