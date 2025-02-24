@@ -1,22 +1,48 @@
 import FullLoading from '@/components/shared/full-loading';
 import useAuth from '@/hooks/auth';
-import { useApi } from '@/hooks/swr';
-import { FetchDataType } from '@/services/axios';
-import { useMemo } from 'react';
+import axiosInstance from '@/services/axios';
+import { useEffect, useState } from 'react';
 import Calendar from '@/components/shared/calendar';
+import { DateClickArg } from '@fullcalendar/interaction';
+import AddAvailability from './components/clicked-date';
+import { useLoading } from '@/hooks';
+import { CalendarAvailabilityType } from '@/types/availibility';
+import CDialog from '@/components/shared-ui/c-dialog';
+import CotopiaButton from '@/components/shared-ui/c-button';
 
 export default function UserCalendarPage() {
+  const [clickedDate, setClickedDate] = useState<DateClickArg>();
+
   const { user } = useAuth();
-  const { data, isLoading } = useApi<FetchDataType<any>>(
-    `/users/${user.id}/availabilities`,
-  );
-  const availabilities = data !== undefined ? data?.data : [];
+
+  const { startLoading, stopLoading, isLoading } = useLoading();
+  const [availabilities, setAvailibilities] = useState<
+    CalendarAvailabilityType[]
+  >([]);
+
+  useEffect(() => {
+    async function getAvailabilities() {
+      startLoading();
+      axiosInstance
+        .get<CalendarAvailabilityType[]>(`/users/${user.id}/availabilities`)
+        .then((res) => {
+          stopLoading();
+          setAvailibilities(res.data);
+        })
+        .catch((err) => {
+          stopLoading();
+        });
+    }
+    getAvailabilities();
+  }, []);
 
   // const events = useMemo(() => {
   //   return [];
   // }, []);
 
-  if (data === undefined || isLoading) return <FullLoading />;
+  console.log('availabilities', availabilities);
+
+  if (isLoading) return <FullLoading />;
 
   const today = new Date().toISOString().split('T')[0]; // Get today's date in YYYY-MM-DD format
 
@@ -53,8 +79,23 @@ export default function UserCalendarPage() {
 
   return (
     <div className="p-4 flex flex-col gap-y-4">
-      <h1 className="text-3xl font-bold">My Schedule</h1>
-      <Calendar events={events} />
+      {!!clickedDate && (
+        <AddAvailability
+          onAdd={(availability) => {}}
+          onClose={() => setClickedDate(undefined)}
+        />
+      )}
+      <div className="flex flex-row justify-between">
+        <h1 className="text-3xl font-bold">My Schedule</h1>
+        <CDialog
+          trigger={(open) => (
+            <CotopiaButton onClick={open}>Add Availability</CotopiaButton>
+          )}
+        >
+          {(close) => <AddAvailability onClose={close} onAdd={close} />}
+        </CDialog>
+      </div>
+      <Calendar events={events} onDateClick={setClickedDate} />
     </div>
   );
 }

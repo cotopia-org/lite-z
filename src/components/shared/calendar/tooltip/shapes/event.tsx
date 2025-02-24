@@ -6,9 +6,5 @@ type Props = {
 } & Omit<CalendarTooltipProps, 'children'>;
 
 export default function EventTooltip({ event, ...rest }: Props) {
-  const { id } = event?.metadata ?? {};
-
-  const { isLoading, data } = useApi(`/availabilities/${id}`);
-
-  return <Tooltip {...rest}>{JSON.stringify(data)}</Tooltip>;
+  return <Tooltip {...rest}>{JSON.stringify(event?.metadata)}</Tooltip>;
 }

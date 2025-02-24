@@ -6,23 +6,26 @@ import {
   InfoIcon,
 } from 'lucide-react';
 import dayGridPlugin from '@fullcalendar/daygrid';
-import interactionPlugin from '@fullcalendar/interaction';
+import interactionPlugin, { DateClickArg } from '@fullcalendar/interaction';
 import timeGridPlugin from '@fullcalendar/timegrid';
 import { useEffect, useRef, useState } from 'react';
 import CotopiaIconButton from '@/components/shared-ui/c-icon-button';
 import { EventSourceInput } from '@fullcalendar/core';
-import { C } from '@fullcalendar/core/internal-common';
 import EventTooltip from './tooltip/shapes/event';
 
 type Props = {
   events: EventSourceInput;
+  onDateClick?: (arg: DateClickArg) => void;
 };
 
-export default function Calendar({ events = [] }: Props) {
+export default function Calendar({ events = [], onDateClick }: Props) {
   const [modalPosition, setModalPosition] = useState({ top: 0, left: 0 });
   const [selectedEvent, setSelectedEvent] = useState<any>(null);
   const modalRef = useRef<HTMLDivElement>(null);
+
   const handleEventClick = (info: any) => {
+    console.log('info', info);
+
     const metadata = info?.event.extendedProps;
 
     const rect = info.el.getBoundingClientRect(); // Get the position of the event element
@@ -111,6 +114,7 @@ export default function Calendar({ events = [] }: Props) {
         events={events}
         plugins={[dayGridPlugin, interactionPlugin, timeGridPlugin]}
         eventClick={handleEventClick}
+        dateClick={onDateClick}
         allDaySlot={false}
         initialView="timeGridWeek"
         ref={calendarRef}
