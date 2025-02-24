@@ -41,7 +41,7 @@ import InvisibleNodesViewer, {
   InvisibleNodeType,
 } from './invisible-nodes-viewer';
 
-const userNodeBound = 86;
+const USER_NODE_BOUND = 86;
 
 enum RoomRfNodeType {
   shareScreenNode = 'shareScreenNode',
@@ -76,6 +76,7 @@ export default function WithReactFlowV2() {
 
   //Init livekit screenshare tracks
   const initShareScreenTracks = useRef<boolean>(false);
+
   const shareScreenTracks = useTracks([Track.Source.ScreenShare]);
 
   useEffect(() => {
@@ -595,7 +596,6 @@ export default function WithReactFlowV2() {
       const properY = Math.abs(viewport.y);
       const properWidth = viewport.width;
       const properHeight = viewport.height;
-      let userNodeHeight = userNodeBound * viewport.zoom;
       //Covering area will be from properX to properWidth + properX // properY to properHeight + properY
       const coveringArea = {
         x: { from: properX, to: properX + properWidth },
@@ -607,15 +607,21 @@ export default function WithReactFlowV2() {
       };
       if (!user) return;
       const nodes = rf?.current?.getNodes() || [];
+
       const user_nodes = nodes.filter(
         (node) =>
           node.type !== VARZ.jailNodeType &&
           node.type !== VARZ.backgroundNodeType,
       );
+
       const flatted_nodes = user_nodes
         .map((item, index) => {
           const itemPositionX = item.position.x * viewport.zoom;
           const itemPositionY = item.position.y * viewport.zoom;
+          const node_width =
+            (item?.measured?.width ?? USER_NODE_BOUND) * viewport.zoom;
+          const node_height =
+            (item?.measured?.height ?? USER_NODE_BOUND) * viewport.zoom;
           const offsets = user_nodes
             .filter((_, otherIndex) => otherIndex !== index) //remove current item from others
             .map((otherNode) => {
@@ -636,16 +642,16 @@ export default function WithReactFlowV2() {
               }
 
               const has_overlap =
-                abs_deltaX < userNodeHeight || abs_deltaY < userNodeHeight;
+                abs_deltaX < node_width || abs_deltaY < node_height;
 
               const additional_margin = 20; // additional margin for more spacing from other node
               if (has_overlap) {
                 return {
                   id: item.id,
                   offsetX:
-                    (abs_deltaX + userNodeBound + additional_margin) * x_dir,
+                    (abs_deltaX + node_width + additional_margin) * x_dir,
                   offsetY:
-                    (abs_deltaY + userNodeBound + additional_margin) * y_dir,
+                    (abs_deltaY + node_height + additional_margin) * y_dir,
                 };
               }
               return null;
@@ -654,12 +660,11 @@ export default function WithReactFlowV2() {
 
           //Visible situation
           //If item's left direction is less than viewport's x and viewport's y is less than item's y
-
           const inTheRightSide = itemPositionX > coveringArea.x.to;
           const inTheLeftSide =
-            itemPositionX + userNodeHeight <= coveringArea.x.from;
+            itemPositionX + node_width <= coveringArea.x.from;
           const inTheTopSide =
-            itemPositionY + userNodeHeight <= coveringArea.y.from;
+            itemPositionY + node_height <= coveringArea.y.from;
           const inTheBottomSide = coveringArea.y.to < itemPositionY;
           //define direction based on invisible side of node
           let dir = undefined;
@@ -667,11 +672,9 @@ export default function WithReactFlowV2() {
           let delta_x = undefined;
           let delta_y = undefined;
           //calc distance between end of covering height and  client y
-          let delta_y_prime =
-            coveringArea.y.to - (itemPositionY + userNodeHeight);
+          let delta_y_prime = coveringArea.y.to - (itemPositionY + node_height);
           //calc distance between end covering width and client x
-          let delta_x_prime =
-            coveringArea.x.to - (itemPositionX + userNodeHeight);
+          let delta_x_prime = coveringArea.x.to - (itemPositionX + node_width);
 
           if (inTheRightSide) {
             dir = 'right';
@@ -708,7 +711,8 @@ export default function WithReactFlowV2() {
             coverCenter,
             itemPositionX,
             itemPositionY,
-            nodeHeight: userNodeHeight,
+            nodeHeight: node_height,
+            nodeWidth: node_width,
             offsets,
           };
         })
