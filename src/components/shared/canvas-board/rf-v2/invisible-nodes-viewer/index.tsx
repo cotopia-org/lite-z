@@ -21,6 +21,7 @@ export type InvisibleNodeType = {
   itemPositionX: number;
   itemPositionY: number;
   nodeHeight: number;
+  nodeWidth: number;
 };
 
 type Props = {
@@ -39,11 +40,9 @@ const InvisibleNodesViewer = ({ invisibleNodes }: Props) => {
         left: 0,
       }}
     >
-      {invisibleNodes
-        .filter((n) => n.node.type !== 'shareScreenNode')
-        .map((n) => {
-          return <InvisibleNode key={n.node.id} node={n} />;
-        })}
+      {invisibleNodes.map((n) => {
+        return <InvisibleNode key={n.node.id} node={n} />;
+      })}
     </div>
   );
 };

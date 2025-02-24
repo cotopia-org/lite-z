@@ -3,10 +3,10 @@ import {
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
-} from "@/components/ui/dropdown";
-import { useCallback, useEffect, useRef, useState } from "react";
-import { ChevronDown } from "lucide-react";
-import { cn } from "@/lib/utils";
+} from '@/components/ui/dropdown';
+import { useCallback, useEffect, useRef, useState } from 'react';
+import { ChevronDown } from 'lucide-react';
+import { cn } from '@/lib/utils';
 
 export type DropdownItemType = { title: string; value: string };
 interface Props {
@@ -22,11 +22,11 @@ const CotopiaDropdown = ({
   items,
   onSelect,
   defaultValue,
-  className = " ",
+  className = ' ',
   triggerClassName,
   label,
 }: Props) => {
-  const [value, setValue] = useState("Choose");
+  const [value, setValue] = useState('Choose');
 
   const triggerRef = useRef<HTMLDivElement>(null);
 
@@ -39,19 +39,19 @@ const CotopiaDropdown = ({
       setValue(item.title);
       if (onSelect) onSelect(item);
     },
-    [onSelect]
+    [onSelect],
   );
 
   return (
-    <div className='flex flex-col gap-y-2'>
+    <div className="flex flex-col gap-y-2">
       {!!label && <strong>{label}</strong>}
       <DropdownMenu>
         <DropdownMenuTrigger
-          className={cn("border rounded-md w-full", triggerClassName)}
+          className={cn('border  rounded-md w-full', triggerClassName)}
         >
           <div
             ref={triggerRef}
-            className='flex w-full p-2 px-4 items-center justify-between'
+            className="flex w-full p-2 px-4 items-center justify-between"
           >
             <span>{value}</span>
             <ChevronDown size={16} />
@@ -61,15 +61,15 @@ const CotopiaDropdown = ({
           style={{
             width: triggerRef?.current
               ? triggerRef.current?.clientWidth
-              : "100%",
+              : '100%',
           }}
           className={`z-[10000] ${className}`}
         >
-          <div className='flex flex-col gap-y-2'>
+          <div className="flex flex-col gap-y-2">
             {items.map((item, key) => {
               return (
                 <DropdownMenuItem
-                  className='cursor-pointer'
+                  className="cursor-pointer"
                   onSelect={() => selectItemHandler(item)}
                   key={key + 1}
                 >

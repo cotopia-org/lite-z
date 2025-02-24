@@ -480,7 +480,6 @@ export const getNodePositionFromCenter = (
 // }
 
 export function getRandomColor(timestamp: any, darkness = 0.9) {
-  const normalizedTimestamp = (timestamp % 1000) / 1000;
   const colors = [
     '#D45246', // Original Red
     '#F68136', // Original Orange
@@ -493,7 +492,7 @@ export function getRandomColor(timestamp: any, darkness = 0.9) {
 
   const colorInterval = 10; // Adjust this value to control color change frequency
 
-  const intervalIndex = Math.floor(timestamp / colorInterval);
+  const intervalIndex = Math.floor(timestamp ?? 0 / colorInterval);
   return colors[intervalIndex % colors.length];
 }
 
